@@ -1,6 +1,6 @@
-# Rapport – submission 1
+# Submission 1
 ## A0
-**Team name**: Sprites
+**Team name**: *Sprites*
 
 **Team members + Skill set:**
 * Tor Erik Wollmann: OOP in python, using git in a team enviorement
@@ -114,3 +114,16 @@ Implementation:
 
 ## A4 
 The program compiles and works as intended. We have pair programmed.
+
+
+## A5: Summary 
+
+**Communication**
+
+Communication within the group has been successful so far. We quickly got to know each other, started working early, clarified expectations and goals for the course, established a good dialogue, and set up a communication channel on Discord. Ideas and thoughts shared within the group are met with respect. The feedback we provide each other is constructive. So far, there have been no disagreements on the topic.
+
+
+**Work Progress**
+
+So far, we have completed the lab exercises, agreed on a game concept, and gained an overview of the mandatory requirements for the course. We use Trello, a project management tool that helps teams organize and keep track of tasks:
+> https://trello.com/b/M1GIZpbu/sprites-inf112-team
