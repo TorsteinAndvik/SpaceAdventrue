@@ -66,5 +66,51 @@ Documents will be shared and stored via GitLab. Diagrams and charts will be writ
 and will follow the repo. The codebase will obviously be maintained at GitLab, and developers will merge their feature branches to main
 frequently. We will also have prod branch to maintain version history and landmarks as the project moves forward.
 
+### Overall goal for the project
+A 2D bullet-hell/bullet-heaven set in Space! 
+
+The player starts with a small ship. They fight enemy ships to gain resources. They can then use those resources to upgrade their ship: Increase size to add more cannons, thrusters, shields, etc., or upgrade previously added parts. Upgrades are added on a screen with a grid, say a 5x5 grid where the ship to begin with only fills the middle square. Parts are added by clicking a neighbouring square on the grid, and choosing which type of part to add. Clicking an already existing ship-piece will instead allow you to upgrade that part (if more upgrades are available). Game is won when the player ship is fully (or at least sufficiently) upgraded.
+
+The enemy ships have some form of AI controlled by the game: They fly around the player ship, and shoot at the player ship. There are different types of enemy ships, with different ways of attacking (some have simple cannons, some are kamikaze-drones, some have auto-targeting missiles, etc.). More ships spawn as time passes / possibly in waves? Possibly from portals? Possibly from off-screen?
+
+### MVP
+1. Show a game board 
+2. Show the Player on the game board
+3. Show enemies on the board
+4. Show obstacles on the board
+5. Ability to move the player (keyboard inputs) 
+6. Player can shoot (keyboard inputs)
+7. Friendly shots interact with enemies and obstacles
+8. Player gets “points” from destroying enemies and obstacles 
+9. Player can spend “points” on upgrades 
+10. Start screen at game launch and game over
+
+### User stories
+User stories:
+As a player I need to be able to tell my ship apart from enemy ships
+Acceptance criteria: Player ship is visually distinct from enemy ships
+Implementation: Use different colors in view/textures for player ship  
+
+As a player I need to be able to tell obstacles apart from the background so that I can see how to navigate around them
+Acceptance criteria:
+Implementation:
+
+As a player I want to be able to regret an incorrect upgrade
+Acceptance criteria:
+Implementation:
+
+As a player with physical limitations I want to be able to remap the default keyboard controls 
+Acceptance criteria:
+Implementation:
+
+As a developer I need to be able to tell ships (both friendly and enemy) apart from obstacles to determine if a collision should occur
+Acceptance criteria:
+Implementation:
+
+As a developer I need to be able 
+Acceptance criteria:
+Implementation:
+
+
 ## A4 
 The program compiles and works as intended. We have pair programmed.
