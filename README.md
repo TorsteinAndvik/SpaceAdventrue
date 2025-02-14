@@ -7,6 +7,9 @@
 * "You are an alien explorer"
 
 ## How to run 
+While developing, run the program with `mvn compile exec:java`
+
+
 * Compile with `mvn package`
 * Run with `TBD`
 * Requires Java 21 or later 
