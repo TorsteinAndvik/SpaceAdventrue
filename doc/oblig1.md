@@ -1,6 +1,13 @@
 # Rapport – innlevering 1
-**Team:** *Teamnavn* – *medlemmer*...
+## A0
+**Teamname**: Sprites
 
+**Teammembers + Skillset:**
+* Tor Erik Wollmann: OOP in python, using git in a team enviorement
+* Torstein Andvik: Gamedevelopment, knowledge of java|, UI/UX
+* Flemming Bjørdal: OOP in Java, interest in games og and gamegraphics
+* Yasmina Madi: organizing, visionary, quality assurance and encouragement 
+* Henrik Dalstø: Experience writing in various programming languages, CI/CD
 
 ## A2 Concept 
 ### In a nutshell
