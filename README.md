@@ -1,3 +1,25 @@
+# INF112 Project - *Sprite* 
+
+* Team: *Happy sprites* (Group 8_1): *Tor Wollmann, Torstein Andvik, Flemming Bjordal, Yasmina Madi, Henrik Dalstø*
+* Links 
+
+## About the game 
+* "You are an alien explorer"
+
+## How to run 
+While developing, run the program with `mvn compile exec:java`
+
+
+* Compile with `mvn package`
+* Run with `TBD`
+* Requires Java 21 or later 
+
+## Known errors 
+None 
+
+## Credits 
+TBD
+
 # INF112 libGDX + Maven template 
 Simple skeleton with [libGDX](https://libgdx.com/). 
 
