@@ -66,3 +66,5 @@ Documents will be shared and stored via GitLab. Diagrams and charts will be writ
 and will follow the repo. The codebase will obviously be maintained at GitLab, and developers will merge their feature branches to main
 frequently. We will also have prod branch to maintain version history and landmarks as the project moves forward.
 
+## A4 
+The program compiles and works as intended. We have pair programmed.
