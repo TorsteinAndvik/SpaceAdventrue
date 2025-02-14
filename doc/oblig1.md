@@ -50,11 +50,11 @@ Our discord server will serve as the main communication tool. We track issues wi
 will interface in weekly standups.
 
 ### Division of labor 
-*Tor* - Game design, tester
-*Flemming* - Render engineer, texture artist, 
-*Torstein* - Game developer, tester
-*Henrik* - CI, integration, modelling, builds, project manager(?)
-*Yasmina* - UI/UX designer, sound engineer, community manager
+* *Tor* - Game design, tester
+* *Flemming* - Render engineer, texture artist, 
+* *Torstein* - Game developer, tester
+* *Henrik* - CI, integration, modelling, builds, project manager(?)
+* *Yasmina* - UI/UX designer, sound engineer, community manager
 
 
 ### Follow up 
