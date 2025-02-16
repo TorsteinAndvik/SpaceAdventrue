@@ -92,24 +92,20 @@ Acceptance criteria: Player ship is visually distinct from enemy ships
 Implementation: Use different colors in view/textures for player ship  
 
 As a player I need to be able to tell obstacles apart from the background so that I can see how to navigate around them
-Acceptance criteria:
-Implementation:
+Acceptance criteria: Obstacles are visually distinct from background, or there's nothing in the background that looks like obstacles (no asteroids in the background)
+Implementation: Use background textures without asteroids and ships that can be mistaken for actual obstacles.
 
 As a player I want to be able to regret an incorrect upgrade
-Acceptance criteria:
-Implementation:
+Acceptance criteria: A wrongly added / unwanted upgrade can be removed.
+Implementation: In code for upgrade Screen add a consent pop-up (user needs to confirm the chosen upgrade) 
 
 As a player with physical limitations I want to be able to remap the default keyboard controls 
-Acceptance criteria:
-Implementation:
+Acceptance criteria: Players have a menu wjhere they can rebind input controls
+Implementation: In view add a Screen for button mapping. In controller, add method for updating the button mapping (e.g. replace effect of default key Left-arrow with the input key press from the player)  
 
 As a developer I need to be able to tell ships (both friendly and enemy) apart from obstacles to determine if a collision should occur
-Acceptance criteria:
-Implementation:
-
-As a developer I need to be able 
-Acceptance criteria:
-Implementation:
+Acceptance criteria: Developers can identify in code if a Body is the player's ship or an enemy ship, or an obstacle (e.g. asteroid)
+Implementation: Friendly and enemy Ships are separate classes and stored as seperate fields 
 
 
 ## A4 
