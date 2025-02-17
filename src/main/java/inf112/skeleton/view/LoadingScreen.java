@@ -1,6 +1,8 @@
 package inf112.skeleton.view;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
@@ -26,12 +28,20 @@ public class LoadingScreen implements Screen {
 
     private void queueAssets() {
         // Textures:
-        manager.load("src/main/resources/images/obligator.png", Texture.class);
-        manager.load("src/main/resources/images/upgrade_grid_tile_green.png", Texture.class);
-        manager.load("src/main/resources/images/upgrade_grid_tile_red.png", Texture.class);
+        queueTexture("images/upgrade_grid_tile_green.png");
+        queueTexture("images/upgrade_grid_tile_red.png");
+        queueTexture("images/obligator.png");
 
         // Sounds:
-        manager.load("blipp.ogg", Sound.class);
+        queueSound("audio/blipp.ogg");
+    }
+
+    private void queueTexture(String path) {
+        manager.load(new AssetDescriptor<>(Gdx.files.internal(path), Texture.class));
+    }
+
+    private void queueSound(String path) {
+        manager.load(new AssetDescriptor<>(Gdx.files.internal(path), Sound.class));
     }
 
     @Override

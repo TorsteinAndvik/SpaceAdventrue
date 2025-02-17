@@ -31,10 +31,10 @@ public class UpgradeScreen implements Screen {
         this.batch = this.game.getSpriteBatch();
         this.manager = this.game.getAssetManager();
 
-        squareRed = new Sprite(manager.get("src/main/resources/images/upgrade_grid_tile_red.png", Texture.class));
+        squareRed = new Sprite(manager.get("images/upgrade_grid_tile_red.png", Texture.class));
         squareRed.setSize(1, 1);
 
-        squareGreen = new Sprite(manager.get("src/main/resources/images/upgrade_grid_tile_green.png", Texture.class));
+        squareGreen = new Sprite(manager.get("images/upgrade_grid_tile_green.png", Texture.class));
         squareGreen.setSize(1, 1);
 
         touchPos = new Vector2();
