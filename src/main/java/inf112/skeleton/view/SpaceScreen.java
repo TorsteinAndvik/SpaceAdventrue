@@ -25,7 +25,7 @@ public class SpaceScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        ScreenUtils.clear(Color.BLACK); // Always wipe screen before drawing
+        ScreenUtils.clear(Color.BLUE); // Always wipe screen before drawing
 
         viewport = game.getViewport();  // TODO: If using multiple viewports, need some way to signal which one to use for different screens (maybe GameState?)
         viewport.apply();
@@ -35,7 +35,7 @@ public class SpaceScreen implements Screen {
         font.setColor(Color.RED);
 
         batch.begin();
-        batch.draw(manager.get("src/main/resources/obligator.png", Texture.class), 0f, 0f, viewport.getScreenWidth() / 2, viewport.getScreenHeight() / 2);
+        batch.draw(manager.get("src/main/resources/images/obligator.png", Texture.class), 0f, 3f, 5f, 1f);
         font.draw(batch, "Hello, World!", 1f, 1f);
         batch.end();
     }

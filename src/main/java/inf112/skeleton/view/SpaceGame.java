@@ -1,5 +1,6 @@
 package inf112.skeleton.view;
 
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -28,7 +29,7 @@ public interface SpaceGame {
 
     /**
      * TODO: Make an abstract class "between" the different screens and the Screen interface which implements most of the same boilerplate code, and use that as the input type for this method
-     * @param spaceScreen
+     * @param screen the Screen we wish to swap to
      */
-    void setScreen(SpaceScreen spaceScreen);
+    void setScreen(Screen screen);
 }

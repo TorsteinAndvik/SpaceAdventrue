@@ -1,5 +1,6 @@
 package inf112.skeleton.view;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
@@ -27,8 +28,8 @@ public class LoadingScreen implements Screen {
     }
 
     private void queueAssets() {
-        manager.load("src/main/resources/obligator.png", Texture.class);
-        manager.load("src/main/resources/audio/blipp.ogg", Sound.class);
+        manager.load("src/main/resources/images/obligator.png", Texture.class);
+        manager.load("blipp.ogg", Sound.class);
     }
 
     @Override
