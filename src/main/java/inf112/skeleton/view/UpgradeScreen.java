@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-public class SpaceScreen implements Screen {
+public class UpgradeScreen implements Screen {
 
     final SpaceGame game;
     SpriteBatch batch;
@@ -17,7 +17,7 @@ public class SpaceScreen implements Screen {
     BitmapFont font;
     AssetManager manager; //An assetmanager helps with loading assets and disposing them once they are no longer needed 
 
-    public SpaceScreen(final SpaceGame game) {
+    public UpgradeScreen(final SpaceGame game) {
         this.game = game;
         this.batch = this.game.getSpriteBatch();
         this.manager = this.game.getAssetManager();
@@ -25,7 +25,7 @@ public class SpaceScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        ScreenUtils.clear(Color.BLACK); // Always wipe screen before drawing
+        ScreenUtils.clear(Color.WHITE); // Always wipe screen before drawing
 
         viewport = game.getViewport();  // TODO: If using multiple viewports, need some way to signal which one to use for different screens (maybe GameState?)
         viewport.apply();
@@ -35,8 +35,8 @@ public class SpaceScreen implements Screen {
         font.setColor(Color.RED);
 
         batch.begin();
-        batch.draw(manager.get("src/main/resources/obligator.png", Texture.class), 0f, 0f, viewport.getScreenWidth() / 2, viewport.getScreenHeight() / 2);
-        font.draw(batch, "Hello, World!", 1f, 1f);
+        //batch.draw(manager.get("src/main/resources/upgradeScreenBackground.png", Texture.class), 0f, 0f, viewport.getScreenWidth(), viewport.getScreenHeight());
+        font.draw(batch, "Hello, Upgrade Screen!", 1f, 1f);
         batch.end();
     }
 

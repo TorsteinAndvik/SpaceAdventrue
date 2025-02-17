@@ -2,6 +2,7 @@ package inf112.skeleton.view;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -9,7 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-public class SpaceScreen implements Screen {
+public class LoadingScreen implements Screen {
 
     final SpaceGame game;
     SpriteBatch batch;
@@ -17,27 +18,28 @@ public class SpaceScreen implements Screen {
     BitmapFont font;
     AssetManager manager; //An assetmanager helps with loading assets and disposing them once they are no longer needed 
 
-    public SpaceScreen(final SpaceGame game) {
+    public LoadingScreen(final SpaceGame game) {
         this.game = game;
         this.batch = this.game.getSpriteBatch();
         this.manager = this.game.getAssetManager();
+
+        queueAssets();
+    }
+
+    private void queueAssets() {
+        manager.load("src/main/resources/obligator.png", Texture.class);
+        manager.load("src/main/resources/audio/blipp.ogg", Sound.class);
     }
 
     @Override
     public void render(float delta) {
-        ScreenUtils.clear(Color.BLACK); // Always wipe screen before drawing
+        //First assets are queued for loading in the constructor (before this block of code runs), and then calling .update() here will *actually* load them. 
+        if(manager.update(17)) { //all assets are loaded 1 by 1 //blocks for at least 17ms before passing over to render() - roughly 60fps (depends on size of asset, a large enough file might block for longer)
+            game.setScreen(new SpaceScreen(game));
+        }
 
-        viewport = game.getViewport();  // TODO: If using multiple viewports, need some way to signal which one to use for different screens (maybe GameState?)
-        viewport.apply();
-        batch.setProjectionMatrix(viewport.getCamera().combined);
-
-        font = game.getFont();
-        font.setColor(Color.RED);
-
-        batch.begin();
-        batch.draw(manager.get("src/main/resources/obligator.png", Texture.class), 0f, 0f, viewport.getScreenWidth() / 2, viewport.getScreenHeight() / 2);
-        font.draw(batch, "Hello, World!", 1f, 1f);
-        batch.end();
+        float progress = manager.getProgress();
+        System.out.println("Loading assets: " + 100f*progress + "%");
     }
 
     @Override
