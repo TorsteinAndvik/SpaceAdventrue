@@ -28,7 +28,12 @@ public class LoadingScreen implements Screen {
     }
 
     private void queueAssets() {
+        // Textures:
         manager.load("src/main/resources/images/obligator.png", Texture.class);
+        manager.load("src/main/resources/images/upgrade_grid_tile_green.png", Texture.class);
+        manager.load("src/main/resources/images/upgrade_grid_tile_red.png", Texture.class);
+
+        // Sounds:
         manager.load("blipp.ogg", Sound.class);
     }
 
@@ -36,7 +41,7 @@ public class LoadingScreen implements Screen {
     public void render(float delta) {
         //First assets are queued for loading in the constructor (before this block of code runs), and then calling .update() here will *actually* load them. 
         if(manager.update(17)) { //all assets are loaded 1 by 1 //blocks for at least 17ms before passing over to render() - roughly 60fps (depends on size of asset, a large enough file might block for longer)
-            game.setScreen(new SpaceScreen(game));
+            game.setScreen(new UpgradeScreen(game));
         }
 
         float progress = manager.getProgress();
