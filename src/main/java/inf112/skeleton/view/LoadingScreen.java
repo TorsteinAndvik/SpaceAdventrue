@@ -30,6 +30,7 @@ public class LoadingScreen implements Screen {
         // Textures:
         queueTexture("images/upgrade_grid_tile_green.png");
         queueTexture("images/upgrade_grid_tile_red.png");
+        queueTexture("images/upgrade_grid_tile_gray.png");
         queueTexture("images/obligator.png");
 
         // Sounds:
