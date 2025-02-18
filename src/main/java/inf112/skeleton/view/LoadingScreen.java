@@ -45,6 +45,7 @@ public class LoadingScreen implements Screen {
         manager.load(new AssetDescriptor<>(Gdx.files.internal(path), Sound.class));
     }
 
+
     @Override
     public void render(float delta) {
         //First assets are queued for loading in the constructor (before this block of code runs), and then calling .update() here will *actually* load them. 
