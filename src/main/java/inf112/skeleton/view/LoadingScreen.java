@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -22,6 +23,9 @@ public class LoadingScreen implements Screen {
         this.game = game;
         this.batch = this.game.getSpriteBatch();
         this.manager = this.game.getAssetManager();
+
+        Pixmap pm = new Pixmap(manager.getFileHandleResolver().resolve("images/pointer_scifi_b.png")); // Custom cursor
+        Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 8, 8));
 
         queueAssets();
     }

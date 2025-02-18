@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -35,10 +34,6 @@ public class UpgradeScreen implements Screen {
         this.batch = this.game.getSpriteBatch();
         this.manager = this.game.getAssetManager();
         this.viewport = game.getViewport();
-
-        //Pixmap pm = new Pixmap(Gdx.files.internal("images/pointer_scifi_b.png")); // Custom cursor
-        Pixmap pm = new Pixmap(manager.getFileHandleResolver().resolve("images/pointer_scifi_b.png")); // Custom cursor
-        Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 8, 8));
 
         squareRed = new Sprite(manager.get("images/upgrade_grid_tile_red.png", Texture.class));
         squareRed.setSize(1, 1);
