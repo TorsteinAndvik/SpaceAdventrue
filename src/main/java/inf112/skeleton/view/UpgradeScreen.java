@@ -1,9 +1,12 @@
 package inf112.skeleton.view;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -12,7 +15,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-public class UpgradeScreen implements Screen {
+public class UpgradeScreen extends InputAdapter implements Screen  {
 
     final SpaceGame game;
     SpriteBatch batch;
@@ -120,8 +123,16 @@ public class UpgradeScreen implements Screen {
         } else {
             int upgradeX = (int)Math.floor(x - upgradeOffsetWest);
             System.out.println("selected upgrade number " + upgradeX);
+            //((OrthographicCamera) viewport.getCamera()).zoom = 2f;
             return true;
         }
+    }
+
+    @Override 
+    public boolean scrolled(float amountX, float amountY) {
+        System.out.println("amountX = " + amountX + ", amountY = " + amountY);
+        
+        return true;
     }
 
     @Override
@@ -131,7 +142,7 @@ public class UpgradeScreen implements Screen {
 
     @Override
     public void hide() {
-        // TODO: If using per-Screen InputProcessors (recommended), need to *unregister* it here
+        Gdx.input.setInputProcessor(null); //Unregister inputprocessor
     }
 
     @Override
@@ -151,7 +162,7 @@ public class UpgradeScreen implements Screen {
 
     @Override
     public void show() {
-        // TODO: If using per-Screen InputProcessors (recommended), need to *register* it here
+        Gdx.input.setInputProcessor(this); //Register new inputProcessor 
     }
     
 }
