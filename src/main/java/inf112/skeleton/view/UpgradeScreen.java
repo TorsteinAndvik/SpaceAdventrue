@@ -15,6 +15,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import inf112.skeleton.grid.CellPosition;
+
 public class UpgradeScreen extends InputAdapter implements Screen  {
 
     final SpaceGame game;
@@ -22,6 +24,7 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
     Viewport viewport;
     BitmapFont font;
     AssetManager manager; //An assetmanager helps with loading assets and disposing them once they are no longer needed 
+    Sprite obligator;
     Sprite squareRed;
     Sprite squareGreen;
     Sprite squareGray;
@@ -31,6 +34,13 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
     float gridOffsetSouth;
     int numUpgradeOptions;
     float upgradeOffsetWest;
+    float obligatorZoom = 0.8f;
+    float[] cameraZoomLevels;
+    int cameraCurrentZoomLevel;
+    boolean obligatorGrabbed;
+    int mouseX;
+    int mouseY;
+    boolean mouseReleased;
 
     public UpgradeScreen(final SpaceGame game) {
         this.game = game;
@@ -47,7 +57,13 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
         squareGray = new Sprite(manager.get("images/upgrade_grid_tile_gray.png", Texture.class));
         squareGray.setSize(1, 1);
 
+        obligator = new Sprite(manager.get("images/obligator.png", Texture.class));
+        obligator.setSize(obligatorZoom, obligatorZoom);
+
         touchPos = new Vector2();
+
+        cameraZoomLevels = new float[] {0.7f, 0.8f, 0.9f, 1f, 1.1f, 1.2f, 1.3f};
+        cameraCurrentZoomLevel = cameraZoomLevels.length / 2;
 
         registerOffsets();
     }
@@ -61,7 +77,7 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
 
     @Override
     public void render(float delta) {
-        ScreenUtils.clear(Color.BLACK); // Always wipe screen before drawing
+        ScreenUtils.clear(new Color(0f, 64f/255f, 64f/255f, 1f)); // Always wipe screen before drawing
 
         viewport.apply();
         batch.setProjectionMatrix(viewport.getCamera().combined);
@@ -73,6 +89,10 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
             squareGray.setX((viewport.getWorldWidth() - numUpgradeOptions)/2 + x);
             squareGray.setY(viewport.getWorldHeight()-1);
             squareGray.draw(batch);
+
+            obligator.setX((viewport.getWorldWidth() - numUpgradeOptions)/2 + x + (1f - obligatorZoom)/2);
+            obligator.setY(viewport.getWorldHeight()-1 + (1f - obligatorZoom)/2);
+            obligator.draw(batch);
         }
 
         // Draw upgrade grid
@@ -90,6 +110,15 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
             }
         }
 
+        if (obligatorGrabbed) {
+            //TODO: Draw obligator head at mouse coordinates.
+        }
+
+        if(mouseReleased) { //TODO: Add code for dropping obligator sprite (if it was grabbed) onto grid (if spot is available and obligator was grabbed)
+            mouseReleased = false;
+            obligatorGrabbed = false;
+        }
+
         batch.end();
 
         // Mouse and touch:
@@ -98,51 +127,84 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
             //Window coordinates depend on screen size, and also has origin in the top left, not bottom left as libGDX uses. viewport.unproject fixes this for us.
             touchPos.set(Gdx.input.getX(), Gdx.input.getY());   // Get the touch position in window coordinates.
             viewport.unproject(touchPos);                       // Convert the units to the world units of the viewport.
-            clickedOnGrid(touchPos.x, touchPos.y);
-            clickedOnUpgradeOptions(touchPos.x, touchPos.y);
+            
+            CellPosition cpGrid = convertMouseToGrid(touchPos.x, touchPos.y);
+            CellPosition cpUpgrade = convertMouseToUpgradeBar(touchPos.x, touchPos.y);
+            clickedOnGrid(cpGrid);
+            clickedOnUpgradeOptions(cpUpgrade);
         }
     }
 
-    private boolean clickedOnGrid(float x, float y) {
-        int worldX = (int) Math.floor(x - gridOffsetWest);
-        int worldY = (int) Math.floor(y - gridOffsetSouth);
+    private CellPosition convertMouseToGrid(float x, float y) {
+        return new CellPosition((int) Math.floor(y - gridOffsetSouth), (int) Math.floor(x - gridOffsetWest));
+    }
+
+    private CellPosition convertMouseToUpgradeBar(float x, float y) {
+        return new CellPosition((int) Math.floor(y), (int)Math.floor(x - upgradeOffsetWest));
+    }
+
+    private boolean clickedOnGrid(CellPosition cp) {
+        int worldX = cp.col();
+        int worldY = cp.row();
         if(worldX < 0 || worldX > 4 || worldY < 0 || worldY > 4) {
             return false;
         } else {
-            System.out.println("x = " + worldX + " (" + x +" ), y = " + worldY + " (" + y +" )");
+            System.out.println("x = " + worldX + ", y = " + worldY);
             return true;
         }
     }
 
-    private boolean clickedOnUpgradeOptions(float x, float y) {
-        int worldY = (int) Math.floor(y);
-        float rightBound = upgradeOffsetWest + numUpgradeOptions;
+    private boolean clickedOnUpgradeOptions(CellPosition cp) {
+        int worldX = cp.col();
+        int worldY = cp.row();
         
-        if((worldY != viewport.getWorldHeight()-1) || (x < upgradeOffsetWest) || (x > rightBound)) {
+        if((worldY != viewport.getWorldHeight()-1) || (worldX < 0) || (worldX > numUpgradeOptions-1)) {
             return false;
         } else {
-            int upgradeX = (int)Math.floor(x - upgradeOffsetWest);
-            System.out.println("selected upgrade number " + upgradeX);
-            //((OrthographicCamera) viewport.getCamera()).zoom = 2f;
+            System.out.println("selected upgrade number " + worldX);
             return true;
         }
     }
 
     @Override 
     public boolean scrolled(float amountX, float amountY) {
-        System.out.println("amountX = " + amountX + ", amountY = " + amountY);
-        
+        cameraCurrentZoomLevel += (int)amountY;
+        if(cameraCurrentZoomLevel < 0) {cameraCurrentZoomLevel = 0;}
+        else if(cameraCurrentZoomLevel >= cameraZoomLevels.length) {cameraCurrentZoomLevel = cameraZoomLevels.length - 1;}
+
+        ((OrthographicCamera) viewport.getCamera()).zoom = cameraZoomLevels[cameraCurrentZoomLevel];
+        return true;
+    }
+
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        if(button == 0) {
+            mouseX = screenX;
+            mouseY = screenY;
+        }
         return true;
     }
 
     @Override
-    public void dispose() {
-        this.dispose();
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        mouseX = screenX;
+        mouseY = screenY;
+        return true;
+    }
+
+    @Override 
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        mouseX = screenX;
+        mouseY = screenY;
+        mouseReleased = true;
+        return true;
     }
 
     @Override
+    public void dispose() {}
+
+    @Override
     public void hide() {
-        Gdx.input.setInputProcessor(null); //Unregister inputprocessor
+        Gdx.input.setInputProcessor(null); //Unregister this inputprocessor
     }
 
     @Override
