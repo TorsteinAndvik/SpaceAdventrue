@@ -1,6 +1,6 @@
 # INF112 Project - *Sprite* 
 
-* Team: *Happy sprites* (Group 8_1): *Tor Wollmann, Torstein Andvik, Flemming Bjordal, Yasmina Madi, Henrik Dalstø*
+* Team: *Happy sprites* (Group 8_1): *Tor Wollmann, Torstein Andvik, Flemming Bjørdal, Yasmina Madi, Henrik Dalstø*
 * Links 
 
 ## About the game 

@@ -13,9 +13,9 @@ public class Main {
 			Configuration.GLFW_LIBRARY_NAME.set("glfw_async");
 		}
 		Lwjgl3ApplicationConfiguration cfg = new Lwjgl3ApplicationConfiguration();
-		cfg.setTitle("hello-world");
-		cfg.setWindowedMode(480, 320);
-
-		new Lwjgl3Application(new HelloWorld(), cfg);
+		cfg.setTitle("TestSpaceGame");
+		cfg.setWindowedMode(680, 680);
+		//
+		new Lwjgl3Application(new TestSpaceGame(), cfg);
 	}
 }
