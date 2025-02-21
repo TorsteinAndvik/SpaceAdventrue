@@ -30,6 +30,8 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
     Sprite squareGray;
     Vector2 touchPos;   // Simplifies converting touch / mouse position in window-coordinates (pixels) to game-coordinates (meters x meters set in viewport)
 
+    int gridWidth = 5;
+    int gridHeight = 5;
     float gridOffsetWest;   
     float gridOffsetSouth;
     int numUpgradeOptions;
@@ -96,8 +98,8 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
         }
 
         // Draw upgrade grid
-        for(int x = 0; x < 5; x++){
-            for(int y = 0; y < 5; y++){
+        for(int x = 0; x < gridWidth; x++){
+            for(int y = 0; y < gridHeight; y++){
                 if ((x == 1 || x==3) || (y < 2 || y==4)) { //just testing some patterns
                     squareGreen.setX(gridOffsetWest + x);
                     squareGreen.setY(gridOffsetSouth + y);
@@ -111,28 +113,24 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
         }
 
         if (obligatorGrabbed) {
-            //TODO: Draw obligator head at mouse coordinates.
+            ViewportPosition vpPos = worldToGameCoordinates(mouseX, mouseY);
+            obligator.setX(vpPos.x() - 0.5f * obligatorZoom);
+            obligator.setY(vpPos.y() - 0.5f * obligatorZoom);
+            obligator.draw(batch);
         }
 
-        if(mouseReleased) { //TODO: Add code for dropping obligator sprite (if it was grabbed) onto grid (if spot is available and obligator was grabbed)
+        if(mouseReleased && obligatorGrabbed) { //TODO: Add code for dropping obligator sprite (if it was grabbed) onto grid (if spot is available and obligator was grabbed)
             mouseReleased = false;
             obligatorGrabbed = false;
         }
 
         batch.end();
+    }
 
-        // Mouse and touch:
-        if (Gdx.input.justTouched()) { // If the user has clicked or tapped the screen
-            //Notes: We get [X/Y] of click/touch with Gdx.input.get[X/Y](). But this is in window coordinates, not game coordinates.
-            //Window coordinates depend on screen size, and also has origin in the top left, not bottom left as libGDX uses. viewport.unproject fixes this for us.
-            touchPos.set(Gdx.input.getX(), Gdx.input.getY());   // Get the touch position in window coordinates.
-            viewport.unproject(touchPos);                       // Convert the units to the world units of the viewport.
-            
-            CellPosition cpGrid = convertMouseToGrid(touchPos.x, touchPos.y);
-            CellPosition cpUpgrade = convertMouseToUpgradeBar(touchPos.x, touchPos.y);
-            clickedOnGrid(cpGrid);
-            clickedOnUpgradeOptions(cpUpgrade);
-        }
+    private ViewportPosition worldToGameCoordinates(int worldX, int worldY) {
+        touchPos.set(worldX, worldY);   // Set the position in window coordinates.
+        viewport.unproject(touchPos);   // Convert the touch position to the game units of the viewport.
+        return new ViewportPosition(touchPos.x, touchPos.y);
     }
 
     private CellPosition convertMouseToGrid(float x, float y) {
@@ -146,24 +144,13 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
     private boolean clickedOnGrid(CellPosition cp) {
         int worldX = cp.col();
         int worldY = cp.row();
-        if(worldX < 0 || worldX > 4 || worldY < 0 || worldY > 4) {
-            return false;
-        } else {
-            System.out.println("x = " + worldX + ", y = " + worldY);
-            return true;
-        }
+        return !(worldX < 0 || worldX > gridWidth-1 || worldY < 0 || worldY > gridHeight-1);
     }
 
     private boolean clickedOnUpgradeOptions(CellPosition cp) {
         int worldX = cp.col();
         int worldY = cp.row();
-        
-        if((worldY != viewport.getWorldHeight()-1) || (worldX < 0) || (worldX > numUpgradeOptions-1)) {
-            return false;
-        } else {
-            System.out.println("selected upgrade number " + worldX);
-            return true;
-        }
+        return !((worldY != viewport.getWorldHeight()-1) || (worldX < 0) || (worldX > numUpgradeOptions-1));
     }
 
     @Override 
@@ -181,6 +168,21 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
             mouseX = screenX;
             mouseY = screenY;
         }
+
+        //Notes: We get [X/Y] of click/touch with Gdx.input.get[X/Y](). But this is in window coordinates, not game coordinates.
+        //Window coordinates depend on screen size, and also has origin in the top left, not bottom left as libGDX uses. viewport.unproject fixes this for us.
+        touchPos.set(mouseX, mouseY);   // Set the touch position in window coordinates.
+        viewport.unproject(touchPos);   // Convert the touch position to the game units of the viewport.
+            
+        CellPosition cpGrid = convertMouseToGrid(touchPos.x, touchPos.y);
+        CellPosition cpUpgrade = convertMouseToUpgradeBar(touchPos.x, touchPos.y);
+
+        if (clickedOnGrid(cpGrid)) {System.out.println("x = " + cpGrid.col() + ", y = " + cpGrid.row());   }
+        if (clickedOnUpgradeOptions(cpUpgrade)) {
+            System.out.println("selected upgrade number " + cpUpgrade.col());
+            obligatorGrabbed = true;
+        }
+
         return true;
     }
 
