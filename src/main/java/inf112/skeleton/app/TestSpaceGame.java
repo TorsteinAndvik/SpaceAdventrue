@@ -22,7 +22,7 @@ public class TestSpaceGame extends Game implements SpaceGame {
     public void create() {
         batch = new SpriteBatch();
         font = new BitmapFont();
-        int meters = 5; // screen will be 5x5 meters (we use Game coordinates, NOT pixel coordinates)
+        int meters = 7; // screen will be meters x meters (we use meters as Game coordinates, NOT pixel coordinates - these depend on window size, awful to work with)
         viewport = new FitViewport(meters, meters);
 
         // font is 15pt, need to scale it to our viewport by ratio of viewport height to screen height
