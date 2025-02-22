@@ -42,7 +42,11 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
     boolean obligatorGrabbed;
     int mouseX;
     int mouseY;
-    boolean mouseReleased;
+    int cameraX;
+    int cameraY;
+    boolean releaseGrabbedItem;
+    boolean leftClickLocked;    //touchDragged() doesn't discern between left and right clicks, but we want to disable left-clicking while right clicking and vice versa
+    boolean rightClickLocked;
 
     public UpgradeScreen(final SpaceGame game) {
         this.game = game;
@@ -119,8 +123,8 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
             obligator.draw(batch);
         }
 
-        if(mouseReleased && obligatorGrabbed) { //TODO: Add code for dropping obligator sprite (if it was grabbed) onto grid (if spot is available and obligator was grabbed)
-            mouseReleased = false;
+        if(releaseGrabbedItem && obligatorGrabbed) { //TODO: Add code for dropping obligator sprite (if it was grabbed) onto grid (if spot is available and obligator was grabbed)
+            releaseGrabbedItem = false;
             obligatorGrabbed = false;
         }
 
@@ -164,10 +168,17 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
     }
 
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if(button == 0) {
-            mouseX = screenX;
-            mouseY = screenY;
-        }
+        if(button == 0) {return leftClick(screenX, screenY);}
+        else if(button == 1) {return rightClick(screenX, screenY);}
+        else {return false;}
+    }
+
+    private boolean leftClick(int screenX, int screenY) {
+        if (leftClickLocked) {return true;}
+        rightClickLocked = true;
+        releaseGrabbedItem = false;
+        mouseX = screenX;
+        mouseY = screenY;
 
         //Notes: We get [X/Y] of click/touch with Gdx.input.get[X/Y](). But this is in window coordinates, not game coordinates.
         //Window coordinates depend on screen size, and also has origin in the top left, not bottom left as libGDX uses. viewport.unproject fixes this for us.
@@ -186,19 +197,47 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
         return true;
     }
 
-    @Override
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
+    private boolean leftClickRelease(int screenX, int screenY) {
+        if (leftClickLocked) {return true;}
+        rightClickLocked = false;
+        releaseGrabbedItem = true;
+        return true;
+    }
+
+    private boolean leftClickDragged(int screenX, int screenY) {
         mouseX = screenX;
         mouseY = screenY;
         return true;
     }
 
+    private boolean rightClick(int screenX, int screenY) {
+        if (rightClickLocked) {return true;}
+        leftClickLocked = true;
+        return true;
+    }
+
+    private boolean rightClickRelease(int screenX, int screenY) {
+        if (rightClickLocked) {return true;}
+        leftClickLocked = false;
+        return true;
+    }
+
+    private boolean rightClickDragged(int screenX, int screenY) {
+        return true;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        if (leftClickLocked) {return rightClickDragged(screenX, screenY);}
+        else if (rightClickLocked) {return leftClickDragged(screenX, screenY);}
+        return true;
+    }
+
     @Override 
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        mouseX = screenX;
-        mouseY = screenY;
-        mouseReleased = true;
-        return true;
+        if(button == 0) {return leftClickRelease(screenX, screenY);}
+        else if(button == 1) {return rightClickRelease(screenX, screenY);}
+        else {return false;}
     }
 
     @Override
