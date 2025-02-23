@@ -42,10 +42,10 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
     boolean obligatorGrabbed;
     int mouseX;
     int mouseY;
-    int rightClickX;
-    int rightClickY;
     int rightClickDragX;
     int rightClickDragY;
+    float cameraX;
+    float cameraY;
     boolean releaseGrabbedItem;
     boolean leftClickLocked;    //touchDragged() doesn't discern between left and right clicks, but we want to disable left-clicking while right clicking and vice versa
     boolean rightClickLocked;
@@ -72,6 +72,8 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
 
         cameraZoomLevels = new float[] {0.7f, 0.8f, 0.9f, 1f, 1.1f, 1.2f, 1.3f};
         cameraCurrentZoomLevel = cameraZoomLevels.length / 2;
+
+        setCameraPosition(0, 0);
 
         registerOffsets();
     }
@@ -215,9 +217,6 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
     private boolean rightClick(int screenX, int screenY) {
         if (rightClickLocked) {return true;}
         leftClickLocked = true;
-        //On click, set the click "center" - on drag we shift the camera by comparing the stored rightClickX/Y with rightClickDragX/Y
-        rightClickX = screenX;
-        rightClickY = screenY;
         rightClickDragX = screenX;
         rightClickDragY = screenY;
         return true;
@@ -241,9 +240,13 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
     }
 
     private void setCameraPosition(int offsetX, int offsetY) {
-        touchPos.set(viewport.getScreenWidth()/2 + offsetX, viewport.getScreenHeight()/2 + offsetY);
+        cameraX = viewport.getScreenWidth()/2 + offsetX;
+        cameraY = viewport.getScreenHeight()/2 + offsetY;
+
+        touchPos.set(cameraX, cameraY);
         viewport.unproject(touchPos);   // Convert the touch position to the game units of the viewport.
         viewport.getCamera().position.set(touchPos, 0);
+        //System.out.println("x=" + (touchPos.x-3.5f) + ", y=" + (touchPos.y-3.5f));
     }
 
     @Override
@@ -261,7 +264,28 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
     }
 
     @Override
-    public void dispose() {}
+    public void resize(int width, int height) {
+        int oldWidth = viewport.getScreenWidth();
+        int oldHeight = viewport.getScreenHeight();
+        int diffX = oldWidth - width;
+        int diffY = oldHeight - height;
+/* 
+        rightClickDragX -= diffX;
+        rightClickDragY += diffY;
+*/
+
+        //touchPos.set(cameraX, cameraY);
+
+        //TODO: Figure out correct use of projection/unprojection to convert "old rightClickDragX" to "new rightClickDragX"
+        //System.out.println("cameraX = " + cameraX + ", cameraY = " + cameraY);
+        //viewport.project(touchPos);
+        //setCameraPosition(0, 0);
+        touchPos.set(cameraX, cameraY);
+        viewport.unproject(touchPos);   // Convert the touch position to the game units of the viewport.
+        viewport.update(width, height, true);
+        viewport.project(touchPos);
+        System.out.println("x=" + touchPos.x + ", y=" + touchPos.y);
+    }
 
     @Override
     public void hide() {
@@ -269,26 +293,11 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
     }
 
     @Override
-    public void pause() {
-        // TODO Auto-generated method stub
-    }
+    public void dispose() {}
 
     @Override
-    public void resize(int width, int height) {
-        int oldWidth = viewport.getScreenWidth();
-        int oldHeight = viewport.getScreenHeight();
-        int diffX = oldWidth - width;
-        int diffY = oldHeight - height;
-/* 
-        rightClickX -= diffX;
-        rightClickDragX -= diffX;
-        rightClickY += diffY;
-        rightClickDragY += diffY;
-*/
-        //TODO: Figure out correct use of projection/unprojection to convert "old rightClickX" to "new rightClickX"
-            
-        viewport.update(width, height, true);
-        setCameraPosition(rightClickX, rightClickY);
+    public void pause() {
+        // TODO Auto-generated method stub
     }
 
     @Override
@@ -300,5 +309,4 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
     public void show() {
         Gdx.input.setInputProcessor(this); //Register new inputProcessor 
     }
-    
 }
