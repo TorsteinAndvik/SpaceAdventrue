@@ -4,13 +4,25 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.viewport.Viewport;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public interface SpaceGame {
     /**
-     * @return the currently active <code>ViewPort</code>
+     * @return the application's <code>FitViewport</code>
      */
-    Viewport getViewport();
+    FitViewport getFitViewport();
+
+    /**
+     * @return the application's <code>ScreenViewport</code>
+     */
+    ScreenViewport getScreenViewport();
+
+        /**
+     * @return the application's <code>ScreenViewport</code>
+     */
+    ExtendViewport getExtendViewport();
 
     /**
      * @return the application's <code>SpriteBatch</code>

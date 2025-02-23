@@ -78,7 +78,7 @@ public class LoadingScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        game.getViewport().update(width, height, true);
+        game.getFitViewport().update(width, height, true);
     }
 
     @Override

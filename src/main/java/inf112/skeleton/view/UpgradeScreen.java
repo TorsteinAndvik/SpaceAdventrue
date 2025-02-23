@@ -1,7 +1,6 @@
 package inf112.skeleton.view;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
@@ -49,12 +48,12 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
     boolean releaseGrabbedItem;
     boolean leftClickLocked;    //touchDragged() doesn't discern between left and right clicks, but we want to disable left-clicking while right clicking and vice versa
     boolean rightClickLocked;
-    boolean firstFrame = true;
-    public UpgradeScreen(final SpaceGame game) {
-        this.game = game;
-        this.batch = this.game.getSpriteBatch();
-        this.manager = this.game.getAssetManager();
-        this.viewport = game.getViewport();
+
+    public UpgradeScreen(final SpaceGame spaceGame) {
+        game = spaceGame;
+        batch = game.getSpriteBatch();
+        manager = game.getAssetManager();
+        viewport = game.getScreenViewport();
 
         squareRed = new Sprite(manager.get("images/upgrade_grid_tile_red.png", Texture.class));
         squareRed.setSize(1, 1);
@@ -239,15 +238,14 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
     }
 
     private void setCameraPosition(int offsetX, int offsetY) {
-        cameraX = viewport.getScreenWidth()/2 + offsetX;
-        cameraY = viewport.getScreenHeight()/2 + offsetY;
+        cameraX = viewport.getScreenWidth()/2 + offsetX + viewport.getLeftGutterWidth();
+        cameraY = viewport.getScreenHeight()/2 + offsetY + viewport.getTopGutterHeight();
 
         touchPos.set(cameraX, cameraY);
         viewport.unproject(touchPos);   // Convert the touch position to the game units of the viewport.
-
         clampVector(touchPos, 0f, viewport.getWorldWidth(), 0f, viewport.getWorldHeight());
+        
         viewport.getCamera().position.set(touchPos, 0);
-        //System.out.println("x=" + (touchPos.x-3.5f) + ", y=" + (touchPos.y-3.5f));
     }
 
     private void clampVector(Vector2 v, float minX, float maxX, float minY, float maxY) {
@@ -271,26 +269,11 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
 
     @Override
     public void resize(int width, int height) {
-        int oldWidth = viewport.getScreenWidth();
-        int oldHeight = viewport.getScreenHeight();
-        int diffX = oldWidth - width;
-        int diffY = oldHeight - height;
-/* 
-        rightClickDragX -= diffX;
-        rightClickDragY += diffY;
-*/
-
-        //touchPos.set(cameraX, cameraY);
-
-        //TODO: Figure out correct use of projection/unprojection to convert "old rightClickDragX" to "new rightClickDragX"
-        //System.out.println("cameraX = " + cameraX + ", cameraY = " + cameraY);
-        //viewport.project(touchPos);
-        //setCameraPosition(0, 0);
-        touchPos.set(cameraX, cameraY);
-        viewport.unproject(touchPos);   // Convert the touch position to the game units of the viewport.
         viewport.update(width, height, true);
-        viewport.project(touchPos);
-        System.out.println("x=" + touchPos.x + ", y=" + touchPos.y);
+        System.out.println("vp ratio: " + viewport.getScreenHeight() / viewport.getWorldHeight());
+        System.out.println("vp lftgt: " + viewport.getLeftGutterWidth());
+        System.out.println("vp topgt: " + viewport.getTopGutterHeight());
+        System.out.println();
     }
 
     @Override
