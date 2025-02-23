@@ -42,8 +42,10 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
     boolean obligatorGrabbed;
     int mouseX;
     int mouseY;
-    int cameraX;
-    int cameraY;
+    int rightClickX;
+    int rightClickY;
+    int rightClickDragX;
+    int rightClickDragY;
     boolean releaseGrabbedItem;
     boolean leftClickLocked;    //touchDragged() doesn't discern between left and right clicks, but we want to disable left-clicking while right clicking and vice versa
     boolean rightClickLocked;
@@ -213,6 +215,11 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
     private boolean rightClick(int screenX, int screenY) {
         if (rightClickLocked) {return true;}
         leftClickLocked = true;
+        //On click, set the click "center" - on drag we shift the camera by comparing the stored rightClickX/Y with rightClickDragX/Y
+        rightClickX = screenX;
+        rightClickY = screenY;
+        rightClickDragX = screenX;
+        rightClickDragY = screenY;
         return true;
     }
 
@@ -223,7 +230,20 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
     }
 
     private boolean rightClickDragged(int screenX, int screenY) {
+        int offsetX = rightClickDragX - screenX;
+        int offsetY = rightClickDragY - screenY;
+
+        rightClickDragX = screenX;
+        rightClickDragY = screenY;
+
+        setCameraPosition(offsetX, offsetY);
         return true;
+    }
+
+    private void setCameraPosition(int offsetX, int offsetY) {
+        touchPos.set(viewport.getScreenWidth()/2 + offsetX, viewport.getScreenHeight()/2 + offsetY);
+        viewport.unproject(touchPos);   // Convert the touch position to the game units of the viewport.
+        viewport.getCamera().position.set(touchPos, 0);
     }
 
     @Override
@@ -255,7 +275,20 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
 
     @Override
     public void resize(int width, int height) {
-        game.getViewport().update(width, height, true);
+        int oldWidth = viewport.getScreenWidth();
+        int oldHeight = viewport.getScreenHeight();
+        int diffX = oldWidth - width;
+        int diffY = oldHeight - height;
+/* 
+        rightClickX -= diffX;
+        rightClickDragX -= diffX;
+        rightClickY += diffY;
+        rightClickDragY += diffY;
+*/
+        //TODO: Figure out correct use of projection/unprojection to convert "old rightClickX" to "new rightClickX"
+            
+        viewport.update(width, height, true);
+        setCameraPosition(rightClickX, rightClickY);
     }
 
     @Override
