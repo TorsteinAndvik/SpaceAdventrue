@@ -72,8 +72,6 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
         cameraZoomLevels = new float[] {0.7f, 0.8f, 0.9f, 1f, 1.1f, 1.2f, 1.3f};
         cameraCurrentZoomLevel = cameraZoomLevels.length / 2;
 
-        setCameraPosition(0, 0);
-
         registerOffsets();
     }
 
@@ -88,7 +86,7 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
     public void render(float delta) {
         ScreenUtils.clear(new Color(0f, 64f/255f, 64f/255f, 1f)); 
         
-        viewport.apply();
+        viewport.apply(false);
         batch.setProjectionMatrix(viewport.getCamera().combined);
         batch.begin(); 
 
@@ -217,6 +215,7 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
         leftClickLocked = true;
         rightClickDragX = screenX;
         rightClickDragY = screenY;
+        //System.out.println("x=" + screenX + ", y=" + screenY);
         return true;
     }
 
@@ -238,8 +237,8 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
     }
 
     private void setCameraPosition(int offsetX, int offsetY) {
-        cameraX = viewport.getScreenWidth()/2 + offsetX + viewport.getLeftGutterWidth();
-        cameraY = viewport.getScreenHeight()/2 + offsetY + viewport.getTopGutterHeight();
+        cameraX = viewport.getScreenWidth()/2 + offsetX;
+        cameraY = viewport.getScreenHeight()/2 + offsetY;
 
         touchPos.set(cameraX, cameraY);
         viewport.unproject(touchPos);   // Convert the touch position to the game units of the viewport.
@@ -248,7 +247,14 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
         viewport.getCamera().position.set(touchPos, 0);
     }
 
+    private void setCameraPosition(float botleftX, float botleftY) {
+        touchPos.set(viewport.getWorldWidth()/2 + botleftX, viewport.getWorldHeight()/2 + botleftY);
+        clampVector(touchPos, 0f, viewport.getWorldWidth(), 0f, viewport.getWorldHeight());
+        viewport.getCamera().position.set(touchPos, 0);
+    }
+
     private void clampVector(Vector2 v, float minX, float maxX, float minY, float maxY) {
+        //System.out.println("x = " + v.x + ", y = " + v.y + ", minX = " + minX + ", minY = " + minY + ", maxX = " + maxX + ", maxY = " + maxY);
         touchPos.x = Math.max(Math.min(touchPos.x, maxX), minX);
         touchPos.y = Math.max(Math.min(touchPos.y, maxY), minY);   
     }
@@ -269,11 +275,10 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
 
     @Override
     public void resize(int width, int height) {
-        viewport.update(width, height, true);
-        System.out.println("vp ratio: " + viewport.getScreenHeight() / viewport.getWorldHeight());
-        System.out.println("vp lftgt: " + viewport.getLeftGutterWidth());
-        System.out.println("vp topgt: " + viewport.getTopGutterHeight());
-        System.out.println();
+        if(viewport.getScreenWidth() == 0 || viewport.getScreenHeight() == 0) {
+            viewport.update(width, height, false);
+            setCameraPosition(0f, 0f);
+        } else {viewport.update(width, height, false);}
     }
 
     @Override
@@ -297,5 +302,6 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
     @Override
     public void show() {
         Gdx.input.setInputProcessor(this); //Register new inputProcessor 
+        viewport.apply(true);
     }
 }
