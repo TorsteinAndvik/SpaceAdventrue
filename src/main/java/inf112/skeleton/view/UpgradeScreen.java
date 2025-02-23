@@ -49,7 +49,7 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
     boolean releaseGrabbedItem;
     boolean leftClickLocked;    //touchDragged() doesn't discern between left and right clicks, but we want to disable left-clicking while right clicking and vice versa
     boolean rightClickLocked;
-
+    boolean firstFrame = true;
     public UpgradeScreen(final SpaceGame game) {
         this.game = game;
         this.batch = this.game.getSpriteBatch();
@@ -87,11 +87,10 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
 
     @Override
     public void render(float delta) {
-        ScreenUtils.clear(new Color(0f, 64f/255f, 64f/255f, 1f)); // Always wipe screen before drawing
-
+        ScreenUtils.clear(new Color(0f, 64f/255f, 64f/255f, 1f)); 
+        
         viewport.apply();
         batch.setProjectionMatrix(viewport.getCamera().combined);
-
         batch.begin(); 
 
         // Draw part-options at top of screen (canon, shield, thruster)
@@ -245,8 +244,15 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
 
         touchPos.set(cameraX, cameraY);
         viewport.unproject(touchPos);   // Convert the touch position to the game units of the viewport.
+
+        clampVector(touchPos, 0f, viewport.getWorldWidth(), 0f, viewport.getWorldHeight());
         viewport.getCamera().position.set(touchPos, 0);
         //System.out.println("x=" + (touchPos.x-3.5f) + ", y=" + (touchPos.y-3.5f));
+    }
+
+    private void clampVector(Vector2 v, float minX, float maxX, float minY, float maxY) {
+        touchPos.x = Math.max(Math.min(touchPos.x, maxX), minX);
+        touchPos.y = Math.max(Math.min(touchPos.y, maxY), minY);   
     }
 
     @Override
