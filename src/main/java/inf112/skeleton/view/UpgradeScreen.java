@@ -23,7 +23,9 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     ScreenViewport viewport;
     BitmapFont font;
     AssetManager manager; //An assetmanager helps with loading assets and disposing them once they are no longer needed 
+    Sprite[] upgradeIcons;
     Sprite obligator;
+    Sprite turret;
     Sprite squareRed;
     Sprite squareGreen;
     Sprite squareGray;
@@ -39,7 +41,8 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     float upgradeOffsetX;
     float upgradeOffsetY;
 
-    float obligatorZoom;
+    float upgradeIconZoom;
+
     float[] cameraZoomLevels;
     int cameraCurrentZoomLevel;
     
@@ -48,8 +51,10 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     int rightClickDragX;
     int rightClickDragY;
 
-    boolean obligatorGrabbed;
-    boolean releaseGrabbedItem;
+    boolean upgradeGrabbed;
+    boolean releaseGrabbedUpgrade;
+    int grabbedUpgradeIndex;
+
     boolean leftClickLocked;    //touchDragged() doesn't discern between left and right clicks, but we want to disable left-clicking while right clicking and vice versa
     boolean rightClickLocked;
 
@@ -68,13 +73,21 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         squareGray = new Sprite(manager.get("images/upgrade_grid_tile_gray.png", Texture.class));
         squareGray.setSize(1, 1);
 
+        
+        upgradeIconZoom = 0.8f;
+
         obligator = new Sprite(manager.get("images/obligator.png", Texture.class));
-        obligatorZoom = 0.8f;
-        obligator.setSize(obligatorZoom, obligatorZoom);
+        obligator.setSize(upgradeIconZoom, upgradeIconZoom);
+
+        turret = new Sprite(manager.get("images/upgrades/turret_laser_stage_0.png", Texture.class));
+        System.out.println("turretZoom = " + upgradeIconZoom);
+        turret.setSize(upgradeIconZoom, upgradeIconZoom);
+
+        upgradeIcons = new Sprite[] {turret, obligator, obligator, obligator};
 
         touchPos = new Vector2();
 
-        cameraZoomLevels = new float[] {0.7f, 0.8f, 0.9f, 1f, 1.1f, 1.2f, 1.3f};
+        cameraZoomLevels = new float[] {0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1f, 1.1f, 1.2f, 1.3f, 1.4f, 1.5f};
         cameraCurrentZoomLevel = cameraZoomLevels.length / 2;
 
         setupFields();
@@ -96,13 +109,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
         // Draw upgrade options at top of screen (canon, shield, thruster, etc.)
         for(int x = 0; x < numUpgradeOptions; x++) {
-            squareGray.setX(upgradeOffsetX + x);
-            squareGray.setY(upgradeOffsetY);
-            squareGray.draw(batch);
-
-            obligator.setX(upgradeOffsetX + x + (1f - obligatorZoom)/2);
-            obligator.setY(upgradeOffsetY + (1f - obligatorZoom)/2);
-            obligator.draw(batch);
+            drawUpgradeSquare(x);
         }
 
         // Draw ship grid
@@ -113,19 +120,29 @@ public class UpgradeScreen extends InputAdapter implements Screen {
             }
         }
 
-        if (obligatorGrabbed) {
+        if (upgradeGrabbed) {
             ViewportPosition vpPos = worldToGameCoordinates(leftClickDragX, mouseY);
-            obligator.setX(vpPos.x() - 0.5f * obligatorZoom);
-            obligator.setY(vpPos.y() - 0.5f * obligatorZoom);
-            obligator.draw(batch);
+            upgradeIcons[grabbedUpgradeIndex].setX(vpPos.x() - 0.5f * upgradeIconZoom);
+            upgradeIcons[grabbedUpgradeIndex].setY(vpPos.y() - 0.5f * upgradeIconZoom);
+            upgradeIcons[grabbedUpgradeIndex].draw(batch);
         }
 
-        if(releaseGrabbedItem && obligatorGrabbed) { //TODO: Add code for dropping obligator sprite (if it was grabbed) onto grid (if spot is available and obligator was grabbed)
-            releaseGrabbedItem = false;
-            obligatorGrabbed = false;
+        if(releaseGrabbedUpgrade && upgradeGrabbed) { //TODO: Add code for dropping obligator sprite (if it was grabbed) onto grid (if spot is available and obligator was grabbed)
+            releaseGrabbedUpgrade = false;
+            upgradeGrabbed = false;
         }
 
         batch.end();
+    }
+
+    private void drawUpgradeSquare(int x) {
+        squareGray.setX(upgradeOffsetX + x);
+        squareGray.setY(upgradeOffsetY);
+        squareGray.draw(batch);
+
+        upgradeIcons[x].setX(upgradeOffsetX + x + (1f - upgradeIconZoom)/2f);
+        upgradeIcons[x].setY(upgradeOffsetY + (1f - upgradeIconZoom)/2f);
+        upgradeIcons[x].draw(batch);
     }
 
     private void drawGridSquare(Sprite squareSprite, int x, int y) {
@@ -179,7 +196,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     private boolean leftClick(int screenX, int screenY) {
         if (leftClickLocked) {return true;}
         rightClickLocked = true;
-        releaseGrabbedItem = false;
+        releaseGrabbedUpgrade = false;
         leftClickDragX = screenX;
         mouseY = screenY;
 
@@ -194,7 +211,8 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         if (clickedOnGrid(cpGrid)) {System.out.println("x = " + cpGrid.col() + ", y = " + cpGrid.row());   }
         if (clickedOnUpgradeOptions(cpUpgrade)) {
             System.out.println("selected upgrade number " + cpUpgrade.col());
-            obligatorGrabbed = true;
+            grabbedUpgradeIndex = cpUpgrade.col();
+            upgradeGrabbed = true;
         }
 
         return true;
@@ -203,7 +221,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     private boolean leftClickRelease(int screenX, int screenY) {
         if (leftClickLocked) {return true;}
         rightClickLocked = false;
-        releaseGrabbedItem = true;
+        releaseGrabbedUpgrade = true;
         return true;
     }
 
@@ -239,9 +257,15 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         return true;
     }
 
-    private void setCameraPosition(int offsetX, int offsetY) {
-        float cameraX = viewport.getScreenWidth()/2 + offsetX;
-        float cameraY = viewport.getScreenHeight()/2 + offsetY;
+    /**
+     * Set camera position in screen coordinates
+     * 
+     * @param screenX
+     * @param screenY
+     */
+    private void setCameraPosition(int screenX, int screenY) {
+        float cameraX = viewport.getScreenWidth()/2f + screenX;
+        float cameraY = viewport.getScreenHeight()/2f + screenY;
 
         touchPos.set(cameraX, cameraY);
         viewport.unproject(touchPos);   // Convert the touch position to the game units of the viewport.
@@ -250,14 +274,19 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         viewport.getCamera().position.set(touchPos, 0);
     }
 
-    private void setCameraPosition(float botleftX, float botleftY) {
-        touchPos.set(viewport.getWorldWidth()/2 + botleftX, viewport.getWorldHeight()/2 + botleftY);
+    /**
+     * Set camera position in world coordinates
+     * 
+     * @param worldX
+     * @param worldY
+     */
+    private void setCameraPosition(float worldX, float worldY) {
+        touchPos.set(viewport.getWorldWidth()/2f + worldX, viewport.getWorldHeight()/2f + worldY);
         clampVector(touchPos, 0f, viewport.getWorldWidth(), 0f, viewport.getWorldHeight());
         viewport.getCamera().position.set(touchPos, 0);
     }
 
     private void clampVector(Vector2 v, float minX, float maxX, float minY, float maxY) {
-        //System.out.println("x = " + v.x + ", y = " + v.y + ", minX = " + minX + ", minY = " + minY + ", maxX = " + maxX + ", maxY = " + maxY);
         touchPos.x = Math.max(Math.min(touchPos.x, maxX), minX);
         touchPos.y = Math.max(Math.min(touchPos.y, maxY), minY);   
     }
@@ -280,27 +309,32 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     public void resize(int width, int height) {
         int oldWidth = viewport.getScreenWidth();
         int oldHeight = viewport.getScreenHeight();
-        if(viewport.getScreenWidth() == 0 || viewport.getScreenHeight() == 0) {
+        if(viewport.getScreenWidth() == 0 || viewport.getScreenHeight() == 0) {//camera only centered on show, this if-split is necessary to set camera position correctly
             viewport.update(width, height, false);
-            setCameraPosition(0f, 0f);
+            setCameraPosition(0f, 0f); //adjust camera position when window is opened from minimized / first created
         } else {
             viewport.update(width, height, false);
 
-            float deltaX = viewport.getUnitsPerPixel()*(width - oldWidth)/2;
-            float deltaY = viewport.getUnitsPerPixel()*(height - oldHeight)/2;
-            viewport.getCamera().translate(deltaX, deltaY, 0);
+            //"evenly distribute" window resizing so that stuff in camera appear to center
+                //For some reason using touchPos and viewport.unproject causes *massive* issues, have to unproject manually using unitsPerPixel
+            float screenDeltaX = (width - oldWidth)/2f;
+            float screenDeltaY = (height - oldHeight)/2f;
+
+            float deltaX = viewport.getUnitsPerPixel()*screenDeltaX;
+            float deltaY = viewport.getUnitsPerPixel()*screenDeltaY;
+            
+            viewport.getCamera().translate(deltaX, deltaY, 0f);
+            
         }
         updateOffsets();
-        
-        //System.out.println("left: " + gridOffsetX + ", right: " + (gridOffsetX+gridWidth) + ", viewport width: " + viewport.getWorldWidth());
     }
 
     private void updateOffsets() { 
         float upgradeToGridDelta = 2f;    // 2: 1 from upgrade bar itself, 1 for space between upgrade bar and ship grid
-        gridOffsetX = (viewport.getWorldWidth() - gridWidth)/2;   
-        gridOffsetY = (viewport.getWorldHeight() - gridHeight - upgradeToGridDelta)/2; 
-        upgradeOffsetX = (viewport.getWorldWidth() - numUpgradeOptions)/2;
-        upgradeOffsetY = gridOffsetY + gridHeight + upgradeToGridDelta/2;
+        gridOffsetX = (viewport.getWorldWidth() - gridWidth)/2f;   
+        gridOffsetY = (viewport.getWorldHeight() - gridHeight - upgradeToGridDelta)/2f; 
+        upgradeOffsetX = (viewport.getWorldWidth() - numUpgradeOptions)/2f;
+        upgradeOffsetY = gridOffsetY + gridHeight + upgradeToGridDelta/2f;
     }
 
     @Override
@@ -323,7 +357,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
     @Override
     public void show() {
-        Gdx.input.setInputProcessor(this); //Register new inputProcessor 
-        viewport.apply(true);
+        Gdx.input.setInputProcessor(this);  //Register new inputProcessor 
+        viewport.apply(true);               //Camera is centered on show, but never on resize
     }
 }

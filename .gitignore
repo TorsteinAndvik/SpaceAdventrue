@@ -49,3 +49,6 @@ dependency-reduced-pom.xml
 
 # VSCode stuff
 .vscode
+
+# Paint.net files
+*.pdn
