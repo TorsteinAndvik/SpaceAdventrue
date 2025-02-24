@@ -145,23 +145,23 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
     }
 
     private CellPosition convertMouseToGrid(float x, float y) {
-        return new CellPosition((int) Math.floor(y - gridOffsetSouth), (int) Math.floor(x - gridOffsetWest));
+        return new CellPosition((int) Math.floor(y - gridOffsetY), (int) Math.floor(x - gridOffsetX));
     }
 
     private CellPosition convertMouseToUpgradeBar(float x, float y) {
-        return new CellPosition((int) Math.floor(y), (int)Math.floor(x - upgradeOffsetX));
+        return new CellPosition((int) Math.floor(y - upgradeOffsetY), (int) Math.floor(x - upgradeOffsetX));
     }
 
     private boolean clickedOnGrid(CellPosition cp) {
-        int worldX = cp.col();
-        int worldY = cp.row();
-        return !(worldX < 0 || worldX > gridWidth-1 || worldY < 0 || worldY > gridHeight-1);
+        int gridX = cp.col();
+        int gridY = cp.row();
+        return !(gridX < 0 || gridX > gridWidth-1 || gridY < 0 || gridY > gridHeight-1);
     }
 
     private boolean clickedOnUpgradeOptions(CellPosition cp) {
-        int worldX = cp.col();
-        int worldY = cp.row();
-        return !((worldY != viewport.getWorldHeight()-1) || (worldX < 0) || (worldX > numUpgradeOptions-1));
+        int upgradeX = cp.col();
+        int upgradeY = cp.row();
+        return !((upgradeY < 0) || (upgradeY > 1) || (upgradeX < 0) || (upgradeX > numUpgradeOptions-1));
     }
 
     @Override 
