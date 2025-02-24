@@ -161,7 +161,7 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
     private boolean clickedOnUpgradeOptions(CellPosition cp) {
         int upgradeX = cp.col();
         int upgradeY = cp.row();
-        return !((upgradeY < 0) || (upgradeY > 1) || (upgradeX < 0) || (upgradeX > numUpgradeOptions-1));
+        return !((upgradeY != 0) || (upgradeX < 0) || (upgradeX > numUpgradeOptions-1));
     }
 
     @Override 
