@@ -12,7 +12,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.Viewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import inf112.skeleton.grid.CellPosition;
 
@@ -20,7 +20,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
     final SpaceGame game;
     SpriteBatch batch;
-    Viewport viewport;
+    ScreenViewport viewport;
     BitmapFont font;
     AssetManager manager; //An assetmanager helps with loading assets and disposing them once they are no longer needed 
     Sprite obligator;
@@ -278,11 +278,20 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
     @Override
     public void resize(int width, int height) {
+        int oldWidth = viewport.getScreenWidth();
+        int oldHeight = viewport.getScreenHeight();
         if(viewport.getScreenWidth() == 0 || viewport.getScreenHeight() == 0) {
             viewport.update(width, height, false);
             setCameraPosition(0f, 0f);
-        } else {viewport.update(width, height, false);}
+        } else {
+            viewport.update(width, height, false);
+
+            float deltaX = viewport.getUnitsPerPixel()*(width - oldWidth)/2;
+            float deltaY = viewport.getUnitsPerPixel()*(height - oldHeight)/2;
+            viewport.getCamera().translate(deltaX, deltaY, 0);
+        }
         updateOffsets();
+        
         //System.out.println("left: " + gridOffsetX + ", right: " + (gridOffsetX+gridWidth) + ", viewport width: " + viewport.getWorldWidth());
     }
 
