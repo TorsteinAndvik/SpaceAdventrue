@@ -16,7 +16,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import inf112.skeleton.grid.CellPosition;
 
-public class UpgradeScreen extends InputAdapter implements Screen  {
+public class UpgradeScreen extends InputAdapter implements Screen {
 
     final SpaceGame game;
     SpriteBatch batch;
@@ -32,11 +32,9 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
     int gridWidth;
     int gridHeight;
     int numUpgradeOptions;
-
-    float gridOffsetWest;   
+ 
     float gridOffsetX;
     float gridOffsetY;
-    float gridOffsetSouth;
     
     float upgradeOffsetX;
     float upgradeOffsetY;
@@ -49,8 +47,6 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
     int mouseY;
     int rightClickDragX;
     int rightClickDragY;
-    float cameraX;
-    float cameraY;
 
     boolean obligatorGrabbed;
     boolean releaseGrabbedItem;
@@ -244,8 +240,8 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
     }
 
     private void setCameraPosition(int offsetX, int offsetY) {
-        cameraX = viewport.getScreenWidth()/2 + offsetX;
-        cameraY = viewport.getScreenHeight()/2 + offsetY;
+        float cameraX = viewport.getScreenWidth()/2 + offsetX;
+        float cameraY = viewport.getScreenHeight()/2 + offsetY;
 
         touchPos.set(cameraX, cameraY);
         viewport.unproject(touchPos);   // Convert the touch position to the game units of the viewport.
