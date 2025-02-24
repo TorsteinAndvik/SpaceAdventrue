@@ -29,22 +29,30 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
     Sprite squareGray;
     Vector2 touchPos;   // Simplifies converting touch / mouse position in window-coordinates (pixels) to game-coordinates (meters x meters set in viewport)
 
-    int gridWidth = 5;
-    int gridHeight = 5;
-    float gridOffsetWest;   
-    float gridOffsetSouth;
+    int gridWidth;
+    int gridHeight;
     int numUpgradeOptions;
-    float upgradeOffsetWest;
-    float obligatorZoom = 0.8f;
+
+    float gridOffsetWest;   
+    float gridOffsetX;
+    float gridOffsetY;
+    float gridOffsetSouth;
+    
+    float upgradeOffsetX;
+    float upgradeOffsetY;
+
+    float obligatorZoom;
     float[] cameraZoomLevels;
     int cameraCurrentZoomLevel;
-    boolean obligatorGrabbed;
-    int mouseX;
+    
+    int leftClickDragX;
     int mouseY;
     int rightClickDragX;
     int rightClickDragY;
     float cameraX;
     float cameraY;
+
+    boolean obligatorGrabbed;
     boolean releaseGrabbedItem;
     boolean leftClickLocked;    //touchDragged() doesn't discern between left and right clicks, but we want to disable left-clicking while right clicking and vice versa
     boolean rightClickLocked;
@@ -65,6 +73,7 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
         squareGray.setSize(1, 1);
 
         obligator = new Sprite(manager.get("images/obligator.png", Texture.class));
+        obligatorZoom = 0.8f;
         obligator.setSize(obligatorZoom, obligatorZoom);
 
         touchPos = new Vector2();
@@ -72,14 +81,13 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
         cameraZoomLevels = new float[] {0.7f, 0.8f, 0.9f, 1f, 1.1f, 1.2f, 1.3f};
         cameraCurrentZoomLevel = cameraZoomLevels.length / 2;
 
-        registerOffsets();
+        setupFields();
     }
 
-    private void registerOffsets() {
-        gridOffsetWest = 1;   
-        gridOffsetSouth = 0;
+    private void setupFields() {
         numUpgradeOptions = 4;
-        upgradeOffsetWest = (viewport.getWorldWidth() - numUpgradeOptions)/2;
+        gridWidth = 5;
+        gridHeight = 5;
     }
 
     @Override
@@ -90,34 +98,27 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
         batch.setProjectionMatrix(viewport.getCamera().combined);
         batch.begin(); 
 
-        // Draw part-options at top of screen (canon, shield, thruster)
+        // Draw upgrade options at top of screen (canon, shield, thruster, etc.)
         for(int x = 0; x < numUpgradeOptions; x++) {
-            squareGray.setX((viewport.getWorldWidth() - numUpgradeOptions)/2 + x);
-            squareGray.setY(viewport.getWorldHeight()-1);
+            squareGray.setX(upgradeOffsetX + x);
+            squareGray.setY(upgradeOffsetY);
             squareGray.draw(batch);
 
-            obligator.setX((viewport.getWorldWidth() - numUpgradeOptions)/2 + x + (1f - obligatorZoom)/2);
-            obligator.setY(viewport.getWorldHeight()-1 + (1f - obligatorZoom)/2);
+            obligator.setX(upgradeOffsetX + x + (1f - obligatorZoom)/2);
+            obligator.setY(upgradeOffsetY + (1f - obligatorZoom)/2);
             obligator.draw(batch);
         }
 
-        // Draw upgrade grid
-        for(int x = 0; x < gridWidth; x++){
-            for(int y = 0; y < gridHeight; y++){
-                if ((x == 1 || x==3) || (y < 2 || y==4)) { //just testing some patterns
-                    squareGreen.setX(gridOffsetWest + x);
-                    squareGreen.setY(gridOffsetSouth + y);
-                    squareGreen.draw(batch);
-                } else {
-                    squareRed.setX(gridOffsetWest + x);
-                    squareRed.setY(gridOffsetSouth + y);
-                    squareRed.draw(batch);
-                }
+        // Draw ship grid
+        for(int x = 0; x < gridWidth; x++) {
+            for(int y = 0; y < gridHeight; y++) {
+                if ((x == 1 || x==3) || (y < 2 || y==4)) {drawGridSquare(squareGreen, x, y);} 
+                else {drawGridSquare(squareRed, x, y);}
             }
         }
 
         if (obligatorGrabbed) {
-            ViewportPosition vpPos = worldToGameCoordinates(mouseX, mouseY);
+            ViewportPosition vpPos = worldToGameCoordinates(leftClickDragX, mouseY);
             obligator.setX(vpPos.x() - 0.5f * obligatorZoom);
             obligator.setY(vpPos.y() - 0.5f * obligatorZoom);
             obligator.draw(batch);
@@ -131,6 +132,12 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
         batch.end();
     }
 
+    private void drawGridSquare(Sprite squareSprite, int x, int y) {
+        squareSprite.setX(gridOffsetX + x);
+        squareSprite.setY(gridOffsetY + y);
+        squareSprite.draw(batch);
+    }
+
     private ViewportPosition worldToGameCoordinates(int worldX, int worldY) {
         touchPos.set(worldX, worldY);   // Set the position in window coordinates.
         viewport.unproject(touchPos);   // Convert the touch position to the game units of the viewport.
@@ -142,7 +149,7 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
     }
 
     private CellPosition convertMouseToUpgradeBar(float x, float y) {
-        return new CellPosition((int) Math.floor(y), (int)Math.floor(x - upgradeOffsetWest));
+        return new CellPosition((int) Math.floor(y), (int)Math.floor(x - upgradeOffsetX));
     }
 
     private boolean clickedOnGrid(CellPosition cp) {
@@ -177,12 +184,12 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
         if (leftClickLocked) {return true;}
         rightClickLocked = true;
         releaseGrabbedItem = false;
-        mouseX = screenX;
+        leftClickDragX = screenX;
         mouseY = screenY;
 
         //Notes: We get [X/Y] of click/touch with Gdx.input.get[X/Y](). But this is in window coordinates, not game coordinates.
         //Window coordinates depend on screen size, and also has origin in the top left, not bottom left as libGDX uses. viewport.unproject fixes this for us.
-        touchPos.set(mouseX, mouseY);   // Set the touch position in window coordinates.
+        touchPos.set(leftClickDragX, mouseY);   // Set the touch position in window coordinates.
         viewport.unproject(touchPos);   // Convert the touch position to the game units of the viewport.
             
         CellPosition cpGrid = convertMouseToGrid(touchPos.x, touchPos.y);
@@ -205,7 +212,7 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
     }
 
     private boolean leftClickDragged(int screenX, int screenY) {
-        mouseX = screenX;
+        leftClickDragX = screenX;
         mouseY = screenY;
         return true;
     }
@@ -279,6 +286,16 @@ public class UpgradeScreen extends InputAdapter implements Screen  {
             viewport.update(width, height, false);
             setCameraPosition(0f, 0f);
         } else {viewport.update(width, height, false);}
+        updateOffsets();
+        //System.out.println("left: " + gridOffsetX + ", right: " + (gridOffsetX+gridWidth) + ", viewport width: " + viewport.getWorldWidth());
+    }
+
+    private void updateOffsets() { 
+        float upgradeToGridDelta = 2f;    // 2: 1 from upgrade bar itself, 1 for space between upgrade bar and ship grid
+        gridOffsetX = (viewport.getWorldWidth() - gridWidth)/2;   
+        gridOffsetY = (viewport.getWorldHeight() - gridHeight - upgradeToGridDelta)/2; 
+        upgradeOffsetX = (viewport.getWorldWidth() - numUpgradeOptions)/2;
+        upgradeOffsetY = gridOffsetY + gridHeight + upgradeToGridDelta/2;
     }
 
     @Override

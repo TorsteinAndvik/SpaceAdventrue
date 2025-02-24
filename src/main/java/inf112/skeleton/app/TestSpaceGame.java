@@ -26,7 +26,7 @@ public class TestSpaceGame extends Game implements SpaceGame {
         batch = new SpriteBatch();
         font = new BitmapFont();
         
-        int meters = 7; // screen will be meters x meters (we use meters as Game coordinates, NOT pixel coordinates - these depend on window size, awful to work with)
+        int meters = 9; // screen will be meters x meters (we use meters as Game coordinates, NOT pixel coordinates - these depend on window size, awful to work with)
         fitViewport = new FitViewport(meters, meters);
         screenViewport = new ScreenViewport();
         screenViewport.setUnitsPerPixel((float)meters / (float)Gdx.graphics.getWidth());
