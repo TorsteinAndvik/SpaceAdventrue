@@ -7,13 +7,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.Viewport;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class SpaceScreen implements Screen {
 
     final SpaceGame game;
     SpriteBatch batch;
-    Viewport viewport;
+    FitViewport viewport;
     BitmapFont font;
     AssetManager manager; //An assetmanager helps with loading assets and disposing them once they are no longer needed 
 
@@ -27,7 +27,7 @@ public class SpaceScreen implements Screen {
     public void render(float delta) {
         ScreenUtils.clear(Color.BLUE); // Always wipe screen before drawing
 
-        viewport = game.getFitViewport();  // TODO: If using multiple viewports, need some way to signal which one to use for different screens (maybe GameState?)
+        viewport = game.getFitViewport();
         viewport.apply();
         batch.setProjectionMatrix(viewport.getCamera().combined);
 
@@ -46,14 +46,10 @@ public class SpaceScreen implements Screen {
     }
 
     @Override
-    public void hide() {
-        // TODO: If using per-Screen InputProcessors (recommended), need to *unregister* it here
-    }
+    public void hide() {}
 
     @Override
-    public void pause() {
-        // TODO Auto-generated method stub
-    }
+    public void pause() {}
 
     @Override
     public void resize(int width, int height) {
@@ -61,13 +57,9 @@ public class SpaceScreen implements Screen {
     }
 
     @Override
-    public void resume() {
-        // TODO Auto-generated method stub
-    }
+    public void resume() {}
 
     @Override
-    public void show() {
-        // TODO: If using per-Screen InputProcessors (recommended), need to *register* it here
-    }
+    public void show() {}
     
 }

@@ -23,13 +23,14 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     ScreenViewport viewport;
     BitmapFont font;
     AssetManager manager; //An assetmanager helps with loading assets and disposing them once they are no longer needed 
+    Vector2 touchPos;   // Simplifies converting touch / mouse position in window-coordinates (pixels) to game-coordinates (meters x meters set in viewport)
+
     Sprite[] upgradeIcons;
     Sprite obligator;
     Sprite turret;
     Sprite squareRed;
     Sprite squareGreen;
     Sprite squareGray;
-    Vector2 touchPos;   // Simplifies converting touch / mouse position in window-coordinates (pixels) to game-coordinates (meters x meters set in viewport)
 
     int gridWidth;
     int gridHeight;
@@ -73,17 +74,15 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         squareGray = new Sprite(manager.get("images/upgrade_grid_tile_gray.png", Texture.class));
         squareGray.setSize(1, 1);
 
-        
         upgradeIconZoom = 0.8f;
 
         obligator = new Sprite(manager.get("images/obligator.png", Texture.class));
         obligator.setSize(upgradeIconZoom, upgradeIconZoom);
 
         turret = new Sprite(manager.get("images/upgrades/turret_laser_stage_0.png", Texture.class));
-        System.out.println("turretZoom = " + upgradeIconZoom);
         turret.setSize(upgradeIconZoom, upgradeIconZoom);
 
-        upgradeIcons = new Sprite[] {turret, obligator, obligator, obligator};
+        upgradeIcons = new Sprite[] {obligator, turret, obligator, obligator};
 
         touchPos = new Vector2();
 
@@ -127,7 +126,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
             upgradeIcons[grabbedUpgradeIndex].draw(batch);
         }
 
-        if(releaseGrabbedUpgrade && upgradeGrabbed) { //TODO: Add code for dropping obligator sprite (if it was grabbed) onto grid (if spot is available and obligator was grabbed)
+        if(releaseGrabbedUpgrade && upgradeGrabbed) {
             releaseGrabbedUpgrade = false;
             upgradeGrabbed = false;
         }
@@ -208,9 +207,9 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         CellPosition cpGrid = convertMouseToGrid(touchPos.x, touchPos.y);
         CellPosition cpUpgrade = convertMouseToUpgradeBar(touchPos.x, touchPos.y);
 
-        if (clickedOnGrid(cpGrid)) {System.out.println("x = " + cpGrid.col() + ", y = " + cpGrid.row());   }
+        if (clickedOnGrid(cpGrid)) {System.out.println("x = " + cpGrid.col() + ", y = " + cpGrid.row());}
         if (clickedOnUpgradeOptions(cpUpgrade)) {
-            System.out.println("selected upgrade number " + cpUpgrade.col());
+            //System.out.println("selected upgrade number " + cpUpgrade.col());
             grabbedUpgradeIndex = cpUpgrade.col();
             upgradeGrabbed = true;
         }
@@ -236,7 +235,6 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         leftClickLocked = true;
         rightClickDragX = screenX;
         rightClickDragY = screenY;
-        //System.out.println("x=" + screenX + ", y=" + screenY);
         return true;
     }
 
@@ -346,14 +344,10 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     public void dispose() {}
 
     @Override
-    public void pause() {
-        // TODO Auto-generated method stub
-    }
+    public void pause() {}
 
     @Override
-    public void resume() {
-        // TODO Auto-generated method stub
-    }
+    public void resume() {}
 
     @Override
     public void show() {
