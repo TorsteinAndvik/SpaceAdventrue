@@ -70,4 +70,12 @@ public class TestSpaceGame extends Game implements SpaceGame {
     public AssetManager getAssetManager() {
         return manager;
     }
+
+    @Override 
+    public void dispose() {
+        this.screen.dispose();
+        this.batch.dispose();
+        this.font.dispose();
+        this.manager.dispose();
+    }
 }

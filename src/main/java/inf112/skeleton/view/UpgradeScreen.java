@@ -27,10 +27,13 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
     Sprite[] upgradeIcons;
     Sprite obligator;
+    Sprite fuselage;
     Sprite turret;
     Sprite squareRed;
     Sprite squareGreen;
     Sprite squareGray;
+
+    String[] upgradeStrings;
 
     int gridWidth;
     int gridHeight;
@@ -48,7 +51,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     int cameraCurrentZoomLevel;
     
     int leftClickDragX;
-    int mouseY;
+    int leftClickDragY;
     int rightClickDragX;
     int rightClickDragY;
 
@@ -65,6 +68,22 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         manager = game.getAssetManager();
         viewport = game.getScreenViewport();
 
+        loadSprites();
+
+        upgradeIcons = new Sprite[] {fuselage, turret, obligator, obligator};
+        
+        cameraZoomLevels = new float[] {0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1f, 1.1f, 1.2f, 1.3f, 1.4f, 1.5f};
+        cameraCurrentZoomLevel = cameraZoomLevels.length / 2;
+        
+        touchPos = new Vector2();
+
+        setupFields();
+
+        setupUpgradeStrings();
+    }
+
+    private void loadSprites() {
+
         squareRed = new Sprite(manager.get("images/upgrade_grid_tile_red.png", Texture.class));
         squareRed.setSize(1, 1);
 
@@ -79,23 +98,26 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         obligator = new Sprite(manager.get("images/obligator.png", Texture.class));
         obligator.setSize(upgradeIconZoom, upgradeIconZoom);
 
+        fuselage = new Sprite(manager.get("images/upgrades/fuselage_stage_0.png", Texture.class));
+        fuselage.setSize(upgradeIconZoom, upgradeIconZoom);
+
         turret = new Sprite(manager.get("images/upgrades/turret_laser_stage_0.png", Texture.class));
         turret.setSize(upgradeIconZoom, upgradeIconZoom);
-
-        upgradeIcons = new Sprite[] {obligator, turret, obligator, obligator};
-
-        touchPos = new Vector2();
-
-        cameraZoomLevels = new float[] {0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1f, 1.1f, 1.2f, 1.3f, 1.4f, 1.5f};
-        cameraCurrentZoomLevel = cameraZoomLevels.length / 2;
-
-        setupFields();
     }
 
     private void setupFields() {
         numUpgradeOptions = 4;
         gridWidth = 5;
         gridHeight = 5;
+    }
+
+    private void setupUpgradeStrings() {
+        upgradeStrings = new String[] {
+            "Fuselage:\nUsed to expand the ship. Any new\npart must be attached to a piece\nof Fuselage.",
+            "Turret:\nFires lasers at enemies and\nasteroids.",
+            "Obligator 1:\nPlaceholder for other upgrades.",
+            "Obligator 2:\nYet another placeholder for\nother upgrades."
+        };
     }
 
     @Override
@@ -120,7 +142,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         }
 
         if (upgradeGrabbed) {
-            ViewportPosition vpPos = worldToGameCoordinates(leftClickDragX, mouseY);
+            ViewportPosition vpPos = worldToGameCoordinates(leftClickDragX, leftClickDragY);
             upgradeIcons[grabbedUpgradeIndex].setX(vpPos.x() - 0.5f * upgradeIconZoom);
             upgradeIcons[grabbedUpgradeIndex].setY(vpPos.y() - 0.5f * upgradeIconZoom);
             upgradeIcons[grabbedUpgradeIndex].draw(batch);
@@ -197,11 +219,11 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         rightClickLocked = true;
         releaseGrabbedUpgrade = false;
         leftClickDragX = screenX;
-        mouseY = screenY;
+        leftClickDragY = screenY;
 
         //Notes: We get [X/Y] of click/touch with Gdx.input.get[X/Y](). But this is in window coordinates, not game coordinates.
         //Window coordinates depend on screen size, and also has origin in the top left, not bottom left as libGDX uses. viewport.unproject fixes this for us.
-        touchPos.set(leftClickDragX, mouseY);   // Set the touch position in window coordinates.
+        touchPos.set(leftClickDragX, leftClickDragY);   // Set the touch position in window coordinates.
         viewport.unproject(touchPos);   // Convert the touch position to the game units of the viewport.
             
         CellPosition cpGrid = convertMouseToGrid(touchPos.x, touchPos.y);
@@ -226,7 +248,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
     private boolean leftClickDragged(int screenX, int screenY) {
         leftClickDragX = screenX;
-        mouseY = screenY;
+        leftClickDragY = screenY;
         return true;
     }
 

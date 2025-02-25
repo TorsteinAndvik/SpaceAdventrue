@@ -37,6 +37,7 @@ public class LoadingScreen implements Screen {
         queueTexture("images/upgrade_grid_tile_gray.png");
         queueTexture("images/obligator.png");
         queueTexture("images/upgrades/turret_laser_stage_0.png");
+        queueTexture("images/upgrades/fuselage_stage_0.png");
 
         // Sounds:
         queueSound("audio/blipp.ogg");
@@ -68,14 +69,10 @@ public class LoadingScreen implements Screen {
     }
 
     @Override
-    public void hide() {
-        // TODO: If using per-Screen InputProcessors (recommended), need to *unregister* it here
-    }
+    public void hide() {}
 
     @Override
-    public void pause() {
-        // TODO Auto-generated method stub
-    }
+    public void pause() {}
 
     @Override
     public void resize(int width, int height) {
@@ -83,13 +80,8 @@ public class LoadingScreen implements Screen {
     }
 
     @Override
-    public void resume() {
-        // TODO Auto-generated method stub
-    }
+    public void resume() {}
 
     @Override
-    public void show() {
-        // TODO: If using per-Screen InputProcessors (recommended), need to *register* it here
-    }
-    
+    public void show() {}
 }
