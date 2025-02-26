@@ -98,7 +98,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         obligator = new Sprite(manager.get("images/obligator.png", Texture.class));
         obligator.setSize(upgradeIconZoom, upgradeIconZoom);
 
-        fuselage = new Sprite(manager.get("images/upgrades/fuselage_stage_0.png", Texture.class));
+        fuselage = new Sprite(manager.get("images/upgrades/fuselage_alt_stage_0.png", Texture.class));
         fuselage.setSize(upgradeIconZoom, upgradeIconZoom);
 
         turret = new Sprite(manager.get("images/upgrades/turret_laser_stage_0.png", Texture.class));
