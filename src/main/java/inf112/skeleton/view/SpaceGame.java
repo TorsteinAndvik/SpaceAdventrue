@@ -30,11 +30,6 @@ public interface SpaceGame {
     SpriteBatch getSpriteBatch();
 
     /**
-     * @return the application's <code>BitMapFont</code>
-     */
-    BitmapFont getFont();
-
-    /**
      * @return the application's <code>AssetManager</code>
      */
     AssetManager getAssetManager();

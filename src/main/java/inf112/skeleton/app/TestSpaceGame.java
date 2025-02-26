@@ -3,7 +3,6 @@ package inf112.skeleton.app;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -15,7 +14,6 @@ import inf112.skeleton.view.LoadingScreen;
 public class TestSpaceGame extends Game implements SpaceGame {
 
     private SpriteBatch batch;
-    private BitmapFont font;
     private AssetManager manager;
     private FitViewport fitViewport;
     private ScreenViewport screenViewport;
@@ -24,17 +22,12 @@ public class TestSpaceGame extends Game implements SpaceGame {
     @Override
     public void create() {
         batch = new SpriteBatch();
-        font = new BitmapFont();
         
         int meters = 9; // screen will be meters x meters (we use meters as Game coordinates, NOT pixel coordinates - these depend on window size, awful to work with)
         fitViewport = new FitViewport(meters, meters);
         screenViewport = new ScreenViewport();
         screenViewport.setUnitsPerPixel((float)meters / (float)Gdx.graphics.getWidth());
         extendViewport = new ExtendViewport(Gdx.graphics.getWidth() / meters, Gdx.graphics.getHeight() / meters);
-
-        // font is 15pt, need to scale it to our viewport by ratio of viewport height to screen height
-        font.setUseIntegerPositions(false);
-        font.getData().setScale(fitViewport.getWorldHeight() / Gdx.graphics.getHeight());
     
         manager = new AssetManager();
 
@@ -62,11 +55,6 @@ public class TestSpaceGame extends Game implements SpaceGame {
     }
 
     @Override
-    public BitmapFont getFont() {
-        return font;
-    }
-
-    @Override
     public AssetManager getAssetManager() {
         return manager;
     }
@@ -75,7 +63,6 @@ public class TestSpaceGame extends Game implements SpaceGame {
     public void dispose() {
         this.screen.dispose();
         this.batch.dispose();
-        this.font.dispose();
         this.manager.dispose();
     }
 }

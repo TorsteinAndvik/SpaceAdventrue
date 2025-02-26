@@ -4,11 +4,17 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.FileHandleResolver;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
+import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
+import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader.FreeTypeFontLoaderParameter;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class LoadingScreen implements Screen {
@@ -41,6 +47,23 @@ public class LoadingScreen implements Screen {
 
         // Sounds:
         queueSound("audio/blipp.ogg");
+
+        // Fonts:
+        FileHandleResolver resolver = new InternalFileHandleResolver();
+        manager.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(resolver));
+        manager.setLoader(BitmapFont.class, ".ttf", new FreetypeFontLoader(resolver));
+
+            // Set params for bold font
+        FreeTypeFontLoaderParameter fontBold = new FreeTypeFontLoaderParameter();
+        fontBold.fontFileName = "fonts/AGENCYB.ttf";
+        fontBold.fontParameters.size = 48;
+        manager.load(fontBold.fontFileName, BitmapFont.class, fontBold);
+
+            // Set params for regular font
+        FreeTypeFontLoaderParameter fontRegular = new FreeTypeFontLoaderParameter();
+        fontRegular.fontFileName = "fonts/AGENCYR.ttf";
+        fontRegular.fontParameters.size = 36;
+        manager.load(fontRegular.fontFileName, BitmapFont.class, fontRegular);
     }
 
     private void queueTexture(String path) {
@@ -51,12 +74,13 @@ public class LoadingScreen implements Screen {
         manager.load(new AssetDescriptor<>(Gdx.files.internal(path), Sound.class));
     }
 
-
     @Override
     public void render(float delta) {
         //First assets are queued for loading in the constructor (before this block of code runs), and then calling .update() here will *actually* load them. 
         if(manager.update(17)) { //all assets are loaded 1 by 1 //blocks for at least 17ms before passing over to render() - roughly 60fps (depends on size of asset, a large enough file might block for longer)
-            game.setScreen(new UpgradeScreen(game));
+            // ONLY CALL ONE OF THESE FOR TESTING:
+            //game.setScreen(new UpgradeScreen(game)); //test the UpgradeScreen class
+            game.setScreen(new SpaceScreen(game));  //test the SpaceScreen class
         }
 
         float progress = manager.getProgress();
