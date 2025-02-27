@@ -44,6 +44,7 @@ public class LoadingScreen implements Screen {
         queueTexture("images/obligator.png");
         queueTexture("images/upgrades/turret_laser_stage_0.png");
         queueTexture("images/upgrades/fuselage_alt_stage_0.png");
+        queueTexture("images/upgrades/rocket_stage_0.png");
 
         // Sounds:
         queueSound("audio/blipp.ogg");
@@ -79,8 +80,8 @@ public class LoadingScreen implements Screen {
         //First assets are queued for loading in the constructor (before this block of code runs), and then calling .update() here will *actually* load them. 
         if(manager.update(17)) { //all assets are loaded 1 by 1 //blocks for at least 17ms before passing over to render() - roughly 60fps (depends on size of asset, a large enough file might block for longer)
             // ONLY CALL ONE OF THESE FOR TESTING:
-            //game.setScreen(new UpgradeScreen(game)); //test the UpgradeScreen class
-            game.setScreen(new SpaceScreen(game));  //test the SpaceScreen class
+            game.setScreen(new UpgradeScreen(game)); //test the UpgradeScreen class
+            //game.setScreen(new SpaceScreen(game));  //test the SpaceScreen class
         }
 
         float progress = manager.getProgress();

@@ -29,6 +29,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     Sprite obligator;
     Sprite fuselage;
     Sprite turret;
+    Sprite rocket;
     Sprite squareRed;
     Sprite squareGreen;
     Sprite squareGray;
@@ -69,8 +70,6 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         viewport = game.getScreenViewport();
 
         loadSprites();
-
-        upgradeIcons = new Sprite[] {fuselage, turret, obligator, obligator};
         
         cameraZoomLevels = new float[] {0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1f, 1.1f, 1.2f, 1.3f, 1.4f, 1.5f};
         cameraCurrentZoomLevel = cameraZoomLevels.length / 2;
@@ -83,7 +82,6 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     }
 
     private void loadSprites() {
-
         squareRed = new Sprite(manager.get("images/upgrade_grid_tile_red.png", Texture.class));
         squareRed.setSize(1, 1);
 
@@ -103,6 +101,11 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
         turret = new Sprite(manager.get("images/upgrades/turret_laser_stage_0.png", Texture.class));
         turret.setSize(upgradeIconZoom, upgradeIconZoom);
+
+        rocket = new Sprite(manager.get("images/upgrades/rocket_stage_0.png", Texture.class));
+        rocket.setSize(upgradeIconZoom, upgradeIconZoom);
+
+        upgradeIcons = new Sprite[] {fuselage, turret, rocket, obligator};
     }
 
     private void setupFields() {
