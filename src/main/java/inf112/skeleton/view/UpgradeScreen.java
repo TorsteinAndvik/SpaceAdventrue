@@ -53,7 +53,10 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
     float[] cameraZoomLevels;
     int cameraCurrentZoomLevel;
-    
+    float cameraZoomDeltaTime;
+    float cameraZoomTextFadeCutoffTime;
+    boolean cameraZoomRecently;
+
     int leftClickDragX;
     int leftClickDragY;
     int rightClickDragX;
@@ -122,6 +125,8 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         numUpgradeOptions = 4;
         gridWidth = 5;
         gridHeight = 5;
+
+        cameraZoomTextFadeCutoffTime = 0.5f;
     }
 
     private void setupUpgradeStrings() {
@@ -140,10 +145,9 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         // font are set as [integer]pt, need to scale them to our viewport by ratio of viewport height to screen height in order to use world-unit sized font
         fontBold.setUseIntegerPositions(false);
         fontBold.getData().setScale(viewportGame.getUnitsPerPixel());
-        //fontBold.getData().setScale(viewport.getWorldHeight() / Gdx.graphics.getHeight());
 
         fontRegular.setUseIntegerPositions(false);
-        //fontRegular.getData().setScale(viewport.getWorldHeight() / Gdx.graphics.getHeight());
+        fontRegular.getData().setScale(viewportGame.getUnitsPerPixel());
     }
 
     @Override
@@ -192,13 +196,32 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
         // Draw UI: Need to swap viewport (because of camera position being set in rightClickDragged we need a separate viewport for centered camera) 
             // TODO: Refactor if possible such that setCamera is only ever called inside render() (does not seem like a simple fix). 
-        viewportUI.apply(true);
+        
+            viewportUI.apply(true);
         batch.setProjectionMatrix(viewportUI.getCamera().combined);
+
         batch.begin();
+
         // Draw some text
-        fontBold.draw(batch, "Scroll: Adjust zoom", 0.1f, 1*fontBold.getData().lineHeight);
-        fontBold.draw(batch, "Right mouse: Adjust camera", 0.1f, 2*fontBold.getData().lineHeight);
-        fontBold.draw(batch, "Left mouse: Grab upgrade", 0.1f, 3*fontBold.getData().lineHeight);
+        fontRegular.setColor(Color.WHITE);
+        fontRegular.draw(batch, "Scroll: Adjust zoom", 0.1f, 1*fontRegular.getData().lineHeight);
+        fontRegular.draw(batch, "Right mouse: Adjust camera", 0.1f, 2*fontRegular.getData().lineHeight);
+        fontRegular.draw(batch, "Left mouse: Grab upgrade", 0.1f, 3*fontRegular.getData().lineHeight);
+        
+        if (cameraZoomRecently) {
+            float deltaTime = Gdx.graphics.getDeltaTime();
+            cameraZoomDeltaTime += deltaTime;
+            //float a = cameraZoomDeltaTime < cameraZoomTextFadeCutoffTime ? 1f : 1f + cameraZoomTextFadeCutoffTime - cameraZoomDeltaTime/cameraZoomTextFadeCutoffTime;
+            float a = cameraZoomDeltaTime < cameraZoomTextFadeCutoffTime ? 1f : 1f - (float)Math.pow((cameraZoomDeltaTime - cameraZoomTextFadeCutoffTime), 2);
+            if (a < 0) {
+                cameraZoomRecently = false;
+            } else {
+                Color fontColor = new Color(1f, 0.47f, 0.55f, a);
+                fontRegular.setColor(fontColor);
+                fontRegular.draw(batch, "Zoom = x" + cameraZoomLevels[cameraCurrentZoomLevel], 0.1f, 4*fontRegular.getData().lineHeight);
+            }
+        }
+
         batch.end();
     }
 
@@ -251,12 +274,15 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         else if(cameraCurrentZoomLevel >= cameraZoomLevels.length) {cameraCurrentZoomLevel = cameraZoomLevels.length - 1;}
 
         ((OrthographicCamera) viewportGame.getCamera()).zoom = cameraZoomLevels[cameraCurrentZoomLevel];
+        cameraZoomRecently = true;
+        cameraZoomDeltaTime = 0f;
         return true;
     }
 
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if(button == 0) {return leftClick(screenX, screenY);}
         else if(button == 1) {return rightClick(screenX, screenY);}
+        else if(button == 2) {return middleClick();}
         else {return false;}
     }
 
@@ -320,6 +346,12 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         rightClickDragY = screenY;
 
         setCameraPosition(offsetX, offsetY);
+        return true;
+    }
+
+    private boolean middleClick() {
+        cameraZoomRecently = true;
+        cameraZoomDeltaTime = 0f;
         return true;
     }
 
