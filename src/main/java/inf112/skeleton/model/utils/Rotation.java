@@ -17,7 +17,7 @@ public class Rotation {
    * @param angle the initial angle in degrees.
    */
   public Rotation(float angle) {
-    this.angle = angle;
+    this.angle = normalizeAngle(angle);
   }
 
   /**
@@ -35,7 +35,7 @@ public class Rotation {
    * @param angle the new angle in degrees.
    */
   public void setAngle(float angle) {
-    this.angle = angle;
+    this.angle = normalizeAngle(angle);
   }
 
   /**
@@ -59,16 +59,7 @@ public class Rotation {
     if (angle < 0) {
       angle += 360;
     }
-    return angle;
-  }
-
-  /**
-   * Applies the current rotation angle to a given SpaceBody object.
-   *
-   * @param spaceBody the SpaceBody object to rotate.
-   */
-  public void applyToSpaceBody(SpaceBody spaceBody) {
-    spaceBody.setRotation(getAngle());
+    return Math.abs(angle);
   }
 
 
