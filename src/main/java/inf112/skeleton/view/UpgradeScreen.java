@@ -149,6 +149,15 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         }
 
         if (upgradeGrabbed) {
+            // draw a ghost copy of upgrade if hovering a grid cell
+            CellPosition cpGrid = convertMouseToGrid(touchPos.x, touchPos.y);
+            if (cellPositionOnGrid(cpGrid)) {
+                upgradeIcons[grabbedUpgradeIndex].setX(gridOffsetX + cpGrid.col() + 0.5f * (1f - upgradeIconZoom));
+                upgradeIcons[grabbedUpgradeIndex].setY(gridOffsetY + cpGrid.row() + 0.5f * (1f - upgradeIconZoom));
+                upgradeIcons[grabbedUpgradeIndex].draw(batch, 0.5f);
+            }
+
+            // draw held upgrade
             ViewportPosition vpPos = worldToGameCoordinates(leftClickDragX, leftClickDragY);
             upgradeIcons[grabbedUpgradeIndex].setX(vpPos.x() - 0.5f * upgradeIconZoom);
             upgradeIcons[grabbedUpgradeIndex].setY(vpPos.y() - 0.5f * upgradeIconZoom);
@@ -193,13 +202,13 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         return new CellPosition((int) Math.floor(y - upgradeOffsetY), (int) Math.floor(x - upgradeOffsetX));
     }
 
-    private boolean clickedOnGrid(CellPosition cp) {
+    private boolean cellPositionOnGrid(CellPosition cp) {
         int gridX = cp.col();
         int gridY = cp.row();
         return !(gridX < 0 || gridX > gridWidth-1 || gridY < 0 || gridY > gridHeight-1);
     }
 
-    private boolean clickedOnUpgradeOptions(CellPosition cp) {
+    private boolean cellPositionOnUpgradeOptions(CellPosition cp) {
         int upgradeX = cp.col();
         int upgradeY = cp.row();
         return !((upgradeY != 0) || (upgradeX < 0) || (upgradeX > numUpgradeOptions-1));
@@ -236,8 +245,8 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         CellPosition cpGrid = convertMouseToGrid(touchPos.x, touchPos.y);
         CellPosition cpUpgrade = convertMouseToUpgradeBar(touchPos.x, touchPos.y);
 
-        if (clickedOnGrid(cpGrid)) {System.out.println("x = " + cpGrid.col() + ", y = " + cpGrid.row());}
-        if (clickedOnUpgradeOptions(cpUpgrade)) {
+        if (cellPositionOnGrid(cpGrid)) {System.out.println("x = " + cpGrid.col() + ", y = " + cpGrid.row());}
+        if (cellPositionOnUpgradeOptions(cpUpgrade)) {
             //System.out.println("selected upgrade number " + cpUpgrade.col());
             grabbedUpgradeIndex = cpUpgrade.col();
             upgradeGrabbed = true;
