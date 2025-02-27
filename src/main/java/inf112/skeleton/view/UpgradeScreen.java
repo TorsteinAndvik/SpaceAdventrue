@@ -30,6 +30,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     Sprite fuselage;
     Sprite turret;
     Sprite rocket;
+    Sprite shield;
     Sprite squareRed;
     Sprite squareGreen;
     Sprite squareGray;
@@ -105,7 +106,10 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         rocket = new Sprite(manager.get("images/upgrades/rocket_stage_0.png", Texture.class));
         rocket.setSize(upgradeIconZoom, upgradeIconZoom);
 
-        upgradeIcons = new Sprite[] {fuselage, turret, rocket, obligator};
+        shield = new Sprite(manager.get("images/upgrades/shield_stage_0.png", Texture.class));
+        shield.setSize(upgradeIconZoom, upgradeIconZoom);
+
+        upgradeIcons = new Sprite[] {fuselage, turret, rocket, shield};
     }
 
     private void setupFields() {

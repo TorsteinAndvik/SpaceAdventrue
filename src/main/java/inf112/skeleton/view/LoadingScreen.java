@@ -45,6 +45,7 @@ public class LoadingScreen implements Screen {
         queueTexture("images/upgrades/turret_laser_stage_0.png");
         queueTexture("images/upgrades/fuselage_alt_stage_0.png");
         queueTexture("images/upgrades/rocket_stage_0.png");
+        queueTexture("images/upgrades/shield_stage_0.png");
 
         // Sounds:
         queueSound("audio/blipp.ogg");
