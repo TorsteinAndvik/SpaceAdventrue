@@ -20,10 +20,12 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
     final SpaceGame game;
     SpriteBatch batch;
-    ScreenViewport viewport;
-    BitmapFont font;
-    AssetManager manager; //An assetmanager helps with loading assets and disposing them once they are no longer needed 
-    Vector2 touchPos;   // Simplifies converting touch / mouse position in window-coordinates (pixels) to game-coordinates (meters x meters set in viewport)
+    ScreenViewport viewportGame;
+    ScreenViewport viewportUI;
+    BitmapFont fontBold;    // Agency FB Bold
+    BitmapFont fontRegular; // Agency FB Regular
+    AssetManager manager;   // An assetmanager helps with loading assets and disposing them once they are no longer needed 
+    Vector2 touchPos;       // Simplifies converting touch / mouse position in window-coordinates (pixels) to game-coordinates (meters x meters set in viewport)
 
     Sprite[] upgradeIcons;
     Sprite obligator;
@@ -68,7 +70,9 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         game = spaceGame;
         batch = game.getSpriteBatch();
         manager = game.getAssetManager();
-        viewport = game.getScreenViewport();
+        viewportGame = game.getScreenViewport();
+        viewportUI = new ScreenViewport();
+        viewportUI.setUnitsPerPixel(viewportGame.getUnitsPerPixel());
 
         loadSprites();
         
@@ -80,6 +84,8 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         setupFields();
 
         setupUpgradeStrings();
+
+        setupFonts();
     }
 
     private void loadSprites() {
@@ -127,12 +133,25 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         };
     }
 
+    private void setupFonts() {
+        fontBold = manager.get("fonts/AGENCYB.ttf", BitmapFont.class);
+        fontRegular = manager.get("fonts/AGENCYR.ttf", BitmapFont.class);
+
+        // font are set as [integer]pt, need to scale them to our viewport by ratio of viewport height to screen height in order to use world-unit sized font
+        fontBold.setUseIntegerPositions(false);
+        fontBold.getData().setScale(viewportGame.getUnitsPerPixel());
+        //fontBold.getData().setScale(viewport.getWorldHeight() / Gdx.graphics.getHeight());
+
+        fontRegular.setUseIntegerPositions(false);
+        //fontRegular.getData().setScale(viewport.getWorldHeight() / Gdx.graphics.getHeight());
+    }
+
     @Override
     public void render(float delta) {
         ScreenUtils.clear(new Color(0f, 64f/255f, 64f/255f, 1f)); 
         
-        viewport.apply(false);
-        batch.setProjectionMatrix(viewport.getCamera().combined);
+        viewportGame.apply(false);
+        batch.setProjectionMatrix(viewportGame.getCamera().combined);
         batch.begin(); 
 
         // Draw upgrade options at top of screen (canon, shield, thruster, etc.)
@@ -170,6 +189,17 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         }
 
         batch.end();
+
+        // Draw UI: Need to swap viewport (because of camera position being set in rightClickDragged we need a separate viewport for centered camera) 
+            // TODO: Refactor if possible such that setCamera is only ever called inside render() (does not seem like a simple fix). 
+        viewportUI.apply(true);
+        batch.setProjectionMatrix(viewportUI.getCamera().combined);
+        batch.begin();
+        // Draw some text
+        fontBold.draw(batch, "Scroll: Adjust zoom", 0.1f, 1*fontBold.getData().lineHeight);
+        fontBold.draw(batch, "Right mouse: Adjust camera", 0.1f, 2*fontBold.getData().lineHeight);
+        fontBold.draw(batch, "Left mouse: Grab upgrade", 0.1f, 3*fontBold.getData().lineHeight);
+        batch.end();
     }
 
     private void drawUpgradeSquare(int x) {
@@ -190,7 +220,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
     private ViewportPosition worldToGameCoordinates(int worldX, int worldY) {
         touchPos.set(worldX, worldY);   // Set the position in window coordinates.
-        viewport.unproject(touchPos);   // Convert the touch position to the game units of the viewport.
+        viewportGame.unproject(touchPos);   // Convert the touch position to the game units of the viewport.
         return new ViewportPosition(touchPos.x, touchPos.y);
     }
 
@@ -220,7 +250,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         if(cameraCurrentZoomLevel < 0) {cameraCurrentZoomLevel = 0;}
         else if(cameraCurrentZoomLevel >= cameraZoomLevels.length) {cameraCurrentZoomLevel = cameraZoomLevels.length - 1;}
 
-        ((OrthographicCamera) viewport.getCamera()).zoom = cameraZoomLevels[cameraCurrentZoomLevel];
+        ((OrthographicCamera) viewportGame.getCamera()).zoom = cameraZoomLevels[cameraCurrentZoomLevel];
         return true;
     }
 
@@ -240,7 +270,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         //Notes: We get [X/Y] of click/touch with Gdx.input.get[X/Y](). But this is in window coordinates, not game coordinates.
         //Window coordinates depend on screen size, and also has origin in the top left, not bottom left as libGDX uses. viewport.unproject fixes this for us.
         touchPos.set(leftClickDragX, leftClickDragY);   // Set the touch position in window coordinates.
-        viewport.unproject(touchPos);   // Convert the touch position to the game units of the viewport.
+        viewportGame.unproject(touchPos);   // Convert the touch position to the game units of the viewport.
             
         CellPosition cpGrid = convertMouseToGrid(touchPos.x, touchPos.y);
         CellPosition cpUpgrade = convertMouseToUpgradeBar(touchPos.x, touchPos.y);
@@ -300,14 +330,14 @@ public class UpgradeScreen extends InputAdapter implements Screen {
      * @param screenY
      */
     private void setCameraPosition(int screenX, int screenY) {
-        float cameraX = viewport.getScreenWidth()/2f + screenX;
-        float cameraY = viewport.getScreenHeight()/2f + screenY;
+        float cameraX = viewportGame.getScreenWidth()/2f + screenX;
+        float cameraY = viewportGame.getScreenHeight()/2f + screenY;
 
         touchPos.set(cameraX, cameraY);
-        viewport.unproject(touchPos);   // Convert the touch position to the game units of the viewport.
-        clampVector(touchPos, 0f, viewport.getWorldWidth(), 0f, viewport.getWorldHeight());
+        viewportGame.unproject(touchPos);   // Convert the touch position to the game units of the viewport.
+        clampVector(touchPos, 0f, viewportGame.getWorldWidth(), 0f, viewportGame.getWorldHeight());
         
-        viewport.getCamera().position.set(touchPos, 0);
+        viewportGame.getCamera().position.set(touchPos, 0);
     }
 
     /**
@@ -317,9 +347,9 @@ public class UpgradeScreen extends InputAdapter implements Screen {
      * @param worldY
      */
     private void setCameraPosition(float worldX, float worldY) {
-        touchPos.set(viewport.getWorldWidth()/2f + worldX, viewport.getWorldHeight()/2f + worldY);
-        clampVector(touchPos, 0f, viewport.getWorldWidth(), 0f, viewport.getWorldHeight());
-        viewport.getCamera().position.set(touchPos, 0);
+        touchPos.set(viewportGame.getWorldWidth()/2f + worldX, viewportGame.getWorldHeight()/2f + worldY);
+        clampVector(touchPos, 0f, viewportGame.getWorldWidth(), 0f, viewportGame.getWorldHeight());
+        viewportGame.getCamera().position.set(touchPos, 0);
     }
 
     private void clampVector(Vector2 v, float minX, float maxX, float minY, float maxY) {
@@ -343,33 +373,32 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        int oldWidth = viewport.getScreenWidth();
-        int oldHeight = viewport.getScreenHeight();
-        if(viewport.getScreenWidth() == 0 || viewport.getScreenHeight() == 0) {//camera only centered on show, this if-split is necessary to set camera position correctly
-            viewport.update(width, height, false);
+        int oldWidth = viewportGame.getScreenWidth();
+        int oldHeight = viewportGame.getScreenHeight();
+        viewportGame.update(width, height, false);
+        if(viewportGame.getScreenWidth() == 0 || viewportGame.getScreenHeight() == 0) {//camera only centered on show, this if-split is necessary to set camera position correctly
             setCameraPosition(0f, 0f); //adjust camera position when window is opened from minimized / first created
         } else {
-            viewport.update(width, height, false);
-
             //"evenly distribute" window resizing so that stuff in camera appear to center
                 //For some reason using touchPos and viewport.unproject causes *massive* issues, have to unproject manually using unitsPerPixel
             float screenDeltaX = (width - oldWidth)/2f;
             float screenDeltaY = (height - oldHeight)/2f;
 
-            float deltaX = viewport.getUnitsPerPixel()*screenDeltaX;
-            float deltaY = viewport.getUnitsPerPixel()*screenDeltaY;
+            float deltaX = viewportGame.getUnitsPerPixel()*screenDeltaX;
+            float deltaY = viewportGame.getUnitsPerPixel()*screenDeltaY;
             
-            viewport.getCamera().translate(deltaX, deltaY, 0f);
+            viewportGame.getCamera().translate(deltaX, deltaY, 0f);
             
         }
         updateOffsets();
+        viewportUI.update(width, height, true);
     }
 
     private void updateOffsets() { 
         float upgradeToGridDelta = 2f;    // 2: 1 from upgrade bar itself, 1 for space between upgrade bar and ship grid
-        gridOffsetX = (viewport.getWorldWidth() - gridWidth)/2f;   
-        gridOffsetY = (viewport.getWorldHeight() - gridHeight - upgradeToGridDelta)/2f; 
-        upgradeOffsetX = (viewport.getWorldWidth() - numUpgradeOptions)/2f;
+        gridOffsetX = (viewportGame.getWorldWidth() - gridWidth)/2f;   
+        gridOffsetY = (viewportGame.getWorldHeight() - gridHeight - upgradeToGridDelta)/2f; 
+        upgradeOffsetX = (viewportGame.getWorldWidth() - numUpgradeOptions)/2f;
         upgradeOffsetY = gridOffsetY + gridHeight + upgradeToGridDelta/2f;
     }
 
@@ -390,6 +419,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     @Override
     public void show() {
         Gdx.input.setInputProcessor(this);  //Register new inputProcessor 
-        viewport.apply(true);               //Camera is centered on show, but never on resize
+        viewportGame.apply(true);           //Camera is centered on show, but never on resize
+        viewportUI.apply(true);
     }
 }

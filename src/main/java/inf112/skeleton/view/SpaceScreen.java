@@ -64,7 +64,7 @@ public class SpaceScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        game.getFitViewport().update(width, height, true);
+        viewport.update(width, height, true);
     }
 
     @Override
