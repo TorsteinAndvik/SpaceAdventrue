@@ -17,6 +17,11 @@ public class SpaceScreen implements Screen {
     BitmapFont font;
     AssetManager manager; //An assetmanager helps with loading assets and disposing them once they are no longer needed 
 
+    //Constants
+    Color BG_COLOR = Color.BLUE;
+    Color TEXT_COLOR = Color.RED;
+
+
     public SpaceScreen(final SpaceGame game) {
         this.game = game;
         this.batch = this.game.getSpriteBatch();
@@ -25,14 +30,14 @@ public class SpaceScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        ScreenUtils.clear(Color.BLUE); // Always wipe screen before drawing
+        ScreenUtils.clear(BG_COLOR); // Always wipe screen before drawing
 
         viewport = game.getViewport();  // TODO: If using multiple viewports, need some way to signal which one to use for different screens (maybe GameState?)
         viewport.apply();
         batch.setProjectionMatrix(viewport.getCamera().combined);
 
         font = game.getFont();
-        font.setColor(Color.RED);
+        font.setColor(TEXT_COLOR);
 
         batch.begin();
         batch.draw(manager.get("src/main/resources/images/obligator.png", Texture.class), 0f, 3f, 5f, 1f);
@@ -42,6 +47,7 @@ public class SpaceScreen implements Screen {
 
     @Override
     public void dispose() {
+        //TODO: Infinite recursion?
         this.dispose();
     }
 

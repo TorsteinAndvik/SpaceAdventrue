@@ -17,13 +17,13 @@ public class TestSpaceGame extends Game implements SpaceGame {
     private BitmapFont font;
     private AssetManager manager;
     private FitViewport viewport;
+    private final int METERS = 7; // screen will be meters x meters (we use meters as Game coordinates, NOT pixel coordinates - these depend on window size, awful to work with)
 
     @Override
     public void create() {
         batch = new SpriteBatch();
         font = new BitmapFont();
-        int meters = 7; // screen will be meters x meters (we use meters as Game coordinates, NOT pixel coordinates - these depend on window size, awful to work with)
-        viewport = new FitViewport(meters, meters);
+        viewport = new FitViewport(METERS, METERS);
 
         // font is 15pt, need to scale it to our viewport by ratio of viewport height to screen height
         font.setUseIntegerPositions(false);

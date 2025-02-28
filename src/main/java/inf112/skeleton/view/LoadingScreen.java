@@ -63,7 +63,9 @@ public class LoadingScreen implements Screen {
 
     @Override
     public void dispose() {
+        //TODO: This will recurse infinitely, no?
         this.dispose();
+
     }
 
     @Override
