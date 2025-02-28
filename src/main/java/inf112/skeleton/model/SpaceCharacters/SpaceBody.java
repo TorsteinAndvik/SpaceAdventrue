@@ -9,16 +9,14 @@ public abstract class SpaceBody implements SpaceThing {
   private final Rotation rotation;
   private int x;
   private int y;
-  private int healthPoints;
   private int mass;
   private int speed;
 
-  public SpaceBody(String name, String description, int x, int y, int healthPoints, int mass, int speed, float angle) {
+  public SpaceBody(String name, String description, int x, int y, int mass, int speed, float angle) {
     this.name = name;
     this.description = description;
     this.x = x;
     this.y = y;
-    this.healthPoints = healthPoints;
     this.mass = mass;
     this.speed = speed;
     rotation = new Rotation(angle);
@@ -72,21 +70,6 @@ public abstract class SpaceBody implements SpaceThing {
   public void setY(int y) {
     this.y = y;
   }
-
-  /**
-   * Get the health points of a SpaceBody object.
-   */
-  public int getHealthPoints() {
-    return healthPoints;
-  }
-
-  /**
-   * Set the health points of a SpaceBody object.
-   */
-  public void setHealthPoints(int healthPoints) {
-    this.healthPoints = healthPoints;
-  }
-
 
   /**
    * Get the mass of a SpaceBody object.
