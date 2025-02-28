@@ -38,14 +38,20 @@ public class LoadingScreen implements Screen {
 
     private void queueAssets() {
         // Textures:
+            // upgrades
         queueTexture("images/upgrade_grid_tile_green.png");
         queueTexture("images/upgrade_grid_tile_red.png");
         queueTexture("images/upgrade_grid_tile_gray.png");
-        queueTexture("images/obligator.png");
         queueTexture("images/upgrades/turret_laser_stage_0.png");
         queueTexture("images/upgrades/fuselage_alt_stage_0.png");
         queueTexture("images/upgrades/rocket_stage_0.png");
         queueTexture("images/upgrades/shield_stage_0.png");
+            
+            // ui
+        queueTexture("images/ui/Mouse_Left_Key_Light.png");
+        queueTexture("images/ui/Mouse_Middle_Key_Light.png");
+        queueTexture("images/ui/Mouse_Right_Key_Light.png");
+        queueTexture("images/ui/T_Key_Light.png");
 
         // Sounds:
         queueSound("audio/blipp.ogg");
@@ -58,7 +64,7 @@ public class LoadingScreen implements Screen {
             // Set params for bold font
         FreeTypeFontLoaderParameter fontBold = new FreeTypeFontLoaderParameter();
         fontBold.fontFileName = "fonts/AGENCYB.ttf";
-        fontBold.fontParameters.size = 48;
+        fontBold.fontParameters.size = 42;
         manager.load(fontBold.fontFileName, BitmapFont.class, fontBold);
 
             // Set params for regular font

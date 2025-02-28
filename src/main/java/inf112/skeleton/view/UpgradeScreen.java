@@ -28,7 +28,6 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     Vector2 touchPos;       // Simplifies converting touch / mouse position in window-coordinates (pixels) to game-coordinates (meters x meters set in viewport)
 
     Sprite[] upgradeIcons;
-    Sprite obligator;
     Sprite fuselage;
     Sprite turret;
     Sprite rocket;
@@ -36,6 +35,11 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     Sprite squareRed;
     Sprite squareGreen;
     Sprite squareGray;
+    //ui sprites:
+    Sprite msLeft;
+    Sprite msMiddle;
+    Sprite msRight;
+    Sprite kbT;
 
     String[] upgradeStrings;
 
@@ -50,6 +54,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     float upgradeOffsetY;
 
     float upgradeIconZoom;
+    float uiIconZoom;
 
     float[] cameraZoomLevels;
     int cameraCurrentZoomLevel;
@@ -77,6 +82,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         viewportUI = new ScreenViewport();
         viewportUI.setUnitsPerPixel(viewportGame.getUnitsPerPixel());
 
+        setupFonts();
         loadSprites();
         
         cameraZoomLevels = new float[] {0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1f, 1.1f, 1.2f, 1.3f, 1.4f, 1.5f};
@@ -85,10 +91,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         touchPos = new Vector2();
 
         setupFields();
-
         setupUpgradeStrings();
-
-        setupFonts();
     }
 
     private void loadSprites() {
@@ -103,9 +106,6 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
         upgradeIconZoom = 0.8f;
 
-        obligator = new Sprite(manager.get("images/obligator.png", Texture.class));
-        obligator.setSize(upgradeIconZoom, upgradeIconZoom);
-
         fuselage = new Sprite(manager.get("images/upgrades/fuselage_alt_stage_0.png", Texture.class));
         fuselage.setSize(upgradeIconZoom, upgradeIconZoom);
 
@@ -119,6 +119,21 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         shield.setSize(upgradeIconZoom, upgradeIconZoom);
 
         upgradeIcons = new Sprite[] {fuselage, turret, rocket, shield};
+
+        //ui sprites:
+        uiIconZoom = fontRegular.getData().lineHeight;
+
+        msLeft = new Sprite(manager.get("images/ui/Mouse_Left_Key_Light.png", Texture.class));
+        msLeft.setSize(uiIconZoom, uiIconZoom);
+
+        msMiddle = new Sprite(manager.get("images/ui/Mouse_Middle_Key_Light.png", Texture.class));
+        msMiddle.setSize(uiIconZoom, uiIconZoom);
+
+        msRight = new Sprite(manager.get("images/ui/Mouse_Right_Key_Light.png", Texture.class));
+        msRight.setSize(uiIconZoom, uiIconZoom);
+
+        kbT = new Sprite(manager.get("images/ui/T_Key_Light.png", Texture.class));
+        kbT.setSize(uiIconZoom, uiIconZoom);
     }
 
     private void setupFields() {
@@ -202,12 +217,34 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
         batch.begin();
 
-        // Draw some text
+        // Draw ui elements
         fontRegular.setColor(Color.WHITE);
-        fontRegular.draw(batch, "Scroll: Adjust zoom", 0.1f, 1*fontRegular.getData().lineHeight);
-        fontRegular.draw(batch, "Right mouse: Adjust camera", 0.1f, 2*fontRegular.getData().lineHeight);
-        fontRegular.draw(batch, "Left mouse: Grab upgrade", 0.1f, 3*fontRegular.getData().lineHeight);
+
+        // zoom (mouse wheel)
+        msMiddle.setX(0f);
+        msMiddle.setY(0.15f * fontRegular.getData().lineHeight);
+        msMiddle.draw(batch);
+        fontRegular.draw(batch, "Adjust zoom", fontRegular.getData().lineHeight, fontRegular.getData().lineHeight);
         
+        // move camera (right click)
+        msRight.setX(0f);
+        msRight.setY(1.15f * fontRegular.getData().lineHeight);
+        msRight.draw(batch);
+        fontRegular.draw(batch, "Move camera", fontRegular.getData().lineHeight, 2*fontRegular.getData().lineHeight);
+        
+        // grab upgrade (left click)
+        msLeft.setX(0f);
+        msLeft.setY(2.15f * fontRegular.getData().lineHeight);
+        msLeft.draw(batch);
+        fontRegular.draw(batch, "Grab upgrade", fontRegular.getData().lineHeight, 3*fontRegular.getData().lineHeight);
+        
+        // inspect upgrade (T key)
+        kbT.setX(0f);
+        kbT.setY(3.15f * fontRegular.getData().lineHeight);
+        kbT.draw(batch);
+        fontRegular.draw(batch, "Inspect upgrade", fontRegular.getData().lineHeight, 4*fontRegular.getData().lineHeight);
+
+        // display zoom level if recently scrolled / middle mouse clicked
         if (cameraZoomRecently) {
             float deltaTime = Gdx.graphics.getDeltaTime();
             cameraZoomDeltaTime += deltaTime;
@@ -218,7 +255,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
             } else {
                 Color fontColor = new Color(1f, 0.47f, 0.55f, a);
                 fontRegular.setColor(fontColor);
-                fontRegular.draw(batch, "Zoom = x" + cameraZoomLevels[cameraCurrentZoomLevel], 0.1f, 4*fontRegular.getData().lineHeight);
+                fontRegular.draw(batch, "Zoom = x" + cameraZoomLevels[cameraCurrentZoomLevel], 0.1f, 5*fontRegular.getData().lineHeight);
             }
         }
 
