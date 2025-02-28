@@ -19,6 +19,11 @@ public class SpaceScreen implements Screen {
     BitmapFont fontRegular; //Agency FB Regular
     AssetManager manager; 
 
+    //Constants
+    Color BG_COLOR = Color.BLUE;
+    Color TEXT_COLOR = Color.RED;
+
+
     public SpaceScreen(final SpaceGame game) {
         this.game = game;
         this.batch = this.game.getSpriteBatch();
@@ -46,6 +51,7 @@ public class SpaceScreen implements Screen {
         fontBold.setColor(Color.GREEN);
         fontRegular.setColor(Color.RED);
         
+
         batch.begin();
         batch.draw(manager.get("images/obligator.png", Texture.class), 0f, 3f, 5f, 1f);
         fontBold.draw(batch, "Hello, World!", 1f, 1f);
@@ -54,7 +60,11 @@ public class SpaceScreen implements Screen {
     }
 
     @Override
-    public void dispose() {}
+    public void dispose() {
+        //TODO: Infinite recursion?
+        this.dispose();
+    }
+
 
     @Override
     public void hide() {}

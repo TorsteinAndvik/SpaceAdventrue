@@ -15,19 +15,28 @@ public class TestSpaceGame extends Game implements SpaceGame {
 
     private SpriteBatch batch;
     private AssetManager manager;
+
     private FitViewport fitViewport;
     private ScreenViewport screenViewport;
     private ExtendViewport extendViewport;
 
+    private final int METERS = 7; // screen will be meters x meters (we use meters as Game coordinates, NOT pixel coordinates - these depend on window size, awful to work with)
+
+
     @Override
     public void create() {
         batch = new SpriteBatch();
-        
-        int meters = 9; // screen will be meters x meters (we use meters as Game coordinates, NOT pixel coordinates - these depend on window size, awful to work with)
-        fitViewport = new FitViewport(meters, meters);
+        fitViewport = new FitViewport(METERS, METERS);
         screenViewport = new ScreenViewport();
-        screenViewport.setUnitsPerPixel((float)meters / (float)Gdx.graphics.getWidth());
-        extendViewport = new ExtendViewport(Gdx.graphics.getWidth() / meters, Gdx.graphics.getHeight() / meters);
+        screenViewport.setUnitsPerPixel((float)METERS / (float)Gdx.graphics.getWidth());
+        extendViewport = new ExtendViewport(Gdx.graphics.getWidth() / METERS, Gdx.graphics.getHeight() / METERS);
+        font = new BitmapFont();
+        viewport = new FitViewport(METERS, METERS);
+
+        // font is 15pt, need to scale it to our viewport by ratio of viewport height to screen height
+        font.setUseIntegerPositions(false);
+        font.getData().setScale(viewport.getWorldHeight() / Gdx.graphics.getHeight());
+
     
         manager = new AssetManager();
 
