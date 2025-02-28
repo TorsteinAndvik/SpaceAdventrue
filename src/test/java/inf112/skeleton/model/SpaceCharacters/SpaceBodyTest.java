@@ -15,7 +15,6 @@ public class SpaceBodyTest {
     assertEquals("Ceres is a dwarf planet", asteroid.getDescription());
     assertEquals(37, asteroid.getX());
     assertEquals(68, asteroid.getY());
-    assertEquals(100, asteroid.getHealthPoints());
     assertEquals(600, asteroid.getMass());
     assertEquals(10_000, asteroid.getSpeed());
     assertEquals(45, asteroid.getRotationAngle());
@@ -44,7 +43,6 @@ public class SpaceBodyTest {
     asteroid.setDescription("Hygiea is a major asteroid located in the main asteroid belt");
     asteroid.setX(0);
     asteroid.setY(1);
-    asteroid.setHealthPoints(99);
     asteroid.setMass(500);
     asteroid.setSpeed(10);
     asteroid.setRotation(90);
@@ -52,7 +50,6 @@ public class SpaceBodyTest {
     assertEquals("Hygiea is a major asteroid located in the main asteroid belt", asteroid.getDescription());
     assertEquals(0, asteroid.getX());
     assertEquals(1, asteroid.getY());
-    assertEquals(99, asteroid.getHealthPoints());
     assertEquals(500, asteroid.getMass());
     assertEquals(10, asteroid.getSpeed());
     assertEquals(90, asteroid.getRotationAngle());
