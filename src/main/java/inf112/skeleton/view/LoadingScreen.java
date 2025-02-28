@@ -4,11 +4,17 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.FileHandleResolver;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
+import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
+import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader.FreeTypeFontLoaderParameter;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class LoadingScreen implements Screen {
@@ -32,13 +38,40 @@ public class LoadingScreen implements Screen {
 
     private void queueAssets() {
         // Textures:
+            // upgrades
         queueTexture("images/upgrade_grid_tile_green.png");
         queueTexture("images/upgrade_grid_tile_red.png");
         queueTexture("images/upgrade_grid_tile_gray.png");
-        queueTexture("images/obligator.png");
+        queueTexture("images/upgrades/turret_laser_stage_0.png");
+        queueTexture("images/upgrades/fuselage_alt_stage_0.png");
+        queueTexture("images/upgrades/rocket_stage_0.png");
+        queueTexture("images/upgrades/shield_stage_0.png");
+            
+            // ui
+        queueTexture("images/ui/Mouse_Left_Key_Light.png");
+        queueTexture("images/ui/Mouse_Middle_Key_Light.png");
+        queueTexture("images/ui/Mouse_Right_Key_Light.png");
+        queueTexture("images/ui/T_Key_Light.png");
 
         // Sounds:
         queueSound("audio/blipp.ogg");
+
+        // Fonts:
+        FileHandleResolver resolver = new InternalFileHandleResolver();
+        manager.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(resolver));
+        manager.setLoader(BitmapFont.class, ".ttf", new FreetypeFontLoader(resolver));
+
+            // Set params for bold font
+        FreeTypeFontLoaderParameter fontBold = new FreeTypeFontLoaderParameter();
+        fontBold.fontFileName = "fonts/AGENCYB.ttf";
+        fontBold.fontParameters.size = 42;
+        manager.load(fontBold.fontFileName, BitmapFont.class, fontBold);
+
+            // Set params for regular font
+        FreeTypeFontLoaderParameter fontRegular = new FreeTypeFontLoaderParameter();
+        fontRegular.fontFileName = "fonts/AGENCYR.ttf";
+        fontRegular.fontParameters.size = 36;
+        manager.load(fontRegular.fontFileName, BitmapFont.class, fontRegular);
     }
 
     private void queueTexture(String path) {
@@ -49,12 +82,13 @@ public class LoadingScreen implements Screen {
         manager.load(new AssetDescriptor<>(Gdx.files.internal(path), Sound.class));
     }
 
-
     @Override
     public void render(float delta) {
         //First assets are queued for loading in the constructor (before this block of code runs), and then calling .update() here will *actually* load them. 
         if(manager.update(17)) { //all assets are loaded 1 by 1 //blocks for at least 17ms before passing over to render() - roughly 60fps (depends on size of asset, a large enough file might block for longer)
-            game.setScreen(new UpgradeScreen(game));
+            // ONLY CALL ONE OF THESE FOR TESTING:
+            game.setScreen(new UpgradeScreen(game)); //test the UpgradeScreen class
+            //game.setScreen(new SpaceScreen(game));  //test the SpaceScreen class
         }
 
         float progress = manager.getProgress();
@@ -69,28 +103,19 @@ public class LoadingScreen implements Screen {
     }
 
     @Override
-    public void hide() {
-        // TODO: If using per-Screen InputProcessors (recommended), need to *unregister* it here
-    }
+    public void hide() {}
 
     @Override
-    public void pause() {
-        // TODO Auto-generated method stub
-    }
+    public void pause() {}
 
     @Override
     public void resize(int width, int height) {
-        game.getViewport().update(width, height, true);
+        game.getFitViewport().update(width, height, true);
     }
 
     @Override
-    public void resume() {
-        // TODO Auto-generated method stub
-    }
+    public void resume() {}
 
     @Override
-    public void show() {
-        // TODO: If using per-Screen InputProcessors (recommended), need to *register* it here
-    }
-    
+    public void show() {}
 }

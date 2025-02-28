@@ -7,7 +7,7 @@ public interface SpaceBody extends SpaceThing {
   /**
    * Get the health point of a SpaceBody object.
    */
-  int getHealthPoints();
+  public int getHealthPoints();
 
   /**
    * Get the mass of a SpaceBody object.

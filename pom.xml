@@ -34,6 +34,21 @@
 			<version>${libgdx.version}</version>
 			<classifier>natives-desktop</classifier>
 		</dependency>
+        <dependency>
+            <!-- libGDX FreeTypeFont extension -->
+            <groupId>com.badlogicgames.gdx</groupId>
+            <artifactId>gdx-freetype</artifactId>
+            <version>${libgdx.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <!-- platform-specific libraries for FreeTypeFont extension -->
+            <groupId>com.badlogicgames.gdx</groupId>
+            <artifactId>gdx-freetype-platform</artifactId>
+            <version>${libgdx.version}</version>
+            <classifier>natives-desktop</classifier>
+            <scope>compile</scope>
+        </dependency>
 		<dependency>
 			<!-- libgdx OpenGL backend-->
 			<groupId>com.badlogicgames.gdx</groupId>

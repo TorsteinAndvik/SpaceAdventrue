@@ -1,5 +1,6 @@
 package inf112.skeleton.view;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
@@ -7,73 +8,69 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.Viewport;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class SpaceScreen implements Screen {
 
     final SpaceGame game;
     SpriteBatch batch;
-    Viewport viewport;
-    BitmapFont font;
-    AssetManager manager; //An assetmanager helps with loading assets and disposing them once they are no longer needed 
-
-    //Constants
-    Color BG_COLOR = Color.BLUE;
-    Color TEXT_COLOR = Color.RED;
-
+    FitViewport viewport;
+    BitmapFont fontBold;    //Agency FB Bold
+    BitmapFont fontRegular; //Agency FB Regular
+    AssetManager manager; 
 
     public SpaceScreen(final SpaceGame game) {
         this.game = game;
         this.batch = this.game.getSpriteBatch();
         this.manager = this.game.getAssetManager();
+        this.viewport = game.getFitViewport();
+
+        fontBold = manager.get("fonts/AGENCYB.ttf", BitmapFont.class);
+        fontRegular = manager.get("fonts/AGENCYR.ttf", BitmapFont.class);
+
+        // font are set as [integer]pt, need to scale them to our viewport by ratio of viewport height to screen height in order to use world-unit sized font
+        fontBold.setUseIntegerPositions(false);
+        fontBold.getData().setScale(viewport.getWorldHeight() / Gdx.graphics.getHeight());
+
+        fontRegular.setUseIntegerPositions(false);
+        fontRegular.getData().setScale(viewport.getWorldHeight() / Gdx.graphics.getHeight());
     }
 
     @Override
     public void render(float delta) {
-        ScreenUtils.clear(BG_COLOR); // Always wipe screen before drawing
-
-        viewport = game.getViewport();  // TODO: If using multiple viewports, need some way to signal which one to use for different screens (maybe GameState?)
+        ScreenUtils.clear(Color.GRAY); 
+        
         viewport.apply();
         batch.setProjectionMatrix(viewport.getCamera().combined);
 
-        font = game.getFont();
-        font.setColor(TEXT_COLOR);
-
+        fontBold.setColor(Color.GREEN);
+        fontRegular.setColor(Color.RED);
+        
         batch.begin();
-        batch.draw(manager.get("src/main/resources/images/obligator.png", Texture.class), 0f, 3f, 5f, 1f);
-        font.draw(batch, "Hello, World!", 1f, 1f);
+        batch.draw(manager.get("images/obligator.png", Texture.class), 0f, 3f, 5f, 1f);
+        fontBold.draw(batch, "Hello, World!", 1f, 1f);
+        fontRegular.draw(batch, "The helloest of Worlds!", 2f, 2f);
         batch.end();
     }
 
     @Override
-    public void dispose() {
-        //TODO: Infinite recursion?
-        this.dispose();
-    }
+    public void dispose() {}
 
     @Override
-    public void hide() {
-        // TODO: If using per-Screen InputProcessors (recommended), need to *unregister* it here
-    }
+    public void hide() {}
 
     @Override
-    public void pause() {
-        // TODO Auto-generated method stub
-    }
+    public void pause() {}
 
     @Override
     public void resize(int width, int height) {
-        game.getViewport().update(width, height, true);
+        viewport.update(width, height, true);
     }
 
     @Override
-    public void resume() {
-        // TODO Auto-generated method stub
-    }
+    public void resume() {}
 
     @Override
-    public void show() {
-        // TODO: If using per-Screen InputProcessors (recommended), need to *register* it here
-    }
+    public void show() {}
     
 }
