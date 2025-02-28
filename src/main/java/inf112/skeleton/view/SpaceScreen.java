@@ -52,6 +52,7 @@ public class SpaceScreen implements Screen {
         fontRegular.setColor(Color.RED);
         
         batch.begin();
+        batch.draw(manager.get("images/obligator.png", Texture.class), 0f, 3f, 5f, 1f);
         fontBold.draw(batch, "Hello, World!", 1f, 1f);
         fontRegular.draw(batch, "The helloest of Worlds!", 2f, 2f);
         batch.end();
