@@ -38,15 +38,23 @@ public class UpgradeScreenController extends InputAdapter {
     if (model.isLeftClickLocked()) return true;
 
     model.setRightClickLocked(true);
+    model.setReleaseGrabbedUpgrade(false);
     model.updateMouseDrag(screenX, screenY, true);
+
     touchPos.set(screenX, screenY);
     view.unprojectTouchPos(touchPos);
 
+    CellPosition cpGrid = view.convertMouseToGrid(touchPos.x, touchPos.y);
     CellPosition cpUpgrade = convertMouseToUpgradeBar(touchPos.x, touchPos.y);
+
+
+    if (cellPositionOnGrid(cpGrid)) {
+      System.out.println("x = " + cpGrid.col() + ", y = " + cpGrid.row());
+    }
+
     if (cellPositionOnUpgradeOptions(cpUpgrade)) {
       model.setGrabbedUpgradeIndex(cpUpgrade.col());
       model.setUpgradeGrabbed(true);
-      model.setReleaseGrabbedUpgrade(false);
     }
 
     return true;

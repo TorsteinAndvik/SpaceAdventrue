@@ -232,7 +232,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         return touchPos;
     }
 
-    private CellPosition convertMouseToGrid(float x, float y) {
+    public CellPosition convertMouseToGrid(float x, float y) {
         return new CellPosition(
             (int) Math.floor(y - model.getGridOffsetY()),
             (int) Math.floor(x - model.getGridOffsetX())
