@@ -19,11 +19,6 @@ public class SpaceScreen implements Screen {
     BitmapFont fontRegular; //Agency FB Regular
     AssetManager manager; 
 
-    //Constants
-    Color BG_COLOR = Color.BLUE;
-    Color TEXT_COLOR = Color.RED;
-
-
     public SpaceScreen(final SpaceGame game) {
         this.game = game;
         this.batch = this.game.getSpriteBatch();
