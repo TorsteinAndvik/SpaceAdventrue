@@ -15,9 +15,8 @@ public class TestSpaceGame extends Game implements SpaceGame {
 
     private SpriteBatch batch;
     private AssetManager manager;
-    private FitViewport fitViewport;
-    private ScreenViewport screenViewport;
-    private ExtendViewport extendViewport;
+    private FitViewport viewport;
+    private final int METERS = 7; // screen will be meters x meters (we use meters as Game coordinates, NOT pixel coordinates - these depend on window size, awful to work with)
 
     @Override
     public void create() {
