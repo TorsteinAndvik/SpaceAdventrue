@@ -3,7 +3,7 @@ package inf112.skeleton.model.SpaceCharacters;
 import inf112.skeleton.model.Globals.DamageDealer;
 import inf112.skeleton.model.Globals.Damageable;
 
-public class Projectile extends SpaceBody implements Damageable, DamageDealer {
+public abstract class Projectile extends SpaceBody implements Damageable, DamageDealer {
 
   private int hitPoints;
 
@@ -15,7 +15,7 @@ public class Projectile extends SpaceBody implements Damageable, DamageDealer {
   }
 
   /**
-   * Get the health points of an Projectile object.
+   * Get the health points of a Projectile object.
    */
   @Override
   public int getHitPoints() {
