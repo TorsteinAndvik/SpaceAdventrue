@@ -5,5 +5,6 @@ public interface Damageable {
 
   int getHealthPoints();
 
+  boolean isDestroyed();
 }
 
