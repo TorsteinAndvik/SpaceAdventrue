@@ -11,6 +11,7 @@ public abstract class SpaceBody implements SpaceThing {
   private int y;
   private int mass;
   private int speed;
+  private int radius;
 
   public SpaceBody(String name, String description, int x, int y, int mass, int speed, float angle) {
     this.name = name;
@@ -131,5 +132,21 @@ public abstract class SpaceBody implements SpaceThing {
     this.rotation.rotate(deltaAngle);
     return true; // TODO: Check if can rotate;
   }
+
+    /**
+   *  Set the radius of a SpaceBody object.
+   */
+  public void setRadius(int r){
+    this.radius=r;
+  }
+
+  /**
+   *  Get the radius of a SpaceBody object.
+   */
+  public int getRadius(){
+    return this.radius;
+  }
+
+
 
 }
