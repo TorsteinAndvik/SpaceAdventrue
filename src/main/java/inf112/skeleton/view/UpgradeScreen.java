@@ -18,6 +18,10 @@ import inf112.skeleton.controller.UpgradeScreenController;
 import inf112.skeleton.grid.CellPosition;
 import inf112.skeleton.model.UpgradeScreenModel;
 
+/**
+ * Screen for managing ship upgrades in game.
+ * Handles rendering of upgrade grid, options and UI elements.
+ */
 public class UpgradeScreen extends InputAdapter implements Screen {
 
     private final SpaceGame game;
@@ -51,7 +55,12 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     private final String[] upgradeStrings;
 
 
-
+    /**
+     * Creates a new upgrade screen with necessary components for rendering and input handling.
+     * Initializes viewports, fonts, sprites and upgrade system.
+     *
+     * @param spaceGame The main game instance providing sprites, and other resources.
+     */
     public UpgradeScreen(final SpaceGame spaceGame) {
         this.game = spaceGame;
         this.batch = game.getSpriteBatch();
@@ -165,7 +174,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
         batch.end();
 
-        // Draw UI elements
+        // draw UI elements
         viewportUI.apply(true);
         batch.setProjectionMatrix(viewportUI.getCamera().combined);
         batch.begin();
@@ -232,7 +241,8 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         return touchPos;
     }
 
-    public CellPosition convertMouseToGrid(float x, float y) {
+
+    private CellPosition convertMouseToGrid(float x, float y) {
         return new CellPosition(
             (int) Math.floor(y - model.getGridOffsetY()),
             (int) Math.floor(x - model.getGridOffsetX())
@@ -246,10 +256,23 @@ public class UpgradeScreen extends InputAdapter implements Screen {
             gridY < 0 || gridY > model.getGridHeight() - 1);
     }
 
+    /**
+     * Updates camera zoom level.
+     * Used by controller to adjust view magnification based on user input.
+     *
+     * @param zoom The new zoom level to apply to camera.
+     */
     public void updateCameraZoom(float zoom) {
         ((OrthographicCamera) viewportGame.getCamera()).zoom = zoom;
     }
 
+    /**
+     * Updates camera position based on screen offset.
+     * Handles camera movement and staying within world bounds.
+     *
+     * @param offsetX The x offset in screen coordinates.
+     * @param offsetY the y offset in screen coordinates.
+     */
     public void updateCameraPosition(int offsetX, int offsetY) {
         float cameraX = viewportGame.getScreenWidth()/2f + offsetX;
         float cameraY = viewportGame.getScreenHeight()/2f + offsetY;
@@ -266,6 +289,12 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         v.y = Math.max(Math.min(v.y, maxY), minY);
     }
 
+    /**
+     * Convert screen coordinate to world coordinates. Windows have origin at top-left,
+     * game world at bottom-left.
+     *
+     * @param pos The position vector to be converted.
+     */
     public void unprojectTouchPos(Vector2 pos) {
         viewportGame.unproject(pos);
     }
