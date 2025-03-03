@@ -2,6 +2,9 @@ package inf112.skeleton.model;
 
 import com.badlogic.gdx.math.Vector2;
 
+/**
+ * Model for the Upgrade Screen. Handles game state for upgrades, camera controls and UI positioning.
+ */
 public class UpgradeScreenModel {
   private final int gridWidth = 5;
   private final int gridHeight = 5;
@@ -26,6 +29,10 @@ public class UpgradeScreenModel {
   private final Vector2 dragPosition;
   private final Vector2 lastDragPosition;
 
+  /**
+   * Initializes an upgrade screen model with vectors for tracking positions.
+   * Also initializes camera zoom, and sets to middle zoom level.
+   */
   public UpgradeScreenModel() {
     cameraPosition = new Vector2();
     mousePosition = new Vector2();
@@ -36,7 +43,7 @@ public class UpgradeScreenModel {
   }
 
   /**
-   * 
+   * Reset state of the model.
    */
   public void resetState() {
     upgradeGrabbed = false;
@@ -46,6 +53,12 @@ public class UpgradeScreenModel {
     cameraZoomDeltaTime = 0f;
   }
 
+  /**
+   * Upgrade camera zoom level based on scroll input.
+   * Clamps zoom level between minimum and maximum zoom.
+   * Triggers zoom level display UI.
+   * @param amount The scroll amount to adjust zoom by (positive values = zoom out etc.)
+   */
   public void updateCameraZoom(float amount) {
     cameraCurrentZoomLevel = Math.min(Math.max(cameraCurrentZoomLevel + (int)amount, 0),
         cameraZoomLevels.length - 1);
@@ -53,6 +66,10 @@ public class UpgradeScreenModel {
     cameraZoomDeltaTime = 0f;
   }
 
+  /**
+   * Update timer for fading out zoom level display.
+   * @param delta Time elapsed since last update in seconds.
+   */
   public void updateCameraZoomDeltaTime(float delta) {
     if (cameraZoomRecently) {
       cameraZoomDeltaTime += delta;
@@ -65,11 +82,22 @@ public class UpgradeScreenModel {
     }
   }
 
+  /**
+   * Updates the drag position for mouse input tracking.
+   * Stores current position as last position before updating
+   * @param x The new x-coordinate in screen coordinates.
+   * @param y The new y-coordinate in screen coordinates.
+   */
   public void updateDragPosition(int x, int y) {
     lastDragPosition.set(dragPosition);
     dragPosition.set(x, y);
   }
 
+  /**
+   * Calculated the delta between the current and last drag positions.
+   * Used for camera movement and drag-and-drop operations
+   * @return A Vector2 containing the x and y differences between drag positions.
+   */
   public Vector2 getDragDelta() {
     return new Vector2(
         lastDragPosition.x - dragPosition.x,
@@ -77,6 +105,12 @@ public class UpgradeScreenModel {
     );
   }
 
+  /**
+   * Updates offset for upgrade grid adnd upgrade bar elements.
+   * Centers these elements in available screen space.
+   * @param worldWidth The width of the game world in world units.
+   * @param worldHeight The height of the game world in world units.
+   */
   public void updateOffsets(float worldWidth, float worldHeight) {
     float upgradeToGridDelta = 2f;
     gridOffsetX = (worldWidth - gridWidth) / 2f;
