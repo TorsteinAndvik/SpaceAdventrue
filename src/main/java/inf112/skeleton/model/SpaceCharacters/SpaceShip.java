@@ -72,8 +72,7 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
 //  public Iterable<Gun> guns() {
 //    return gunList;
 //  }
-
-  public abstract void attack(SpaceBodyView target);
+//  public abstract void attack(SpaceBodyView target);
 
 
 }
