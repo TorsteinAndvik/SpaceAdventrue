@@ -18,9 +18,20 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
 
   public SpaceShip(String name, String description, int maxHitPoints, int hitPoints, int x, int y, int mass, int speed, float angle, int radius) {
     super(name, description, x, y, mass, speed, angle, radius);
+    if (hitPoints <= 0 || maxHitPoints <= 0) {
+      throw new IllegalArgumentException("Hit points must be positive on ship creation");
+    }
+    if (maxHitPoints < hitPoints) {
+      throw new IllegalArgumentException("Hit points can't be higher than max hit points");
+    }
     this.hitPoints = hitPoints;
     this.maxHitPoints = maxHitPoints;
 //    this.gunList = new ArrayList<>();
+  }
+
+  @Override
+  public int getMaxHitPoints() {
+    return maxHitPoints;
   }
 //  public void addGun(Gun gun) {
 //    gunList.add(gun);
@@ -29,8 +40,9 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
   @Override
   public void dealDamage(Damageable target) {
     // Damage dealt when ship hits damageable object
+    int targetHp = target.getHitPoints();
     target.takeDamage(this.getHitPoints());
-
+    this.takeDamage(targetHp);
   }
 
   @Override
@@ -38,7 +50,7 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
     if (hitPoints < 0) {
       throw new IllegalArgumentException("Damage can't be negative");
     }
-    this.hitPoints -= hitPoints;
+    this.hitPoints = Math.max(0, this.hitPoints - hitPoints);
   }
 
   @Override
