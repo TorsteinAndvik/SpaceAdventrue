@@ -2,34 +2,67 @@ package inf112.skeleton.model.SpaceCharacters;
 
 import inf112.skeleton.model.Globals.DamageDealer;
 import inf112.skeleton.model.Globals.Damageable;
+import inf112.skeleton.model.Globals.Repairable;
+//import java.util.ArrayList;
+//import java.util.List;
 
-public class SpaceShip extends SpaceBody implements DamageDealer, Damageable {
-  private int healthPoints;
+public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damageable, Repairable {
+  private int maxHitPoints;
+  private int hitPoints;
+//  private List<Gun> gunList;
 
-  public SpaceShip(String name, String description, int healthPoints, int x, int y, int mass, int speed, float angle) {
-    super(name, description, x, y, mass, speed, angle);
-    this.healthPoints = healthPoints;
+
+  public SpaceShip(String name, String description, int maxHealthPoints, int x, int y, int mass, int speed, float angle, int radius) {
+    this(name, description, maxHealthPoints, maxHealthPoints, x, y, mass, speed, angle, radius);
   }
+
+  public SpaceShip(String name, String description, int maxHitPoints, int hitPoints, int x, int y, int mass, int speed, float angle, int radius) {
+    super(name, description, x, y, mass, speed, angle, radius);
+    this.hitPoints = hitPoints;
+    this.maxHitPoints = maxHitPoints;
+//    this.gunList = new ArrayList<>();
+  }
+//  public void addGun(Gun gun) {
+//    gunList.add(gun);
+//  }
 
   @Override
   public void dealDamage(Damageable target) {
+    // Damage dealt when ship hits damageable object
+    target.takeDamage(this.getHitPoints());
+
   }
 
   @Override
-  public void takeDamage(int damagePoints) {
-    if (damagePoints < 0) {
+  public void takeDamage(int hitPoints) {
+    if (hitPoints < 0) {
       throw new IllegalArgumentException("Damage can't be negative");
     }
-    healthPoints -= damagePoints;
+    this.hitPoints -= hitPoints;
   }
 
   @Override
-  public int getHealthPoints() {
-    return healthPoints;
+  public int getHitPoints() {
+    return hitPoints;
   }
 
   @Override
   public boolean isDestroyed() {
-    return false;
+    return hitPoints <= 0;
   }
+
+  @Override
+  public void repair(int hitPoints) {
+    if (isDestroyed()) {
+      return;
+    }
+    this.hitPoints = Math.min(maxHitPoints, this.hitPoints + hitPoints);
+  }
+//  public Iterable<Gun> guns() {
+//    return gunList;
+//  }
+
+  public abstract void attack(SpaceBodyView target);
+
+
 }
