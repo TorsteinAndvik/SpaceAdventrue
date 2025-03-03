@@ -14,11 +14,17 @@ public interface Damageable {
   int getHitPoints();
 
   /**
+   * Get the maximum number of hit points this Damageable object can have.
+   *
+   * @return the max hit point number of this Damageable object.
+   */
+  int getMaxHitPoints();
+
+  /**
    * Checks if a damageable object is destroyed.
    *
    * @return true if destroyed, else false.
    */
   boolean isDestroyed();
-
 }
 
