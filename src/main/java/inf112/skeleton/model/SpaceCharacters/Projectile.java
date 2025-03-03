@@ -9,8 +9,8 @@ public abstract class Projectile extends SpaceBody implements Damageable, Damage
 
   private final int multiplier = 1;
 
-  public Projectile(String name, String description, int x, int y, int healthPoints, int mass, int speed, float angle) {
-    super(name, description, x, y, mass, speed, angle);
+  public Projectile(String name, String description, int x, int y, int healthPoints, int mass, int speed, float angle, int radius) {
+    super(name, description, x, y, mass, speed, angle, radius);
     this.hitPoints = healthPoints;
   }
 

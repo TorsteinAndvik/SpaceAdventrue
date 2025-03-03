@@ -10,7 +10,7 @@ public class SpaceBodyTest {
   void createSpaceBodyTest() {
     SpaceBody asteroid = new Asteroid(
             "Ceres", "Ceres is a dwarf planet",
-            37, 68, 100, 600, 10_000, 45);
+            37, 68, 100, 600, 10_000, 45, 100);
     assertEquals("Ceres", asteroid.getName());
     assertEquals("Ceres is a dwarf planet", asteroid.getDescription());
     assertEquals(37, asteroid.getX());
@@ -18,6 +18,7 @@ public class SpaceBodyTest {
     assertEquals(600, asteroid.getMass());
     assertEquals(10_000, asteroid.getSpeed());
     assertEquals(45, asteroid.getRotationAngle());
+    assertEquals(100, asteroid.getRadius());
 
   }
 
@@ -25,7 +26,7 @@ public class SpaceBodyTest {
   void ChangeAngleSpaceBodyTest() {
     SpaceBody asteroid = new Asteroid(
             "Ceres", "Ceres is a dwarf planet",
-            0, 0, 1, 1, 0, 45);
+            0, 0, 1, 1, 0, 45, 100);
     assertEquals(45, asteroid.getRotationAngle());
     asteroid.rotate(314);
     assertEquals(359, asteroid.getRotationAngle());
@@ -38,7 +39,7 @@ public class SpaceBodyTest {
   void SetterGetterTests() {
     SpaceBody asteroid = new Asteroid(
             "Ceres", "Ceres is a dwarf planet",
-            37, 68, 100, 600, 10_000, 45);
+            37, 68, 100, 600, 10_000, 45, 100);
     asteroid.setName("Hygiea");
     asteroid.setDescription("Hygiea is a major asteroid located in the main asteroid belt");
     asteroid.setX(0);
@@ -46,6 +47,7 @@ public class SpaceBodyTest {
     asteroid.setMass(500);
     asteroid.setSpeed(10);
     asteroid.setRotation(90);
+    asteroid.setRadius(200);
     assertEquals("Hygiea", asteroid.getName());
     assertEquals("Hygiea is a major asteroid located in the main asteroid belt", asteroid.getDescription());
     assertEquals(0, asteroid.getX());
@@ -53,6 +55,7 @@ public class SpaceBodyTest {
     assertEquals(500, asteroid.getMass());
     assertEquals(10, asteroid.getSpeed());
     assertEquals(90, asteroid.getRotationAngle());
+    assertEquals(200, asteroid.getRadius());
   }
 
 }
