@@ -1,45 +1,35 @@
 package inf112.skeleton.controller;
 
-import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Vector2;
 import inf112.skeleton.model.UpgradeScreenModel;
 import inf112.skeleton.view.UpgradeScreen;
 import inf112.skeleton.grid.CellPosition;
 
-public class UpgradeScreenController extends InputAdapter {
+public class UpgradeScreenController extends GenericController {
   private final UpgradeScreenModel model;
   private final UpgradeScreen view;
-  private final Vector2 touchPos;
+
 
   public UpgradeScreenController(UpgradeScreen view, UpgradeScreenModel model) {
+    super(); //GenericController gives us touchpos
     this.view = view;
     this.model = model;
-    this.touchPos = new Vector2();
   }
 
   @Override
-  public boolean scrolled(float amountX, float amountY) {
-    model.updateCameraZoom(amountY);
+  protected void handleScroll(float amount) {
+    model.updateCameraZoom(amount);
     view.updateCameraZoom(model.getCurrentZoom());
-    return true;
   }
+
 
   @Override
-  public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-    return switch (button) {
-      case 0 -> leftClick(screenX, screenY);
-      case 1 -> rightClick(screenX, screenY);
-      case 2 -> middleClick();
-      default -> false;
-    };
-  }
+  protected boolean leftClick(int screenX, int screenY) {
+    if (isLeftClickLocked()) return true;
 
-  private boolean leftClick(int screenX, int screenY) {
-    if (model.isLeftClickLocked()) return true;
-
-    model.setRightClickLocked(true);
+    setRightClickLocked(true);
     model.setReleaseGrabbedUpgrade(false);
-    model.updateMouseDrag(screenX, screenY, true);
+    model.updateDragPosition(screenX, screenY);
 
     touchPos.set(screenX, screenY);
     view.unprojectTouchPos(touchPos);
@@ -60,61 +50,49 @@ public class UpgradeScreenController extends InputAdapter {
     return true;
   }
 
-  private boolean rightClick(int screenX, int screenY) {
-    if (model.isRightClickLocked()) return true;
+  @Override
+  protected boolean rightClick(int screenX, int screenY) {
+    if (isRightClickLocked()) return true;
 
-    model.setLeftClickLocked(true);
-    model.updateMouseDrag(screenX, screenY, false);
+    setLeftClickLocked(true);
+    model.updateDragPosition(screenX, screenY);
     return true;
   }
 
-  private boolean middleClick() {
+  @Override
+  protected boolean middleClick() {
     model.setCameraZoomRecently(true);
     model.updateCameraZoomDeltaTime(0f);
     return true;
   }
 
+@Override
+  protected boolean leftClickDragged(int screenX, int screenY) {
+    model.updateDragPosition(screenX, screenY);
+    return true;
+  }
+
   @Override
-  public boolean touchDragged(int screenX, int screenY, int pointer) {
-    if (model.isLeftClickLocked()) {
-      return rightClickDragged(screenX, screenY);
-    } else if (model.isRightClickLocked()) {
-      return leftClickDragged(screenX, screenY);
-    }
-    return true;
-  }
-
-  private boolean leftClickDragged(int screenX, int screenY) {
-    model.updateMouseDrag(screenX, screenY, true);
-    return true;
-  }
-
-  private boolean rightClickDragged(int screenX, int screenY) {
-    Vector2 dragDelta = model.getDragDelta(screenX, screenY, true);
+  protected boolean rightClickDragged(int screenX, int screenY) {
+    model.updateDragPosition(screenX, screenY);
+    Vector2 dragDelta = model.getDragDelta();
     view.updateCameraPosition((int)dragDelta.x, (int)dragDelta.y);
     return true;
   }
 
-  @Override
-  public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-    if (button == 0) {
-      return leftClickRelease();
-    } else if (button == 1) {
-      return rightClickRelease();
-    }
-    return false;
-  }
 
-  private boolean leftClickRelease() {
-    if (model.isLeftClickLocked()) return true;
-    model.setRightClickLocked(false);
+@Override
+  protected boolean leftClickRelease() {
+    if (isLeftClickLocked()) return true;
+    setRightClickLocked(false);
     model.setReleaseGrabbedUpgrade(true);
     return true;
   }
 
-  private boolean rightClickRelease() {
-    if (model.isRightClickLocked()) return true;
-    model.setLeftClickLocked(false);
+  @Override
+  protected boolean rightClickRelease() {
+    if (isRightClickLocked()) return true;
+    setLeftClickLocked(false);
     return true;
   }
 

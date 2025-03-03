@@ -23,26 +23,25 @@ public class UpgradeScreenModel {
   private int grabbedUpgradeIndex;
 
   private final Vector2 mousePosition;
-  private int leftClickDragX;
-  private int leftClickDragY;
-  private int rightClickDragX;
-  private int rightClickDragY;
-  private boolean leftClickLocked;
-  private boolean rightClickLocked;
+  private final Vector2 dragPosition;
+  private final Vector2 lastDragPosition;
 
   public UpgradeScreenModel() {
     cameraPosition = new Vector2();
     mousePosition = new Vector2();
+    dragPosition = new Vector2();
+    lastDragPosition = new Vector2();
     cameraCurrentZoomLevel = cameraZoomLevels.length / 2;
     resetState();
   }
 
+  /**
+   * 
+   */
   public void resetState() {
     upgradeGrabbed = false;
     releaseGrabbedUpgrade = false;
     grabbedUpgradeIndex = -1;
-    leftClickLocked = false;
-    rightClickLocked = false;
     cameraZoomRecently = false;
     cameraZoomDeltaTime = 0f;
   }
@@ -66,14 +65,16 @@ public class UpgradeScreenModel {
     }
   }
 
-  public void updateMouseDrag(int screenX, int screenY, boolean isLeftClick) {
-    if (isLeftClick) {
-      leftClickDragX = screenX;
-      leftClickDragY = screenY;
-    } else {
-      rightClickDragX = screenX;
-      rightClickDragY = screenY;
-    }
+  public void updateDragPosition(int x, int y) {
+    lastDragPosition.set(dragPosition);
+    dragPosition.set(x, y);
+  }
+
+  public Vector2 getDragDelta() {
+    return new Vector2(
+        lastDragPosition.x - dragPosition.x,
+        lastDragPosition.y - dragPosition.y
+    );
   }
 
   public void updateOffsets(float worldWidth, float worldHeight) {
@@ -84,28 +85,10 @@ public class UpgradeScreenModel {
     upgradeOffsetY = gridOffsetY + gridHeight + upgradeToGridDelta / 2f;
   }
 
-  public Vector2 getDragDelta(int newX, int newY, boolean isRightClick) {
-    int offsetX, offsetY;
-    if (isRightClick) {
-      offsetX = rightClickDragX - newX;
-      offsetY = rightClickDragY - newY;
-      rightClickDragX = newX;
-      rightClickDragY = newY;
-    } else {
-      offsetX = leftClickDragX - newX;
-      offsetY = leftClickDragY - newY;
-      leftClickDragX = newX;
-      leftClickDragY = newY;
-    }
-    return new Vector2(offsetX, offsetY);
-  }
-
 
   public float getCurrentZoom() { return cameraZoomLevels[cameraCurrentZoomLevel]; }
   public boolean isUpgradeGrabbed() { return upgradeGrabbed; }
   public int getGrabbedUpgradeIndex() { return grabbedUpgradeIndex; }
-  public boolean isLeftClickLocked() { return leftClickLocked; }
-  public boolean isRightClickLocked() { return rightClickLocked; }
   public int getGridWidth() { return gridWidth; }
   public int getGridHeight() { return gridHeight; }
   public int getNumUpgradeOptions() { return numUpgradeOptions; }
@@ -119,16 +102,11 @@ public class UpgradeScreenModel {
   public float getCameraZoomTextFadeCutoffTime() { return cameraZoomTextFadeCutoffTime; }
   public boolean isReleaseGrabbedUpgrade() { return releaseGrabbedUpgrade; }
   public Vector2 getMousePosition() { return mousePosition; }
-  public int getLeftClickDragX() { return leftClickDragX; }
-  public int getLeftClickDragY() { return leftClickDragY; }
-
+  public float getDragX() { return dragPosition.x; }
+  public float getDragY() { return dragPosition.y; }
 
   public void setUpgradeGrabbed(boolean grabbed) { this.upgradeGrabbed = grabbed; }
   public void setGrabbedUpgradeIndex(int index) { this.grabbedUpgradeIndex = index; }
-  public void setLeftClickLocked(boolean locked) { this.leftClickLocked = locked; }
-  public void setRightClickLocked(boolean locked) { this.rightClickLocked = locked; }
-  public void setCameraPosition(float x, float y) { this.cameraPosition.set(x, y); }
-  public void setMousePosition(float x, float y) { this.mousePosition.set(x, y); }
   public void setReleaseGrabbedUpgrade(boolean value) { this.releaseGrabbedUpgrade = value; }
   public void setCameraZoomRecently(boolean value) { this.cameraZoomRecently = value; }
 }

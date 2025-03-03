@@ -152,7 +152,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
             }
 
             // draw held upgrade
-            Vector2 pos = worldToGameCoordinates(model.getLeftClickDragX(), model.getLeftClickDragY());
+            Vector2 pos = worldToGameCoordinates(model.getDragX(), model.getDragY());
             upgradeIcons[model.getGrabbedUpgradeIndex()].setX(pos.x - 0.5f * upgradeIconZoom);
             upgradeIcons[model.getGrabbedUpgradeIndex()].setY(pos.y - 0.5f * upgradeIconZoom);
             upgradeIcons[model.getGrabbedUpgradeIndex()].draw(batch);
@@ -226,7 +226,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         squareSprite.draw(batch);
     }
 
-    private Vector2 worldToGameCoordinates(int worldX, int worldY) {
+    private Vector2 worldToGameCoordinates(float worldX, float worldY) {
         touchPos.set(worldX, worldY);
         viewportGame.unproject(touchPos);
         return touchPos;
