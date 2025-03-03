@@ -1,5 +1,6 @@
 package inf112.skeleton.controller;
 
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
 import inf112.skeleton.grid.CellPosition;
 import inf112.skeleton.model.UpgradeScreenModel;
@@ -21,6 +22,12 @@ public class UpgradeScreenController extends GenericController {
   protected void handleScroll(float amount) {
     model.updateCameraZoom(amount);
     view.updateCameraZoom(model.getCurrentZoom());
+  }
+
+  @Override
+  protected boolean handleKeyDown(int keycode) {
+    //TODO: add this feature?
+    return keycode == Keys.T;
   }
 
 

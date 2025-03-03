@@ -1,5 +1,6 @@
 package inf112.skeleton.controller;
 
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 import inf112.skeleton.model.SpaceGameModel;
 import inf112.skeleton.view.SpaceScreen;
@@ -14,6 +15,39 @@ public class SpaceGameScreenController extends GenericController {
     this.model = model;
     this.view = view;
     this.touchPos = new Vector2();
+  }
+
+  @Override
+  protected boolean handleKeyDown(int keycode) {
+    switch (keycode) {
+      case Input.Keys.W:
+        model.moveUp();
+        return true;
+      case Input.Keys.S:
+        model.moveDown();
+        return true;
+      case Input.Keys.A:
+        model.moveLeft();
+      case Input.Keys.D:
+        model.moveRight();
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  @Override
+  protected boolean handleKeyUp(int keycode) {
+    switch (keycode) {
+      case Input.Keys.W:
+      case Input.Keys.S:
+      case Input.Keys.A:
+      case Input.Keys.D:
+        model.stopMoving();
+        return true;
+      default:
+        return false;
+    }
   }
 
   @Override
