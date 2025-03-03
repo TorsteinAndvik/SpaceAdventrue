@@ -3,7 +3,7 @@ package inf112.skeleton.model.SpaceCharacters;
 import inf112.skeleton.model.Globals.SpaceThing;
 import inf112.skeleton.model.utils.Rotation;
 
-public abstract class SpaceBody implements SpaceThing {
+public abstract class SpaceBody implements SpaceThing, SpaceBodyView {
   private String name;
   private String description;
   private final Rotation rotation;
@@ -44,9 +44,7 @@ public abstract class SpaceBody implements SpaceThing {
     return description;
   }
 
-  /**
-   * Get the x-coordinate of a SpaceBody object.
-   */
+  @Override
   public int getX() {
     return x;
   }
@@ -58,9 +56,7 @@ public abstract class SpaceBody implements SpaceThing {
     this.x = x;
   }
 
-  /**
-   * Get the y-coordinate of a SpaceBody object.
-   */
+  @Override
   public int getY() {
     return y;
   }
@@ -72,11 +68,7 @@ public abstract class SpaceBody implements SpaceThing {
     this.y = y;
   }
 
-  /**
-   * Get the mass of a SpaceBody object.
-   *
-   * @return the mass og a given object.
-   */
+  @Override
   public int getMass() {
     return mass;
   }
@@ -90,11 +82,7 @@ public abstract class SpaceBody implements SpaceThing {
     this.mass = mass;
   }
 
-  /**
-   * Get the speed of a SpaceBody object.
-   *
-   * @return the speed of the given object.
-   */
+  @Override
   public int getSpeed() {
     return speed;
   }
@@ -108,11 +96,7 @@ public abstract class SpaceBody implements SpaceThing {
     this.speed = speed;
   }
 
-  /**
-   * The rotation of a SpaceBody object.
-   *
-   * @return the rotation of the given object.
-   */
+  @Override
   public float getRotationAngle() {
     return rotation.getAngle();
   }
@@ -133,20 +117,16 @@ public abstract class SpaceBody implements SpaceThing {
     return true; // TODO: Check if can rotate;
   }
 
-    /**
-   *  Set the radius of a SpaceBody object.
+  /**
+   * Set the radius of a SpaceBody object.
    */
-  public void setRadius(int r){
-    this.radius=r;
+  public void setRadius(int r) {
+    this.radius = r;
   }
 
-  /**
-   *  Get the radius of a SpaceBody object.
-   */
-  public int getRadius(){
+  @Override
+  public int getRadius() {
     return this.radius;
   }
-
-
-
+  
 }
