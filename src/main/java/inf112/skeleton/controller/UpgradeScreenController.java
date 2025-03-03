@@ -1,11 +1,12 @@
 package inf112.skeleton.controller;
 
 import com.badlogic.gdx.math.Vector2;
+import inf112.skeleton.grid.CellPosition;
 import inf112.skeleton.model.UpgradeScreenModel;
 import inf112.skeleton.view.UpgradeScreen;
-import inf112.skeleton.grid.CellPosition;
 
 public class UpgradeScreenController extends GenericController {
+
   private final UpgradeScreenModel model;
   private final UpgradeScreen view;
 
@@ -25,7 +26,9 @@ public class UpgradeScreenController extends GenericController {
 
   @Override
   protected boolean leftClick(int screenX, int screenY) {
-    if (isLeftClickLocked()) return true;
+    if (isLeftClickLocked()) {
+      return true;
+    }
 
     setRightClickLocked(true);
     model.setReleaseGrabbedUpgrade(false);
@@ -36,7 +39,6 @@ public class UpgradeScreenController extends GenericController {
 
     CellPosition cpGrid = view.convertMouseToGrid(touchPos.x, touchPos.y);
     CellPosition cpUpgrade = convertMouseToUpgradeBar(touchPos.x, touchPos.y);
-
 
     if (cellPositionOnGrid(cpGrid)) {
       System.out.println("x = " + cpGrid.col() + ", y = " + cpGrid.row());
@@ -52,7 +54,9 @@ public class UpgradeScreenController extends GenericController {
 
   @Override
   protected boolean rightClick(int screenX, int screenY) {
-    if (isRightClickLocked()) return true;
+    if (isRightClickLocked()) {
+      return true;
+    }
 
     setLeftClickLocked(true);
     model.updateDragPosition(screenX, screenY);
@@ -66,7 +70,7 @@ public class UpgradeScreenController extends GenericController {
     return true;
   }
 
-@Override
+  @Override
   protected boolean leftClickDragged(int screenX, int screenY) {
     model.updateDragPosition(screenX, screenY);
     return true;
@@ -76,14 +80,16 @@ public class UpgradeScreenController extends GenericController {
   protected boolean rightClickDragged(int screenX, int screenY) {
     model.updateDragPosition(screenX, screenY);
     Vector2 dragDelta = model.getDragDelta();
-    view.updateCameraPosition((int)dragDelta.x, (int)dragDelta.y);
+    view.updateCameraPosition((int) dragDelta.x, (int) dragDelta.y);
     return true;
   }
 
 
-@Override
+  @Override
   protected boolean leftClickRelease() {
-    if (isLeftClickLocked()) return true;
+    if (isLeftClickLocked()) {
+      return true;
+    }
     setRightClickLocked(false);
     model.setReleaseGrabbedUpgrade(true);
     return true;
@@ -91,7 +97,9 @@ public class UpgradeScreenController extends GenericController {
 
   @Override
   protected boolean rightClickRelease() {
-    if (isRightClickLocked()) return true;
+    if (isRightClickLocked()) {
+      return true;
+    }
     setLeftClickLocked(false);
     return true;
   }

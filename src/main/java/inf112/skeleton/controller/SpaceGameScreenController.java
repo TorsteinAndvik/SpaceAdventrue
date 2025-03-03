@@ -1,15 +1,11 @@
 package inf112.skeleton.controller;
 
-import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import inf112.skeleton.model.SpaceGameModel;
-import inf112.skeleton.model.UpgradeScreenModel;
 import inf112.skeleton.view.SpaceScreen;
 
-public class SpaceGameScreenController extends InputAdapter {
+public class SpaceGameScreenController extends GenericController {
+
   private final SpaceGameModel model;
   private final SpaceScreen view;
   private final Vector2 touchPos;
@@ -20,4 +16,43 @@ public class SpaceGameScreenController extends InputAdapter {
     this.touchPos = new Vector2();
   }
 
+  @Override
+  protected boolean leftClick(int screenX, int screenY) {
+    return false;
+  }
+
+  @Override
+  protected boolean rightClick(int screenX, int screenY) {
+    return false;
+  }
+
+  @Override
+  protected boolean middleClick() {
+    return false;
+  }
+
+  @Override
+  protected boolean leftClickDragged(int screenX, int screenY) {
+    return false;
+  }
+
+  @Override
+  protected boolean rightClickDragged(int screenX, int screenY) {
+    return false;
+  }
+
+  @Override
+  protected boolean leftClickRelease() {
+    return false;
+  }
+
+  @Override
+  protected boolean rightClickRelease() {
+    return false;
+  }
+
+  @Override
+  protected void handleScroll(float amountY) {
+
+  }
 }
