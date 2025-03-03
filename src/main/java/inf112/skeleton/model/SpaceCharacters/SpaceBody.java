@@ -13,13 +13,14 @@ public abstract class SpaceBody implements SpaceThing, SpaceBodyView {
   private int speed;
   private int radius;
 
-  public SpaceBody(String name, String description, int x, int y, int mass, int speed, float angle) {
+  public SpaceBody(String name, String description, int x, int y, int mass, int speed, float angle, int radius) {
     this.name = name;
     this.description = description;
     this.x = x;
     this.y = y;
     this.mass = mass;
     this.speed = speed;
+    this.radius = radius;
     rotation = new Rotation(angle);
   }
 
@@ -128,5 +129,5 @@ public abstract class SpaceBody implements SpaceThing, SpaceBodyView {
   public int getRadius() {
     return this.radius;
   }
-  
+
 }
