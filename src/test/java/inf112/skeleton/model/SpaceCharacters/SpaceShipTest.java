@@ -1,7 +1,5 @@
 package inf112.skeleton.model.SpaceCharacters;
 
-import inf112.skeleton.model.Globals.DamageDealer;
-import inf112.skeleton.model.Globals.Damageable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -50,7 +48,7 @@ public class SpaceShipTest {
             49, 0, 0, 100, 40, 53, 60);
     assertEquals(49, enemyShip.getHitPoints());
     spaceShip.dealDamage(enemyShip);
-    assertEquals(51, spaceShip.getHitPoints());
+    assertEquals(0, enemyShip.getHitPoints());
   }
 
 }
