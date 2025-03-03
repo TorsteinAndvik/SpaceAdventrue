@@ -40,9 +40,8 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
   @Override
   public void dealDamage(Damageable target) {
     // Damage dealt when ship hits damageable object
-    int targetHp = target.getHitPoints();
-    target.takeDamage(this.getHitPoints());
-    this.takeDamage(targetHp);
+    target.takeDamage(getHitPoints());
+
   }
 
   @Override
