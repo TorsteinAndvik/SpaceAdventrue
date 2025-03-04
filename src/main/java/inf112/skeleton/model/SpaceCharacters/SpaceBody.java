@@ -1,9 +1,10 @@
 package inf112.skeleton.model.SpaceCharacters;
 
+import inf112.skeleton.model.Globals.Rotatable;
 import inf112.skeleton.model.Globals.SpaceThing;
 import inf112.skeleton.model.utils.Rotation;
 
-public abstract class SpaceBody implements SpaceThing, SpaceBodyView {
+public abstract class SpaceBody implements SpaceThing, Rotatable, SpaceBodyView {
   private String name;
   private String description;
   private final Rotation rotation;
@@ -97,26 +98,6 @@ public abstract class SpaceBody implements SpaceThing, SpaceBodyView {
     this.speed = speed;
   }
 
-  @Override
-  public float getRotationAngle() {
-    return rotation.getAngle();
-  }
-
-  /**
-   * Set the rotation of a given object.
-   *
-   * @param angle the angle of the object.
-   * @return true if the object is rotated, false otherwise.
-   */
-  public boolean setRotation(float angle) {
-    this.rotation.setAngle(angle);
-    return true; // TODO: Check if can rotate;
-  }
-
-  public boolean rotate(float deltaAngle) {
-    this.rotation.rotate(deltaAngle);
-    return true; // TODO: Check if can rotate;
-  }
 
   /**
    * Set the radius of a SpaceBody object.
@@ -130,4 +111,18 @@ public abstract class SpaceBody implements SpaceThing, SpaceBodyView {
     return this.radius;
   }
 
+  @Override
+  public float getRotationAngle() {
+    return rotation.getAngle();
+  }
+
+  @Override
+  public void setRotation(float angle) {
+    this.rotation.setAngle(angle);
+  }
+
+  @Override
+  public void rotate(float deltaAngle) {
+    this.rotation.rotate(deltaAngle);
+  }
 }
