@@ -35,12 +35,11 @@ abstract class GenericController extends InputAdapter {
 
   @Override
   public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-    if (button == 0) {
-      return leftClickRelease();
-    } else if (button == 1) {
-      return rightClickRelease();
-    }
-    return false;
+    return switch (button) {
+      case 0 -> leftClickRelease();
+      case 1 -> rightClickRelease();
+      default -> false;
+    };
   }
 
 
@@ -51,7 +50,7 @@ abstract class GenericController extends InputAdapter {
     } else if (isRightClickLocked()) {
       return leftClickDragged(screenX, screenY);
     }
-    return true;
+    return false;
   }
 
   @Override

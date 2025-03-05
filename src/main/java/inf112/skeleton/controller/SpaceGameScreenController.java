@@ -19,21 +19,25 @@ public class SpaceGameScreenController extends GenericController {
 
   @Override
   protected boolean handleKeyDown(int keycode) {
-    switch (keycode) {
-      case Input.Keys.W:
+    return switch (keycode) {
+      case Input.Keys.W -> {
         model.moveUp();
-        return true;
-      case Input.Keys.S:
+        yield true;
+      }
+      case Input.Keys.S -> {
         model.moveDown();
-        return true;
-      case Input.Keys.A:
+        yield true;
+      }
+      case Input.Keys.A -> {
         model.moveLeft();
-      case Input.Keys.D:
+        yield true;
+      }
+      case Input.Keys.D -> {
         model.moveRight();
-        return true;
-      default:
-        return false;
-    }
+        yield true;
+      }
+      default -> false;
+    };
   }
 
   @Override
