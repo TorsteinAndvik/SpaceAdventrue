@@ -33,6 +33,31 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
   }
 
   @Override
+  public void stopMoving() {
+
+  }
+
+  @Override
+  public void moveUp() {
+
+  }
+
+  @Override
+  public void moveDown() {
+
+  }
+
+  @Override
+  public void moveLeft() {
+
+  }
+
+  @Override
+  public void moveRight() {
+
+  }
+
+  @Override
   public GameState getGameState() {
     return null;
   }
@@ -61,7 +86,5 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
   public int getProgression() {
     return 0;
   }
-  //Constants
 
-  // Field variables representing game state
 }

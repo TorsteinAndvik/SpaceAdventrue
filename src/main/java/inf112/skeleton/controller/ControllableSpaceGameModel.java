@@ -40,4 +40,28 @@ public interface ControllableSpaceGameModel {
    */
   void startNewGame();
 
+  /**
+   * Stop a spaceship from moving. Related to releasing a key.
+   */
+  void stopMoving();
+
+  /**
+   * Move the spaceship up.
+   */
+  void moveUp();
+
+  /**
+   * Move the spaceship down.
+   */
+  void moveDown();
+
+  /**
+   * Move the spaceship left.
+   */
+  void moveLeft();
+
+  /**
+   * Move the spaceship right.
+   */
+  void moveRight();
 }
