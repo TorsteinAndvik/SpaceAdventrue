@@ -51,22 +51,22 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
   @Override
   public void moveUp() {
-
+    player.setY(player.getY()+1);
   }
 
   @Override
   public void moveDown() {
-
+    player.setY(player.getY()-1);
   }
 
   @Override
   public void moveLeft() {
-
+    player.setX(player.getX()-1);
   }
 
   @Override
   public void moveRight() {
-
+    player.setX(player.getX()+1);
   }
 
   @Override

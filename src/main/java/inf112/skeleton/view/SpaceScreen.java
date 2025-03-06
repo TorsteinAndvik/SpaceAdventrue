@@ -11,10 +11,15 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
+import inf112.skeleton.controller.SpaceGameScreenController;
+import inf112.skeleton.controller.UpgradeScreenController;
+import inf112.skeleton.model.SpaceGameModel;
+
 public class SpaceScreen implements Screen {
 
     final SpaceGame game;
-    final ViewableSpaceGameModel model;
+    final SpaceGameModel model;
+    private final SpaceGameScreenController controller;
     SpriteBatch batch;
     FitViewport viewport;
     BitmapFont fontBold;    //Agency FB Bold
@@ -25,13 +30,15 @@ public class SpaceScreen implements Screen {
     Sprite player;
     Sprite enemyShip;
 
-    public SpaceScreen(final SpaceGame game, final ViewableSpaceGameModel model) {
+    public SpaceScreen(final SpaceGame game, final SpaceGameModel model) {
         this.game = game;
         this.batch = this.game.getSpriteBatch();
         this.manager = this.game.getAssetManager();
         this.viewport = game.getFitViewport();
 
         this.model = model;
+
+        this.controller = new SpaceGameScreenController(this, model);
 
         fontBold = manager.get("fonts/AGENCYB.ttf", BitmapFont.class);
         fontRegular = manager.get("fonts/AGENCYR.ttf", BitmapFont.class);
@@ -68,13 +75,13 @@ public class SpaceScreen implements Screen {
         asteroid.setY(model.getAsteroid().getY());
         asteroid.draw(batch);
 
-        player.setX(model.getPlayer().getX());
-        player.setY(model.getPlayer().getY());
-        player.draw(batch);
-
         enemyShip.setX(model.getEnemyShip().getX());
         enemyShip.setY(model.getEnemyShip().getY());
         enemyShip.draw(batch);
+
+        player.setX(model.getPlayer().getX());
+        player.setY(model.getPlayer().getY());
+        player.draw(batch);
 
         //fontBold.draw(batch, "Hello, World!", 1f, 1f);
         //fontRegular.draw(batch, "The helloest of Worlds!", 2f, 2f);
@@ -85,7 +92,9 @@ public class SpaceScreen implements Screen {
     public void dispose() {}
 
     @Override
-    public void hide() {}
+    public void hide() {
+        Gdx.input.setInputProcessor(null);
+    }
 
     @Override
     public void pause() {}
@@ -99,6 +108,8 @@ public class SpaceScreen implements Screen {
     public void resume() {}
 
     @Override
-    public void show() {}
+    public void show() {
+        Gdx.input.setInputProcessor(controller);
+    }
     
 }
