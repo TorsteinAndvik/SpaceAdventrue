@@ -17,6 +17,20 @@ public interface Rotatable {
   void setRotation(float angle);
 
   /**
+   * Get the rotation speed of a rotatable object.
+   *
+   * @return the rotation speed.
+   */
+  float getRotationSpeed();
+
+  /**
+   * Set the rotation speed of a rotatable object.
+   *
+   * @param rotationSpeed the rotation speed.
+   */
+  void setRotationSpeed(float rotationSpeed);
+
+  /**
    * Rotates an object around a given angle
    *
    * @param deltaAngle the angle to rotate

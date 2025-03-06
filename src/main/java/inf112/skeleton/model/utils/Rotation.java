@@ -1,7 +1,5 @@
 package inf112.skeleton.model.utils;
 
-import inf112.skeleton.model.SpaceCharacters.SpaceBody;
-
 /**
  * Utility class for handling rotations in a 2D space. This class represents the rotation of an
  * object by managing its angle in degrees. It provides methods to set, get, and adjust the rotation
@@ -10,6 +8,7 @@ import inf112.skeleton.model.SpaceCharacters.SpaceBody;
 public class Rotation {
 
   private float angle;
+  private float rotationSpeed;
 
   /**
    * Constructs a new Rotation object with the specified initial angle.
@@ -17,8 +16,14 @@ public class Rotation {
    * @param angle the initial angle in degrees.
    */
   public Rotation(float angle) {
-    this.angle = normalizeAngle(angle);
+    this(angle, 0);
   }
+
+  public Rotation(float angle, float rotationSpeed) {
+    this.angle = normalizeAngle(angle);
+    this.rotationSpeed = rotationSpeed;
+  }
+
 
   /**
    * Retrieves the current rotation angle.
@@ -36,6 +41,24 @@ public class Rotation {
    */
   public void setAngle(float angle) {
     this.angle = normalizeAngle(angle);
+  }
+
+  /**
+   * Set the rotation speed.
+   *
+   * @param rotationSpeed the rotation speed.
+   */
+  public void setRotationSpeed(float rotationSpeed) {
+    this.rotationSpeed = rotationSpeed;
+  }
+
+  /**
+   * Get the rotation speed.
+   *
+   * @return the rotation speed.
+   */
+  public float getRotationSpeed() {
+    return this.rotationSpeed;
   }
 
   /**
@@ -60,6 +83,10 @@ public class Rotation {
       angle += 360;
     }
     return Math.abs(angle);
+  }
+
+  public void update(float deltaTime) {
+    angle = normalizeAngle(angle + rotationSpeed * deltaTime);
   }
 
 
