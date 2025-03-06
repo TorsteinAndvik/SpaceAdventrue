@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 public class SpaceScreen implements Screen {
 
     final SpaceGame game;
+    final ViewableSpaceGameModel model;
     SpriteBatch batch;
     FitViewport viewport;
     BitmapFont fontBold;    //Agency FB Bold
@@ -22,11 +23,13 @@ public class SpaceScreen implements Screen {
 
     Sprite asteroid;
 
-    public SpaceScreen(final SpaceGame game) {
+    public SpaceScreen(final SpaceGame game, final ViewableSpaceGameModel model) {
         this.game = game;
         this.batch = this.game.getSpriteBatch();
         this.manager = this.game.getAssetManager();
         this.viewport = game.getFitViewport();
+
+        this.model = model;
 
         fontBold = manager.get("fonts/AGENCYB.ttf", BitmapFont.class);
         fontRegular = manager.get("fonts/AGENCYR.ttf", BitmapFont.class);
@@ -53,8 +56,8 @@ public class SpaceScreen implements Screen {
         fontRegular.setColor(Color.RED);
         
         batch.begin();
-        asteroid.setX(1f);
-        asteroid.setY(4f);
+        asteroid.setX(model.getAsteroid().getX());
+        asteroid.setY(model.getAsteroid().getY());
         asteroid.draw(batch);
 
         fontBold.draw(batch, "Hello, World!", 1f, 1f);

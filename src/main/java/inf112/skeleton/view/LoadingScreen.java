@@ -17,6 +17,8 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader.FreeTypeFontLoaderParameter;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import inf112.skeleton.model.SpaceGameModel;
+
 public class LoadingScreen implements Screen {
 
     final SpaceGame game;
@@ -94,7 +96,7 @@ public class LoadingScreen implements Screen {
         if(manager.update(17)) { //all assets are loaded 1 by 1 //update(17) blocks thread for at least 17ms before passing over to render(), gives roughly 60fps (depends on size of asset, a large enough file might block for longer)
             // ONLY CALL ONE OF THESE FOR TESTING:
             //game.setScreen(new UpgradeScreen(game)); //test the UpgradeScreen class
-            game.setScreen(new SpaceScreen(game));  //test the SpaceScreen class
+            game.setScreen(new SpaceScreen(game, new SpaceGameModel()));  //test the SpaceScreen class
         }
 
         float progress = manager.getProgress();

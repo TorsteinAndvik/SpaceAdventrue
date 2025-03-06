@@ -3,9 +3,21 @@ package inf112.skeleton.model;
 import inf112.skeleton.controller.ControllableSpaceGameModel;
 import inf112.skeleton.grid.GridCell;
 import inf112.skeleton.grid.IGridDimension;
+import inf112.skeleton.model.SpaceCharacters.Asteroid;
+import inf112.skeleton.model.SpaceCharacters.EnemyShip;
+import inf112.skeleton.model.SpaceCharacters.Player;
 import inf112.skeleton.view.ViewableSpaceGameModel;
 
 public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpaceGameModel {
+
+    private Player player;
+    private Asteroid asteroid;   
+    private EnemyShip enemyShip; 
+    public SpaceGameModel() {
+        this.player = new Player("player", "the player's spaceship", 1, 3, 1, 1, 0, 0, 1);
+        this.asteroid = new Asteroid("asteroid", "an asteroid", 1, 1, 6, 1, 0, 0, 2);
+        this.enemyShip = new EnemyShip("enemy", "an enemy ship", 1, 6, 5, 1, 0, 0, 1);
+    }
 
   @Override
   public boolean moveSpaceShip(int deltaRow, int deltaCol) {
@@ -86,5 +98,20 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
   public int getProgression() {
     return 0;
   }
+
+    @Override
+    public Player getPlayer() {
+        return this.player;
+    }
+
+    @Override
+    public Asteroid getAsteroid() {
+        return this.asteroid;
+    }
+
+    @Override
+    public EnemyShip getEnemyShip() {
+        return this.enemyShip;
+    }
 
 }
