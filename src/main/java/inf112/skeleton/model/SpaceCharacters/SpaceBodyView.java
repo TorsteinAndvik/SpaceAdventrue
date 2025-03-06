@@ -6,13 +6,13 @@ public interface SpaceBodyView {
   /**
    * @return the x-coordinate of a SpaceBody object.
    */
-  int getX();
+  float getX();
 
 
   /**
    * @return the y-coordinate of a SpaceBody object.
    */
-  int getY();
+  float getY();
 
 
   /**
@@ -27,7 +27,7 @@ public interface SpaceBodyView {
    *
    * @return the speed of the SpaceBody.
    */
-  int getSpeed();
+  float getSpeed();
 
   /**
    * The rotation of a SpaceBody object.
@@ -42,5 +42,5 @@ public interface SpaceBodyView {
    * @return the radius of the SpaceBody
    */
   int getRadius();
-  
+
 }
