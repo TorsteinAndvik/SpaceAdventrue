@@ -22,8 +22,11 @@ public class LoadingScreen implements Screen {
     final SpaceGame game;
     SpriteBatch batch;
     Viewport viewport;
-    BitmapFont font;
     AssetManager manager; //An assetmanager helps with loading assets and disposing them once they are no longer needed 
+
+    //Constants
+    int boldFontSize = 42;
+    int regularFontSize = 36;
 
     public LoadingScreen(final SpaceGame game) {
         this.game = game;
@@ -64,13 +67,13 @@ public class LoadingScreen implements Screen {
             // Set params for bold font
         FreeTypeFontLoaderParameter fontBold = new FreeTypeFontLoaderParameter();
         fontBold.fontFileName = "fonts/AGENCYB.ttf";
-        fontBold.fontParameters.size = 42;
+        fontBold.fontParameters.size = boldFontSize;
         manager.load(fontBold.fontFileName, BitmapFont.class, fontBold);
 
             // Set params for regular font
         FreeTypeFontLoaderParameter fontRegular = new FreeTypeFontLoaderParameter();
         fontRegular.fontFileName = "fonts/AGENCYR.ttf";
-        fontRegular.fontParameters.size = 36;
+        fontRegular.fontParameters.size = regularFontSize;
         manager.load(fontRegular.fontFileName, BitmapFont.class, fontRegular);
     }
 
@@ -85,10 +88,10 @@ public class LoadingScreen implements Screen {
     @Override
     public void render(float delta) {
         //First assets are queued for loading in the constructor (before this block of code runs), and then calling .update() here will *actually* load them. 
-        if(manager.update(17)) { //all assets are loaded 1 by 1 //blocks for at least 17ms before passing over to render() - roughly 60fps (depends on size of asset, a large enough file might block for longer)
+        if(manager.update(17)) { //all assets are loaded 1 by 1 //update(17) blocks thread for at least 17ms before passing over to render(), gives roughly 60fps (depends on size of asset, a large enough file might block for longer)
             // ONLY CALL ONE OF THESE FOR TESTING:
-            game.setScreen(new UpgradeScreen(game)); //test the UpgradeScreen class
-            //game.setScreen(new SpaceScreen(game));  //test the SpaceScreen class
+            //game.setScreen(new UpgradeScreen(game)); //test the UpgradeScreen class
+            game.setScreen(new SpaceScreen(game));  //test the SpaceScreen class
         }
 
         float progress = manager.getProgress();
@@ -96,11 +99,7 @@ public class LoadingScreen implements Screen {
     }
 
     @Override
-    public void dispose() {
-        //TODO: This will recurse infinitely, no?
-        this.dispose();
-
-    }
+    public void dispose() {}
 
     @Override
     public void hide() {}
