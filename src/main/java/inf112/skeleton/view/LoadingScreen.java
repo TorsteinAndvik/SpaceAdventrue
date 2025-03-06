@@ -46,14 +46,17 @@ public class LoadingScreen implements Screen {
             // space objects
         queueTexture("images/space/asteroid_0.png");
 
-            // upgrades
+            // upgrade screen
         queueTexture("images/upgrade_grid_tile_green.png");
         queueTexture("images/upgrade_grid_tile_red.png");
         queueTexture("images/upgrade_grid_tile_gray.png");
+        
+            // ship parts
         queueTexture("images/upgrades/turret_laser_stage_0.png");
         queueTexture("images/upgrades/fuselage_alt_stage_0.png");
         queueTexture("images/upgrades/rocket_stage_0.png");
         queueTexture("images/upgrades/shield_stage_0.png");
+        queueTexture("images/upgrades/fuselage_enemy_stage_0.png");
             
             // ui
         queueTexture("images/ui/Mouse_Left_Key_Light.png");

@@ -22,6 +22,8 @@ public class SpaceScreen implements Screen {
     AssetManager manager; 
 
     Sprite asteroid;
+    Sprite player;
+    Sprite enemyShip;
 
     public SpaceScreen(final SpaceGame game, final ViewableSpaceGameModel model) {
         this.game = game;
@@ -43,11 +45,17 @@ public class SpaceScreen implements Screen {
 
         asteroid = new Sprite(manager.get("images/space/asteroid_0.png", Texture.class));
         asteroid.setSize(2, 2);
+
+        player = new Sprite(manager.get("images/upgrades/fuselage_alt_stage_0.png", Texture.class));
+        player.setSize(1, 1);
+
+        enemyShip = new Sprite(manager.get("images/upgrades/fuselage_enemy_stage_0.png", Texture.class));
+        enemyShip.setSize(1, 1);
     }
 
     @Override
     public void render(float delta) {
-        ScreenUtils.clear(Color.GRAY); 
+        ScreenUtils.clear(Color.DARK_GRAY); 
         
         viewport.apply();
         batch.setProjectionMatrix(viewport.getCamera().combined);
@@ -60,8 +68,16 @@ public class SpaceScreen implements Screen {
         asteroid.setY(model.getAsteroid().getY());
         asteroid.draw(batch);
 
-        fontBold.draw(batch, "Hello, World!", 1f, 1f);
-        fontRegular.draw(batch, "The helloest of Worlds!", 2f, 2f);
+        player.setX(model.getPlayer().getX());
+        player.setY(model.getPlayer().getY());
+        player.draw(batch);
+
+        enemyShip.setX(model.getEnemyShip().getX());
+        enemyShip.setY(model.getEnemyShip().getY());
+        enemyShip.draw(batch);
+
+        //fontBold.draw(batch, "Hello, World!", 1f, 1f);
+        //fontRegular.draw(batch, "The helloest of Worlds!", 2f, 2f);
         batch.end();
     }
 
