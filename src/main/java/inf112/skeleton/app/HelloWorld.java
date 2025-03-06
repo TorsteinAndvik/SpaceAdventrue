@@ -27,9 +27,9 @@ public class HelloWorld implements ApplicationListener {
 		batch = new SpriteBatch();
 		font = new BitmapFont();
 		font.setColor(Color.RED);
-		spriteImage = new Texture(Gdx.files.internal("obligator.png"));
+		spriteImage = new Texture(Gdx.files.internal("images/upgrade_grid_tile_green.png"));
 		spriteRect = new Rectangle(1, 1, spriteImage.getWidth() / 2, spriteImage.getHeight() / 2);
-		bellSound = Gdx.audio.newSound(Gdx.files.internal("blipp.ogg"));
+		bellSound = Gdx.audio.newSound(Gdx.files.internal("audio/blipp.ogg"));
 		Gdx.graphics.setForegroundFPS(60);
 	}
 

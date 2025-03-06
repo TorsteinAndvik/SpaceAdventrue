@@ -106,8 +106,8 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     return new String[]{
         "Fuselage:\nUsed to expand the ship. Any new\npart must be attached to a piece\nof Fuselage.",
         "Turret:\nFires lasers at enemies and\nasteroids.",
-        "Obligator 1:\nPlaceholder for other upgrades.",
-        "Obligator 2:\nYet another placeholder for\nother upgrades."
+        "Rocket:\nImproves acceleration and\ntop speed of the ship.",
+        "Shield:\nIncrease the ship's health."
     };
   }
 
