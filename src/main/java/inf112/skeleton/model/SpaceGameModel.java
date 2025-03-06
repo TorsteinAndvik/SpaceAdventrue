@@ -4,6 +4,7 @@ import inf112.skeleton.controller.ControllableSpaceGameModel;
 import inf112.skeleton.grid.GridCell;
 import inf112.skeleton.grid.IGridDimension;
 import inf112.skeleton.model.SpaceCharacters.Asteroid;
+import inf112.skeleton.model.SpaceCharacters.Bullet;
 import inf112.skeleton.model.SpaceCharacters.EnemyShip;
 import inf112.skeleton.model.SpaceCharacters.Player;
 import inf112.skeleton.view.ViewableSpaceGameModel;
@@ -13,10 +14,29 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     private Player player;
     private Asteroid asteroid;   
     private EnemyShip enemyShip; 
+    private Bullet laser;
+    public boolean laserExists;
     public SpaceGameModel() {
         this.player = new Player("player", "the player's spaceship", 1, 3, 1, 1, 0, 0, 1);
         this.asteroid = new Asteroid("asteroid", "an asteroid", 1, 1, 6, 1, 0, 0, 2);
         this.enemyShip = new EnemyShip("enemy", "an enemy ship", 1, 6, 5, 1, 0, 0, 1);
+        this.laser = new Bullet("laser", "a laser shot", 0,0, 1, 1, 0, 0, 1);
+    }
+
+    public void shoot() {
+        //TODO: This is awful, never do this.
+        this.laser = new Bullet("laser", "a laser shot", player.getX(),player.getY()+1, 1, 1, 0, 0, 1);
+        laserExists = true;
+    }
+
+    public void moveLaser() {
+        //TODO: This is also awful.
+        laser.setY(laser.getY()+1);    
+        if (laser.getY() >= 9) {
+            System.out.println("laser deleted offscreen");
+            laserExists = false;
+            this.laser = null;
+        }
     }
 
   @Override
@@ -114,4 +134,8 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         return this.enemyShip;
     }
 
+    @Override 
+    public Bullet getLaser() {
+        return this.laser;
+    }
 }

@@ -4,6 +4,7 @@ import inf112.skeleton.grid.GridCell;
 import inf112.skeleton.grid.IGridDimension;
 import inf112.skeleton.model.GameState;
 import inf112.skeleton.model.SpaceCharacters.Asteroid;
+import inf112.skeleton.model.SpaceCharacters.Bullet;
 import inf112.skeleton.model.SpaceCharacters.EnemyShip;
 import inf112.skeleton.model.SpaceCharacters.Player;
 
@@ -73,4 +74,11 @@ public interface ViewableSpaceGameModel {
    * @return the EnemyShip object
    */
   EnemyShip getEnemyShip();
+
+      /**
+   * Returns the Bullet object (laser) of the MVP //TODO: Remove this once a proper model is in place
+   * 
+   * @return the Bullet object
+   */
+  Bullet getLaser();
 }

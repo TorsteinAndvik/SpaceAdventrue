@@ -29,6 +29,10 @@ public class SpaceScreen implements Screen {
     Sprite asteroid;
     Sprite player;
     Sprite enemyShip;
+    Sprite laser;
+
+    float laserUpdateCutoff = 0.5f;
+    float laserUpdateTimer;
 
     public SpaceScreen(final SpaceGame game, final SpaceGameModel model) {
         this.game = game;
@@ -58,6 +62,9 @@ public class SpaceScreen implements Screen {
 
         enemyShip = new Sprite(manager.get("images/upgrades/fuselage_enemy_stage_0.png", Texture.class));
         enemyShip.setSize(1, 1);
+
+        laser = new Sprite(manager.get("images/space/laser_shot_0.png", Texture.class));
+        laser.setSize(0.25f, 0.25f);
     }
 
     @Override
@@ -82,6 +89,18 @@ public class SpaceScreen implements Screen {
         player.setX(model.getPlayer().getX());
         player.setY(model.getPlayer().getY());
         player.draw(batch);
+
+        if(model.laserExists) { //TODO: refactor, I beg thee
+            laser.setX(model.getLaser().getX() + 0.375f);
+            laser.setY(model.getLaser().getY() + 0.375f);
+            laser.draw(batch);
+
+            laserUpdateTimer += delta;
+            if(laserUpdateTimer >= laserUpdateCutoff) {
+                laserUpdateTimer = 0f;
+                model.moveLaser();
+            }
+        }
 
         //fontBold.draw(batch, "Hello, World!", 1f, 1f);
         //fontRegular.draw(batch, "The helloest of Worlds!", 2f, 2f);
