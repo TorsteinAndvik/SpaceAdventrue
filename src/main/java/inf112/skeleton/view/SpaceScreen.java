@@ -6,6 +6,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -18,6 +19,8 @@ public class SpaceScreen implements Screen {
     BitmapFont fontBold;    //Agency FB Bold
     BitmapFont fontRegular; //Agency FB Regular
     AssetManager manager; 
+
+    Sprite asteroid;
 
     public SpaceScreen(final SpaceGame game) {
         this.game = game;
@@ -34,6 +37,9 @@ public class SpaceScreen implements Screen {
 
         fontRegular.setUseIntegerPositions(false);
         fontRegular.getData().setScale(viewport.getWorldHeight() / Gdx.graphics.getHeight());
+
+        asteroid = new Sprite(manager.get("images/space/asteroid_0.png", Texture.class));
+        asteroid.setSize(2, 2);
     }
 
     @Override
@@ -47,6 +53,10 @@ public class SpaceScreen implements Screen {
         fontRegular.setColor(Color.RED);
         
         batch.begin();
+        asteroid.setX(1f);
+        asteroid.setY(4f);
+        asteroid.draw(batch);
+
         fontBold.draw(batch, "Hello, World!", 1f, 1f);
         fontRegular.draw(batch, "The helloest of Worlds!", 2f, 2f);
         batch.end();
