@@ -43,4 +43,5 @@ public interface SpaceBodyView {
    */
   int getRadius();
 
+  CharacterType getType();
 }
