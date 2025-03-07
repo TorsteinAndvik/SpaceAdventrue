@@ -17,6 +17,8 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader.FreeTypeFontLoaderParameter;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import inf112.skeleton.model.SpaceGameModel;
+
 public class LoadingScreen implements Screen {
 
     final SpaceGame game;
@@ -41,14 +43,21 @@ public class LoadingScreen implements Screen {
 
     private void queueAssets() {
         // Textures:
-            // upgrades
+            // space objects
+        queueTexture("images/space/asteroid_0.png");
+        queueTexture("images/space/laser_shot_0.png");
+
+            // upgrade screen
         queueTexture("images/upgrade_grid_tile_green.png");
         queueTexture("images/upgrade_grid_tile_red.png");
         queueTexture("images/upgrade_grid_tile_gray.png");
+        
+            // ship parts
         queueTexture("images/upgrades/turret_laser_stage_0.png");
         queueTexture("images/upgrades/fuselage_alt_stage_0.png");
         queueTexture("images/upgrades/rocket_stage_0.png");
         queueTexture("images/upgrades/shield_stage_0.png");
+        queueTexture("images/upgrades/fuselage_enemy_stage_0.png");
             
             // ui
         queueTexture("images/ui/Mouse_Left_Key_Light.png");
@@ -91,7 +100,7 @@ public class LoadingScreen implements Screen {
         if(manager.update(17)) { //all assets are loaded 1 by 1 //update(17) blocks thread for at least 17ms before passing over to render(), gives roughly 60fps (depends on size of asset, a large enough file might block for longer)
             // ONLY CALL ONE OF THESE FOR TESTING:
             //game.setScreen(new UpgradeScreen(game)); //test the UpgradeScreen class
-            game.setScreen(new SpaceScreen(game));  //test the SpaceScreen class
+            game.setScreen(new SpaceScreen(game, new SpaceGameModel()));  //test the SpaceScreen class
         }
 
         float progress = manager.getProgress();

@@ -36,10 +36,6 @@ public class UpgradeScreen extends InputAdapter implements Screen {
   private BitmapFont fontRegular; // Agency FB Regular
 
   private Sprite[] upgradeIcons;
-  private Sprite fuselage;
-  private Sprite turret;
-  private Sprite rocket;
-  private Sprite shield;
   private Sprite squareRed;
   private Sprite squareGreen;
   private Sprite squareGray;
@@ -52,7 +48,6 @@ public class UpgradeScreen extends InputAdapter implements Screen {
   private final float upgradeIconZoom = 0.8f;
   private float uiIconZoom;
   private final String[] upgradeStrings;
-
 
   /**
    * Creates a new upgrade screen with necessary components for rendering and input handling.
@@ -81,8 +76,8 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     squareGreen = createSprite("images/upgrade_grid_tile_green.png", 1, 1);
     squareGray = createSprite("images/upgrade_grid_tile_gray.png", 1, 1);
 
-    upgradeIcons = new Sprite[]{
-        createSprite("images/upgrades/fuselage_alt_stage_0.png", upgradeIconZoom, upgradeIconZoom),
+    upgradeIcons = new Sprite[]{    //[fuselage, rocket, turret, shield]
+        createSprite("images/upgrades/fuselage_alt_stage_0.png", upgradeIconZoom, upgradeIconZoom), 
         createSprite("images/upgrades/turret_laser_stage_0.png", upgradeIconZoom, upgradeIconZoom),
         createSprite("images/upgrades/rocket_stage_0.png", upgradeIconZoom, upgradeIconZoom),
         createSprite("images/upgrades/shield_stage_0.png", upgradeIconZoom, upgradeIconZoom)
