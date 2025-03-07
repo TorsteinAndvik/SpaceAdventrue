@@ -151,7 +151,9 @@ from portals? Possibly from off-screen?
 * **As a player** I need to be able to tell my ship apart from enemy ships
 * **Acceptance criteria**: Player ship is visually distinct from enemy ships
 * **Implementation**: Use different colors in view/textures for player ship
+- Resolved: Yes.
 
+---
 
 * **As a player** I need to be able to tell obstacles apart from the background so that I can see how to navigate around
   them
@@ -159,19 +161,22 @@ from portals? Possibly from off-screen?
   looks
   like obstacles (no asteroids in the background)
 * **Implementation**: Use background textures without asteroids and ships that can be mistaken for actual obstacles.
-
+- Resolved: Yes.
+---
 
 * **As a player** I want to be able to regret an incorrect upgrade
 * **Acceptance criteria**: A wrongly added / unwanted upgrade can be removed.
 * **Implementation**: In code for upgrade Screen add a consent pop-up (user needs to confirm the chosen upgrade)
-
+- Resolved: No.
+---
 
 * **As a player** with physical limitations I want to be able to remap the default keyboard controls
 * **Acceptance criteria**: Players have a menu wjhere they can rebind input controls
 * **Implementation**: In view add a Screen for button mapping. In controller, add method for updating the button
   mapping (e.g.
   replace effect of default key Left-arrow with the input key press from the player)
-
+- Resolved: No.
+---
 
 * **As a developer** I need to be able to tell ships (both friendly and enemy) apart from obstacles to determine if a
   collision should occur
@@ -179,6 +184,8 @@ from portals? Possibly from off-screen?
   obstacle (
   e.g. asteroid)
 * **Implementation**: Friendly and enemy Ships are separate classes and stored as seperate fields
+- Resolved: In progress.
+---
 
 ## A4
 
