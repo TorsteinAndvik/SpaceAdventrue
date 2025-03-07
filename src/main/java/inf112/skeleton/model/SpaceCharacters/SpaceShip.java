@@ -5,18 +5,20 @@ import inf112.skeleton.model.Globals.Damageable;
 import inf112.skeleton.model.Globals.Repairable;
 //import java.util.ArrayList;
 //import java.util.List;
+import inf112.skeleton.model.ShipComponents.Components.ShipStructure;
 
 public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damageable, Repairable {
   private int maxHitPoints;
   private int hitPoints;
+  private ShipStructure shipStructure;
 //  private List<Gun> gunList;
 
 
-  public SpaceShip(String name, String description, int maxHealthPoints, int x, int y, int mass, int speed, float angle, int radius) {
-    this(name, description, maxHealthPoints, maxHealthPoints, x, y, mass, speed, angle, radius);
+  public SpaceShip(ShipStructure shipStructure, String name, String description, int maxHealthPoints, int x, int y, int mass, int speed, float angle, int radius) {
+    this(shipStructure, name, description, maxHealthPoints, maxHealthPoints, x, y, mass, speed, angle, radius);
   }
 
-  public SpaceShip(String name, String description, int maxHitPoints, int hitPoints, int x, int y, int mass, int speed, float angle, int radius) {
+  public SpaceShip(ShipStructure shipStructure,String name, String description, int maxHitPoints, int hitPoints, int x, int y, int mass, int speed, float angle, int radius) {
     super(name, description, x, y, mass, speed, angle, radius);
     if (hitPoints <= 0 || maxHitPoints <= 0) {
       throw new IllegalArgumentException("Hit points must be positive on ship creation");
@@ -26,7 +28,12 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
     }
     this.hitPoints = hitPoints;
     this.maxHitPoints = maxHitPoints;
+    this.shipStructure = shipStructure;
 //    this.gunList = new ArrayList<>();
+  }
+
+  public ShipStructure getShipStructure() {
+    return shipStructure;
   }
 
   @Override

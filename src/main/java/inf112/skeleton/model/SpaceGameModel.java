@@ -3,6 +3,7 @@ package inf112.skeleton.model;
 import inf112.skeleton.controller.ControllableSpaceGameModel;
 import inf112.skeleton.grid.GridCell;
 import inf112.skeleton.grid.IGridDimension;
+import inf112.skeleton.model.ShipComponents.ShipFactory;
 import inf112.skeleton.model.SpaceCharacters.Asteroid;
 import inf112.skeleton.model.SpaceCharacters.Bullet;
 import inf112.skeleton.model.SpaceCharacters.EnemyShip;
@@ -15,11 +16,13 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     private Asteroid asteroid;   
     private EnemyShip enemyShip; 
     private Bullet laser;
+    private ShipFactory shipFactory;
     public boolean laserExists;
     public SpaceGameModel() {
-        this.player = new Player("player", "the player's spaceship", 1, 3, 1, 1, 0, 0, 1);
+        this.shipFactory = new ShipFactory();
+        this.player = new Player(shipFactory.simplePlayerShip(), "player", "the player's spaceship", 1, 3, 1, 1, 0, 0, 1);
+        this.enemyShip = new EnemyShip(shipFactory.simpleShip(), "enemy", "an enemy ship", 1, 6, 5, 1, 0, 0, 1);
         this.asteroid = new Asteroid("asteroid", "an asteroid", 1, 1, 6, 1, 0, 0, 2);
-        this.enemyShip = new EnemyShip("enemy", "an enemy ship", 1, 6, 5, 1, 0, 0, 1);
         this.laser = new Bullet("laser", "a laser shot", 0,0, 1, 1, 0, 0, 1);
     }
 
