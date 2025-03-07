@@ -12,8 +12,10 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import inf112.skeleton.controller.SpaceGameScreenController;
-import inf112.skeleton.controller.UpgradeScreenController;
+import inf112.skeleton.grid.GridCell;
+import inf112.skeleton.grid.CellPosition;
 import inf112.skeleton.model.SpaceGameModel;
+import inf112.skeleton.model.ShipComponents.Components.Fuselage;
 
 public class SpaceScreen implements Screen {
 
@@ -27,9 +29,13 @@ public class SpaceScreen implements Screen {
     AssetManager manager; 
 
     Sprite asteroid;
-    Sprite player;
-    Sprite enemyShip;
     Sprite laser;
+
+    Sprite fuselagePlayer;
+    Sprite fuselageEnemy;
+    Sprite thruster;
+    Sprite turret;
+    Sprite shield;
 
     float laserUpdateCutoff = 0.5f;
     float laserUpdateTimer;
@@ -54,17 +60,24 @@ public class SpaceScreen implements Screen {
         fontRegular.setUseIntegerPositions(false);
         fontRegular.getData().setScale(viewport.getWorldHeight() / Gdx.graphics.getHeight());
 
-        asteroid = new Sprite(manager.get("images/space/asteroid_0.png", Texture.class));
-        asteroid.setSize(2, 2);
+        loadSprites();
+    }
 
-        player = new Sprite(manager.get("images/upgrades/fuselage_alt_stage_0.png", Texture.class));
-        player.setSize(1, 1);
+    private void loadSprites() {
+        asteroid = createSprite("images/space/asteroid_0.png", 2, 2);
+        laser = createSprite("images/space/laser_shot_0.png", 0.25f, 0.25f);
+        
+        fuselagePlayer = createSprite("images/upgrades/fuselage_alt_stage_0.png", 1, 1);
+        fuselageEnemy = createSprite("images/upgrades/fuselage_enemy_stage_0.png", 1, 1);
+        turret = createSprite("images/upgrades/turret_laser_stage_0.png", 1, 1);
+        thruster = createSprite("images/upgrades/rocket_stage_0.png", 1, 1);
+        shield = createSprite("images/upgrades/shield_stage_0.png", 1, 1);
+    }
 
-        enemyShip = new Sprite(manager.get("images/upgrades/fuselage_enemy_stage_0.png", Texture.class));
-        enemyShip.setSize(1, 1);
-
-        laser = new Sprite(manager.get("images/space/laser_shot_0.png", Texture.class));
-        laser.setSize(0.25f, 0.25f);
+    private Sprite createSprite(String path, float width, float height) {
+        Sprite sprite = new Sprite(manager.get(path, Texture.class));
+        sprite.setSize(width, height);
+        return sprite;
     }
 
     @Override
@@ -78,17 +91,23 @@ public class SpaceScreen implements Screen {
         fontRegular.setColor(Color.RED);
         
         batch.begin();
+
         asteroid.setX(model.getAsteroid().getX());
         asteroid.setY(model.getAsteroid().getY());
         asteroid.draw(batch);
+        
+        for (GridCell<Fuselage> cell : model.getEnemyShip().getShipStructure().iterable()) {
+            fuselageEnemy.setX(model.getEnemyShip().getX() + cell.pos().col());
+            fuselageEnemy.setY(model.getEnemyShip().getY() + cell.pos().row());
+            fuselageEnemy.draw(batch);
+        }
 
-        enemyShip.setX(model.getEnemyShip().getX());
-        enemyShip.setY(model.getEnemyShip().getY());
-        enemyShip.draw(batch);
-
-        player.setX(model.getPlayer().getX());
-        player.setY(model.getPlayer().getY());
-        player.draw(batch);
+        
+        for (GridCell<Fuselage> cell : model.getPlayer().getShipStructure().iterable()) {
+            fuselagePlayer.setX(model.getPlayer().getX() + cell.pos().col());
+            fuselagePlayer.setY(model.getPlayer().getY() + cell.pos().row());
+            fuselagePlayer.draw(batch);
+        }
 
         if(model.laserExists) { //TODO: refactor, I beg thee
             laser.setX(model.getLaser().getX() + 0.375f);

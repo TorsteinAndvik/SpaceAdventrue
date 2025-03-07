@@ -10,7 +10,7 @@ public class SpaceShipTest {
 
   @BeforeEach()
   void setup() {
-    spaceShip = new Player("The Black Swan", "A beautiful pirate ship.",
+    spaceShip = new Player(null, "The Black Swan", "A beautiful pirate ship.",
             100, 0, 0, 100, 40, 53, 60);
   }
 
@@ -44,7 +44,7 @@ public class SpaceShipTest {
 
   @Test
   void dealDamageTest() {
-    SpaceShip enemyShip = new Player("The White Swan", "A boring ship.",
+    SpaceShip enemyShip = new Player(null, "The White Swan", "A boring ship.",
             49, 0, 0, 100, 40, 53, 60);
     assertEquals(49, enemyShip.getHitPoints());
     spaceShip.dealDamage(enemyShip);

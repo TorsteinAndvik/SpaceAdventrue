@@ -64,7 +64,7 @@ public class ShipStructure {
         }
     }
 
-    public Iterator<GridCell<Fuselage>> getShipGridIterator() {
-        return grid.iterator();
+    public Iterable<GridCell<Fuselage>> iterable() {
+        return grid;
     }
 }
