@@ -1,7 +1,5 @@
 package inf112.skeleton.model.ShipComponents.Components;
 
-import java.util.Iterator;
-
 import inf112.skeleton.grid.CellPosition;
 import inf112.skeleton.grid.Grid;
 import inf112.skeleton.grid.GridCell;

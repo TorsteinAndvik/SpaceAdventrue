@@ -31,4 +31,9 @@ public class Fuselage {
         heldUpgrade = null;
         return type;
     }
+
+    /**
+     * @return The <code>ShipUpgrade</code> held by <code>this</code>.
+     */
+    public ShipUpgrade getUpgrade() {return heldUpgrade;}
 }

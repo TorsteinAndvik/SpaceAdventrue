@@ -1,5 +1,7 @@
 package inf112.skeleton.view;
 
+import java.util.HashMap;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
@@ -15,7 +17,9 @@ import inf112.skeleton.controller.SpaceGameScreenController;
 import inf112.skeleton.grid.GridCell;
 import inf112.skeleton.grid.CellPosition;
 import inf112.skeleton.model.SpaceGameModel;
+import inf112.skeleton.model.ShipComponents.UpgradeType;
 import inf112.skeleton.model.ShipComponents.Components.Fuselage;
+import inf112.skeleton.model.ShipComponents.Components.ShipUpgrade;
 
 public class SpaceScreen implements Screen {
 
@@ -33,9 +37,8 @@ public class SpaceScreen implements Screen {
 
     Sprite fuselagePlayer;
     Sprite fuselageEnemy;
-    Sprite thruster;
-    Sprite turret;
-    Sprite shield;
+
+    HashMap<UpgradeType, Sprite> upgradeIcons;
 
     float laserUpdateCutoff = 0.5f;
     float laserUpdateTimer;
@@ -47,9 +50,14 @@ public class SpaceScreen implements Screen {
         this.viewport = game.getFitViewport();
 
         this.model = model;
-
         this.controller = new SpaceGameScreenController(this, model);
 
+        setupFonts();
+        loadSprites();
+        setupUpgradeHashMap();
+    }
+
+    private void setupFonts() {
         fontBold = manager.get("fonts/AGENCYB.ttf", BitmapFont.class);
         fontRegular = manager.get("fonts/AGENCYR.ttf", BitmapFont.class);
 
@@ -59,8 +67,6 @@ public class SpaceScreen implements Screen {
 
         fontRegular.setUseIntegerPositions(false);
         fontRegular.getData().setScale(viewport.getWorldHeight() / Gdx.graphics.getHeight());
-
-        loadSprites();
     }
 
     private void loadSprites() {
@@ -69,9 +75,13 @@ public class SpaceScreen implements Screen {
         
         fuselagePlayer = createSprite("images/upgrades/fuselage_alt_stage_0.png", 1, 1);
         fuselageEnemy = createSprite("images/upgrades/fuselage_enemy_stage_0.png", 1, 1);
-        turret = createSprite("images/upgrades/turret_laser_stage_0.png", 1, 1);
-        thruster = createSprite("images/upgrades/rocket_stage_0.png", 1, 1);
-        shield = createSprite("images/upgrades/shield_stage_0.png", 1, 1);
+    }
+
+    private void setupUpgradeHashMap() {
+        upgradeIcons = new HashMap<UpgradeType, Sprite>();
+        upgradeIcons.put(UpgradeType.TURRET, createSprite("images/upgrades/turret_laser_stage_0.png", 1, 1));
+        upgradeIcons.put(UpgradeType.THRUSTER, createSprite("images/upgrades/rocket_stage_0.png", 1, 1));
+        upgradeIcons.put(UpgradeType.SHIELD, createSprite("images/upgrades/shield_stage_0.png", 1, 1));
     }
 
     private Sprite createSprite(String path, float width, float height) {
@@ -97,21 +107,37 @@ public class SpaceScreen implements Screen {
         asteroid.draw(batch);
         
         for (GridCell<Fuselage> cell : model.getEnemyShip().getShipStructure().iterable()) {
-            fuselageEnemy.setX(model.getEnemyShip().getX() + cell.pos().col());
-            fuselageEnemy.setY(model.getEnemyShip().getY() + cell.pos().row());
+            float enemyX = model.getEnemyShip().getX() + cell.pos().col();
+            float enemyY = model.getEnemyShip().getY() + cell.pos().row();
+            fuselageEnemy.setX(enemyX);
+            fuselageEnemy.setY(enemyY);
             fuselageEnemy.draw(batch);
+
+            if (cell.value().getUpgrade() != null) {
+                upgradeIcons.get(cell.value().getUpgrade().getType()).setX(enemyX);
+                upgradeIcons.get(cell.value().getUpgrade().getType()).setY(enemyY);
+                upgradeIcons.get(cell.value().getUpgrade().getType()).draw(batch);
+            }
         }
 
         
         for (GridCell<Fuselage> cell : model.getPlayer().getShipStructure().iterable()) {
-            fuselagePlayer.setX(model.getPlayer().getX() + cell.pos().col());
-            fuselagePlayer.setY(model.getPlayer().getY() + cell.pos().row());
+            float playerX = model.getPlayer().getX() + cell.pos().col();
+            float playerY = model.getPlayer().getY() + cell.pos().row();
+            fuselagePlayer.setX(playerX);
+            fuselagePlayer.setY(playerY);
             fuselagePlayer.draw(batch);
+
+            if (cell.value().getUpgrade() != null) {
+                upgradeIcons.get(cell.value().getUpgrade().getType()).setX(playerX);
+                upgradeIcons.get(cell.value().getUpgrade().getType()).setY(playerY);
+                upgradeIcons.get(cell.value().getUpgrade().getType()).draw(batch);
+            }
         }
 
         if(model.laserExists) { //TODO: refactor, I beg thee
             laser.setX(model.getLaser().getX() + 0.375f);
-            laser.setY(model.getLaser().getY() + 0.375f);
+            laser.setY(model.getLaser().getY() + 0.875f);
             laser.draw(batch);
 
             laserUpdateTimer += delta;
