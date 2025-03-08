@@ -6,24 +6,43 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
+import inf112.skeleton.controller.SpaceGameScreenController;
+import inf112.skeleton.controller.UpgradeScreenController;
+import inf112.skeleton.model.SpaceGameModel;
+
 public class SpaceScreen implements Screen {
 
     final SpaceGame game;
+    final SpaceGameModel model;
+    private final SpaceGameScreenController controller;
     SpriteBatch batch;
     FitViewport viewport;
     BitmapFont fontBold;    //Agency FB Bold
     BitmapFont fontRegular; //Agency FB Regular
     AssetManager manager; 
 
-    public SpaceScreen(final SpaceGame game) {
+    Sprite asteroid;
+    Sprite player;
+    Sprite enemyShip;
+    Sprite laser;
+
+    float laserUpdateCutoff = 0.5f;
+    float laserUpdateTimer;
+
+    public SpaceScreen(final SpaceGame game, final SpaceGameModel model) {
         this.game = game;
         this.batch = this.game.getSpriteBatch();
         this.manager = this.game.getAssetManager();
         this.viewport = game.getFitViewport();
+
+        this.model = model;
+
+        this.controller = new SpaceGameScreenController(this, model);
 
         fontBold = manager.get("fonts/AGENCYB.ttf", BitmapFont.class);
         fontRegular = manager.get("fonts/AGENCYR.ttf", BitmapFont.class);
@@ -34,11 +53,23 @@ public class SpaceScreen implements Screen {
 
         fontRegular.setUseIntegerPositions(false);
         fontRegular.getData().setScale(viewport.getWorldHeight() / Gdx.graphics.getHeight());
+
+        asteroid = new Sprite(manager.get("images/space/asteroid_0.png", Texture.class));
+        asteroid.setSize(2, 2);
+
+        player = new Sprite(manager.get("images/upgrades/fuselage_alt_stage_0.png", Texture.class));
+        player.setSize(1, 1);
+
+        enemyShip = new Sprite(manager.get("images/upgrades/fuselage_enemy_stage_0.png", Texture.class));
+        enemyShip.setSize(1, 1);
+
+        laser = new Sprite(manager.get("images/space/laser_shot_0.png", Texture.class));
+        laser.setSize(0.25f, 0.25f);
     }
 
     @Override
     public void render(float delta) {
-        ScreenUtils.clear(Color.GRAY); 
+        ScreenUtils.clear(Color.DARK_GRAY); 
         
         viewport.apply();
         batch.setProjectionMatrix(viewport.getCamera().combined);
@@ -47,9 +78,32 @@ public class SpaceScreen implements Screen {
         fontRegular.setColor(Color.RED);
         
         batch.begin();
-        batch.draw(manager.get("images/obligator.png", Texture.class), 0f, 3f, 5f, 1f);
-        fontBold.draw(batch, "Hello, World!", 1f, 1f);
-        fontRegular.draw(batch, "The helloest of Worlds!", 2f, 2f);
+        asteroid.setX(model.getAsteroid().getX());
+        asteroid.setY(model.getAsteroid().getY());
+        asteroid.draw(batch);
+
+        enemyShip.setX(model.getEnemyShip().getX());
+        enemyShip.setY(model.getEnemyShip().getY());
+        enemyShip.draw(batch);
+
+        player.setX(model.getPlayer().getX());
+        player.setY(model.getPlayer().getY());
+        player.draw(batch);
+
+        if(model.laserExists) { //TODO: refactor, I beg thee
+            laser.setX(model.getLaser().getX() + 0.375f);
+            laser.setY(model.getLaser().getY() + 0.375f);
+            laser.draw(batch);
+
+            laserUpdateTimer += delta;
+            if(laserUpdateTimer >= laserUpdateCutoff) {
+                laserUpdateTimer = 0f;
+                model.moveLaser();
+            }
+        }
+
+        //fontBold.draw(batch, "Hello, World!", 1f, 1f);
+        //fontRegular.draw(batch, "The helloest of Worlds!", 2f, 2f);
         batch.end();
     }
 
@@ -57,7 +111,9 @@ public class SpaceScreen implements Screen {
     public void dispose() {}
 
     @Override
-    public void hide() {}
+    public void hide() {
+        Gdx.input.setInputProcessor(null);
+    }
 
     @Override
     public void pause() {}
@@ -71,6 +127,8 @@ public class SpaceScreen implements Screen {
     public void resume() {}
 
     @Override
-    public void show() {}
+    public void show() {
+        Gdx.input.setInputProcessor(controller);
+    }
     
 }
