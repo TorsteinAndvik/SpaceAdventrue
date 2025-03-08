@@ -1,7 +1,9 @@
 package inf112.skeleton.model.SpaceCharacters;
 
+import com.badlogic.gdx.math.Vector2;
 import inf112.skeleton.model.Globals.DamageDealer;
 import inf112.skeleton.model.Globals.Damageable;
+import inf112.skeleton.model.utils.SpaceCalculator;
 
 public abstract class Projectile extends SpaceBody implements Damageable, DamageDealer {
 
@@ -10,8 +12,15 @@ public abstract class Projectile extends SpaceBody implements Damageable, Damage
 
   private final int multiplier = 1;
 
-  public Projectile(String name, String description, float x, float y, int hitPoints, int mass, float angle, int radius) {
-    super(name, description, x, y, mass, angle, radius);
+  public Projectile(String name, String description, CharacterType characterType, float x, float y, int hitPoints, float angle, float speed, float radius) {
+    super(name, description, characterType, x, y, angle, radius);
+    this.hitPoints = hitPoints;
+    this.maxHitPoints = hitPoints;
+    setVelocity(SpaceCalculator.velocityFromAngleSpeed(angle, speed));
+  }
+
+  public Projectile(String name, String description, CharacterType characterType, float x, float y, float vX, float vY, int hitPoints, float angle, float mass, float radius, float rotationSpeed) {
+    super(name, description, characterType, new Vector2(x, y), new Vector2(vX, vY), mass, angle, rotationSpeed, radius);
     this.hitPoints = hitPoints;
     this.maxHitPoints = hitPoints;
   }

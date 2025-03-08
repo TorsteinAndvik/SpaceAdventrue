@@ -1,5 +1,6 @@
 package inf112.skeleton.model.SpaceCharacters;
 
+import com.badlogic.gdx.math.Vector2;
 import inf112.skeleton.model.Globals.DamageDealer;
 import inf112.skeleton.model.Globals.Damageable;
 import inf112.skeleton.model.Globals.Repairable;
@@ -12,12 +13,12 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
 //  private List<Gun> gunList;
 
 
-  public SpaceShip(String name, String description, int maxHealthPoints, int x, int y, int mass, int speed, float angle, int radius) {
-    this(name, description, maxHealthPoints, maxHealthPoints, x, y, mass, speed, angle, radius);
+  public SpaceShip(String name, String description, CharacterType characterType, int maxHealthPoints, float x, float y, float angle, float radius) {
+    this(name, description, characterType, maxHealthPoints, maxHealthPoints, x, y, angle, radius);
   }
 
-  public SpaceShip(String name, String description, int maxHitPoints, int hitPoints, int x, int y, int mass, int speed, float angle, int radius) {
-    super(name, description, x, y, mass, speed, angle, radius);
+  public SpaceShip(String name, String description, CharacterType characterType, int maxHitPoints, int hitPoints, float x, float y, float angle, float radius) {
+    super(name, description, characterType, 0, 0, 0, radius);
     if (hitPoints <= 0 || maxHitPoints <= 0) {
       throw new IllegalArgumentException("Hit points must be positive on ship creation");
     }
