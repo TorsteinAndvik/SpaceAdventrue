@@ -5,8 +5,6 @@ import inf112.skeleton.grid.IGridDimension;
 import inf112.skeleton.model.GameState;
 import inf112.skeleton.model.SpaceCharacters.Asteroid;
 import inf112.skeleton.model.SpaceCharacters.Bullet;
-import inf112.skeleton.model.SpaceCharacters.EnemyShip;
-import inf112.skeleton.model.SpaceCharacters.Player;
 import inf112.skeleton.model.SpaceCharacters.SpaceShip;
 
 public interface ViewableSpaceGameModel {

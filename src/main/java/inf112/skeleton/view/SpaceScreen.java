@@ -15,11 +15,9 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import inf112.skeleton.controller.SpaceGameScreenController;
 import inf112.skeleton.grid.GridCell;
-import inf112.skeleton.grid.CellPosition;
 import inf112.skeleton.model.SpaceGameModel;
 import inf112.skeleton.model.ShipComponents.UpgradeType;
 import inf112.skeleton.model.ShipComponents.Components.Fuselage;
-import inf112.skeleton.model.ShipComponents.Components.ShipUpgrade;
 
 public class SpaceScreen implements Screen {
 
