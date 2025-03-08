@@ -1,7 +1,5 @@
 package inf112.skeleton.model.SpaceCharacters;
 
-import inf112.skeleton.model.utils.SpaceCalculator;
-
 public class Bullet extends Projectile {
 
   public Bullet(String name, String description, int healthPoints, float x, float y, float angle, float speed, float radius) {

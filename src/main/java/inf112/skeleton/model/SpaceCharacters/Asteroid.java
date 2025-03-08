@@ -1,7 +1,5 @@
 package inf112.skeleton.model.SpaceCharacters;
 
-import com.badlogic.gdx.math.Vector2;
-
 public class Asteroid extends Projectile {
   private static final float ROTATION_SPEED = 0.01f;
 

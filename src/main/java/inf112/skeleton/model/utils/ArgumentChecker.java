@@ -1,7 +1,5 @@
 package inf112.skeleton.model.utils;
 
-import com.badlogic.gdx.math.Vector2;
-
 public class ArgumentChecker {
 
   /**

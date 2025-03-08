@@ -1,7 +1,6 @@
 package inf112.skeleton.controller;
 
 import com.badlogic.gdx.math.Vector2;
-import inf112.skeleton.model.Globals.Rotatable;
 
 /**
  * Represents a controllable SpaceBody that can be moved and updated dynamically.

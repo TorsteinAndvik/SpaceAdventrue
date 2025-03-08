@@ -1,6 +1,5 @@
 package inf112.skeleton.model.SpaceCharacters;
 
-import com.badlogic.gdx.math.Vector2;
 import inf112.skeleton.model.Globals.DamageDealer;
 import inf112.skeleton.model.Globals.Damageable;
 import inf112.skeleton.model.Globals.Repairable;
