@@ -24,9 +24,10 @@ public class LoadingScreen implements Screen {
     final SpaceGame game;
     SpriteBatch batch;
     Viewport viewport;
-    AssetManager manager; //An assetmanager helps with loading assets and disposing them once they are no longer needed 
+    AssetManager manager; // An assetmanager helps with loading assets and disposing them once they are no
+                          // longer needed
 
-    //Constants
+    // Constants
     int boldFontSize = 42;
     int regularFontSize = 36;
 
@@ -43,23 +44,23 @@ public class LoadingScreen implements Screen {
 
     private void queueAssets() {
         // Textures:
-            // space objects
+        // space objects
         queueTexture("images/space/asteroid_0.png");
         queueTexture("images/space/laser_shot_0.png");
 
-            // upgrade screen
+        // upgrade screen
         queueTexture("images/upgrade_grid_tile_green.png");
         queueTexture("images/upgrade_grid_tile_red.png");
         queueTexture("images/upgrade_grid_tile_gray.png");
-        
-            // ship parts
+
+        // ship parts
         queueTexture("images/upgrades/turret_laser_stage_0.png");
         queueTexture("images/upgrades/fuselage_alt_stage_0.png");
         queueTexture("images/upgrades/rocket_stage_0.png");
         queueTexture("images/upgrades/shield_stage_0.png");
         queueTexture("images/upgrades/fuselage_enemy_stage_0.png");
-            
-            // ui
+
+        // ui
         queueTexture("images/ui/Mouse_Left_Key_Light.png");
         queueTexture("images/ui/Mouse_Middle_Key_Light.png");
         queueTexture("images/ui/Mouse_Right_Key_Light.png");
@@ -73,13 +74,13 @@ public class LoadingScreen implements Screen {
         manager.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(resolver));
         manager.setLoader(BitmapFont.class, ".ttf", new FreetypeFontLoader(resolver));
 
-            // Set params for bold font
+        // Set params for bold font
         FreeTypeFontLoaderParameter fontBold = new FreeTypeFontLoaderParameter();
         fontBold.fontFileName = "fonts/AGENCYB.ttf";
         fontBold.fontParameters.size = boldFontSize;
         manager.load(fontBold.fontFileName, BitmapFont.class, fontBold);
 
-            // Set params for regular font
+        // Set params for regular font
         FreeTypeFontLoaderParameter fontRegular = new FreeTypeFontLoaderParameter();
         fontRegular.fontFileName = "fonts/AGENCYR.ttf";
         fontRegular.fontParameters.size = regularFontSize;
@@ -96,25 +97,31 @@ public class LoadingScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        //First assets are queued for loading in the constructor (before this block of code runs), and then calling .update() here will *actually* load them. 
-        if(manager.update(17)) { //all assets are loaded 1 by 1 //update(17) blocks thread for at least 17ms before passing over to render(), gives roughly 60fps (depends on size of asset, a large enough file might block for longer)
+        // First assets are queued for loading in the constructor (before this block of
+        // code runs), and then calling .update() here will *actually* load them.
+        if (manager.update(17)) { // all assets are loaded 1 by 1 //update(17) blocks thread for at least 17ms
+                                  // before passing over to render(), gives roughly 60fps (depends on size of
+                                  // asset, a large enough file might block for longer)
             // ONLY CALL ONE OF THESE FOR TESTING:
-            //game.setScreen(new UpgradeScreen(game)); //test the UpgradeScreen class
-            game.setScreen(new SpaceScreen(game, new SpaceGameModel()));  //test the SpaceScreen class
+            // game.setScreen(new UpgradeScreen(game)); //test the UpgradeScreen class
+            game.setScreen(new SpaceScreen(game, new SpaceGameModel())); // test the SpaceScreen class
         }
 
         float progress = manager.getProgress();
-        System.out.println("Loading assets: " + 100f*progress + "%");
+        System.out.println("Loading assets: " + 100f * progress + "%");
     }
 
     @Override
-    public void dispose() {}
+    public void dispose() {
+    }
 
     @Override
-    public void hide() {}
+    public void hide() {
+    }
 
     @Override
-    public void pause() {}
+    public void pause() {
+    }
 
     @Override
     public void resize(int width, int height) {
@@ -122,8 +129,10 @@ public class LoadingScreen implements Screen {
     }
 
     @Override
-    public void resume() {}
+    public void resume() {
+    }
 
     @Override
-    public void show() {}
+    public void show() {
+    }
 }

@@ -28,9 +28,9 @@ public class SpaceScreen implements Screen {
     private final SpaceGameScreenController controller;
     SpriteBatch batch;
     FitViewport viewport;
-    BitmapFont fontBold;    //Agency FB Bold
-    BitmapFont fontRegular; //Agency FB Regular
-    AssetManager manager; 
+    BitmapFont fontBold; // Agency FB Bold
+    BitmapFont fontRegular; // Agency FB Regular
+    AssetManager manager;
 
     Sprite asteroid;
     Sprite laser;
@@ -61,7 +61,8 @@ public class SpaceScreen implements Screen {
         fontBold = manager.get("fonts/AGENCYB.ttf", BitmapFont.class);
         fontRegular = manager.get("fonts/AGENCYR.ttf", BitmapFont.class);
 
-        // font are set as [integer]pt, need to scale them to our viewport by ratio of viewport height to screen height in order to use world-unit sized font
+        // font are set as [integer]pt, need to scale them to our viewport by ratio of
+        // viewport height to screen height in order to use world-unit sized font
         fontBold.setUseIntegerPositions(false);
         fontBold.getData().setScale(viewport.getWorldHeight() / Gdx.graphics.getHeight());
 
@@ -72,7 +73,7 @@ public class SpaceScreen implements Screen {
     private void loadSprites() {
         asteroid = createSprite("images/space/asteroid_0.png", 2, 2);
         laser = createSprite("images/space/laser_shot_0.png", 0.25f, 0.25f);
-        
+
         fuselagePlayer = createSprite("images/upgrades/fuselage_alt_stage_0.png", 1, 1);
         fuselageEnemy = createSprite("images/upgrades/fuselage_enemy_stage_0.png", 1, 1);
     }
@@ -92,20 +93,20 @@ public class SpaceScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        ScreenUtils.clear(Color.DARK_GRAY); 
-        
+        ScreenUtils.clear(Color.DARK_GRAY);
+
         viewport.apply();
         batch.setProjectionMatrix(viewport.getCamera().combined);
 
         fontBold.setColor(Color.GREEN);
         fontRegular.setColor(Color.RED);
-        
+
         batch.begin();
 
         asteroid.setX(model.getAsteroid().getX());
         asteroid.setY(model.getAsteroid().getY());
         asteroid.draw(batch);
-        
+
         for (GridCell<Fuselage> cell : model.getEnemyShip().getShipStructure().iterable()) {
             float enemyX = model.getEnemyShip().getX() + cell.pos().col();
             float enemyY = model.getEnemyShip().getY() + cell.pos().row();
@@ -120,7 +121,6 @@ public class SpaceScreen implements Screen {
             }
         }
 
-        
         for (GridCell<Fuselage> cell : model.getPlayer().getShipStructure().iterable()) {
             float playerX = model.getPlayer().getX() + cell.pos().col();
             float playerY = model.getPlayer().getY() + cell.pos().row();
@@ -135,25 +135,26 @@ public class SpaceScreen implements Screen {
             }
         }
 
-        if(model.laserExists) { //TODO: refactor, I beg thee
+        if (model.laserExists) { // TODO: refactor, I beg thee
             laser.setX(model.getLaser().getX() + 0.375f);
             laser.setY(model.getLaser().getY() + 0.875f);
             laser.draw(batch);
 
             laserUpdateTimer += delta;
-            if(laserUpdateTimer >= laserUpdateCutoff) {
+            if (laserUpdateTimer >= laserUpdateCutoff) {
                 laserUpdateTimer = 0f;
                 model.moveLaser();
             }
         }
 
-        //fontBold.draw(batch, "Hello, World!", 1f, 1f);
-        //fontRegular.draw(batch, "The helloest of Worlds!", 2f, 2f);
+        // fontBold.draw(batch, "Hello, World!", 1f, 1f);
+        // fontRegular.draw(batch, "The helloest of Worlds!", 2f, 2f);
         batch.end();
     }
 
     @Override
-    public void dispose() {}
+    public void dispose() {
+    }
 
     @Override
     public void hide() {
@@ -161,7 +162,8 @@ public class SpaceScreen implements Screen {
     }
 
     @Override
-    public void pause() {}
+    public void pause() {
+    }
 
     @Override
     public void resize(int width, int height) {
@@ -169,11 +171,12 @@ public class SpaceScreen implements Screen {
     }
 
     @Override
-    public void resume() {}
+    public void resume() {
+    }
 
     @Override
     public void show() {
         Gdx.input.setInputProcessor(controller);
     }
-    
+
 }

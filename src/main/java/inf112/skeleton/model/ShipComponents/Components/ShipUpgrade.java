@@ -7,7 +7,7 @@ public abstract class ShipUpgrade {
 
     private String name;
     private String description;
-    
+
     private UpgradeType type;
     private UpgradeStage stage;
 
@@ -29,7 +29,7 @@ public abstract class ShipUpgrade {
     public UpgradeType getType() {
         return type;
     }
-    
+
     public UpgradeStage getStage() {
         return stage;
     }
@@ -40,9 +40,11 @@ public abstract class ShipUpgrade {
      * @return true if <code>this</code> was upgraded, false otherwise
      */
     public boolean upgrade() {
-        if(stage.isUpgradeable()) {
+        if (stage.isUpgradeable()) {
             stage = stage.nextStage(stage);
             return true;
-        } else {return false;}
+        } else {
+            return false;
+        }
     }
 }
