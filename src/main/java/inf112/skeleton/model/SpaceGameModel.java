@@ -8,6 +8,7 @@ import inf112.skeleton.model.SpaceCharacters.Asteroid;
 import inf112.skeleton.model.SpaceCharacters.Bullet;
 import inf112.skeleton.model.SpaceCharacters.EnemyShip;
 import inf112.skeleton.model.SpaceCharacters.Player;
+import inf112.skeleton.model.SpaceCharacters.SpaceShip;
 import inf112.skeleton.view.ViewableSpaceGameModel;
 
 public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpaceGameModel {
@@ -17,15 +18,18 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     private EnemyShip enemyShip;
     private Bullet laser;
     private ShipFactory shipFactory;
+    private SpaceShip[] spaceShips;
     public boolean laserExists;
 
     public SpaceGameModel() {
         this.shipFactory = new ShipFactory();
-        this.player = new Player(shipFactory.simplePlayerShip(), "player", "the player's spaceship", 1, 3, 1, 1, 0, 0,
+        this.player = new Player(shipFactory.simpleShip(), "player", "the player's spaceship", 1, 3, 1, 1, 0, 0,
                 1);
         this.enemyShip = new EnemyShip(shipFactory.simpleShip(), "enemy", "an enemy ship", 1, 6, 5, 1, 0, 0, 1);
         this.asteroid = new Asteroid("asteroid", "an asteroid", 1, 1, 6, 1, 0, 0, 2);
         this.laser = new Bullet("laser", "a laser shot", 0, 0, 1, 1, 0, 0, 1);
+
+        spaceShips = new SpaceShip[] { player, enemyShip };
     }
 
     public void shoot() {
@@ -125,18 +129,13 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     }
 
     @Override
-    public Player getPlayer() {
-        return this.player;
+    public SpaceShip[] getSpaceShips() {
+        return this.spaceShips;
     }
 
     @Override
     public Asteroid getAsteroid() {
         return this.asteroid;
-    }
-
-    @Override
-    public EnemyShip getEnemyShip() {
-        return this.enemyShip;
     }
 
     @Override

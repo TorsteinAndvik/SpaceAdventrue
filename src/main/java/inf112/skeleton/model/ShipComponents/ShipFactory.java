@@ -21,15 +21,4 @@ public class ShipFactory {
         ship.set(new CellPosition(0, 0), new Fuselage(new Thruster()));
         return ship;
     }
-
-    /**
-     * @return A 1x2 <code>ShipStructure</code> with a turret at the front and a
-     *         thruster at the back, set to be the player's ship.
-     */
-    public ShipStructure simplePlayerShip() {
-        ShipStructure ship = new ShipStructure(1, 2, true);
-        ship.set(new CellPosition(1, 0), new Fuselage(new Turret()));
-        ship.set(new CellPosition(0, 0), new Fuselage(new Thruster()));
-        return ship;
-    }
 }

@@ -8,15 +8,9 @@ import inf112.skeleton.grid.IGrid;
 public class ShipStructure {
 
     private IGrid<Fuselage> grid;
-    public final boolean isPlayerShip;
 
     public ShipStructure(int width, int height) {
-        this(width, height, false);
-    }
-
-    public ShipStructure(int width, int height, boolean isPlayerShip) {
         this.grid = new Grid<Fuselage>(height, width);
-        this.isPlayerShip = isPlayerShip;
     }
 
     /**

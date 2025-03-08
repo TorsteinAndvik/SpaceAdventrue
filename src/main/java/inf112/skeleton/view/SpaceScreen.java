@@ -107,31 +107,25 @@ public class SpaceScreen implements Screen {
         asteroid.setY(model.getAsteroid().getY());
         asteroid.draw(batch);
 
-        for (GridCell<Fuselage> cell : model.getEnemyShip().getShipStructure().iterable()) {
-            float enemyX = model.getEnemyShip().getX() + cell.pos().col();
-            float enemyY = model.getEnemyShip().getY() + cell.pos().row();
-            fuselageEnemy.setX(enemyX);
-            fuselageEnemy.setY(enemyY);
-            fuselageEnemy.draw(batch);
+        for (int i = 0; i < model.getSpaceShips().length; i++) {
+            for (GridCell<Fuselage> cell : model.getSpaceShips()[i].getShipStructure().iterable()) {
+                float shipX = model.getSpaceShips()[i].getX() + cell.pos().col();
+                float shipY = model.getSpaceShips()[i].getY() + cell.pos().row();
+                if (model.getSpaceShips()[i].isPlayerShip()) {
+                    fuselagePlayer.setX(shipX);
+                    fuselagePlayer.setY(shipY);
+                    fuselagePlayer.draw(batch);
+                } else {
+                    fuselageEnemy.setX(shipX);
+                    fuselageEnemy.setY(shipY);
+                    fuselageEnemy.draw(batch);
+                }
 
-            if (cell.value().getUpgrade() != null) {
-                upgradeIcons.get(cell.value().getUpgrade().getType()).setX(enemyX);
-                upgradeIcons.get(cell.value().getUpgrade().getType()).setY(enemyY);
-                upgradeIcons.get(cell.value().getUpgrade().getType()).draw(batch);
-            }
-        }
-
-        for (GridCell<Fuselage> cell : model.getPlayer().getShipStructure().iterable()) {
-            float playerX = model.getPlayer().getX() + cell.pos().col();
-            float playerY = model.getPlayer().getY() + cell.pos().row();
-            fuselagePlayer.setX(playerX);
-            fuselagePlayer.setY(playerY);
-            fuselagePlayer.draw(batch);
-
-            if (cell.value().getUpgrade() != null) {
-                upgradeIcons.get(cell.value().getUpgrade().getType()).setX(playerX);
-                upgradeIcons.get(cell.value().getUpgrade().getType()).setY(playerY);
-                upgradeIcons.get(cell.value().getUpgrade().getType()).draw(batch);
+                if (cell.value().getUpgrade() != null) {
+                    upgradeIcons.get(cell.value().getUpgrade().getType()).setX(shipX);
+                    upgradeIcons.get(cell.value().getUpgrade().getType()).setY(shipY);
+                    upgradeIcons.get(cell.value().getUpgrade().getType()).draw(batch);
+                }
             }
         }
 

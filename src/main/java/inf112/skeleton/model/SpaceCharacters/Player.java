@@ -8,4 +8,9 @@ public class Player extends SpaceShip {
             int speed, float angle, int radius) {
         super(shipStructure, name, description, hitPoints, x, y, mass, speed, angle, radius);
     }
+
+    @Override
+    public boolean isPlayerShip() {
+        return true;
+    }
 }

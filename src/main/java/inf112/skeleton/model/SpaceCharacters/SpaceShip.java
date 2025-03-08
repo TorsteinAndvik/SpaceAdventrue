@@ -37,6 +37,10 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
         return shipStructure;
     }
 
+    public boolean isPlayerShip() {
+        return false;
+    }
+
     @Override
     public int getMaxHitPoints() {
         return maxHitPoints;

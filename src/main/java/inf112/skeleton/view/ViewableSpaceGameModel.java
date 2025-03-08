@@ -7,6 +7,7 @@ import inf112.skeleton.model.SpaceCharacters.Asteroid;
 import inf112.skeleton.model.SpaceCharacters.Bullet;
 import inf112.skeleton.model.SpaceCharacters.EnemyShip;
 import inf112.skeleton.model.SpaceCharacters.Player;
+import inf112.skeleton.model.SpaceCharacters.SpaceShip;
 
 public interface ViewableSpaceGameModel {
 
@@ -56,14 +57,9 @@ public interface ViewableSpaceGameModel {
     int getProgression();
 
     /**
-     * Returns the Player object of the MVP
-     * TODO: Remove this once a proper model is in place.
-     * TODO: There should be another "viewable" interface for model-objects, such
-     * that the view doesn't get access to the model
-     * 
-     * @return the Player object
+     * @return an array of all <code>SpaceShip</code> objects in the model
      */
-    Player getPlayer();
+    SpaceShip[] getSpaceShips();
 
     /**
      * Returns the Asteroid object of the MVP //TODO: Remove this once a proper
@@ -72,14 +68,6 @@ public interface ViewableSpaceGameModel {
      * @return the Asteroid object
      */
     Asteroid getAsteroid();
-
-    /**
-     * Returns the enemy ship of the MVP //TODO: Remove this once a proper model is
-     * in place
-     * 
-     * @return the EnemyShip object
-     */
-    EnemyShip getEnemyShip();
 
     /**
      * Returns the Bullet object (laser) of the MVP //TODO: Remove this once a
