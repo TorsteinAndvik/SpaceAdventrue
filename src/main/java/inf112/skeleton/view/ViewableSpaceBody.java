@@ -1,7 +1,10 @@
-package inf112.skeleton.model.SpaceCharacters;
+package inf112.skeleton.view;
 
 
-public interface SpaceBodyView {
+import com.badlogic.gdx.math.Vector2;
+import inf112.skeleton.model.SpaceCharacters.CharacterType;
+
+public interface ViewableSpaceBody {
 
   /**
    * @return the x-coordinate of a SpaceBody object.
@@ -20,7 +23,9 @@ public interface SpaceBodyView {
    *
    * @return the mass of the SpaceBody.
    */
-  int getMass();
+  float getMass();
+
+  Vector2 getVelocity();
 
   /**
    * Get the speed of a SpaceBody object.
@@ -30,18 +35,25 @@ public interface SpaceBodyView {
   float getSpeed();
 
   /**
-   * The rotation of a SpaceBody object.
+   * Get the rotation of a SpaceBody object.
    *
    * @return the rotation of the SpaceBody.
    */
   float getRotationAngle();
 
   /**
-   * The radius of a SpaceBody object
+   * Get the radius of a SpaceBody object
    *
    * @return the radius of the SpaceBody
    */
-  int getRadius();
+  float getRadius();
 
-  CharacterType getType();
+  /**
+   * Get the CharacterType of a SpaceBody object
+   *
+   * @return the character type.
+   */
+  CharacterType getCharacterType();
+
+
 }
