@@ -12,12 +12,12 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
 //  private List<Gun> gunList;
 
 
-  public SpaceShip(String name, String description, CharacterType characterType, int maxHealthPoints, float x, float y, float angle, float radius) {
-    this(name, description, characterType, maxHealthPoints, maxHealthPoints, x, y, angle, radius);
+  public SpaceShip(String name, String description, CharacterType characterType, float x, float y, int maxHealthPoints, float angle, float radius) {
+    this(name, description, characterType, x, y, maxHealthPoints, maxHealthPoints, angle, radius);
   }
 
-  public SpaceShip(String name, String description, CharacterType characterType, int maxHitPoints, int hitPoints, float x, float y, float angle, float radius) {
-    super(name, description, characterType, 0, 0, 0, radius);
+  public SpaceShip(String name, String description, CharacterType characterType, float x, float y, int maxHitPoints, int hitPoints, float angle, float radius) {
+    super(name, description, characterType, x, y, angle, radius);
     if (hitPoints <= 0 || maxHitPoints <= 0) {
       throw new IllegalArgumentException("Hit points must be positive on ship creation");
     }
