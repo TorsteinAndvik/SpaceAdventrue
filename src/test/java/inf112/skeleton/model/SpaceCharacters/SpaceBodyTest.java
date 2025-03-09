@@ -10,7 +10,7 @@ public class SpaceBodyTest {
   void createSpaceBodyTest() {
     SpaceBody asteroid = new Asteroid(
             "Ceres", "Ceres is a dwarf planet",
-            100, 37, 0, 17, 68, 600, 45, 200);
+            37, 68, 0, 17, 100, 600, 45, 200);
     assertEquals("Ceres", asteroid.getName());
     assertEquals("Ceres is a dwarf planet", asteroid.getDescription());
     assertEquals(37, asteroid.getX());
