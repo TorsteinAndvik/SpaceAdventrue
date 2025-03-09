@@ -11,33 +11,34 @@ import inf112.skeleton.view.ViewableSpaceGameModel;
 
 public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpaceGameModel {
 
-    private Player player;
-    private Asteroid asteroid;   
-    private EnemyShip enemyShip; 
-    private Bullet laser;
-    public boolean laserExists;
-    public SpaceGameModel() {
-        this.player = new Player("player", "the player's spaceship", 1, 3, 1, 1, 0, 0, 1);
-        this.asteroid = new Asteroid("asteroid", "an asteroid", 1, 1, 6, 1, 0, 0, 2);
-        this.enemyShip = new EnemyShip("enemy", "an enemy ship", 1, 6, 5, 1, 0, 0, 1);
-        this.laser = new Bullet("laser", "a laser shot", 0,0, 1, 1, 0, 0, 1);
-    }
+  private Player player;
+  private Asteroid asteroid;
+  private EnemyShip enemyShip;
+  private Bullet laser;
+  public boolean laserExists;
 
-    public void shoot() {
-        //TODO: This is awful, never do this.
-        this.laser = new Bullet("laser", "a laser shot", player.getX(),player.getY()+1, 1, 1, 0, 0, 1);
-        laserExists = true;
-    }
+  public SpaceGameModel() {
+    this.player = new Player("player", "the player's spaceship", 1, 3, 1, 1);
+    this.asteroid = new Asteroid("asteroid", "an asteroid", 1, 1, 0, 0, 1, 1, 0, 1);
+    this.enemyShip = new EnemyShip("enemy", "an enemy ship", 6, 5, 1, 0, 1);
+    this.laser = new Bullet("laser", "a laser shot", 0, 0, 1, 0, 1, 1);
+  }
 
-    public void moveLaser() {
-        //TODO: This is also awful.
-        laser.setY(laser.getY()+1);    
-        if (laser.getY() >= 9) {
-            System.out.println("laser deleted offscreen");
-            laserExists = false;
-            this.laser = null;
-        }
+  public void shoot() {
+    //TODO: This is awful, never do this.
+    this.laser = new Bullet("laser", "a laser shot", 1, player.getX(), player.getY() + 1, 1, 0, 1);
+    laserExists = true;
+  }
+
+  public void moveLaser() {
+    //TODO: This is also awful.
+    laser.setY(laser.getY() + 1);
+    if (laser.getY() >= 9) {
+      System.out.println("laser deleted offscreen");
+      laserExists = false;
+      this.laser = null;
     }
+  }
 
   @Override
   public boolean moveSpaceShip(int deltaRow, int deltaCol) {
@@ -46,47 +47,42 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
   @Override
   public void gameStateActive() {
-
   }
 
   @Override
   public void gameStatePaused() {
-
   }
 
   @Override
   public void stopGame() {
-
   }
 
   @Override
   public void startNewGame() {
-
   }
 
   @Override
   public void stopMoving() {
-
   }
 
   @Override
   public void moveUp() {
-    player.setY(player.getY()+1);
+    player.setY(player.getY() + 1);
   }
 
   @Override
   public void moveDown() {
-    player.setY(player.getY()-1);
+    player.setY(player.getY() - 1);
   }
 
   @Override
   public void moveLeft() {
-    player.setX(player.getX()-1);
+    player.setX(player.getX() - 1);
   }
 
   @Override
   public void moveRight() {
-    player.setX(player.getX()+1);
+    player.setX(player.getX() + 1);
   }
 
   @Override
@@ -119,23 +115,23 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     return 0;
   }
 
-    @Override
-    public Player getPlayer() {
-        return this.player;
-    }
+  @Override
+  public Player getPlayer() {
+    return this.player;
+  }
 
-    @Override
-    public Asteroid getAsteroid() {
-        return this.asteroid;
-    }
+  @Override
+  public Asteroid getAsteroid() {
+    return this.asteroid;
+  }
 
-    @Override
-    public EnemyShip getEnemyShip() {
-        return this.enemyShip;
-    }
+  @Override
+  public EnemyShip getEnemyShip() {
+    return this.enemyShip;
+  }
 
-    @Override 
-    public Bullet getLaser() {
-        return this.laser;
-    }
+  @Override
+  public Bullet getLaser() {
+    return this.laser;
+  }
 }

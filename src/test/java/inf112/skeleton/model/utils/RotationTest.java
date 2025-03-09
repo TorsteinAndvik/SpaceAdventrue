@@ -27,6 +27,26 @@ public class RotationTest {
   }
 
   @Test
+  void rotationSpeedTest() {
+    Rotation r = new Rotation(0, 2);
+    r.update(0.5f);
+    assertEquals(1, r.getAngle());
+    r.update(1f);
+    assertEquals(3, r.getAngle());
+  }
+
+
+  @Test
+  void negativeRotationSpeedTest() {
+    Rotation r = new Rotation(5, -10);
+    r.update(1f);
+    assertEquals(355, r.getAngle());
+    r.update(1f);
+    assertEquals(345, r.getAngle());
+  }
+
+
+  @Test
   void toStringTest() {
     Rotation r = new Rotation(180);
     assertEquals("Rotation{angle=180.0}", r.toString());
