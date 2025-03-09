@@ -19,7 +19,7 @@ public abstract class Projectile extends SpaceBody implements Damageable, Damage
     setVelocity(SpaceCalculator.velocityFromAngleSpeed(angle, speed));
   }
 
-  public Projectile(String name, String description, CharacterType characterType, float x, float y, float vX, float vY, int hitPoints, float angle, float mass, float radius, float rotationSpeed) {
+  public Projectile(String name, String description, CharacterType characterType, float x, float y, float vX, float vY, int hitPoints, float mass, float angle, float radius, float rotationSpeed) {
     super(name, description, characterType, new Vector2(x, y), new Vector2(vX, vY), mass, angle, rotationSpeed, radius);
     this.hitPoints = hitPoints;
     this.maxHitPoints = hitPoints;
