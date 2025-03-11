@@ -60,7 +60,7 @@ public class ShipFactory {
     return shipConfig;
   }
 
-  public ShipStructure createShipStructureFromJson(String filename) {
+  public ShipStructure createShipFromJson(String filename) {
     return CreateShipFromShipConfig(createShipConfigFromJson(filename));
   }
 
