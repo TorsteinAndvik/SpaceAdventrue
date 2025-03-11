@@ -1,5 +1,7 @@
 package inf112.skeleton.view;
 
+import java.util.HashMap;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
@@ -12,8 +14,10 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import inf112.skeleton.controller.SpaceGameScreenController;
-import inf112.skeleton.controller.UpgradeScreenController;
+import inf112.skeleton.grid.GridCell;
 import inf112.skeleton.model.SpaceGameModel;
+import inf112.skeleton.model.ShipComponents.UpgradeType;
+import inf112.skeleton.model.ShipComponents.Components.Fuselage;
 
 public class SpaceScreen implements Screen {
 
@@ -22,14 +26,17 @@ public class SpaceScreen implements Screen {
     private final SpaceGameScreenController controller;
     SpriteBatch batch;
     FitViewport viewport;
-    BitmapFont fontBold;    //Agency FB Bold
-    BitmapFont fontRegular; //Agency FB Regular
-    AssetManager manager; 
+    BitmapFont fontBold; // Agency FB Bold
+    BitmapFont fontRegular; // Agency FB Regular
+    AssetManager manager;
 
     Sprite asteroid;
-    Sprite player;
-    Sprite enemyShip;
     Sprite laser;
+
+    Sprite fuselagePlayer;
+    Sprite fuselageEnemy;
+
+    HashMap<UpgradeType, Sprite> upgradeIcons;
 
     float laserUpdateCutoff = 0.5f;
     float laserUpdateTimer;
@@ -41,74 +48,105 @@ public class SpaceScreen implements Screen {
         this.viewport = game.getFitViewport();
 
         this.model = model;
-
         this.controller = new SpaceGameScreenController(this, model);
 
+        setupFonts();
+        loadSprites();
+        setupUpgradeHashMap();
+    }
+
+    private void setupFonts() {
         fontBold = manager.get("fonts/AGENCYB.ttf", BitmapFont.class);
         fontRegular = manager.get("fonts/AGENCYR.ttf", BitmapFont.class);
 
-        // font are set as [integer]pt, need to scale them to our viewport by ratio of viewport height to screen height in order to use world-unit sized font
+        // font are set as [integer]pt, need to scale them to our viewport by ratio of
+        // viewport height to screen height in order to use world-unit sized font
         fontBold.setUseIntegerPositions(false);
         fontBold.getData().setScale(viewport.getWorldHeight() / Gdx.graphics.getHeight());
 
         fontRegular.setUseIntegerPositions(false);
         fontRegular.getData().setScale(viewport.getWorldHeight() / Gdx.graphics.getHeight());
+    }
 
-        asteroid = new Sprite(manager.get("images/space/asteroid_0.png", Texture.class));
-        asteroid.setSize(2, 2);
+    private void loadSprites() {
+        asteroid = createSprite("images/space/asteroid_0.png", 2, 2);
+        laser = createSprite("images/space/laser_shot_0.png", 0.25f, 0.25f);
 
-        player = new Sprite(manager.get("images/upgrades/fuselage_alt_stage_0.png", Texture.class));
-        player.setSize(1, 1);
+        fuselagePlayer = createSprite("images/upgrades/fuselage_alt_stage_0.png", 1, 1);
+        fuselageEnemy = createSprite("images/upgrades/fuselage_enemy_stage_0.png", 1, 1);
+    }
 
-        enemyShip = new Sprite(manager.get("images/upgrades/fuselage_enemy_stage_0.png", Texture.class));
-        enemyShip.setSize(1, 1);
+    private void setupUpgradeHashMap() {
+        upgradeIcons = new HashMap<UpgradeType, Sprite>();
+        upgradeIcons.put(UpgradeType.TURRET, createSprite("images/upgrades/turret_laser_stage_0.png", 1, 1));
+        upgradeIcons.put(UpgradeType.THRUSTER, createSprite("images/upgrades/rocket_stage_0.png", 1, 1));
+        upgradeIcons.put(UpgradeType.SHIELD, createSprite("images/upgrades/shield_stage_0.png", 1, 1));
+    }
 
-        laser = new Sprite(manager.get("images/space/laser_shot_0.png", Texture.class));
-        laser.setSize(0.25f, 0.25f);
+    private Sprite createSprite(String path, float width, float height) {
+        Sprite sprite = new Sprite(manager.get(path, Texture.class));
+        sprite.setSize(width, height);
+        return sprite;
     }
 
     @Override
     public void render(float delta) {
-        ScreenUtils.clear(Color.DARK_GRAY); 
-        
+        ScreenUtils.clear(Color.DARK_GRAY);
+
         viewport.apply();
         batch.setProjectionMatrix(viewport.getCamera().combined);
 
         fontBold.setColor(Color.GREEN);
         fontRegular.setColor(Color.RED);
-        
+
         batch.begin();
+
         asteroid.setX(model.getAsteroid().getX());
         asteroid.setY(model.getAsteroid().getY());
         asteroid.draw(batch);
 
-        enemyShip.setX(model.getEnemyShip().getX());
-        enemyShip.setY(model.getEnemyShip().getY());
-        enemyShip.draw(batch);
+        for (int i = 0; i < model.getSpaceShips().length; i++) {
+            for (GridCell<Fuselage> cell : model.getSpaceShips()[i].getShipStructure().iterable()) {
+                float shipX = model.getSpaceShips()[i].getX() + cell.pos().col();
+                float shipY = model.getSpaceShips()[i].getY() + cell.pos().row();
+                if (model.getSpaceShips()[i].isPlayerShip()) {
+                    fuselagePlayer.setX(shipX);
+                    fuselagePlayer.setY(shipY);
+                    fuselagePlayer.draw(batch);
+                } else {
+                    fuselageEnemy.setX(shipX);
+                    fuselageEnemy.setY(shipY);
+                    fuselageEnemy.draw(batch);
+                }
 
-        player.setX(model.getPlayer().getX());
-        player.setY(model.getPlayer().getY());
-        player.draw(batch);
+                if (cell.value().getUpgrade() != null) {
+                    upgradeIcons.get(cell.value().getUpgrade().getType()).setX(shipX);
+                    upgradeIcons.get(cell.value().getUpgrade().getType()).setY(shipY);
+                    upgradeIcons.get(cell.value().getUpgrade().getType()).draw(batch);
+                }
+            }
+        }
 
-        if(model.laserExists) { //TODO: refactor, I beg thee
+        if (model.laserExists) { // TODO: refactor, I beg thee
             laser.setX(model.getLaser().getX() + 0.375f);
-            laser.setY(model.getLaser().getY() + 0.375f);
+            laser.setY(model.getLaser().getY() + 0.875f);
             laser.draw(batch);
 
             laserUpdateTimer += delta;
-            if(laserUpdateTimer >= laserUpdateCutoff) {
+            if (laserUpdateTimer >= laserUpdateCutoff) {
                 laserUpdateTimer = 0f;
                 model.moveLaser();
             }
         }
 
-        //fontBold.draw(batch, "Hello, World!", 1f, 1f);
-        //fontRegular.draw(batch, "The helloest of Worlds!", 2f, 2f);
+        // fontBold.draw(batch, "Hello, World!", 1f, 1f);
+        // fontRegular.draw(batch, "The helloest of Worlds!", 2f, 2f);
         batch.end();
     }
 
     @Override
-    public void dispose() {}
+    public void dispose() {
+    }
 
     @Override
     public void hide() {
@@ -116,7 +154,8 @@ public class SpaceScreen implements Screen {
     }
 
     @Override
-    public void pause() {}
+    public void pause() {
+    }
 
     @Override
     public void resize(int width, int height) {
@@ -124,11 +163,12 @@ public class SpaceScreen implements Screen {
     }
 
     @Override
-    public void resume() {}
+    public void resume() {
+    }
 
     @Override
     public void show() {
         Gdx.input.setInputProcessor(controller);
     }
-    
+
 }

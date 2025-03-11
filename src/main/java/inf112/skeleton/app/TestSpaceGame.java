@@ -18,18 +18,20 @@ public class TestSpaceGame extends Game implements SpaceGame {
     private FitViewport fitViewport;
     private ExtendViewport extendViewport;
     private ScreenViewport screenViewport;
-    private final int METERS = 9; // screen will be meters x meters (we use meters as Game coordinates, NOT pixel coordinates - these depend on window size, awful to work with)
+    private final int METERS = 9; // screen will be meters x meters (we use meters as Game coordinates, NOT pixel
+                                  // coordinates - these depend on window size, awful to work with)
 
     @Override
     public void create() {
         batch = new SpriteBatch();
-        
-        // screen will be meters x meters (we use meters as Game coordinates, NOT pixel coordinates - these depend on window size, awful to work with)
+
+        // screen will be meters x meters (we use meters as Game coordinates, NOT pixel
+        // coordinates - these depend on window size, awful to work with)
         fitViewport = new FitViewport(METERS, METERS);
         screenViewport = new ScreenViewport();
-        screenViewport.setUnitsPerPixel((float)METERS / (float)Gdx.graphics.getWidth());
+        screenViewport.setUnitsPerPixel((float) METERS / (float) Gdx.graphics.getWidth());
         extendViewport = new ExtendViewport(Gdx.graphics.getWidth() / METERS, Gdx.graphics.getHeight() / METERS);
-    
+
         manager = new AssetManager();
 
         this.setScreen(new LoadingScreen(this));
@@ -60,7 +62,7 @@ public class TestSpaceGame extends Game implements SpaceGame {
         return manager;
     }
 
-    @Override 
+    @Override
     public void dispose() {
         this.screen.dispose();
         this.batch.dispose();
