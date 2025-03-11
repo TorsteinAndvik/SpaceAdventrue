@@ -18,14 +18,17 @@ public class ShipStructure {
   public ShipStructure(ShipConfig shipConfig) {
     this(shipConfig.width, shipConfig.height);
     for (ShipComponent component : shipConfig.components) {
-
+      if (component.upgrade == null) {
+        set(new CellPosition(component.x, component.y), new Fuselage());
+        continue;
+      }
       ShipUpgrade upgradeType =
           switch (component.upgrade.type) {
             case TURRET -> new Turret();
             case SHIELD -> new Shield();
             case THRUSTER -> new Thruster();
           };
-      addUpgrade(new CellPosition(component.x, component.y), upgradeType);
+      set(new CellPosition(component.x, component.y), new Fuselage(upgradeType));
     }
   }
 
