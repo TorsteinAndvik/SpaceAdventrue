@@ -19,10 +19,15 @@ public class ShipFactory {
   public ShipConfig createShipConfigFromJson(String filename) {
     JsonReader json = new JsonReader();
     JsonValue shipData = json.parse(Gdx.files.internal("ships/" + filename));
+
     return createShipConfigFromJson(shipData);
   }
 
-  public static ShipConfig createShipConfigFromJson(JsonValue shipData) {
+  public ShipConfig createShipConfigFromJson(JsonValue shipData) {
+
+    if (!ShipValidator.validateShipJson(shipData)) {
+      throw new IllegalArgumentException("Invalid ship JSON: does not meet requirements.");
+    }
 
     ShipConfig shipConfig = new ShipConfig();
 
@@ -56,10 +61,10 @@ public class ShipFactory {
   }
 
   public ShipStructure createShipStructureFromJson(String filename) {
-    return CreateShipStructureFromShipConfig(createShipConfigFromJson(filename));
+    return CreateShipFromShipConfig(createShipConfigFromJson(filename));
   }
 
-  public ShipStructure CreateShipStructureFromShipConfig(ShipConfig shipConfig) {
+  public ShipStructure CreateShipFromShipConfig(ShipConfig shipConfig) {
     return new ShipStructure(shipConfig);
   }
 
