@@ -7,55 +7,59 @@ import inf112.skeleton.model.utils.SpaceCalculator;
 
 public abstract class Projectile extends SpaceBody implements Damageable, DamageDealer {
 
-  private int hitPoints;
-  private int maxHitPoints;
+    private int hitPoints;
+    private int maxHitPoints;
 
-  private final int multiplier = 1;
+    private final int multiplier = 1;
 
-  public Projectile(String name, String description, CharacterType characterType, float x, float y, int hitPoints, float angle, float speed, float radius) {
-    super(name, description, characterType, x, y, angle, radius);
-    this.hitPoints = hitPoints;
-    this.maxHitPoints = hitPoints;
-    setVelocity(SpaceCalculator.velocityFromAngleSpeed(angle, speed));
-  }
+    public Projectile(String name, String description, CharacterType characterType, float x,
+            float y, int hitPoints, float angle, float speed, float radius) {
+        super(name, description, characterType, x, y, angle, radius);
+        this.hitPoints = hitPoints;
+        this.maxHitPoints = hitPoints;
+        setVelocity(SpaceCalculator.velocityFromAngleSpeed(angle, speed));
+    }
 
-  public Projectile(String name, String description, CharacterType characterType, float x, float y, float vX, float vY, int hitPoints, float mass, float angle, float radius, float rotationSpeed) {
-    super(name, description, characterType, new Vector2(x, y), new Vector2(vX, vY), mass, angle, rotationSpeed, radius);
-    this.hitPoints = hitPoints;
-    this.maxHitPoints = hitPoints;
-  }
+    public Projectile(String name, String description, CharacterType characterType, float x,
+            float y, float vX, float vY, int hitPoints, float mass, float angle, float radius,
+            float rotationSpeed) {
+        super(name, description, characterType, new Vector2(x, y), new Vector2(vX, vY), mass, angle,
+                rotationSpeed, radius);
+        this.hitPoints = hitPoints;
+        this.maxHitPoints = hitPoints;
+    }
 
-  /**
-   * Get the health points of a Projectile object.
-   */
-  @Override
-  public int getHitPoints() {
-    return this.hitPoints;
-  }
+    /**
+     * Get the health points of a Projectile object.
+     */
+    @Override
+    public int getHitPoints() {
+        return this.hitPoints;
+    }
 
-  @Override
-  public int getMaxHitPoints() {
-    return this.maxHitPoints;
-  }
+    @Override
+    public int getMaxHitPoints() {
+        return this.maxHitPoints;
+    }
 
-  @Override
-  public boolean isDestroyed() {
-    return hitPoints <= 0;
-  }
+    @Override
+    public boolean isDestroyed() {
+        return hitPoints <= 0;
+    }
 
-  @Override
-  public void takeDamage(int hitPoints) {
-    this.hitPoints = Math.max(this.hitPoints - hitPoints, 0);
-  }
+    @Override
+    public void takeDamage(int hitPoints) {
+        this.hitPoints = Math.max(this.hitPoints - hitPoints, 0);
+    }
 
-  @Override
-  public void dealDamage(Damageable target) {
-    int targetHP = target.getHitPoints();
-    target.takeDamage(this.multiplier * this.hitPoints);
-    this.takeDamage(targetHP);
-    //Forslag: Lage en Crash metode i stedet for å "take damage" i "deal damage"-metoden.
-  }
-  //TODO Damage kan ikke være basert på HP (hvis asteroider kolliderer skal begge ødelegges)
-  //Mitt forslag er hvis to asteroider kolloderer, vil den som har mest HP "vinne".
+    @Override
+    public void dealDamage(Damageable target) {
+        int targetHP = target.getHitPoints();
+        target.takeDamage(this.multiplier * this.hitPoints);
+        this.takeDamage(targetHP);
+        //Forslag: Lage en Crash metode i stedet for å "take damage" i "deal damage"-metoden.
+    }
+    //TODO Damage kan ikke være basert på HP (hvis asteroider kolliderer skal begge ødelegges)
+    //Mitt forslag er hvis to asteroider kolloderer, vil den som har mest HP "vinne".
 
 }
