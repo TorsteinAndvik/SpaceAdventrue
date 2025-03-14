@@ -6,12 +6,13 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Align;
@@ -30,6 +31,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
     private final SpaceGame game;
     private final SpriteBatch batch;
+    private final ShapeRenderer shape;
     private final ScreenViewport viewportGame;
     private final ScreenViewport viewportUI;
     private final AssetManager manager; // An assetmanager helps with loading assets and disposing them once they are no
@@ -48,7 +50,6 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     private Sprite squareGreen;
     private Sprite squareGray;
     private Rectangle descriptionRect;
-    private Texture descriptionTexture;
 
     // ui sprites:
     private Sprite msLeft;
@@ -74,6 +75,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     public UpgradeScreen(final SpaceGame spaceGame) {
         this.game = spaceGame;
         this.batch = game.getSpriteBatch();
+        this.shape = new ShapeRenderer();
         this.manager = game.getAssetManager();
         this.viewportGame = game.getScreenViewport();
         this.viewportUI = new ScreenViewport();
@@ -85,9 +87,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         setupFonts();
         loadSprites();
 
-        // TODO: Refactor this with a proper sprite (maybe a ninepatch?)
         descriptionRect = new Rectangle(0, 0, 0, 0);
-        descriptionTexture = new Texture(1, 1, Pixmap.Format.RGBA8888);
 
         upgradeStrings = setupUpgradeStrings();
     }
@@ -241,28 +241,34 @@ public class UpgradeScreen extends InputAdapter implements Screen {
             }
         }
 
+        batch.end();
+
         // draw upgrade description if inspection mode is on
         if (model.upgradeInspectionModeIsActive()) {
-            String upgradeDescription = upgradeStrings[0]; // TODO: Get description of the actual hovered upgrade
+            String upgradeDescription = upgradeStrings[model.getInspectedUpgradeIndex()];
 
             float width = 3f;
+            float rectanglePadding = 0.1f;
             glyphLayout.setText(fontRegular, upgradeDescription, Color.WHITE, width, Align.left, true);
 
-            touchPos.set(Gdx.input.getX() + cursorWidth, Gdx.input.getY() + cursorHeight);
+            touchPos.set(Gdx.input.getX(), Gdx.input.getY() + cursorHeight);
             viewportUI.unproject(touchPos);
-            System.out.println("width = " + glyphLayout.width + ", height = " + glyphLayout.height);
 
             descriptionRect.setWidth(glyphLayout.width);
             descriptionRect.setHeight(glyphLayout.height);
 
-            batch.setColor(Color.DARK_GRAY);
-            batch.draw(descriptionTexture, touchPos.x, touchPos.y, descriptionRect.width,
-                    descriptionRect.height);
+            shape.setProjectionMatrix(viewportUI.getCamera().combined);
+            shape.begin(ShapeType.Filled);
+            shape.setColor(Color.DARK_GRAY);
+            shape.rect(touchPos.x - rectanglePadding, touchPos.y - rectanglePadding - descriptionRect.height,
+                    descriptionRect.width + 2f * rectanglePadding, descriptionRect.height + 2f * rectanglePadding);
+            shape.end();
+
+            batch.begin();
             fontRegular.draw(batch, glyphLayout,
                     touchPos.x, touchPos.y);
+            batch.end();
         }
-
-        batch.end();
     }
 
     private void drawUpgradeSquare(int x) {

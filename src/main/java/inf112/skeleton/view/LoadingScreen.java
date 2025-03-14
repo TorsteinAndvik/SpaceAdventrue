@@ -17,8 +17,6 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader.FreeTypeFontLoaderParameter;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import inf112.skeleton.model.SpaceGameModel;
-
 public class LoadingScreen implements Screen {
 
     final SpaceGame game;
