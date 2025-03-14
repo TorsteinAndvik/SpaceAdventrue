@@ -56,6 +56,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     private Sprite msMiddle;
     private Sprite msRight;
     private Sprite kbT;
+    private Sprite kbEsc;
 
     private final float upgradeIconZoom = 0.8f;
     private float uiIconZoom;
@@ -86,6 +87,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         viewportUI.setUnitsPerPixel(viewportGame.getUnitsPerPixel());
         setupFonts();
         loadSprites();
+        setupUISprites();
 
         descriptionRect = new Rectangle(0, 0, 0, 0);
 
@@ -110,6 +112,30 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         msMiddle = createSprite("images/ui/Mouse_Middle_Key_Light.png", uiIconZoom, uiIconZoom);
         msRight = createSprite("images/ui/Mouse_Right_Key_Light.png", uiIconZoom, uiIconZoom);
         kbT = createSprite("images/ui/T_Key_Light.png", uiIconZoom, uiIconZoom);
+        kbEsc = createSprite("images/ui/Esc_Key_Light.png", uiIconZoom, uiIconZoom);
+    }
+
+    private void setupUISprites() {
+        // zoom (mouse wheel)
+        msMiddle.setX(0f);
+        msMiddle.setY(0.18f * fontRegular.getData().lineHeight);
+
+        // move camera (right click)
+        msRight.setX(0f);
+        msRight.setY(1.18f * fontRegular.getData().lineHeight);
+
+        // grab upgrade (left click)
+        msLeft.setX(0f);
+        msLeft.setY(2.18f * fontRegular.getData().lineHeight);
+
+        // inspect upgrade (T key)
+        kbT.setX(0f);
+        kbT.setY(3.18f * fontRegular.getData().lineHeight);
+        System.out.println(viewportUI.getWorldHeight());
+
+        // swap to game screen (Esc key)
+        kbEsc.setX(0f);
+        // kbEsc.y must be set in render since it changes dynamically with window size
     }
 
     private Sprite createSprite(String path, float width, float height) {
@@ -202,32 +228,30 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         fontRegular.setColor(Color.WHITE);
 
         // zoom (mouse wheel)
-        msMiddle.setX(0f);
-        msMiddle.setY(0.15f * fontRegular.getData().lineHeight);
         msMiddle.draw(batch);
         fontRegular.draw(batch, "Adjust zoom", fontRegular.getData().lineHeight,
                 fontRegular.getData().lineHeight);
 
         // move camera (right click)
-        msRight.setX(0f);
-        msRight.setY(1.15f * fontRegular.getData().lineHeight);
         msRight.draw(batch);
         fontRegular.draw(batch, "Move camera", fontRegular.getData().lineHeight,
                 2 * fontRegular.getData().lineHeight);
 
         // grab upgrade (left click)
-        msLeft.setX(0f);
-        msLeft.setY(2.15f * fontRegular.getData().lineHeight);
         msLeft.draw(batch);
         fontRegular.draw(batch, "Grab upgrade", fontRegular.getData().lineHeight,
                 3 * fontRegular.getData().lineHeight);
 
         // inspect upgrade (T key)
-        kbT.setX(0f);
-        kbT.setY(3.15f * fontRegular.getData().lineHeight);
         kbT.draw(batch);
         fontRegular.draw(batch, "Inspect upgrade", fontRegular.getData().lineHeight,
                 4 * fontRegular.getData().lineHeight);
+
+        // escape (Esc key)
+        kbEsc.setY(viewportUI.getWorldHeight() - 1.15f * fontRegular.getData().lineHeight);
+        kbEsc.draw(batch);
+        fontRegular.draw(batch, "Change screen", fontRegular.getData().lineHeight,
+                viewportUI.getWorldHeight() - 0.33f * fontRegular.getData().lineHeight);
 
         if (model.isCameraZoomRecently()) {
             float alpha = model.getCameraZoomDeltaTime() < model.getCameraZoomTextFadeCutoffTime() ? 1f
