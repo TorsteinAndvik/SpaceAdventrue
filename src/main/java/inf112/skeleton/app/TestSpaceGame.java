@@ -9,6 +9,9 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import inf112.skeleton.view.SpaceGame;
+import inf112.skeleton.view.SpaceScreen;
+import inf112.skeleton.view.UpgradeScreen;
+import inf112.skeleton.model.SpaceGameModel;
 import inf112.skeleton.view.LoadingScreen;
 
 public class TestSpaceGame extends Game implements SpaceGame {
@@ -18,6 +21,9 @@ public class TestSpaceGame extends Game implements SpaceGame {
     private FitViewport fitViewport;
     private ExtendViewport extendViewport;
     private ScreenViewport screenViewport;
+    private LoadingScreen loadingScreen;
+    private UpgradeScreen upgradeScreen;
+    private SpaceScreen spaceScreen;
     private final int METERS = 9; // screen will be meters x meters (we use meters as Game coordinates, NOT pixel
                                   // coordinates - these depend on window size, awful to work with)
 
@@ -33,6 +39,8 @@ public class TestSpaceGame extends Game implements SpaceGame {
         extendViewport = new ExtendViewport(Gdx.graphics.getWidth() / METERS, Gdx.graphics.getHeight() / METERS);
 
         manager = new AssetManager();
+
+        this.loadingScreen = new LoadingScreen(this);
 
         this.setScreen(new LoadingScreen(this));
     }
@@ -67,5 +75,27 @@ public class TestSpaceGame extends Game implements SpaceGame {
         this.screen.dispose();
         this.batch.dispose();
         this.manager.dispose();
+    }
+
+    /**
+     * Change active screen to UpgradeScreen.
+     */
+    public void setUpgradeScreen() {
+        if (this.upgradeScreen == null) {
+            this.upgradeScreen = new UpgradeScreen(this);
+        }
+
+        setScreen(this.upgradeScreen);
+    }
+
+    /**
+     * Change active screen to SpaceScreen.
+     */
+    public void setSpaceScreen() {
+        if (this.spaceScreen == null) {
+            this.spaceScreen = new SpaceScreen(this, new SpaceGameModel());
+        }
+
+        setScreen(this.spaceScreen);
     }
 }

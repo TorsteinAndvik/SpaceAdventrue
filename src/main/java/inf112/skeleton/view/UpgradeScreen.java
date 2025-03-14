@@ -81,7 +81,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         this.viewportGame = game.getScreenViewport();
         this.viewportUI = new ScreenViewport();
         this.model = new UpgradeScreenModel();
-        this.controller = new UpgradeScreenController(this, model);
+        this.controller = new UpgradeScreenController(this, model, game);
         this.touchPos = new Vector2();
 
         viewportUI.setUnitsPerPixel(viewportGame.getUnitsPerPixel());
@@ -131,11 +131,10 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         // inspect upgrade (T key)
         kbT.setX(0f);
         kbT.setY(3.18f * fontRegular.getData().lineHeight);
-        System.out.println(viewportUI.getWorldHeight());
 
         // swap to game screen (Esc key)
         kbEsc.setX(0f);
-        // kbEsc.y must be set in render since it changes dynamically with window size
+        // kbEsc.y must be set in render() since it changes dynamically with window size
     }
 
     private Sprite createSprite(String path, float width, float height) {

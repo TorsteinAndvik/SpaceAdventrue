@@ -48,7 +48,7 @@ public class SpaceScreen implements Screen {
         this.viewport = game.getFitViewport();
 
         this.model = model;
-        this.controller = new SpaceGameScreenController(this, model);
+        this.controller = new SpaceGameScreenController(this, model, game);
 
         setupFonts();
         loadSprites();

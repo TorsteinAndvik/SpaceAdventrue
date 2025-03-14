@@ -34,11 +34,12 @@ public interface SpaceGame {
     AssetManager getAssetManager();
 
     /**
-     * TODO: Make an abstract class "between" the different screens and the Screen
-     * interface which implements most of the same boilerplate code, and use that as
-     * the input type for this method
-     * 
-     * @param screen the Screen we wish to swap to
+     * Change active screen to SpaceScreen.
      */
-    void setScreen(Screen screen);
+    void setSpaceScreen();
+
+    /**
+     * Change active screen to UpgradeScreen.
+     */
+    void setUpgradeScreen();
 }
