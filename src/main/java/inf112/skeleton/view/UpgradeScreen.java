@@ -6,11 +6,15 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import inf112.skeleton.controller.UpgradeScreenController;
@@ -37,11 +41,15 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
     private BitmapFont fontBold; // Agency FB Bold
     private BitmapFont fontRegular; // Agency FB Regular
+    private GlyphLayout glyphLayout;
 
     private Sprite[] upgradeIcons;
     private Sprite squareRed;
     private Sprite squareGreen;
     private Sprite squareGray;
+    private Rectangle descriptionRect;
+    private Texture descriptionTexture;
+
     // ui sprites:
     private Sprite msLeft;
     private Sprite msMiddle;
@@ -51,6 +59,9 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     private final float upgradeIconZoom = 0.8f;
     private float uiIconZoom;
     private final String[] upgradeStrings;
+
+    int cursorWidth = 64;
+    int cursorHeight = 64;
 
     /**
      * Creates a new upgrade screen with necessary components for rendering and
@@ -73,6 +84,11 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         viewportUI.setUnitsPerPixel(viewportGame.getUnitsPerPixel());
         setupFonts();
         loadSprites();
+
+        // TODO: Refactor this with a proper sprite (maybe a ninepatch?)
+        descriptionRect = new Rectangle(0, 0, 0, 0);
+        descriptionTexture = new Texture(1, 1, Pixmap.Format.RGBA8888);
+
         upgradeStrings = setupUpgradeStrings();
     }
 
@@ -104,9 +120,9 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
     private String[] setupUpgradeStrings() {
         return new String[] {
-                "Fuselage:\nUsed to expand the ship. Any new\npart must be attached to a piece\nof Fuselage.",
-                "Turret:\nFires lasers at enemies and\nasteroids.",
-                "Rocket:\nImproves acceleration and\ntop speed of the ship.",
+                "Fuselage:\nUsed to expand the ship. New upgrades are attached to Fuselage.",
+                "Turret:\nFires lasers at enemies and asteroids.",
+                "Rocket:\nImproves acceleration and top speed of the ship.",
                 "Shield:\nIncrease the ship's health."
         };
     }
@@ -122,6 +138,8 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
         fontRegular.setUseIntegerPositions(false);
         fontRegular.getData().setScale(viewportGame.getUnitsPerPixel());
+
+        glyphLayout = new GlyphLayout();
     }
 
     @Override
@@ -221,6 +239,27 @@ public class UpgradeScreen extends InputAdapter implements Screen {
                 fontRegular.draw(batch, "Zoom = x" + model.getCurrentZoom(),
                         0.1f, 5 * fontRegular.getData().lineHeight);
             }
+        }
+
+        // draw upgrade description if inspection mode is on
+        if (model.upgradeInspectionModeIsActive()) {
+            String upgradeDescription = upgradeStrings[0]; // TODO: Get description of the actual hovered upgrade
+
+            float width = 3f;
+            glyphLayout.setText(fontRegular, upgradeDescription, Color.WHITE, width, Align.left, true);
+
+            touchPos.set(Gdx.input.getX() + cursorWidth, Gdx.input.getY() + cursorHeight);
+            viewportUI.unproject(touchPos);
+            System.out.println("width = " + glyphLayout.width + ", height = " + glyphLayout.height);
+
+            descriptionRect.setWidth(glyphLayout.width);
+            descriptionRect.setHeight(glyphLayout.height);
+
+            batch.setColor(Color.DARK_GRAY);
+            batch.draw(descriptionTexture, touchPos.x, touchPos.y, descriptionRect.width,
+                    descriptionRect.height);
+            fontRegular.draw(batch, glyphLayout,
+                    touchPos.x, touchPos.y);
         }
 
         batch.end();

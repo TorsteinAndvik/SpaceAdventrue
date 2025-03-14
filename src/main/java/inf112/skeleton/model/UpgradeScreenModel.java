@@ -26,6 +26,8 @@ public class UpgradeScreenModel {
     private boolean releaseGrabbedUpgrade;
     private int grabbedUpgradeIndex;
 
+    private boolean upgradeInspectionModeIsActive;
+
     private final Vector2 mousePosition;
     private final Vector2 dragPosition;
     private final Vector2 lastDragPosition;
@@ -211,5 +213,13 @@ public class UpgradeScreenModel {
 
     public void setCameraZoomRecently(boolean value) {
         this.cameraZoomRecently = value;
+    }
+
+    public boolean upgradeInspectionModeIsActive() {
+        return this.upgradeInspectionModeIsActive;
+    }
+
+    public void setUpgradeInspectionModeIsActive(boolean value) {
+        this.upgradeInspectionModeIsActive = value;
     }
 }

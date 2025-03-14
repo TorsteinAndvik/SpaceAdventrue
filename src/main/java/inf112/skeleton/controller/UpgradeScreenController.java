@@ -1,5 +1,6 @@
 package inf112.skeleton.controller;
 
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
 import inf112.skeleton.grid.CellPosition;
@@ -25,8 +26,13 @@ public class UpgradeScreenController extends GenericController {
 
     @Override
     protected boolean handleKeyDown(int keycode) {
-        // TODO: add this feature?
-        return keycode == Keys.T;
+        return switch (keycode) {
+            case Input.Keys.T -> { // switch inspection mode
+                model.setUpgradeInspectionModeIsActive(!model.upgradeInspectionModeIsActive());
+                yield true;
+            }
+            default -> false;
+        };
     }
 
     @Override
