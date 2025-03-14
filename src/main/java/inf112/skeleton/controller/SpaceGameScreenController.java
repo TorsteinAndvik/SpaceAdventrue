@@ -47,6 +47,14 @@ public class SpaceGameScreenController extends GenericController {
                 game.setUpgradeScreen();
                 yield true;
             }
+            case Input.Keys.Q -> {
+                model.rotateEnemy(false);
+                yield true;
+            }
+            case Input.Keys.E -> {
+                model.rotateEnemy(true);
+                yield true;
+            }
             default -> false;
         };
     }

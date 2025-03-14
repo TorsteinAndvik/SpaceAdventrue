@@ -10,6 +10,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Matrix3;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
@@ -18,6 +20,7 @@ import inf112.skeleton.grid.GridCell;
 import inf112.skeleton.model.SpaceGameModel;
 import inf112.skeleton.model.ShipComponents.UpgradeType;
 import inf112.skeleton.model.ShipComponents.Components.Fuselage;
+import inf112.skeleton.model.SpaceCharacters.SpaceShip;
 
 public class SpaceScreen implements Screen {
 
@@ -41,6 +44,10 @@ public class SpaceScreen implements Screen {
     float laserUpdateCutoff = 0.5f;
     float laserUpdateTimer;
 
+    // Matrices for handling rotation of space ships
+    private Matrix3 rotationMatrix;
+    private Matrix4 transformMatrix;
+
     public SpaceScreen(final SpaceGame game, final SpaceGameModel model) {
         this.game = game;
         this.batch = this.game.getSpriteBatch();
@@ -53,6 +60,9 @@ public class SpaceScreen implements Screen {
         setupFonts();
         loadSprites();
         setupUpgradeHashMap();
+
+        rotationMatrix = new Matrix3();
+        transformMatrix = new Matrix4();
     }
 
     private void setupFonts() {
@@ -91,6 +101,85 @@ public class SpaceScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        ScreenUtils.clear(Color.DARK_GRAY);
+
+        viewport.apply();
+        batch.setProjectionMatrix(viewport.getCamera().combined);
+
+        fontBold.setColor(Color.GREEN);
+        fontRegular.setColor(Color.RED);
+
+        batch.begin();
+
+        asteroid.setX(model.getAsteroid().getX());
+        asteroid.setY(model.getAsteroid().getY());
+        asteroid.draw(batch);
+
+        for (int i = 0; i < model.getSpaceShips().length; i++) {
+            SpaceShip ship = model.getSpaceShips()[i];
+            float angle = ship.getRotationAngle();
+
+            // reset the transformation matrix
+            transformMatrix.idt();
+
+            // translate the transformation matrix to the ship's center of rotation
+            float x = ship.getX() + 0.5f * (float) ship.getShipStructure().getWidth();
+            float y = ship.getY() + 0.5f * (float) ship.getShipStructure().getHeight();
+            transformMatrix.translate(x, y, 0f);
+
+            // do the rotation about the origin (set at ship's center of rotation)
+            rotationMatrix.setToRotation(angle);
+            transformMatrix.mul(new Matrix4().set(rotationMatrix));
+
+            // undo the translation
+            transformMatrix.translate(-x, -y, 0f);
+
+            // set the transform matrix for the batch
+            batch.setTransformMatrix(transformMatrix);
+
+            for (GridCell<Fuselage> cell : model.getSpaceShips()[i].getShipStructure().iterable()) {
+                float shipX = model.getSpaceShips()[i].getX() + cell.pos().col();
+                float shipY = model.getSpaceShips()[i].getY() + cell.pos().row();
+                if (model.getSpaceShips()[i].isPlayerShip()) {
+                    fuselagePlayer.setX(shipX);
+                    fuselagePlayer.setY(shipY);
+                    fuselagePlayer.draw(batch);
+                } else {
+                    fuselageEnemy.setX(shipX);
+                    fuselageEnemy.setY(shipY);
+                    fuselageEnemy.draw(batch);
+                }
+
+                if (cell.value().getUpgrade() != null) {
+                    upgradeIcons.get(cell.value().getUpgrade().getType()).setX(shipX);
+                    upgradeIcons.get(cell.value().getUpgrade().getType()).setY(shipY);
+                    upgradeIcons.get(cell.value().getUpgrade().getType()).draw(batch);
+                }
+            }
+        }
+
+        // Reset the transform matrix to the identity matrix
+        batch.setTransformMatrix(new Matrix4().idt());
+
+        if (model.laserExists) { // TODO: refactor, I beg thee
+            laser.setX(model.getLaser().getX() + 0.375f);
+            laser.setY(model.getLaser().getY() + 0.875f);
+            laser.draw(batch);
+
+            laserUpdateTimer += delta;
+            if (laserUpdateTimer >= laserUpdateCutoff) {
+                laserUpdateTimer = 0f;
+                model.moveLaser();
+            }
+        }
+
+        // fontBold.draw(batch, "Hello, World!", 1f, 1f);
+        // fontRegular.draw(batch, "The helloest of Worlds!", 2f, 2f);
+        batch.end();
+    }
+
+    // Local backup of old render method
+    public void renderOld(float delta) {
         ScreenUtils.clear(Color.DARK_GRAY);
 
         viewport.apply();

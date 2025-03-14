@@ -30,11 +30,11 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                 "enemy",
                 "an enemy ship",
                 1,
-                6,
-                5,
                 1,
+                5,
+                0,
                 1);
-        this.asteroid = new Asteroid("asteroid", "an asteroid", 1, 1, 6, 1, 1, 0, 2, 4);
+        this.asteroid = new Asteroid("asteroid", "an asteroid", 1, 6, 6, 1, 1, 0, 2, 4);
         this.laser = new Bullet("laser", "a laser shot", 0, 0, 1, 1, 0, 1);
 
         spaceShips = new SpaceShip[] { player, enemyShip };
@@ -53,6 +53,16 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
             System.out.println("laser deleted offscreen");
             laserExists = false;
             this.laser = null;
+        }
+    }
+
+    // TODO: Remove this once proper model is in place - currently used for testing
+    // rendering of rotated ships in SpaceScreen
+    public void rotateEnemy(boolean clockwise) {
+        if (clockwise) {
+            this.enemyShip.rotate(-15f);
+        } else {
+            this.enemyShip.rotate(15f);
         }
     }
 

@@ -1,8 +1,10 @@
 package inf112.skeleton.model.utils;
 
 /**
- * Utility class for handling rotations in a 2D space. This class represents the rotation of an
- * object by managing its angle in degrees. It provides methods to set, get, and adjust the rotation
+ * Utility class for handling rotations in a 2D space. This class represents the
+ * rotation of an
+ * object by managing its angle in degrees. It provides methods to set, get, and
+ * adjust the rotation
  * angle.
  */
 public class Rotation {
@@ -23,7 +25,6 @@ public class Rotation {
         this.angle = normalizeAngle(angle);
         this.rotationSpeed = rotationSpeed;
     }
-
 
     /**
      * Retrieves the current rotation angle.
@@ -88,7 +89,6 @@ public class Rotation {
     public void update(float deltaTime) {
         angle = normalizeAngle(angle + rotationSpeed * deltaTime);
     }
-
 
     /**
      * Returns a string representation of the rotation object.
