@@ -1,5 +1,7 @@
 package inf112.skeleton.controller;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
 import inf112.skeleton.grid.CellPosition;
@@ -25,8 +27,48 @@ public class UpgradeScreenController extends GenericController {
 
     @Override
     protected boolean handleKeyDown(int keycode) {
-        // TODO: add this feature?
-        return keycode == Keys.T;
+        return switch (keycode) {
+            case Input.Keys.T -> { // switch inspection mode
+                toggleUpgradeDescriptionMode();
+                updateInspectionMode();
+                yield true;
+            }
+            default -> false;
+        };
+    }
+
+    private void toggleUpgradeDescriptionMode() {
+        if (model.upgradeInspectionModeIsActive()) {
+            model.setUpgradeInspectionModeIsActive(false);
+        }
+
+        touchPos.set(Gdx.input.getX(), Gdx.input.getY());
+        view.unprojectTouchPos(touchPos);
+
+        CellPosition cpUpgrade = convertMouseToUpgradeBar(touchPos.x, touchPos.y);
+        model.setUpgradeInspectionModeIsActive(cellPositionOnUpgradeOptions(cpUpgrade));
+    }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        updateInspectionMode();
+        return true;
+    }
+
+    private void updateInspectionMode() {
+        if (!model.upgradeInspectionModeIsActive()) {
+            return;
+        }
+
+        touchPos.set(Gdx.input.getX(), Gdx.input.getY());
+        view.unprojectTouchPos(touchPos);
+        CellPosition cpUpgrade = convertMouseToUpgradeBar(touchPos.x, touchPos.y);
+        if (cellPositionOnUpgradeOptions(cpUpgrade)) {
+            model.setInspectedUpgradeIndex(cpUpgrade.col());
+            model.setUpgradeInspectionModeIsActive(true);
+        } else {
+            model.setUpgradeInspectionModeIsActive(false);
+        }
     }
 
     @Override
@@ -45,7 +87,7 @@ public class UpgradeScreenController extends GenericController {
         CellPosition cpGrid = view.convertMouseToGrid(touchPos.x, touchPos.y);
         CellPosition cpUpgrade = convertMouseToUpgradeBar(touchPos.x, touchPos.y);
 
-        if (cellPositionOnGrid(cpGrid)) {
+        if (cellPositionOnGrid(cpGrid)) {// TODO: Implement actions when clicking the grid.
             System.out.println("x = " + cpGrid.col() + ", y = " + cpGrid.row());
         }
 

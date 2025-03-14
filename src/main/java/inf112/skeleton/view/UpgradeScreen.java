@@ -8,9 +8,14 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import inf112.skeleton.controller.UpgradeScreenController;
@@ -26,6 +31,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
     private final SpaceGame game;
     private final SpriteBatch batch;
+    private final ShapeRenderer shape;
     private final ScreenViewport viewportGame;
     private final ScreenViewport viewportUI;
     private final AssetManager manager; // An assetmanager helps with loading assets and disposing them once they are no
@@ -37,11 +43,14 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
     private BitmapFont fontBold; // Agency FB Bold
     private BitmapFont fontRegular; // Agency FB Regular
+    private GlyphLayout glyphLayout;
 
     private Sprite[] upgradeIcons;
     private Sprite squareRed;
     private Sprite squareGreen;
     private Sprite squareGray;
+    private Rectangle descriptionRect;
+
     // ui sprites:
     private Sprite msLeft;
     private Sprite msMiddle;
@@ -51,6 +60,9 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     private final float upgradeIconZoom = 0.8f;
     private float uiIconZoom;
     private final String[] upgradeStrings;
+
+    int cursorWidth = 64;
+    int cursorHeight = 64;
 
     /**
      * Creates a new upgrade screen with necessary components for rendering and
@@ -63,6 +75,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     public UpgradeScreen(final SpaceGame spaceGame) {
         this.game = spaceGame;
         this.batch = game.getSpriteBatch();
+        this.shape = new ShapeRenderer();
         this.manager = game.getAssetManager();
         this.viewportGame = game.getScreenViewport();
         this.viewportUI = new ScreenViewport();
@@ -73,6 +86,9 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         viewportUI.setUnitsPerPixel(viewportGame.getUnitsPerPixel());
         setupFonts();
         loadSprites();
+
+        descriptionRect = new Rectangle(0, 0, 0, 0);
+
         upgradeStrings = setupUpgradeStrings();
     }
 
@@ -104,9 +120,9 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
     private String[] setupUpgradeStrings() {
         return new String[] {
-                "Fuselage:\nUsed to expand the ship. Any new\npart must be attached to a piece\nof Fuselage.",
-                "Turret:\nFires lasers at enemies and\nasteroids.",
-                "Rocket:\nImproves acceleration and\ntop speed of the ship.",
+                "Fuselage:\nUsed to expand the ship. New upgrades are attached to Fuselage.",
+                "Turret:\nFires lasers at enemies and asteroids.",
+                "Rocket:\nImproves acceleration and top speed of the ship.",
                 "Shield:\nIncrease the ship's health."
         };
     }
@@ -122,6 +138,8 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
         fontRegular.setUseIntegerPositions(false);
         fontRegular.getData().setScale(viewportGame.getUnitsPerPixel());
+
+        glyphLayout = new GlyphLayout();
     }
 
     @Override
@@ -151,6 +169,8 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
         if (model.isUpgradeGrabbed()) {
             // draw a ghost copy of upgrade if hovering a grid cell
+            touchPos.set(Gdx.input.getX(), Gdx.input.getY());
+            unprojectTouchPos(touchPos);
             CellPosition cpGrid = convertMouseToGrid(touchPos.x, touchPos.y);
             if (cellPositionOnGrid(cpGrid)) {
                 upgradeIcons[model.getGrabbedUpgradeIndex()].setX(
@@ -222,6 +242,33 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         }
 
         batch.end();
+
+        // draw upgrade description if inspection mode is on
+        if (model.upgradeInspectionModeIsActive()) {
+            String upgradeDescription = upgradeStrings[model.getInspectedUpgradeIndex()];
+
+            float width = 3f;
+            float rectanglePadding = 0.1f;
+            glyphLayout.setText(fontRegular, upgradeDescription, Color.WHITE, width, Align.left, true);
+
+            touchPos.set(Gdx.input.getX(), Gdx.input.getY() + cursorHeight);
+            viewportUI.unproject(touchPos);
+
+            descriptionRect.setWidth(glyphLayout.width);
+            descriptionRect.setHeight(glyphLayout.height);
+
+            shape.setProjectionMatrix(viewportUI.getCamera().combined);
+            shape.begin(ShapeType.Filled);
+            shape.setColor(Color.DARK_GRAY);
+            shape.rect(touchPos.x - rectanglePadding, touchPos.y - rectanglePadding - descriptionRect.height,
+                    descriptionRect.width + 2f * rectanglePadding, descriptionRect.height + 2f * rectanglePadding);
+            shape.end();
+
+            batch.begin();
+            fontRegular.draw(batch, glyphLayout,
+                    touchPos.x, touchPos.y);
+            batch.end();
+        }
     }
 
     private void drawUpgradeSquare(int x) {
@@ -242,7 +289,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
     private Vector2 worldToGameCoordinates(float worldX, float worldY) {
         touchPos.set(worldX, worldY);
-        viewportGame.unproject(touchPos);
+        unprojectTouchPos(touchPos);
         return touchPos;
     }
 
@@ -290,7 +337,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         float cameraY = viewportGame.getScreenHeight() / 2f + offsetY;
 
         touchPos.set(cameraX, cameraY);
-        viewportGame.unproject(touchPos);
+        unprojectTouchPos(touchPos);
         clampVector(touchPos, 0f, viewportGame.getWorldWidth(), 0f, viewportGame.getWorldHeight());
 
         viewportGame.getCamera().position.set(touchPos, 0);

@@ -25,6 +25,9 @@ public class UpgradeScreenModel {
     private boolean upgradeGrabbed;
     private boolean releaseGrabbedUpgrade;
     private int grabbedUpgradeIndex;
+    private int inspectedUpgradeIndex;
+
+    private boolean upgradeInspectionModeIsActive;
 
     private final Vector2 mousePosition;
     private final Vector2 dragPosition;
@@ -50,6 +53,7 @@ public class UpgradeScreenModel {
         upgradeGrabbed = false;
         releaseGrabbedUpgrade = false;
         grabbedUpgradeIndex = -1;
+        inspectedUpgradeIndex = -1;
         cameraZoomRecently = false;
         cameraZoomDeltaTime = 0f;
     }
@@ -137,6 +141,10 @@ public class UpgradeScreenModel {
         return grabbedUpgradeIndex;
     }
 
+    public int getInspectedUpgradeIndex() {
+        return inspectedUpgradeIndex;
+    }
+
     public int getGridWidth() {
         return gridWidth;
     }
@@ -209,7 +217,19 @@ public class UpgradeScreenModel {
         this.releaseGrabbedUpgrade = value;
     }
 
+    public void setInspectedUpgradeIndex(int index) {
+        this.inspectedUpgradeIndex = index;
+    }
+
     public void setCameraZoomRecently(boolean value) {
         this.cameraZoomRecently = value;
+    }
+
+    public boolean upgradeInspectionModeIsActive() {
+        return this.upgradeInspectionModeIsActive;
+    }
+
+    public void setUpgradeInspectionModeIsActive(boolean value) {
+        this.upgradeInspectionModeIsActive = value;
     }
 }
