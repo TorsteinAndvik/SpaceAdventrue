@@ -103,8 +103,8 @@ public class LoadingScreen implements Screen {
                                   // before passing over to render(), gives roughly 60fps (depends on size of
                                   // asset, a large enough file might block for longer)
             // ONLY CALL ONE OF THESE FOR TESTING:
-            // game.setScreen(new UpgradeScreen(game)); //test the UpgradeScreen class
-            game.setScreen(new SpaceScreen(game, new SpaceGameModel())); // test the SpaceScreen class
+            game.setScreen(new UpgradeScreen(game));
+            // game.setScreen(new SpaceScreen(game, new SpaceGameModel()));
         }
 
         float progress = manager.getProgress();

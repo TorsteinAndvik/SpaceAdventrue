@@ -151,6 +151,8 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
         if (model.isUpgradeGrabbed()) {
             // draw a ghost copy of upgrade if hovering a grid cell
+            touchPos.set(Gdx.input.getX(), Gdx.input.getY());
+            unprojectTouchPos(touchPos);
             CellPosition cpGrid = convertMouseToGrid(touchPos.x, touchPos.y);
             if (cellPositionOnGrid(cpGrid)) {
                 upgradeIcons[model.getGrabbedUpgradeIndex()].setX(
@@ -242,7 +244,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
     private Vector2 worldToGameCoordinates(float worldX, float worldY) {
         touchPos.set(worldX, worldY);
-        viewportGame.unproject(touchPos);
+        unprojectTouchPos(touchPos);
         return touchPos;
     }
 
@@ -290,7 +292,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         float cameraY = viewportGame.getScreenHeight() / 2f + offsetY;
 
         touchPos.set(cameraX, cameraY);
-        viewportGame.unproject(touchPos);
+        unprojectTouchPos(touchPos);
         clampVector(touchPos, 0f, viewportGame.getWorldWidth(), 0f, viewportGame.getWorldHeight());
 
         viewportGame.getCamera().position.set(touchPos, 0);
