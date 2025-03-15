@@ -9,7 +9,7 @@ import inf112.skeleton.model.ShipComponents.ShipConfig.ShipComponent;
 
 public class ShipStructure {
 
-    private IGrid<Fuselage> grid;
+    private final IGrid<Fuselage> grid;
 
     public ShipStructure(int width, int height) {
         this.grid = new Grid<>(height, width);
@@ -23,11 +23,11 @@ public class ShipStructure {
                 continue;
             }
             ShipUpgrade upgradeType =
-                    switch (component.upgrade.type) {
-                        case TURRET -> new Turret();
-                        case SHIELD -> new Shield();
-                        case THRUSTER -> new Thruster();
-                    };
+                switch (component.upgrade.type) {
+                    case TURRET -> new Turret();
+                    case SHIELD -> new Shield();
+                    case THRUSTER -> new Thruster();
+                };
             set(new CellPosition(component.x, component.y), new Fuselage(upgradeType));
         }
     }
