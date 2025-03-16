@@ -9,7 +9,7 @@ import inf112.skeleton.model.ShipComponents.ShipConfig.ShipComponent;
 
 public class ShipStructure {
 
-    private IGrid<Fuselage> grid;
+    private final IGrid<Fuselage> grid;
 
     public ShipStructure(int width, int height) {
         this.grid = new Grid<>(height, width);

@@ -5,10 +5,10 @@ import inf112.skeleton.model.ShipComponents.UpgradeType;
 
 public abstract class ShipUpgrade {
 
-    private String name;
-    private String description;
+    private final String name;
+    private final String description;
 
-    private UpgradeType type;
+    private final UpgradeType type;
     private UpgradeStage stage;
 
     public ShipUpgrade(String name, String description, UpgradeType type, UpgradeStage stage) {
@@ -36,7 +36,7 @@ public abstract class ShipUpgrade {
 
     /**
      * Upgrade <code>this</code> to the next stage if possible
-     * 
+     *
      * @return true if <code>this</code> was upgraded, false otherwise
      */
     public boolean upgrade() {
