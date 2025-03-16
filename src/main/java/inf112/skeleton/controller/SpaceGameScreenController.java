@@ -48,11 +48,15 @@ public class SpaceGameScreenController extends GenericController {
                 yield true;
             }
             case Input.Keys.Q -> {
-                model.rotateEnemy(false);
+                model.setEnemyRotationClockwise(false);
                 yield true;
             }
             case Input.Keys.E -> {
-                model.rotateEnemy(true);
+                model.setEnemyRotationClockwise(true);
+                yield true;
+            }
+            case Input.Keys.R -> {
+                model.toggleEnemyRotationActive();
                 yield true;
             }
             default -> false;

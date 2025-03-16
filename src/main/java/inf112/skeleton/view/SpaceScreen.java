@@ -109,6 +109,8 @@ public class SpaceScreen implements Screen {
         fontBold.setColor(Color.GREEN);
         fontRegular.setColor(Color.RED);
 
+        model.rotateEnemy(); // TODO: Remove this once proper model is in place
+                             // view should only send model.update(delta) via controller in future
         batch.begin();
 
         asteroid.setX(model.getAsteroid().getX());
@@ -127,7 +129,7 @@ public class SpaceScreen implements Screen {
             float y = ship.getY() + 0.5f * (float) ship.getShipStructure().getHeight();
             transformMatrix.translate(x, y, 0f);
 
-            // do the rotation about the origin (set at ship's center of rotation)
+            // apply rotation
             rotationMatrix.setToRotation(angle);
             transformMatrix.mul(new Matrix4().set(rotationMatrix));
 

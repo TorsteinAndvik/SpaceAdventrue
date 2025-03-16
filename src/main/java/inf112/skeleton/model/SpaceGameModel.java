@@ -20,6 +20,8 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     private ShipFactory shipFactory;
     private SpaceShip[] spaceShips;
     public boolean laserExists;
+    private boolean enemyRotationActive;
+    private boolean rotateClockwise;
 
     public SpaceGameModel() {
         this.shipFactory = new ShipFactory();
@@ -58,12 +60,25 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     // TODO: Remove this once proper model is in place - currently used for testing
     // rendering of rotated ships in SpaceScreen
-    public void rotateEnemy(boolean clockwise) {
-        if (clockwise) {
-            this.enemyShip.rotate(-15f);
-        } else {
-            this.enemyShip.rotate(15f);
+    public void rotateEnemy() {
+        if (!this.enemyRotationActive) {
+            return;
         }
+
+        float rotationalVelocity = 0.5f;
+        if (rotateClockwise) {
+            this.enemyShip.rotate(-rotationalVelocity);
+        } else {
+            this.enemyShip.rotate(rotationalVelocity);
+        }
+    }
+
+    public void toggleEnemyRotationActive() {
+        this.enemyRotationActive = !this.enemyRotationActive;
+    }
+
+    public void setEnemyRotationClockwise(boolean clockwise) {
+        this.rotateClockwise = clockwise;
     }
 
     @Override
