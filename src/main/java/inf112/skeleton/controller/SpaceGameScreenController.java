@@ -20,6 +20,10 @@ public class SpaceGameScreenController extends GenericController {
         this.touchPos = new Vector2();
     }
 
+    public void update(float delta) {
+        model.update(delta);
+    }
+
     @Override
     protected boolean handleKeyDown(int keycode) {
         return switch (keycode) {

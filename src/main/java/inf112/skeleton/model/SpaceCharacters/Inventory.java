@@ -30,7 +30,8 @@ public interface Inventory {
     boolean containsItem(GameItem item);
 
     /**
-     * Use an item from the inventory. If the item is the last of its kind in the inventory do not
+     * Use an item from the inventory. If the item is the last of its kind in the
+     * inventory do not
      * delete key in mapping, instead set its counter to null.
      *
      * @param item an item to use.

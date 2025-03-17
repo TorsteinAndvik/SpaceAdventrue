@@ -57,9 +57,12 @@ public abstract class Projectile extends SpaceBody implements Damageable, Damage
         int targetHP = target.getHitPoints();
         target.takeDamage(this.multiplier * this.hitPoints);
         this.takeDamage(targetHP);
-        //Forslag: Lage en Crash metode i stedet for å "take damage" i "deal damage"-metoden.
+        // Forslag: Lage en Crash metode i stedet for å "take damage" i "deal
+        // damage"-metoden.
     }
-    //TODO Damage kan ikke være basert på HP (hvis asteroider kolliderer skal begge ødelegges)
-    //Mitt forslag er hvis to asteroider kolloderer, vil den som har mest HP "vinne".
+    // TODO Damage kan ikke være basert på HP (hvis asteroider kolliderer skal begge
+    // ødelegges)
+    // Mitt forslag er hvis to asteroider kolloderer, vil den som har mest HP
+    // "vinne".
 
 }

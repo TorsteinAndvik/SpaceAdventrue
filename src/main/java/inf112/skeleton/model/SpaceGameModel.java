@@ -36,10 +36,19 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                 5,
                 0,
                 1);
-        this.asteroid = new Asteroid("asteroid", "an asteroid", 1, 6, 6, 1, 1, 0, 2, 4);
+        this.asteroid = new Asteroid("asteroid", "an asteroid", 1, 6, 0.6f, 0.1f, 1, 0, 2, 4);
         this.laser = new Bullet("laser", "a laser shot", 0, 0, 1, 1, 0, 1);
 
         spaceShips = new SpaceShip[] { player, enemyShip };
+    }
+
+    @Override
+    public void update(float delta) {
+        asteroid.update(delta);
+        laser.update(delta);
+        for (int i = 0; i < spaceShips.length; i++) {
+            spaceShips[i].update(delta);
+        }
     }
 
     public void shoot() {

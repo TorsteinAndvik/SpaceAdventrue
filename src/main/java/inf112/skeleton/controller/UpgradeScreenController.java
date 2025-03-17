@@ -22,6 +22,11 @@ public class UpgradeScreenController extends GenericController {
     }
 
     @Override
+    public void update(float delta) {
+
+    }
+
+    @Override
     protected void handleScroll(float amount) {
         model.updateCameraZoom(amount);
         view.updateCameraZoom(model.getCurrentZoom());
