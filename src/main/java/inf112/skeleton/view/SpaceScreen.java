@@ -101,6 +101,8 @@ public class SpaceScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        controller.update(delta);
+
         ScreenUtils.clear(Color.DARK_GRAY);
 
         viewport.apply();

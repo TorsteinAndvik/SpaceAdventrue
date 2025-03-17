@@ -64,6 +64,14 @@ abstract class GenericController extends InputAdapter {
     }
 
     /**
+     * Used to pass delta-time (time elapsed since the previous frame) from the view
+     * to the model.
+     * 
+     * @param delta Time elapsed since previous rendered frame in seconds.
+     */
+    public abstract void update(float delta);
+
+    /**
      * Template for handling key press event. Default returns false to indicate that
      * input wasn't
      * handled. Child classes can override this to implement keyboard controls.

@@ -5,6 +5,13 @@ import inf112.skeleton.model.GameState;
 public interface ControllableSpaceGameModel {
 
     /**
+     * Updates the game model by the given delta time in seconds.
+     * 
+     * @param delta delta time in seconds
+     */
+    void update(float delta);
+
+    /**
      * Gets the current game state. @TODO are we doing game states?
      *
      * @return The current game state

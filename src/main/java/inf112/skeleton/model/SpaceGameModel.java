@@ -42,6 +42,11 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         spaceShips = new SpaceShip[] { player, enemyShip };
     }
 
+    @Override
+    public void update(float delta) {
+        // TODO: Update model/physics objects according to delta time.
+    }
+
     public void shoot() {
         // TODO: This is awful, never do this.
         this.laser = new Bullet("laser", "a laser shot", player.getX(), player.getY() + 1, 1, 1, 0, 1);
