@@ -17,6 +17,8 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader.FreeTypeFontLoaderParameter;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import inf112.skeleton.model.SpaceGameModel;
+
 public class LoadingScreen implements Screen {
 
     final SpaceGame game;
@@ -63,6 +65,7 @@ public class LoadingScreen implements Screen {
         queueTexture("images/ui/Mouse_Middle_Key_Light.png");
         queueTexture("images/ui/Mouse_Right_Key_Light.png");
         queueTexture("images/ui/T_Key_Light.png");
+        queueTexture("images/ui/Esc_Key_Light.png");
 
         // Sounds:
         queueSound("audio/blipp.ogg");
@@ -101,8 +104,8 @@ public class LoadingScreen implements Screen {
                                   // before passing over to render(), gives roughly 60fps (depends on size of
                                   // asset, a large enough file might block for longer)
             // ONLY CALL ONE OF THESE FOR TESTING:
-            game.setScreen(new UpgradeScreen(game));
-            // game.setScreen(new SpaceScreen(game, new SpaceGameModel()));
+            // game.setUpgradeScreen();
+            game.setSpaceScreen();
         }
 
         float progress = manager.getProgress();

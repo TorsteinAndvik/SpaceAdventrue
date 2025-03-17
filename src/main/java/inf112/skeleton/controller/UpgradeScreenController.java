@@ -2,21 +2,23 @@ package inf112.skeleton.controller;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
 import inf112.skeleton.grid.CellPosition;
 import inf112.skeleton.model.UpgradeScreenModel;
+import inf112.skeleton.view.SpaceGame;
 import inf112.skeleton.view.UpgradeScreen;
 
 public class UpgradeScreenController extends GenericController {
 
     private final UpgradeScreenModel model;
     private final UpgradeScreen view;
+    private final SpaceGame game;
 
-    public UpgradeScreenController(UpgradeScreen view, UpgradeScreenModel model) {
+    public UpgradeScreenController(UpgradeScreen view, UpgradeScreenModel model, SpaceGame game) {
         super(); // GenericController gives us touchpos
         this.view = view;
         this.model = model;
+        this.game = game;
     }
 
     @Override
@@ -31,6 +33,10 @@ public class UpgradeScreenController extends GenericController {
             case Input.Keys.T -> { // switch inspection mode
                 toggleUpgradeDescriptionMode();
                 updateInspectionMode();
+                yield true;
+            }
+            case Input.Keys.ESCAPE -> {
+                game.setSpaceScreen();
                 yield true;
             }
             default -> false;

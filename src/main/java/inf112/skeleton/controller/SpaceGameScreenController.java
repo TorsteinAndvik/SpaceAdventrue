@@ -3,17 +3,20 @@ package inf112.skeleton.controller;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 import inf112.skeleton.model.SpaceGameModel;
+import inf112.skeleton.view.SpaceGame;
 import inf112.skeleton.view.SpaceScreen;
 
 public class SpaceGameScreenController extends GenericController {
 
     private final SpaceGameModel model;
     private final SpaceScreen view;
+    private final SpaceGame game;
     private final Vector2 touchPos;
 
-    public SpaceGameScreenController(SpaceScreen view, SpaceGameModel model) {
+    public SpaceGameScreenController(SpaceScreen view, SpaceGameModel model, SpaceGame game) {
         this.model = model;
         this.view = view;
+        this.game = game;
         this.touchPos = new Vector2();
     }
 
@@ -38,6 +41,22 @@ public class SpaceGameScreenController extends GenericController {
             }
             case Input.Keys.SPACE -> {
                 model.shoot();
+                yield true;
+            }
+            case Input.Keys.ESCAPE -> {
+                game.setUpgradeScreen();
+                yield true;
+            }
+            case Input.Keys.Q -> {
+                model.setEnemyRotationClockwise(false);
+                yield true;
+            }
+            case Input.Keys.E -> {
+                model.setEnemyRotationClockwise(true);
+                yield true;
+            }
+            case Input.Keys.R -> {
+                model.toggleEnemyRotationActive();
                 yield true;
             }
             default -> false;
