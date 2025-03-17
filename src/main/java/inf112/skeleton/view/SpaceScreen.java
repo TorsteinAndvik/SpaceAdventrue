@@ -127,6 +127,7 @@ public class SpaceScreen implements Screen {
             transformMatrix.idt();
 
             // translate the transformation matrix to the ship's center of rotation
+            // TODO: ship's center of rotation should be provided by the model
             float x = ship.getX() + 0.5f * (float) ship.getShipStructure().getWidth();
             float y = ship.getY() + 0.5f * (float) ship.getShipStructure().getHeight();
             transformMatrix.translate(x, y, 0f);
@@ -165,75 +166,12 @@ public class SpaceScreen implements Screen {
         // Reset the transform matrix to the identity matrix
         batch.setTransformMatrix(new Matrix4().idt());
 
-        if (model.laserExists) { // TODO: refactor, I beg thee
+        if (model.laserExists) { // TODO: refactor once cannon-firing logic is added to model
             laser.setX(model.getLaser().getX() + 0.375f);
             laser.setY(model.getLaser().getY() + 0.875f);
             laser.draw(batch);
-
-            laserUpdateTimer += delta;
-            if (laserUpdateTimer >= laserUpdateCutoff) {
-                laserUpdateTimer = 0f;
-                model.moveLaser();
-            }
         }
 
-        // fontBold.draw(batch, "Hello, World!", 1f, 1f);
-        // fontRegular.draw(batch, "The helloest of Worlds!", 2f, 2f);
-        batch.end();
-    }
-
-    // Local backup of old render method
-    public void renderOld(float delta) {
-        ScreenUtils.clear(Color.DARK_GRAY);
-
-        viewport.apply();
-        batch.setProjectionMatrix(viewport.getCamera().combined);
-
-        fontBold.setColor(Color.GREEN);
-        fontRegular.setColor(Color.RED);
-
-        batch.begin();
-
-        asteroid.setX(model.getAsteroid().getX());
-        asteroid.setY(model.getAsteroid().getY());
-        asteroid.draw(batch);
-
-        for (int i = 0; i < model.getSpaceShips().length; i++) {
-            for (GridCell<Fuselage> cell : model.getSpaceShips()[i].getShipStructure().iterable()) {
-                float shipX = model.getSpaceShips()[i].getX() + cell.pos().col();
-                float shipY = model.getSpaceShips()[i].getY() + cell.pos().row();
-                if (model.getSpaceShips()[i].isPlayerShip()) {
-                    fuselagePlayer.setX(shipX);
-                    fuselagePlayer.setY(shipY);
-                    fuselagePlayer.draw(batch);
-                } else {
-                    fuselageEnemy.setX(shipX);
-                    fuselageEnemy.setY(shipY);
-                    fuselageEnemy.draw(batch);
-                }
-
-                if (cell.value().getUpgrade() != null) {
-                    upgradeIcons.get(cell.value().getUpgrade().getType()).setX(shipX);
-                    upgradeIcons.get(cell.value().getUpgrade().getType()).setY(shipY);
-                    upgradeIcons.get(cell.value().getUpgrade().getType()).draw(batch);
-                }
-            }
-        }
-
-        if (model.laserExists) { // TODO: refactor, I beg thee
-            laser.setX(model.getLaser().getX() + 0.375f);
-            laser.setY(model.getLaser().getY() + 0.875f);
-            laser.draw(batch);
-
-            laserUpdateTimer += delta;
-            if (laserUpdateTimer >= laserUpdateCutoff) {
-                laserUpdateTimer = 0f;
-                model.moveLaser();
-            }
-        }
-
-        // fontBold.draw(batch, "Hello, World!", 1f, 1f);
-        // fontRegular.draw(batch, "The helloest of Worlds!", 2f, 2f);
         batch.end();
     }
 
