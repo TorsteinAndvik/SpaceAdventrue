@@ -19,7 +19,7 @@ public class ShipStructure {
         this(shipConfig.width, shipConfig.height);
         for (ShipComponent component : shipConfig.components) {
             if (component.upgrade == null) {
-                set(new CellPosition(component.x, component.y), new Fuselage());
+                set(component.getPosition(), new Fuselage());
                 continue;
             }
             ShipUpgrade upgradeType = switch (component.upgrade.type) {
@@ -27,19 +27,17 @@ public class ShipStructure {
                 case SHIELD -> new Shield();
                 case THRUSTER -> new Thruster();
             };
-            set(new CellPosition(component.x, component.y), new Fuselage(upgradeType));
+            set(component.getPosition(), new Fuselage(upgradeType));
         }
     }
 
     /**
-     * Sets the fuselage at the given position if it is empty and the position is on
-     * the grid
+     * Sets the fuselage at the given position if it is empty and the position is on the grid
      *
      * @param pos      the <code>CellPosition</code> of the fuselage to be added
      * @param fuselage the <code>Fuselage</code> to be added
-     * @return true if the fuselage was successfully added (i.e. <code>pos</code> is
-     *         valid and the
-     *         position was empty), false otherwise
+     * @return true if the fuselage was successfully added (i.e. <code>pos</code> is valid and the
+     * position was empty), false otherwise
      */
     public boolean set(CellPosition pos, Fuselage fuselage) {
         try {
@@ -54,15 +52,13 @@ public class ShipStructure {
     }
 
     /**
-     * Sets an empty <code>Fuselage</code> at the given position if it is empty and
-     * the position is
+     * Sets an empty <code>Fuselage</code> at the given position if it is empty and the position is
      * on the grid
      *
      * @param pos the <code>CellPosition</code> to add an empty
      *            <code>Fuselage</code> to
-     * @return true if the fuselage was successfully added (i.e. <code>pos</code> is
-     *         valid and the
-     *         position was empty), false otherwise
+     * @return true if the fuselage was successfully added (i.e. <code>pos</code> is valid and the
+     * position was empty), false otherwise
      */
     public boolean set(CellPosition pos) {
         return set(pos, new Fuselage());
@@ -73,12 +69,10 @@ public class ShipStructure {
      * <code>CellPosition
      * </code>, if the position is valid and holds an empty <code>Fuselage</code>.
      *
-     * @param pos     the <code>CellPosition</code> where the upgrade is be to added
-     *                to
+     * @param pos     the <code>CellPosition</code> where the upgrade is be to added to
      * @param upgrade the <code>ShipUpgrade</code> to be added
-     * @return true if the upgrade was successfully added (i.e. <code>pos</code> is
-     *         valid and the
-     *         position holds an empty <code>Fuselage</code>), false otherwise
+     * @return true if the upgrade was successfully added (i.e. <code>pos</code> is valid and the
+     * position holds an empty <code>Fuselage</code>), false otherwise
      */
     public boolean addUpgrade(CellPosition pos, ShipUpgrade upgrade) {
         try {
