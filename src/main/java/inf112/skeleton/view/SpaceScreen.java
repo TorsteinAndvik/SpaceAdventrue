@@ -146,6 +146,7 @@ public class SpaceScreen implements Screen {
                 if (cell.value() == null) {
                     continue;
                 }
+
                 float shipX = ship.getX() + cell.pos().col();
                 float shipY = ship.getY() + cell.pos().row();
                 if (ship.isPlayerShip()) {

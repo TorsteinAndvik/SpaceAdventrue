@@ -19,7 +19,7 @@
             "x": 2,
             "y": 0,
             "upgrade": {
-                "type": "Turret",
+                "type": "Thruster",
                 "level": 1
             }
         },
@@ -27,7 +27,7 @@
             "x": 1,
             "y": 1,
             "upgrade": {
-                "type": "Thruster",
+                "type": "Turret",
                 "level": 1
             }
         }
