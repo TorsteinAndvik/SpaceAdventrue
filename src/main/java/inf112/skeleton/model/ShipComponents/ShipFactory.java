@@ -72,8 +72,8 @@ public class ShipFactory {
     }
 
     /**
-     * @return A 1x2 <code>ShipStructure</code> with a turret at the front and a thruster at the
-     * back.
+     * @return A 1x2 <code>ShipStructure</code> with a turret at the front
+     *         and a thruster at the back.
      */
     public ShipStructure simpleShip() {
         ShipStructure ship = new ShipStructure(1, 2);

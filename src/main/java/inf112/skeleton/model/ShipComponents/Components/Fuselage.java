@@ -48,4 +48,13 @@ public class Fuselage {
     public ShipUpgrade getUpgrade() {
         return heldUpgrade;
     }
+
+    @Override
+    public String toString() {
+        if (heldUpgrade == null) {
+            return "fuselage: empty";
+        } else {
+            return "fuselage: " + heldUpgrade.getName();
+        }
+    }
 }

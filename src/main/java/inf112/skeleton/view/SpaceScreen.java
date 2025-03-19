@@ -142,10 +142,14 @@ public class SpaceScreen implements Screen {
             // set the transform matrix for the batch
             batch.setTransformMatrix(transformMatrix);
 
-            for (GridCell<Fuselage> cell : model.getSpaceShips()[i].getShipStructure().iterable()) {
-                float shipX = model.getSpaceShips()[i].getX() + cell.pos().col();
-                float shipY = model.getSpaceShips()[i].getY() + cell.pos().row();
-                if (model.getSpaceShips()[i].isPlayerShip()) {
+            for (GridCell<Fuselage> cell : ship.getShipStructure().iterable()) {
+                if (cell.value() == null) {
+                    continue;
+                }
+
+                float shipX = ship.getX() + cell.pos().col();
+                float shipY = ship.getY() + cell.pos().row();
+                if (ship.isPlayerShip()) {
                     fuselagePlayer.setX(shipX);
                     fuselagePlayer.setY(shipY);
                     fuselagePlayer.draw(batch);

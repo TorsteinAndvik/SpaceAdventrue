@@ -26,9 +26,9 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     public SpaceGameModel() {
         this.shipFactory = new ShipFactory();
         this.player = new Player(
-                shipFactory.simpleShip(), "player", "the player's spaceship", 1, 3, 1, 1);
+                shipFactory.simpleShip(), "player", "the player's spaceship", 1, 5, 1, 1);
         this.enemyShip = new EnemyShip(
-                shipFactory.createShipFromJson("enemy1.json"),
+                shipFactory.createShipFromJson("enemy2.json"),
                 "enemy",
                 "an enemy ship",
                 1,
