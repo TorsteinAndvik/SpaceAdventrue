@@ -26,7 +26,7 @@ public class ShipFactory {
 
     public ShipConfig createShipConfigFromJson(JsonValue shipData) {
 
-        if (!ShipValidator.validateShipJson(shipData)) {
+        if (!ShipValidator.isValid(shipData)) {
             throw new IllegalArgumentException("Invalid ship JSON: does not meet requirements.");
         }
 
@@ -55,7 +55,7 @@ public class ShipFactory {
             shipComponent.upgrade = upgrade;
         }
 
-        if (!ShipValidator.validShipConfig(shipConfig)) {
+        if (!ShipValidator.isValid(shipConfig)) {
             throw new IllegalArgumentException(
                     "Invalid ship configuration for " + shipData.get("name"));
         }
