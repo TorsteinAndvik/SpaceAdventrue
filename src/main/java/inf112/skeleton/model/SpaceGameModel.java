@@ -26,9 +26,9 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     public SpaceGameModel() {
         this.shipFactory = new ShipFactory();
         this.player = new Player(
-                shipFactory.simpleShip(), "player", "the player's spaceship", 1, 3, 1, 1);
+                shipFactory.simpleShip(), "player", "the player's spaceship", 1, 5, 1, 1);
         this.enemyShip = new EnemyShip(
-                shipFactory.createShipFromJson("enemy1.json"),
+                shipFactory.createShipFromJson("enemy2.json"),
                 "enemy",
                 "an enemy ship",
                 1,
@@ -39,7 +39,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         this.asteroid = new Asteroid("asteroid", "an asteroid", 1, 6, 0.6f, 0.1f, 1, 0, 2, 4);
         this.laser = new Bullet("laser", "a laser shot", 0, 0, 1, 1, 0, 1);
 
-        spaceShips = new SpaceShip[] { player, enemyShip };
+        spaceShips = new SpaceShip[]{player, enemyShip};
     }
 
     @Override
@@ -53,7 +53,8 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     public void shoot() {
         // TODO: This is awful, never do this.
-        this.laser = new Bullet("laser", "a laser shot", player.getX(), player.getY() + 1, 1, 1, 0, 1);
+        this.laser = new Bullet("laser", "a laser shot", player.getX(), player.getY() + 1, 1, 1, 0,
+                1);
         laserExists = true;
     }
 

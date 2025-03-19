@@ -88,9 +88,12 @@ public class SpaceScreen implements Screen {
 
     private void setupUpgradeHashMap() {
         upgradeIcons = new HashMap<UpgradeType, Sprite>();
-        upgradeIcons.put(UpgradeType.TURRET, createSprite("images/upgrades/turret_laser_stage_0.png", 1, 1));
-        upgradeIcons.put(UpgradeType.THRUSTER, createSprite("images/upgrades/rocket_stage_0.png", 1, 1));
-        upgradeIcons.put(UpgradeType.SHIELD, createSprite("images/upgrades/shield_stage_0.png", 1, 1));
+        upgradeIcons.put(UpgradeType.TURRET,
+                createSprite("images/upgrades/turret_laser_stage_0.png", 1, 1));
+        upgradeIcons.put(UpgradeType.THRUSTER,
+                createSprite("images/upgrades/rocket_stage_0.png", 1, 1));
+        upgradeIcons.put(UpgradeType.SHIELD,
+                createSprite("images/upgrades/shield_stage_0.png", 1, 1));
     }
 
     private Sprite createSprite(String path, float width, float height) {
@@ -112,7 +115,7 @@ public class SpaceScreen implements Screen {
         fontRegular.setColor(Color.RED);
 
         model.rotateEnemy(); // TODO: Remove this once proper model is in place
-                             // view should only send model.update(delta) via controller in future
+        // view should only send model.update(delta) via controller in future
         batch.begin();
 
         asteroid.setX(model.getAsteroid().getX());
@@ -142,10 +145,14 @@ public class SpaceScreen implements Screen {
             // set the transform matrix for the batch
             batch.setTransformMatrix(transformMatrix);
 
-            for (GridCell<Fuselage> cell : model.getSpaceShips()[i].getShipStructure().iterable()) {
-                float shipX = model.getSpaceShips()[i].getX() + cell.pos().col();
-                float shipY = model.getSpaceShips()[i].getY() + cell.pos().row();
-                if (model.getSpaceShips()[i].isPlayerShip()) {
+            for (GridCell<Fuselage> cell : ship.getShipStructure().iterable()) {
+                if (cell.value() == null) {
+                    continue;
+                }
+
+                float shipX = ship.getX() + cell.pos().col();
+                float shipY = ship.getY() + cell.pos().row();
+                if (ship.isPlayerShip()) {
                     fuselagePlayer.setX(shipX);
                     fuselagePlayer.setY(shipY);
                     fuselagePlayer.draw(batch);
