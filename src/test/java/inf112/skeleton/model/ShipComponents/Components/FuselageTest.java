@@ -1,6 +1,8 @@
 package inf112.skeleton.model.ShipComponents.Components;
 
 import inf112.skeleton.model.ShipComponents.UpgradeType;
+import inf112.skeleton.model.constants.PhysicsParameters;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +32,12 @@ class FuselageTest {
         UpgradeType upgradeType = fuselageWithUpgrade.removeUpgrade();
         assertEquals(upgradeType, new Turret().getType());
         assertNull(fuselageWithUpgrade.getUpgrade());
+    }
 
+    @Test
+    void correctMassTest() {
+        assertEquals(PhysicsParameters.fuselageMass, fuselageWithoutUpgrade.getMass());
+        assertEquals(PhysicsParameters.fuselageMass + PhysicsParameters.shipUpgradeMass, fuselageWithUpgrade.getMass());
     }
 
 }

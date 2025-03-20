@@ -2,6 +2,7 @@ package inf112.skeleton.model.ShipComponents.Components;
 
 import inf112.skeleton.model.ShipComponents.UpgradeStage;
 import inf112.skeleton.model.ShipComponents.UpgradeType;
+import inf112.skeleton.model.constants.PhysicsParameters;
 
 public abstract class ShipUpgrade {
 
@@ -10,6 +11,8 @@ public abstract class ShipUpgrade {
 
     private final UpgradeType type;
     private UpgradeStage stage;
+
+    private float mass = PhysicsParameters.shipUpgradeMass;
 
     public ShipUpgrade(String name, String description, UpgradeType type, UpgradeStage stage) {
         this.name = name;
@@ -32,6 +35,10 @@ public abstract class ShipUpgrade {
 
     public UpgradeStage getStage() {
         return stage;
+    }
+
+    public float getMass() {
+        return mass;
     }
 
     /**

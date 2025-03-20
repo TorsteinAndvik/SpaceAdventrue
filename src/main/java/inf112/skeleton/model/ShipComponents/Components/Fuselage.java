@@ -1,10 +1,13 @@
 package inf112.skeleton.model.ShipComponents.Components;
 
 import inf112.skeleton.model.ShipComponents.UpgradeType;
+import inf112.skeleton.model.constants.PhysicsParameters;
 
 public class Fuselage {
 
     private ShipUpgrade heldUpgrade;
+
+    private float mass = PhysicsParameters.fuselageMass;
 
     public Fuselage() {
     }
@@ -49,12 +52,32 @@ public class Fuselage {
         return heldUpgrade;
     }
 
+    /**
+     * @return <code>true</code> if <code>this</code> currently holds a
+     *         <code>ShipUpgrade</code>, otherwise <code>false</code>.
+     */
+    public boolean hasUpgrade() {
+        return heldUpgrade != null;
+    }
+
     @Override
     public String toString() {
         if (heldUpgrade == null) {
             return "fuselage: empty";
         } else {
             return "fuselage: " + heldUpgrade.getName();
+        }
+    }
+
+    /**
+     * @return combined mass of <code>this</code> and an eventual held
+     *         <code>ShipUpgrade</code>.
+     */
+    public float getMass() {
+        if (hasUpgrade()) {
+            return mass + heldUpgrade.getMass();
+        } else {
+            return mass;
         }
     }
 }
