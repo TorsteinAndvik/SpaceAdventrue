@@ -6,6 +6,8 @@ public class Fuselage {
 
     private ShipUpgrade heldUpgrade;
 
+    private float mass = 1f;
+
     public Fuselage() {
     }
 
@@ -49,6 +51,14 @@ public class Fuselage {
         return heldUpgrade;
     }
 
+    /**
+     * @return <code>true</code> if <code>this</code> currently holds a
+     *         <code>ShipUpgrade</code>, otherwise <code>false</code>.
+     */
+    public boolean hasUpgrade() {
+        return heldUpgrade != null;
+    }
+
     @Override
     public String toString() {
         if (heldUpgrade == null) {
@@ -56,5 +66,12 @@ public class Fuselage {
         } else {
             return "fuselage: " + heldUpgrade.getName();
         }
+    }
+
+    /**
+     * @return mass of a piece of <code>Fuselage</code>.
+     */
+    public float getMass() {
+        return mass;
     }
 }

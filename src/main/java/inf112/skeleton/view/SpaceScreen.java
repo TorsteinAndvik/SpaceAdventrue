@@ -21,6 +21,7 @@ import inf112.skeleton.model.SpaceGameModel;
 import inf112.skeleton.model.ShipComponents.UpgradeType;
 import inf112.skeleton.model.ShipComponents.Components.Fuselage;
 import inf112.skeleton.model.SpaceCharacters.SpaceShip;
+import inf112.skeleton.model.utils.FloatPair;
 
 public class SpaceScreen implements Screen {
 
@@ -131,8 +132,10 @@ public class SpaceScreen implements Screen {
 
             // translate the transformation matrix to the ship's center of rotation
             // TODO: ship's center of rotation should be provided by the model
-            float x = ship.getX() + 0.5f * (float) ship.getShipStructure().getWidth();
-            float y = ship.getY() + 0.5f * (float) ship.getShipStructure().getHeight();
+            FloatPair cm = ship.getShipStructure().getCenterOfMass();
+            float x = ship.getX() + cm.x();
+            float y = ship.getY() + cm.y();
+
             transformMatrix.translate(x, y, 0f);
 
             // apply rotation
@@ -168,6 +171,11 @@ public class SpaceScreen implements Screen {
                     upgradeIcons.get(cell.value().getUpgrade().getType()).draw(batch);
                 }
             }
+
+            // draw center of mass as a laser, for testing purposes
+            laser.setX(x - 0.5f * laser.getWidth());
+            laser.setY(y - 0.5f * laser.getHeight());
+            laser.draw(batch);
         }
 
         // Reset the transform matrix to the identity matrix

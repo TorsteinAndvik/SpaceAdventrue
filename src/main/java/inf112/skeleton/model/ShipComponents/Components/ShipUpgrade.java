@@ -11,6 +11,8 @@ public abstract class ShipUpgrade {
     private final UpgradeType type;
     private UpgradeStage stage;
 
+    private float mass = 1f;
+
     public ShipUpgrade(String name, String description, UpgradeType type, UpgradeStage stage) {
         this.name = name;
         this.description = description;
@@ -32,6 +34,10 @@ public abstract class ShipUpgrade {
 
     public UpgradeStage getStage() {
         return stage;
+    }
+
+    public float getMass() {
+        return mass;
     }
 
     /**
