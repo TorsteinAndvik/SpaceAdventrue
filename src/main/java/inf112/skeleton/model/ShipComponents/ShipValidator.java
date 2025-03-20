@@ -99,7 +99,7 @@ public class ShipValidator {
             componentPositions.add(
                     new CellPosition(component.get("y").asInt(), component.get("x").asInt()));
         }
-        System.out.println(componentPositions);
+
         return componentPositions;
     }
 }
