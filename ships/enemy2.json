@@ -1,75 +1,75 @@
 {
-    "name": "Dreadnought",
-    "width": 3,
-    "height": 5,
-    "components": [
-        {
-            "x": 0,
-            "y": 0,
-            "upgrade": {
-                "type": "Turret",
-                "level": 1
-            }
-        },
-        {
-            "x": 0,
-            "y": 1,
-            "upgrade": {
-                "type": "Thruster",
-                "level": 1
-            }
-        },
-        {
-            "x": 0,
-            "y": 2,
-            "upgrade": {
-                "type": "Thruster",
-                "level": 1
-            }
-        },
-        {
-            "x": 0,
-            "y": 3,
-            "upgrade": {
-                "type": "Thruster",
-                "level": 1
-            }
-        },
-        {
-            "x": 0,
-            "y": 4,
-            "upgrade": {
-                "type": "Turret",
-                "level": 1
-            }
-        },
-        {
-            "x": 1,
-            "y": 1,
-            "upgrade": {
-                "type": "Shield",
-                "level": 1
-            }
-        },
-        {
-            "x": 1,
-            "y": 2
-        },
-        {
-            "x": 1,
-            "y": 3,
-            "upgrade": {
-                "type": "Shield",
-                "level": 1
-            }
-        },
-        {
-            "x": 2,
-            "y": 2,
-            "upgrade": {
-                "type": "Turret",
-                "level": 1
-            }
-        }
-    ]
+  "name": "Dreadnought",
+  "width": 5,
+  "height": 3,
+  "components": [
+    {
+      "x": 0,
+      "y": 0,
+      "upgrade": {
+        "type": "Turret",
+        "level": 1
+      }
+    },
+    {
+      "x": 1,
+      "y": 0,
+      "upgrade": {
+        "type": "Thruster",
+        "level": 1
+      }
+    },
+    {
+      "x": 2,
+      "y": 0,
+      "upgrade": {
+        "type": "Thruster",
+        "level": 1
+      }
+    },
+    {
+      "x": 3,
+      "y": 0,
+      "upgrade": {
+        "type": "Thruster",
+        "level": 1
+      }
+    },
+    {
+      "x": 4,
+      "y": 0,
+      "upgrade": {
+        "type": "Turret",
+        "level": 1
+      }
+    },
+    {
+      "x": 1,
+      "y": 1,
+      "upgrade": {
+        "type": "Shield",
+        "level": 1
+      }
+    },
+    {
+      "x": 2,
+      "y": 1
+    },
+    {
+      "x": 3,
+      "y": 1,
+      "upgrade": {
+        "type": "Shield",
+        "level": 1
+      }
+    },
+    {
+      "x": 2,
+      "y": 2,
+      "upgrade": {
+        "type": "Turret",
+        "level": 1
+      }
+    }
+  ]
 }
