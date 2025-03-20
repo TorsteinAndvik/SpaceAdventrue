@@ -1,12 +1,13 @@
 package inf112.skeleton.model.ShipComponents.Components;
 
 import inf112.skeleton.model.ShipComponents.UpgradeType;
+import inf112.skeleton.model.constants.PhysicsParameters;
 
 public class Fuselage {
 
     private ShipUpgrade heldUpgrade;
 
-    private float mass = 1f;
+    private float mass = PhysicsParameters.fuselageMass;
 
     public Fuselage() {
     }
@@ -69,9 +70,14 @@ public class Fuselage {
     }
 
     /**
-     * @return mass of a piece of <code>Fuselage</code>.
+     * @return combined mass of <code>this</code> and an eventual held
+     *         <code>ShipUpgrade</code>.
      */
     public float getMass() {
-        return mass;
+        if (hasUpgrade()) {
+            return mass + heldUpgrade.getMass();
+        } else {
+            return mass;
+        }
     }
 }

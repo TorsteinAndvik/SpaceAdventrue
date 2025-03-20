@@ -133,8 +133,8 @@ public class SpaceScreen implements Screen {
             // translate the transformation matrix to the ship's center of rotation
             // TODO: ship's center of rotation should be provided by the model
             FloatPair cm = ship.getShipStructure().getCenterOfMass();
-            float x = ship.getX() + cm.x();
-            float y = ship.getY() + cm.y();
+            float x = ship.getX() + cm.x() + 0.5f;
+            float y = ship.getY() + cm.y() + 0.5f;
 
             transformMatrix.translate(x, y, 0f);
 
