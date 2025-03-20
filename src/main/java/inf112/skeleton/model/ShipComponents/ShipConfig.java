@@ -1,5 +1,6 @@
 package inf112.skeleton.model.ShipComponents;
 
+import inf112.skeleton.grid.CellPosition;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -30,6 +31,15 @@ public class ShipConfig {
         public int x;
         public int y;
         public Upgrade upgrade;
+
+        /**
+         * Get the cell position of the ship component.
+         *
+         * @return the CellPosition.
+         */
+        public CellPosition getPosition() {
+            return new CellPosition(y, x);
+        }
 
         @Override
         public String toString() {
