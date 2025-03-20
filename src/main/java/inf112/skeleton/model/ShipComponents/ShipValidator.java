@@ -65,11 +65,10 @@ public class ShipValidator {
         return componentPositions.size() == visited.size();
     }
 
-
     private static List<CellPosition> getAdjacent(List<CellPosition> components, CellPosition cp) {
         List<CellPosition> adjacent = new ArrayList<>();
         for (CellPosition adjPos : components) {
-            if (!adjPos.equals(cp) && orthogonallyAdjacent(adjPos, cp)) {
+            if (orthogonallyAdjacent(adjPos, cp)) {
                 adjacent.add(adjPos);
             }
         }
@@ -104,4 +103,3 @@ public class ShipValidator {
         return componentPositions;
     }
 }
-
