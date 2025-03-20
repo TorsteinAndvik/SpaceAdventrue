@@ -2,6 +2,8 @@ package inf112.skeleton.model.ShipComponents.Components;
 
 import inf112.skeleton.model.ShipComponents.UpgradeStage;
 import inf112.skeleton.model.ShipComponents.UpgradeType;
+import inf112.skeleton.model.constants.PhysicsParameters;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -48,7 +50,6 @@ class UpgradesTest {
         assertEquals(UpgradeType.SHIELD, shield.getType());
     }
 
-
     @Test
     void thrusterTest() {
         assertEquals("Thruster", thruster.getName());
@@ -94,5 +95,18 @@ class UpgradesTest {
         assertFalse(superShield.upgrade());
         assertFalse(superThruster.upgrade());
         assertFalse(superTurret.upgrade());
+    }
+
+    @Test
+    void correctMassTest() {
+        assertEquals(PhysicsParameters.shipUpgradeMass, shield.getMass());
+        assertEquals(PhysicsParameters.shipUpgradeMass, thruster.getMass());
+        assertEquals(PhysicsParameters.shipUpgradeMass, turret.getMass());
+
+        // Note: Super upgrades may have a different mass in future
+        String message = "mass does not match value specified in PhysicsParameters (did you implement or change an upgrade such that the mass changed without updating PhysicsParameters accordingly?)";
+        assertEquals(PhysicsParameters.shipUpgradeMass, superShield.getMass(), "superShield: " + message);
+        assertEquals(PhysicsParameters.shipUpgradeMass, superThruster.getMass(), "superThruster: " + message);
+        assertEquals(PhysicsParameters.shipUpgradeMass, superTurret.getMass(), "superTurret: " + message);
     }
 }

@@ -113,7 +113,10 @@ public class ShipStructure {
             if (fuselage == null) {
                 return false;
             }
+
+            updateMassAndCenterOfMass(pos, upgrade.getMass());
             return fuselage.setUpgrade(upgrade);
+
         } catch (IndexOutOfBoundsException e) {
             return false;
         }
