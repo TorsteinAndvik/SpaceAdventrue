@@ -62,8 +62,6 @@ public class ShipValidator {
                 }
             }
         }
-        System.out.println(componentPositions.size());
-        System.out.println(+visited.size());
         return componentPositions.size() == visited.size();
     }
 
@@ -78,7 +76,7 @@ public class ShipValidator {
         return adjacent;
     }
 
-    public static List<CellPosition> extractCellPositions(ShipConfig shipConfig) {
+    private static List<CellPosition> extractCellPositions(ShipConfig shipConfig) {
         ArgumentChecker.requireNonNull(shipConfig, "ShipConfig can't be null");
         if (shipConfig.components == null) {
             return null;
@@ -90,7 +88,7 @@ public class ShipValidator {
         return componentPositions;
     }
 
-    public static List<CellPosition> extractCellPositions(JsonValue shipData) {
+    private static List<CellPosition> extractCellPositions(JsonValue shipData) {
         ArgumentChecker.requireNonNull(shipData, "JsonValue can't be null");
         if (!shipData.has("components")) {
             return null;

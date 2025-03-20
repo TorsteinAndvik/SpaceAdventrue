@@ -65,18 +65,5 @@ public class ShipValidatorTest {
         JsonValue enemy = json.parse(smallInvalidShip);
         assertFalse(ShipValidator.isValid(enemy));
     }
-
-
-    @Test
-    void ShipCellPositionTest() {
-        JsonValue enemy1 = json.parse(validShip);
-        List<CellPosition> cellPositions = ShipValidator.extractCellPositions(enemy1);
-
-        assertNotNull(cellPositions);
-        assertTrue(cellPositions.contains(new CellPosition(0, 0)));
-        assertTrue(cellPositions.contains(new CellPosition(0, 1)));
-        assertTrue(cellPositions.contains(new CellPosition(1, 0)));
-        assertTrue(cellPositions.contains(new CellPosition(1, 1)));
-
-    }
+    
 }
