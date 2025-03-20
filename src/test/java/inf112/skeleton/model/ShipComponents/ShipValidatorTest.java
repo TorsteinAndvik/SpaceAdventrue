@@ -1,13 +1,11 @@
 package inf112.skeleton.model.ShipComponents;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
-import inf112.skeleton.grid.CellPosition;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 
 public class ShipValidatorTest {
@@ -61,9 +59,35 @@ public class ShipValidatorTest {
     }
 
     @Test
-    void SmallInvalidShipTest() {
+    void smallInvalidShipTest() {
         JsonValue enemy = json.parse(smallInvalidShip);
         assertFalse(ShipValidator.isValid(enemy));
     }
-    
+
+    @Test
+    void jsonValueNullTest() {
+        JsonValue jsonValue = null;
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            ShipValidator.isValid(jsonValue);
+        });
+
+        String expectedMessage = "JsonValue can't be null";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    void shipConfigNullTest() {
+        ShipConfig shipConfig = null;
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            ShipValidator.isValid(shipConfig);
+        });
+
+        String expectedMessage = "ShipConfig can't be null";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
 }
