@@ -20,7 +20,12 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import inf112.skeleton.controller.UpgradeScreenController;
 import inf112.skeleton.grid.CellPosition;
+import inf112.skeleton.grid.GridCell;
+import inf112.skeleton.model.SpaceGameModel;
 import inf112.skeleton.model.UpgradeScreenModel;
+import inf112.skeleton.model.ShipComponents.UpgradeType;
+import inf112.skeleton.model.ShipComponents.Components.Fuselage;
+import inf112.skeleton.model.ShipComponents.Components.ShipStructure;
 
 /**
  * Screen for managing ship upgrades in game. Handles rendering of upgrade grid,
@@ -73,7 +78,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
      * @param spaceGame The main game instance providing sprites, and other
      *                  resources.
      */
-    public UpgradeScreen(final SpaceGame spaceGame) {
+    public UpgradeScreen(final SpaceGame spaceGame, final SpaceGameModel spaceModel) {
         this.game = spaceGame;
         this.batch = game.getSpriteBatch();
         this.shape = new ShapeRenderer();
@@ -81,7 +86,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         this.viewportGame = game.getScreenViewport();
         this.viewportUI = new ScreenViewport();
         this.model = new UpgradeScreenModel();
-        this.controller = new UpgradeScreenController(this, model, game);
+        this.controller = new UpgradeScreenController(this, model, spaceModel, game);
         this.touchPos = new Vector2();
 
         viewportUI.setUnitsPerPixel(viewportGame.getUnitsPerPixel());
@@ -184,11 +189,25 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         // Draw ship grid
         for (int x = 0; x < model.getGridWidth(); x++) {
             for (int y = 0; y < model.getGridHeight(); y++) {
-                if ((x == 1 || x == 3) || (y < 2 || y == 4)) {
+                if ((x == 1 || x == 3) || (y < 2 || y == 4)) { // TODO: Replace with model.validFuselagePosition or
+                                                               // equivalent once implemented
                     drawGridSquare(squareGreen, x, y);
                 } else {
                     drawGridSquare(squareRed, x, y);
                 }
+            }
+        }
+
+        // draw player's ship
+        for (GridCell<Fuselage> cell : controller.getPlayerShipParts()) {
+            if (cell.value() == null) {
+                continue;
+            }
+
+            if (cell.value().hasUpgrade()) {
+                drawUpgrade(cell.pos(), cell.value().getUpgrade().getType());
+            } else {
+                drawUpgrade(cell.pos());
             }
         }
 
@@ -308,6 +327,15 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         squareSprite.setX(model.getGridOffsetX() + x);
         squareSprite.setY(model.getGridOffsetY() + y);
         squareSprite.draw(batch);
+    }
+
+    private void drawUpgrade(CellPosition cp) {
+
+    }
+
+    private void drawUpgrade(CellPosition cp, UpgradeType type) {
+        drawUpgrade(cp);
+
     }
 
     private Vector2 worldToGameCoordinates(float worldX, float worldY) {
