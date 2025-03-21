@@ -115,7 +115,7 @@ public class SpaceScreen implements Screen {
         fontBold.setColor(Color.GREEN);
         fontRegular.setColor(Color.RED);
 
-        model.rotateEnemy(); // TODO: Remove this once proper model is in place
+        model.rotateEnemy(delta); // TODO: Remove this once proper model is in place
         // view should only send model.update(delta) via controller in future
         batch.begin();
 

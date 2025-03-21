@@ -70,16 +70,16 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     // TODO: Remove this once proper model is in place - currently used for testing
     // rendering of rotated ships in SpaceScreen
-    public void rotateEnemy() {
+    public void rotateEnemy(float deltaTime) {
         if (!this.enemyRotationActive) {
             return;
         }
 
-        float rotationalVelocity = 0.5f;
+        float rotationalVelocity = 90f; // degrees per second
         if (rotateClockwise) {
-            this.enemyShip.rotate(-rotationalVelocity);
+            this.enemyShip.rotate(-rotationalVelocity * deltaTime);
         } else {
-            this.enemyShip.rotate(rotationalVelocity);
+            this.enemyShip.rotate(rotationalVelocity * deltaTime);
         }
     }
 
