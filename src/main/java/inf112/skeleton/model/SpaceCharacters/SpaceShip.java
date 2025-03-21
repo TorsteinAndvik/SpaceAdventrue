@@ -29,8 +29,11 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
         this.hitPoints = hitPoints;
         this.maxHitPoints = maxHitPoints;
         this.shipStructure = shipStructure;
-        this.setRadius(
-                (float) Math.sqrt(Math.pow(shipStructure.getWidth(), 2) + Math.pow(shipStructure.getHeight(), 2)));
+        if (this.shipStructure != null) {
+            this.setRadius(
+                    (float) Math.sqrt(
+                            Math.pow(shipStructure.getWidth() / 2f, 2) + Math.pow(shipStructure.getHeight() / 2f, 2)));
+        }
         // this.gunList = new ArrayList<>();
     }
 
