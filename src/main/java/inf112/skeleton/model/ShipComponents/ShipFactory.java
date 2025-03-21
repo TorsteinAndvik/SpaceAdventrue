@@ -81,4 +81,13 @@ public class ShipFactory {
         ship.set(new CellPosition(0, 0), new Fuselage(new Thruster()));
         return ship;
     }
+
+    /**
+     * @return a <code>this.simpleShip()</code> centered on a 6x5 grid
+     */
+    public ShipStructure playerShip() {
+        ShipStructure ship = this.simpleShip();
+        ship.expandGrid(4, 4, true);
+        return ship;
+    }
 }

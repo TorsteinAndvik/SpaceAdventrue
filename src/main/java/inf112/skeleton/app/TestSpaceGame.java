@@ -23,6 +23,7 @@ public class TestSpaceGame extends Game implements SpaceGame {
     private ScreenViewport screenViewport;
     private LoadingScreen loadingScreen;
     private UpgradeScreen upgradeScreen;
+    private SpaceGameModel spaceGameModel;
     private SpaceScreen spaceScreen;
     private final int METERS = 9; // screen will be meters x meters (we use meters as Game coordinates, NOT pixel
                                   // coordinates - these depend on window size, awful to work with)
@@ -82,7 +83,10 @@ public class TestSpaceGame extends Game implements SpaceGame {
      */
     public void setUpgradeScreen() {
         if (this.upgradeScreen == null) {
-            this.upgradeScreen = new UpgradeScreen(this);
+            if (this.spaceGameModel == null) {
+                this.spaceGameModel = new SpaceGameModel();
+            }
+            this.upgradeScreen = new UpgradeScreen(this, this.spaceGameModel);
         }
 
         setScreen(this.upgradeScreen);
@@ -93,7 +97,10 @@ public class TestSpaceGame extends Game implements SpaceGame {
      */
     public void setSpaceScreen() {
         if (this.spaceScreen == null) {
-            this.spaceScreen = new SpaceScreen(this, new SpaceGameModel());
+            if (this.spaceGameModel == null) {
+                this.spaceGameModel = new SpaceGameModel();
+            }
+            this.spaceScreen = new SpaceScreen(this, this.spaceGameModel);
         }
 
         setScreen(this.spaceScreen);

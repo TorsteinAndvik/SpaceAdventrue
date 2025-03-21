@@ -4,21 +4,31 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 import inf112.skeleton.grid.CellPosition;
+import inf112.skeleton.grid.GridCell;
+import inf112.skeleton.model.SpaceGameModel;
 import inf112.skeleton.model.UpgradeScreenModel;
+import inf112.skeleton.model.ShipComponents.Components.Fuselage;
 import inf112.skeleton.view.SpaceGame;
 import inf112.skeleton.view.UpgradeScreen;
 
 public class UpgradeScreenController extends GenericController {
 
-    private final UpgradeScreenModel model;
     private final UpgradeScreen view;
+    private final UpgradeScreenModel upgradeModel;
+    private final SpaceGameModel spaceModel;
     private final SpaceGame game;
 
-    public UpgradeScreenController(UpgradeScreen view, UpgradeScreenModel model, SpaceGame game) {
+    public UpgradeScreenController(UpgradeScreen view, UpgradeScreenModel upgradeModel, SpaceGameModel spaceModel,
+            SpaceGame game) {
         super(); // GenericController gives us touchpos
         this.view = view;
-        this.model = model;
+        this.upgradeModel = upgradeModel;
+        this.spaceModel = spaceModel;
         this.game = game;
+    }
+
+    public Iterable<GridCell<Fuselage>> getPlayerShipParts() {
+        return spaceModel.getSpaceShips()[0].getShipStructure().iterable();
     }
 
     @Override
@@ -28,8 +38,8 @@ public class UpgradeScreenController extends GenericController {
 
     @Override
     protected void handleScroll(float amount) {
-        model.updateCameraZoom(amount);
-        view.updateCameraZoom(model.getCurrentZoom());
+        upgradeModel.updateCameraZoom(amount);
+        view.updateCameraZoom(upgradeModel.getCurrentZoom());
     }
 
     @Override
@@ -49,15 +59,16 @@ public class UpgradeScreenController extends GenericController {
     }
 
     private void toggleUpgradeDescriptionMode() {
-        if (model.upgradeInspectionModeIsActive()) {
-            model.setUpgradeInspectionModeIsActive(false);
+        if (upgradeModel.upgradeInspectionModeIsActive()) {
+            upgradeModel.setUpgradeInspectionModeIsActive(false);
+            return;
         }
 
         touchPos.set(Gdx.input.getX(), Gdx.input.getY());
         view.unprojectTouchPos(touchPos);
 
         CellPosition cpUpgrade = convertMouseToUpgradeBar(touchPos.x, touchPos.y);
-        model.setUpgradeInspectionModeIsActive(cellPositionOnUpgradeOptions(cpUpgrade));
+        upgradeModel.setUpgradeInspectionModeIsActive(cellPositionOnUpgradeOptions(cpUpgrade));
     }
 
     @Override
@@ -67,7 +78,7 @@ public class UpgradeScreenController extends GenericController {
     }
 
     private void updateInspectionMode() {
-        if (!model.upgradeInspectionModeIsActive()) {
+        if (!upgradeModel.upgradeInspectionModeIsActive()) {
             return;
         }
 
@@ -75,10 +86,10 @@ public class UpgradeScreenController extends GenericController {
         view.unprojectTouchPos(touchPos);
         CellPosition cpUpgrade = convertMouseToUpgradeBar(touchPos.x, touchPos.y);
         if (cellPositionOnUpgradeOptions(cpUpgrade)) {
-            model.setInspectedUpgradeIndex(cpUpgrade.col());
-            model.setUpgradeInspectionModeIsActive(true);
+            upgradeModel.setInspectedUpgradeIndex(cpUpgrade.col());
+            upgradeModel.setUpgradeInspectionModeIsActive(true);
         } else {
-            model.setUpgradeInspectionModeIsActive(false);
+            upgradeModel.setUpgradeInspectionModeIsActive(false);
         }
     }
 
@@ -89,8 +100,8 @@ public class UpgradeScreenController extends GenericController {
         }
 
         setRightClickLocked(true);
-        model.setReleaseGrabbedUpgrade(false);
-        model.updateDragPosition(screenX, screenY);
+        upgradeModel.setReleaseGrabbedUpgrade(false);
+        upgradeModel.updateDragPosition(screenX, screenY);
 
         touchPos.set(screenX, screenY);
         view.unprojectTouchPos(touchPos);
@@ -103,8 +114,8 @@ public class UpgradeScreenController extends GenericController {
         }
 
         if (cellPositionOnUpgradeOptions(cpUpgrade)) {
-            model.setGrabbedUpgradeIndex(cpUpgrade.col());
-            model.setUpgradeGrabbed(true);
+            upgradeModel.setGrabbedUpgradeIndex(cpUpgrade.col());
+            upgradeModel.setUpgradeGrabbed(true);
         }
 
         return true;
@@ -117,27 +128,27 @@ public class UpgradeScreenController extends GenericController {
         }
 
         setLeftClickLocked(true);
-        model.updateDragPosition(screenX, screenY);
+        upgradeModel.updateDragPosition(screenX, screenY);
         return true;
     }
 
     @Override
     protected boolean middleClick() {
-        model.setCameraZoomRecently(true);
-        model.updateCameraZoomDeltaTime(0f);
+        upgradeModel.setCameraZoomRecently(true);
+        upgradeModel.updateCameraZoomDeltaTime(0f);
         return true;
     }
 
     @Override
     protected boolean leftClickDragged(int screenX, int screenY) {
-        model.updateDragPosition(screenX, screenY);
+        upgradeModel.updateDragPosition(screenX, screenY);
         return true;
     }
 
     @Override
     protected boolean rightClickDragged(int screenX, int screenY) {
-        model.updateDragPosition(screenX, screenY);
-        Vector2 dragDelta = model.getDragDelta();
+        upgradeModel.updateDragPosition(screenX, screenY);
+        Vector2 dragDelta = upgradeModel.getDragDelta();
         view.updateCameraPosition((int) dragDelta.x, (int) dragDelta.y);
         return true;
     }
@@ -148,7 +159,7 @@ public class UpgradeScreenController extends GenericController {
             return true;
         }
         setRightClickLocked(false);
-        model.setReleaseGrabbedUpgrade(true);
+        upgradeModel.setReleaseGrabbedUpgrade(true);
         return true;
     }
 
@@ -163,27 +174,27 @@ public class UpgradeScreenController extends GenericController {
 
     private CellPosition convertMouseToGrid(float x, float y) {
         return new CellPosition(
-                (int) Math.floor(y - model.getGridOffsetY()),
-                (int) Math.floor(x - model.getGridOffsetX()));
+                (int) Math.floor(y - upgradeModel.getGridOffsetY()),
+                (int) Math.floor(x - upgradeModel.getGridOffsetX()));
     }
 
     private CellPosition convertMouseToUpgradeBar(float x, float y) {
         return new CellPosition(
-                (int) Math.floor(y - model.getUpgradeOffsetY()),
-                (int) Math.floor(x - model.getUpgradeOffsetX()));
+                (int) Math.floor(y - upgradeModel.getUpgradeOffsetY()),
+                (int) Math.floor(x - upgradeModel.getUpgradeOffsetX()));
     }
 
     private boolean cellPositionOnGrid(CellPosition cp) {
         int gridX = cp.col();
         int gridY = cp.row();
-        return !(gridX < 0 || gridX > model.getGridWidth() - 1 ||
-                gridY < 0 || gridY > model.getGridHeight() - 1);
+        return !(gridX < 0 || gridX > upgradeModel.getGridWidth() - 1 ||
+                gridY < 0 || gridY > upgradeModel.getGridHeight() - 1);
     }
 
     private boolean cellPositionOnUpgradeOptions(CellPosition cp) {
         int upgradeX = cp.col();
         int upgradeY = cp.row();
         return !((upgradeY != 0) || (upgradeX < 0) ||
-                (upgradeX > model.getNumUpgradeOptions() - 1));
+                (upgradeX > upgradeModel.getNumUpgradeOptions() - 1));
     }
 }

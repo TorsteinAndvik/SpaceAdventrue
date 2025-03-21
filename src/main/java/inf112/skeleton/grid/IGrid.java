@@ -31,4 +31,9 @@ public interface IGrid<E> extends IGridDimension, Iterable<GridCell<E>> {
      * @return true if the coordinate is within bounds, false otherwise.
      */
     boolean positionIsOnGrid(CellPosition pos);
+
+    /**
+     * @return a copy of the grid.
+     */
+    IGrid<E> copy();
 }

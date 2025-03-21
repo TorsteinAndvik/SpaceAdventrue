@@ -113,4 +113,13 @@ public class Grid<E> implements IGrid<E> {
         }
         return cells.iterator();
     }
+
+    @Override
+    public IGrid<E> copy() {
+        IGrid<E> copy = new Grid<>(rows, columns);
+        for (GridCell<E> cell : this) {
+            copy.set(cell.pos(), cell.value());
+        }
+        return copy;
+    }
 }
