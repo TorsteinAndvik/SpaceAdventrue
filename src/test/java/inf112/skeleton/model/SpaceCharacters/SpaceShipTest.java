@@ -3,6 +3,8 @@ package inf112.skeleton.model.SpaceCharacters;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import inf112.skeleton.model.ShipComponents.Components.ShipStructure;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SpaceShipTest {
@@ -12,7 +14,7 @@ public class SpaceShipTest {
     @BeforeEach()
     void setup() {
         spaceShip = new Player(null, "The Black Swan", "A beautiful pirate ship.",
-                100, 0, 100, 100);
+                100, 0, 100);
     }
 
     @Test
@@ -46,10 +48,18 @@ public class SpaceShipTest {
     @Test
     void dealDamageTest() {
         SpaceShip enemyShip = new Player(null, "The White Swan", "A boring ship.",
-                49, 0, 49, 100);
+                49, 0, 49);
         assertEquals(49, enemyShip.getHitPoints());
         spaceShip.dealDamage(enemyShip);
         assertEquals(0, enemyShip.getHitPoints());
+    }
+
+    @Test
+    void radiusTest() {
+        assertEquals(0, spaceShip.getRadius());
+
+        SpaceShip ship = new Player(new ShipStructure(6, 8), "name", "description", 100, 0, 100);
+        assertEquals(5f, ship.getRadius());
     }
 
 }
