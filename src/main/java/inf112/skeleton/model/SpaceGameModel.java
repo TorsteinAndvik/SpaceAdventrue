@@ -36,7 +36,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                 5,
                 0,
                 1);
-        this.asteroid = new Asteroid("asteroid", "an asteroid", 1f, 6f, 0f, 0f, 1, 0f, 0f, 4f);
+        this.asteroid = new Asteroid("asteroid", "an asteroid", 1f, 6f, 0.5f, -0.25f, 1, 0f, 30f, 4f);
         this.asteroid.setRotationSpeed(90f);
 
         this.laser = new Bullet("laser", "a laser shot", 0f, 0f, 1, 1f, 0f, 1f);
@@ -46,7 +46,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     @Override
     public void update(float delta) {
-        asteroid.rotate(asteroid.getRotationSpeed() * delta);
+        asteroid.update(delta);
         laser.update(delta);
         for (int i = 0; i < spaceShips.length; i++) {
             spaceShips[i].update(delta);
