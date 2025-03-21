@@ -61,6 +61,7 @@ public class UpgradeScreenController extends GenericController {
     private void toggleUpgradeDescriptionMode() {
         if (upgradeModel.upgradeInspectionModeIsActive()) {
             upgradeModel.setUpgradeInspectionModeIsActive(false);
+            return;
         }
 
         touchPos.set(Gdx.input.getX(), Gdx.input.getY());

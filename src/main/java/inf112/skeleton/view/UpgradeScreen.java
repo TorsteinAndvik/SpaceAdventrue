@@ -104,7 +104,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         squareGreen = createSprite("images/upgrade_grid_tile_green.png", 1, 1);
         squareGray = createSprite("images/upgrade_grid_tile_gray.png", 1, 1);
 
-        upgradeIcons = new Sprite[] { // [fuselage, rocket, turret, shield]
+        upgradeIcons = new Sprite[] { // [fuselage, turret, rocket, shield]
                 createSprite("images/upgrades/fuselage_alt_stage_0.png", upgradeIconZoom, upgradeIconZoom),
                 createSprite("images/upgrades/turret_laser_stage_0.png", upgradeIconZoom, upgradeIconZoom),
                 createSprite("images/upgrades/rocket_stage_0.png", upgradeIconZoom, upgradeIconZoom),
@@ -337,6 +337,24 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
     private void drawUpgrade(CellPosition cp, UpgradeType type) {
         drawUpgrade(cp);
+        int upgradeIndex;
+        switch (type) {
+            case TURRET:
+                upgradeIndex = 1;
+                break;
+            case THRUSTER:
+                upgradeIndex = 2;
+                break;
+            case SHIELD:
+                upgradeIndex = 3;
+                break;
+            default:
+                return;
+        }
+
+        upgradeIcons[upgradeIndex].setX(model.getGridOffsetX() + cp.col() + 0.5f * (1f - upgradeIconZoom));
+        upgradeIcons[upgradeIndex].setY(model.getGridOffsetY() + cp.row() + 0.5f * (1f - upgradeIconZoom));
+        upgradeIcons[upgradeIndex].draw(batch);
     }
 
     private Vector2 worldToGameCoordinates(float worldX, float worldY) {
