@@ -75,7 +75,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
             return;
         }
 
-        float rotationalVelocity = 90f; // degrees per second
+        float rotationalVelocity = 45f; // degrees per second
         if (rotateClockwise) {
             this.enemyShip.rotate(-rotationalVelocity * deltaTime);
         } else {
