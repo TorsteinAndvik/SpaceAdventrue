@@ -7,18 +7,18 @@ public interface Collideable {
     /**
    * @return the x coordinate of the collideable object
    */
-  int getX();
+  float getX();
 
   /**
    * @return the x coordinate of the collideable object
    */
-  int getY();
+  float getY();
 
 
   /**
    * @return the radius of the collideable object
    */
-  int getRadius();
+  float getRadius();
 
 
 }

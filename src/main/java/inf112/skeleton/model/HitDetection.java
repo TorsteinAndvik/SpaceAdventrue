@@ -25,7 +25,7 @@ public class HitDetection {
         for (int i = 0; i < colliders.size(); i++) {
             for (int j = i + 1; j < colliders.size(); j++) {
                 if (objectProximity(colliders.get(i),colliders.get(j))){
-                    if (colliders.get(i).checkCollision(colliders.get(j))) {
+                    if (checkCollision(colliders.get(i),colliders.get(j))) {
                         if (colliders.get(i) instanceof DamageDealer && colliders.get(j) instanceof Damageable){
                             ((DamageDealer)colliders.get(i)).dealDamage((Damageable)(colliders.get(j)));
                         }
@@ -36,6 +36,10 @@ public class HitDetection {
     }
 
 
-
+    private boolean checkCollision(Collideable target1, Collideable target2){
+      float distance = Math.abs(target1.getX()-target2.getX())+Math.abs(target1.getY()-target2.getY());
+      return (distance < target1.getRadius()+target2.getRadius());
+    }  
+  
 
 }

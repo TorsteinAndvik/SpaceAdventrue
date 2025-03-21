@@ -5,6 +5,8 @@ import inf112.skeleton.model.constants.PhysicsParameters;
 
 public class Fuselage {
 
+
+    // TODO implement as Colideable
     private ShipUpgrade heldUpgrade;
 
     private float mass = PhysicsParameters.fuselageMass;

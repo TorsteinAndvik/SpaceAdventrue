@@ -2,6 +2,7 @@ package inf112.skeleton.model.SpaceCharacters;
 
 import com.badlogic.gdx.math.Vector2;
 import inf112.skeleton.controller.ControllableSpaceBody;
+import inf112.skeleton.model.Globals.Collideable;
 import inf112.skeleton.model.Globals.Rotatable;
 import inf112.skeleton.model.Globals.SpaceThing;
 import inf112.skeleton.model.utils.ArgumentChecker;
@@ -10,7 +11,7 @@ import inf112.skeleton.view.ViewableSpaceBody;
 
 import java.util.Objects;
 
-public abstract class SpaceBody implements SpaceThing, Rotatable, ViewableSpaceBody,
+public abstract class SpaceBody implements SpaceThing, Rotatable, Collideable, ViewableSpaceBody,
         ControllableSpaceBody {
 
     private String name;
