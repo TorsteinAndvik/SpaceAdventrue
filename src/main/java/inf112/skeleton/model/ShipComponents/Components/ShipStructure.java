@@ -10,7 +10,7 @@ import inf112.skeleton.model.utils.FloatPair;
 
 public class ShipStructure {
 
-    private final IGrid<Fuselage> grid;
+    private IGrid<Fuselage> grid;
     private float mass;
     private FloatPair centerOfMass;
 
@@ -119,6 +119,44 @@ public class ShipStructure {
 
         } catch (IndexOutOfBoundsException e) {
             return false;
+        }
+    }
+
+    /**
+     * Expands the grid by the given number of rows and columns.
+     * 
+     * If the inputs are negative, nothing happens.
+     * 
+     * TODO: needs a more detailed javadoc
+     * 
+     * @param addedCols
+     * @param addedRows
+     * @param center
+     */
+    public void expandGrid(int addedRows, int addedCols, boolean center) {
+        if (addedRows < 0 || addedCols < 0 || (addedRows == 0 && addedCols == 0)) {
+            return;
+        }
+
+        IGrid<Fuselage> oldGridCopy = grid.copy();
+
+        grid = new Grid<>(oldGridCopy.rows() + addedRows, oldGridCopy.cols() + addedCols);
+        this.mass = 0f;
+        this.centerOfMass = new FloatPair(0f, 0f);
+
+        for (GridCell<Fuselage> cell : oldGridCopy) {
+            if (cell.value() == null) {
+                continue;
+            }
+
+            CellPosition cp;
+            if (center) {
+                cp = new CellPosition(cell.pos().row() + (addedRows - addedRows / 2),
+                        cell.pos().col() + (addedCols - addedCols / 2));
+            } else {
+                cp = new CellPosition(cell.pos().row() + addedRows, cell.pos().col() + addedCols);
+            }
+            set(cp, cell.value());
         }
     }
 

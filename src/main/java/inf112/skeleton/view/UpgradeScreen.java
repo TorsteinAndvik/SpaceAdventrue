@@ -25,7 +25,6 @@ import inf112.skeleton.model.SpaceGameModel;
 import inf112.skeleton.model.UpgradeScreenModel;
 import inf112.skeleton.model.ShipComponents.UpgradeType;
 import inf112.skeleton.model.ShipComponents.Components.Fuselage;
-import inf112.skeleton.model.ShipComponents.Components.ShipStructure;
 
 /**
  * Screen for managing ship upgrades in game. Handles rendering of upgrade grid,
@@ -85,7 +84,8 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         this.manager = game.getAssetManager();
         this.viewportGame = game.getScreenViewport();
         this.viewportUI = new ScreenViewport();
-        this.model = new UpgradeScreenModel();
+        this.model = new UpgradeScreenModel(spaceModel.getSpaceShips()[0].getShipStructure().getWidth(),
+                spaceModel.getSpaceShips()[0].getShipStructure().getHeight());
         this.controller = new UpgradeScreenController(this, model, spaceModel, game);
         this.touchPos = new Vector2();
 
@@ -330,12 +330,13 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     }
 
     private void drawUpgrade(CellPosition cp) {
-
+        upgradeIcons[0].setX(model.getGridOffsetX() + cp.col() + 0.5f * (1f - upgradeIconZoom));
+        upgradeIcons[0].setY(model.getGridOffsetY() + cp.row() + 0.5f * (1f - upgradeIconZoom));
+        upgradeIcons[0].draw(batch);
     }
 
     private void drawUpgrade(CellPosition cp, UpgradeType type) {
         drawUpgrade(cp);
-
     }
 
     private Vector2 worldToGameCoordinates(float worldX, float worldY) {

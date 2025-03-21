@@ -7,8 +7,8 @@ import com.badlogic.gdx.math.Vector2;
  * controls and UI positioning.
  */
 public class UpgradeScreenModel {
-    private final int gridWidth = 5;
-    private final int gridHeight = 5;
+    private final int gridWidth;
+    private final int gridHeight;
     private final int numUpgradeOptions = 4;
     private float gridOffsetX;
     private float gridOffsetY;
@@ -37,7 +37,9 @@ public class UpgradeScreenModel {
      * Initializes an upgrade screen model with vectors for tracking positions.
      * Also initializes camera zoom, and sets to middle zoom level.
      */
-    public UpgradeScreenModel() {
+    public UpgradeScreenModel(int width, int height) {
+        this.gridWidth = width;
+        this.gridHeight = height;
         cameraPosition = new Vector2();
         mousePosition = new Vector2();
         dragPosition = new Vector2();
