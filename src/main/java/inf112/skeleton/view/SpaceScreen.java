@@ -100,6 +100,7 @@ public class SpaceScreen implements Screen {
     private Sprite createSprite(String path, float width, float height) {
         Sprite sprite = new Sprite(manager.get(path, Texture.class));
         sprite.setSize(width, height);
+        sprite.setOrigin(width / 2, height / 2);
         return sprite;
     }
 
@@ -119,6 +120,8 @@ public class SpaceScreen implements Screen {
         // view should only send model.update(delta) via controller in future
         batch.begin();
 
+        batch.setTransformMatrix(transformMatrix.idt());
+        asteroid.setRotation(model.getAsteroid().getRotationAngle());
         asteroid.setX(model.getAsteroid().getX());
         asteroid.setY(model.getAsteroid().getY());
         asteroid.draw(batch);
@@ -179,7 +182,7 @@ public class SpaceScreen implements Screen {
         }
 
         // Reset the transform matrix to the identity matrix
-        batch.setTransformMatrix(new Matrix4().idt());
+        // batch.setTransformMatrix(new Matrix4().idt());
 
         if (model.laserExists) { // TODO: refactor once cannon-firing logic is added to model
             laser.setX(model.getLaser().getX() + 0.375f);
