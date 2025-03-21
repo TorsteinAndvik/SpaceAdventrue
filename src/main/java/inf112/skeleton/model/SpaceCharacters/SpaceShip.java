@@ -4,6 +4,7 @@ import inf112.skeleton.model.Globals.DamageDealer;
 import inf112.skeleton.model.Globals.Damageable;
 import inf112.skeleton.model.Globals.Repairable;
 import inf112.skeleton.model.ShipComponents.Components.ShipStructure;
+import inf112.skeleton.model.utils.FloatPair;
 
 public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damageable, Repairable {
     private int maxHitPoints;
@@ -12,13 +13,13 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
     // private List<Gun> gunList;
 
     public SpaceShip(ShipStructure shipStructure, String name, String description, CharacterType characterType, float x,
-            float y, int maxHealthPoints, float angle, float radius) {
-        this(shipStructure, name, description, characterType, x, y, maxHealthPoints, maxHealthPoints, angle, radius);
+            float y, int maxHealthPoints, float angle) {
+        this(shipStructure, name, description, characterType, x, y, maxHealthPoints, maxHealthPoints, angle);
     }
 
     public SpaceShip(ShipStructure shipStructure, String name, String description, CharacterType characterType, float x,
-            float y, int maxHitPoints, int hitPoints, float angle, float radius) {
-        super(name, description, characterType, x, y, angle, radius);
+            float y, int maxHitPoints, int hitPoints, float angle) {
+        super(name, description, characterType, x, y, angle, 0f);
         if (hitPoints <= 0 || maxHitPoints <= 0) {
             throw new IllegalArgumentException("Hit points must be positive on ship creation");
         }
@@ -28,6 +29,8 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
         this.hitPoints = hitPoints;
         this.maxHitPoints = maxHitPoints;
         this.shipStructure = shipStructure;
+        this.setRadius(
+                (float) Math.sqrt(Math.pow(shipStructure.getWidth(), 2) + Math.pow(shipStructure.getHeight(), 2)));
         // this.gunList = new ArrayList<>();
     }
 
@@ -37,6 +40,15 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
 
     public boolean isPlayerShip() {
         return false;
+    }
+
+    /**
+     * @return center point of the ship, as opposed to getX() and getY() which
+     *         return the bottom left corner
+     */
+    public FloatPair getCenter() {
+        return new FloatPair(getX() + ((float) shipStructure.getWidth()) / 2f,
+                getY() + ((float) shipStructure.getHeight()) / 2f);
     }
 
     @Override

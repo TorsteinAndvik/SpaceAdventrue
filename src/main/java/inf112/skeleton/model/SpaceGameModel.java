@@ -26,7 +26,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     public SpaceGameModel() {
         this.shipFactory = new ShipFactory();
         this.player = new Player(
-                shipFactory.simpleShip(), "player", "the player's spaceship", 1, 5, 1, 1);
+                shipFactory.simpleShip(), "player", "the player's spaceship", 1, 5, 1);
         this.enemyShip = new EnemyShip(
                 shipFactory.createShipFromJson("enemy2.json"),
                 "enemy",
@@ -34,8 +34,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                 1,
                 1,
                 5,
-                0,
-                1);
+                0);
         this.asteroid = new Asteroid("asteroid", "an asteroid", 1f, 6f, 0.5f, -0.25f, 1, 0f, 30f, 4f);
         this.asteroid.setRotationSpeed(90f);
 
