@@ -1,8 +1,7 @@
 package inf112.skeleton.grid;
 
 /**
- * A CellPosition is an object that stores two integers. Together they make for
- * a coordinate within
+ * A CellPosition is an object that stores two integers. Together they make for a coordinate within
  * a grid.
  *
  * @param row an int representing the row of the object.
@@ -10,4 +9,7 @@ package inf112.skeleton.grid;
  */
 public record CellPosition(int row, int col) {
 
+    public CellPosition offset(int dRow, int dCol) {
+        return new CellPosition(row + dRow, col + dCol);
+    }
 }
