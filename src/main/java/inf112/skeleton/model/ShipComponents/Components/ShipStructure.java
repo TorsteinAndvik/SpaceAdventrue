@@ -6,9 +6,11 @@ import inf112.skeleton.grid.GridCell;
 import inf112.skeleton.grid.IGrid;
 import inf112.skeleton.model.ShipComponents.ShipConfig;
 import inf112.skeleton.model.ShipComponents.ShipConfig.ShipComponent;
+import inf112.skeleton.model.ShipComponents.UpgradeType;
 import inf112.skeleton.model.utils.FloatPair;
+import java.util.Iterator;
 
-public class ShipStructure {
+public class ShipStructure implements ViewableShipStructure {
 
     private IGrid<Fuselage> grid;
     private float mass;
@@ -41,14 +43,13 @@ public class ShipStructure {
     }
 
     /**
-     * Sets the fuselage at the given position if it is empty and the position is on
-     * the grid. Updates ship's mass and center of mass accordingly.
+     * Sets the fuselage at the given position if it is empty and the position is on the grid.
+     * Updates ship's mass and center of mass accordingly.
      *
      * @param pos      the <code>CellPosition</code> of the fuselage to be added
      * @param fuselage the <code>Fuselage</code> to be added
-     * @return true if the fuselage was successfully added (i.e. <code>pos</code> is
-     *         valid and the
-     *         position was empty), false otherwise
+     * @return true if the fuselage was successfully added (i.e. <code>pos</code> is valid and the
+     * position was empty), false otherwise
      */
     public boolean set(CellPosition pos, Fuselage fuselage) {
         try {
@@ -81,15 +82,13 @@ public class ShipStructure {
     }
 
     /**
-     * Sets an empty <code>Fuselage</code> at the given position if it is empty and
-     * the position is on the grid.
-     * Updates ship's mass and center of mass accordingly.
+     * Sets an empty <code>Fuselage</code> at the given position if it is empty and the position is
+     * on the grid. Updates ship's mass and center of mass accordingly.
      *
      * @param pos the <code>CellPosition</code> to add an empty
      *            <code>Fuselage</code> to
-     * @return true if the fuselage was successfully added (i.e. <code>pos</code> is
-     *         valid and the
-     *         position was empty), false otherwise
+     * @return true if the fuselage was successfully added (i.e. <code>pos</code> is valid and the
+     * position was empty), false otherwise
      */
     public boolean set(CellPosition pos) {
         return set(pos, new Fuselage());
@@ -100,12 +99,10 @@ public class ShipStructure {
      * <code>CellPosition </code>, if the position is valid and holds an empty
      * <code>Fuselage</code>. Updates ship's mass and center of mass accordingly.
      *
-     * @param pos     the <code>CellPosition</code> where the upgrade is be to added
-     *                to
+     * @param pos     the <code>CellPosition</code> where the upgrade is be to added to
      * @param upgrade the <code>ShipUpgrade</code> to be added
-     * @return true if the upgrade was successfully added (i.e. <code>pos</code> is
-     *         valid and the
-     *         position holds an empty <code>Fuselage</code>), false otherwise
+     * @return true if the upgrade was successfully added (i.e. <code>pos</code> is valid and the
+     * position holds an empty <code>Fuselage</code>), false otherwise
      */
     public boolean addUpgrade(CellPosition pos, ShipUpgrade upgrade) {
         try {
@@ -124,11 +121,11 @@ public class ShipStructure {
 
     /**
      * Expands the grid by the given number of rows and columns.
-     * 
+     * <p>
      * If the inputs are negative, nothing happens.
-     * 
+     * <p>
      * TODO: needs a more detailed javadoc
-     * 
+     *
      * @param addedCols
      * @param addedRows
      * @param center
@@ -160,29 +157,53 @@ public class ShipStructure {
         }
     }
 
+    @Override
     public Iterable<GridCell<Fuselage>> iterable() {
         return grid;
     }
 
+    @Override
+    public Iterator<GridCell<Fuselage>> iterator() {
+        return this.grid.iterator();
+    }
+
+    @Override
     public int getWidth() {
         return grid.cols();
     }
 
+    @Override
     public int getHeight() {
         return grid.rows();
     }
 
-    /**
-     * @return the total mass of the ship.
-     */
+    @Override
     public float getMass() {
         return this.mass;
     }
 
-    /**
-     * @return the ship's center of mass as a <code>FloatPair</code>
-     */
+    @Override
     public FloatPair getCenterOfMass() {
         return this.centerOfMass;
     }
+
+    @Override
+    public boolean hasFuselage(CellPosition cp) {
+        try {
+            return this.grid.get(cp) != null;
+        } catch (IndexOutOfBoundsException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean hasUpgrade(CellPosition cp) {
+        return this.grid.get(cp).hasUpgrade();
+    }
+
+    @Override
+    public UpgradeType getUpgradeType(CellPosition cp) {
+        return this.grid.get(cp).getUpgrade().getType();
+    }
+    
 }
