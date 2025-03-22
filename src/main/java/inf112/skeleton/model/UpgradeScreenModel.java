@@ -1,12 +1,16 @@
 package inf112.skeleton.model;
 
 import com.badlogic.gdx.math.Vector2;
+import inf112.skeleton.grid.CellPosition;
+import inf112.skeleton.model.ShipComponents.Components.ViewableShipStructure;
+import inf112.skeleton.model.utils.SpaceCalculator;
 
 /**
- * Model for the Upgrade Screen. Handles game state for upgrades, camera
- * controls and UI positioning.
+ * Model for the Upgrade Screen. Handles game state for upgrades, camera controls and UI
+ * positioning.
  */
 public class UpgradeScreenModel {
+
     private final int gridWidth;
     private final int gridHeight;
     private final int numUpgradeOptions = 4;
@@ -15,7 +19,8 @@ public class UpgradeScreenModel {
     private float upgradeOffsetX;
     private float upgradeOffsetY;
 
-    private final float[] cameraZoomLevels = { 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1f, 1.1f, 1.2f, 1.3f, 1.4f, 1.5f };
+    private final float[] cameraZoomLevels = {0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1f, 1.1f, 1.2f, 1.3f,
+            1.4f, 1.5f};
     private int cameraCurrentZoomLevel;
     private float cameraZoomDeltaTime;
     private final float cameraZoomTextFadeCutoffTime = 0.5f;
@@ -33,13 +38,16 @@ public class UpgradeScreenModel {
     private final Vector2 dragPosition;
     private final Vector2 lastDragPosition;
 
+    private final ViewableShipStructure shipStructure;
+
     /**
-     * Initializes an upgrade screen model with vectors for tracking positions.
-     * Also initializes camera zoom, and sets to middle zoom level.
+     * Initializes an upgrade screen model with vectors for tracking positions. Also initializes
+     * camera zoom, and sets to middle zoom level.
      */
-    public UpgradeScreenModel(int width, int height) {
-        this.gridWidth = width;
-        this.gridHeight = height;
+    public UpgradeScreenModel(ViewableShipStructure shipStructure) {
+        this.shipStructure = shipStructure;
+        gridWidth = shipStructure.getWidth();
+        gridHeight = shipStructure.getHeight();
         cameraPosition = new Vector2();
         mousePosition = new Vector2();
         dragPosition = new Vector2();
@@ -61,12 +69,10 @@ public class UpgradeScreenModel {
     }
 
     /**
-     * Upgrade camera zoom level based on scroll input.
-     * Clamps zoom level between minimum and maximum zoom.
-     * Triggers zoom level display UI.
-     * 
-     * @param amount The scroll amount to adjust zoom by (positive values = zoom out
-     *               etc.)
+     * Upgrade camera zoom level based on scroll input. Clamps zoom level between minimum and
+     * maximum zoom. Triggers zoom level display UI.
+     *
+     * @param amount The scroll amount to adjust zoom by (positive values = zoom out etc.)
      */
     public void updateCameraZoom(float amount) {
         cameraCurrentZoomLevel = Math.min(Math.max(cameraCurrentZoomLevel + (int) amount, 0),
@@ -77,14 +83,16 @@ public class UpgradeScreenModel {
 
     /**
      * Update timer for fading out zoom level display.
-     * 
+     *
      * @param delta Time elapsed since last update in seconds.
      */
     public void updateCameraZoomDeltaTime(float delta) {
         if (cameraZoomRecently) {
             cameraZoomDeltaTime += delta;
             if (cameraZoomDeltaTime > cameraZoomTextFadeCutoffTime) {
-                float fadeAmount = 1f - (float) Math.pow((cameraZoomDeltaTime - cameraZoomTextFadeCutoffTime), 2);
+                float fadeAmount =
+                        1f - (float) Math.pow((cameraZoomDeltaTime - cameraZoomTextFadeCutoffTime),
+                                2);
                 if (fadeAmount < 0) {
                     cameraZoomRecently = false;
                 }
@@ -93,9 +101,9 @@ public class UpgradeScreenModel {
     }
 
     /**
-     * Updates the drag position for mouse input tracking.
-     * Stores current position as last position before updating
-     * 
+     * Updates the drag position for mouse input tracking. Stores current position as last position
+     * before updating
+     *
      * @param x The new x-coordinate in screen coordinates.
      * @param y The new y-coordinate in screen coordinates.
      */
@@ -105,9 +113,9 @@ public class UpgradeScreenModel {
     }
 
     /**
-     * Calculated the delta between the current and last drag positions.
-     * Used for camera movement and drag-and-drop operations
-     * 
+     * Calculated the delta between the current and last drag positions. Used for camera movement
+     * and drag-and-drop operations
+     *
      * @return A Vector2 containing the x and y differences between drag positions.
      */
     public Vector2 getDragDelta() {
@@ -117,18 +125,18 @@ public class UpgradeScreenModel {
     }
 
     /**
-     * Updates offset for upgrade grid adnd upgrade bar elements.
-     * Centers these elements in available screen space.
-     * 
+     * Updates offset for upgrade grid and upgrade bar elements. Centers these elements in available
+     * screen space.
+     *
      * @param worldWidth  The width of the game world in world units.
      * @param worldHeight The height of the game world in world units.
      */
     public void updateOffsets(float worldWidth, float worldHeight) {
         float upgradeToGridDelta = 2f;
-        gridOffsetX = (worldWidth - gridWidth) / 2f;
-        gridOffsetY = (worldHeight - gridHeight - upgradeToGridDelta) / 2f;
+        gridOffsetX = (worldWidth - getGridWidth()) / 2f;
+        gridOffsetY = (worldHeight - getGridHeight() - upgradeToGridDelta) / 2f;
         upgradeOffsetX = (worldWidth - numUpgradeOptions) / 2f;
-        upgradeOffsetY = gridOffsetY + gridHeight + upgradeToGridDelta / 2f;
+        upgradeOffsetY = gridOffsetY + getGridHeight() + upgradeToGridDelta / 2f;
     }
 
     public float getCurrentZoom() {
@@ -233,5 +241,42 @@ public class UpgradeScreenModel {
 
     public void setUpgradeInspectionModeIsActive(boolean value) {
         this.upgradeInspectionModeIsActive = value;
+    }
+
+    public ViewableShipStructure getPlayerShipStructure() {
+        return shipStructure;
+    }
+
+    public boolean isValidFuselagePosition(CellPosition pos) {
+
+        if (shipStructure.hasFuselage(pos)) {
+            return false;
+        }
+
+        for (CellPosition cp : SpaceCalculator.getOrthogonalNeighbours(pos)) {
+
+            if (!isOnGrid(cp)) {
+                continue;
+            }
+
+            if (shipStructure.hasFuselage(cp)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isValidUpgradePosition(CellPosition pos) {
+
+        if (shipStructure.hasFuselage(pos)) {
+            return !shipStructure.hasUpgrade(pos);
+        }
+
+        return false;
+    }
+
+    public boolean isOnGrid(CellPosition cp) {
+        return cp.row() >= 0 && cp.col() >= 0 && cp.row() < gridHeight
+                && cp.col() < gridWidth;
     }
 }
