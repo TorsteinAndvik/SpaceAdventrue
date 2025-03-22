@@ -26,16 +26,14 @@ public interface ViewableSpaceGameModel {
     /**
      * Creates an iterable of the pixels in the game board.
      *
-     * @return An iterable that contains all pixels on the board, their position and
-     *         symbol.
+     * @return An iterable that contains all pixels on the board, their position and symbol.
      */
     Iterable<GridCell<Character>> getPixels();
 
     /**
      * Creates an iterable of the pixels in a SpaceBody
      *
-     * @return An iterable that contains the pixels of a SpaceBody, their positions
-     *         and symbols.
+     * @return An iterable that contains the pixels of a SpaceBody, their positions and symbols.
      */
     Iterable<GridCell<Character>> getPixelsInSpaceBody();
 
@@ -47,8 +45,7 @@ public interface ViewableSpaceGameModel {
     int getScore();
 
     /**
-     * Returns an integer representation of the game progression @TODO are we
-     * changing this?
+     * Returns an integer representation of the game progression @TODO are we changing this?
      *
      * @return an integer representation of the game score.
      */
@@ -60,17 +57,21 @@ public interface ViewableSpaceGameModel {
     SpaceShip[] getSpaceShips();
 
     /**
-     * Returns the Asteroid object of the MVP //TODO: Remove this once a proper
-     * model is in place
-     * 
+     * @return the players <code>SpaceShip</code> object
+     */
+    SpaceShip getPlayerSpaceShip();
+
+    /**
+     * Returns the Asteroid object of the MVP //TODO: Remove this once a proper model is in place
+     *
      * @return the Asteroid object
      */
     Asteroid getAsteroid();
 
     /**
-     * Returns the Bullet object (laser) of the MVP //TODO: Remove this once a
-     * proper model is in place
-     * 
+     * Returns the Bullet object (laser) of the MVP //TODO: Remove this once a proper model is in
+     * place
+     *
      * @return the Bullet object
      */
     Bullet getLaser();
