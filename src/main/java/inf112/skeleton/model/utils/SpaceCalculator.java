@@ -2,6 +2,8 @@ package inf112.skeleton.model.utils;
 
 import com.badlogic.gdx.math.Vector2;
 import inf112.skeleton.grid.CellPosition;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SpaceCalculator {
 
@@ -33,5 +35,15 @@ public class SpaceCalculator {
         int dx = Math.abs(a.col() - b.col());
         int dy = Math.abs(a.row() - b.row());
         return (dx == 1 && dy == 0) || (dx == 0 && dy == 1);
+    }
+
+    public static List<CellPosition> getOrthogonalNeighbours(CellPosition a) {
+        List<CellPosition> neighbours = new ArrayList<>();
+        int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+
+        for (int[] dir : directions) {
+            neighbours.add(new CellPosition(a.row() + dir[0], a.col() + dir[1]));
+        }
+        return neighbours;
     }
 }
