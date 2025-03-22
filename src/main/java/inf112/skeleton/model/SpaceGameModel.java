@@ -173,6 +173,12 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     }
 
     @Override
+    public SpaceShip getPlayerSpaceShip() {
+        // TODO: Check if this allways will be true
+        return this.spaceShips[0];
+    }
+
+    @Override
     public Asteroid getAsteroid() {
         return this.asteroid;
     }
