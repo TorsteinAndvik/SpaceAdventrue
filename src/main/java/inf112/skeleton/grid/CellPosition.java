@@ -8,8 +8,4 @@ package inf112.skeleton.grid;
  * @param col an int representing the column of the object.
  */
 public record CellPosition(int row, int col) {
-
-    public CellPosition offset(int dRow, int dCol) {
-        return new CellPosition(row + dRow, col + dCol);
-    }
 }
