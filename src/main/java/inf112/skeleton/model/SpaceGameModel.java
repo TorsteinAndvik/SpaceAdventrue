@@ -45,10 +45,10 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     private void createAsteroids() {
         Asteroid asteroidLarge = new Asteroid("large asteroid", "a large asteroid", 1f, 6f, 0.6f, -0.20f, 4, 4f, 30f,
-                4f, true);
+                2f, true);
         asteroidLarge.setRotationSpeed(60f);
 
-        Asteroid asteroidSmall = new Asteroid("small asteroid", "a small asteroid", 5f, 4f, -0.2f, 0.3f, 1, 1f, 0f, 4f,
+        Asteroid asteroidSmall = new Asteroid("small asteroid", "a small asteroid", 5f, 4f, -0.2f, 0.3f, 1, 1f, 0f, 1f,
                 false);
         asteroidSmall.setRotationSpeed(-30f);
 
