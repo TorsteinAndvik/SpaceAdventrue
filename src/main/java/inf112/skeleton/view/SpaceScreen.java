@@ -1,7 +1,5 @@
 package inf112.skeleton.view;
 
-import java.util.HashMap;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
@@ -10,46 +8,38 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-
 import inf112.skeleton.controller.SpaceGameScreenController;
 import inf112.skeleton.grid.GridCell;
-import inf112.skeleton.model.SpaceGameModel;
-import inf112.skeleton.model.ShipComponents.UpgradeType;
 import inf112.skeleton.model.ShipComponents.Components.Fuselage;
+import inf112.skeleton.model.ShipComponents.UpgradeType;
 import inf112.skeleton.model.SpaceCharacters.Asteroid;
 import inf112.skeleton.model.SpaceCharacters.SpaceShip;
+import inf112.skeleton.model.SpaceGameModel;
 import inf112.skeleton.model.utils.FloatPair;
+import java.util.HashMap;
 
 public class SpaceScreen implements Screen {
 
     final SpaceGame game;
     final SpaceGameModel model;
     private final SpaceGameScreenController controller;
-    SpriteBatch batch;
-    FitViewport viewport;
-    BitmapFont fontBold; // Agency FB Bold
-    BitmapFont fontRegular; // Agency FB Regular
-    AssetManager manager;
+    private final SpriteBatch batch;
+    private final FitViewport viewport;
+    private BitmapFont fontBold; // Agency FB Bold
+    private BitmapFont fontRegular; // Agency FB Regular
+    private final AssetManager manager;
 
-    Sprite asteroidLarge;
-    Sprite asteroidSmall;
-    Sprite laser;
+    private Sprite asteroidLarge;
+    private Sprite asteroidSmall;
+    private Sprite laser;
 
-    Sprite fuselagePlayer;
-    Sprite fuselageEnemy;
+    private Sprite fuselagePlayer;
+    private Sprite fuselageEnemy;
 
-    HashMap<UpgradeType, Sprite> upgradeIcons;
-
-    float laserUpdateCutoff = 0.5f;
-    float laserUpdateTimer;
-
-    // Matrices for handling rotation of space ships
-    private Matrix3 rotationMatrix;
-    private Matrix4 transformMatrix;
+    private HashMap<UpgradeType, Sprite> upgradeIcons;
 
     public SpaceScreen(final SpaceGame game, final SpaceGameModel model) {
         this.game = game;
@@ -63,9 +53,6 @@ public class SpaceScreen implements Screen {
         setupFonts();
         loadSprites();
         setupUpgradeHashMap();
-
-        rotationMatrix = new Matrix3();
-        transformMatrix = new Matrix4();
     }
 
     private void setupFonts() {
@@ -91,13 +78,13 @@ public class SpaceScreen implements Screen {
     }
 
     private void setupUpgradeHashMap() {
-        upgradeIcons = new HashMap<UpgradeType, Sprite>();
+        upgradeIcons = new HashMap<>();
         upgradeIcons.put(UpgradeType.TURRET,
-                createSprite("images/upgrades/turret_laser_stage_0.png", 1, 1));
+            createSprite("images/upgrades/turret_laser_stage_0.png", 1, 1));
         upgradeIcons.put(UpgradeType.THRUSTER,
-                createSprite("images/upgrades/rocket_stage_0.png", 1, 1));
+            createSprite("images/upgrades/rocket_stage_0.png", 1, 1));
         upgradeIcons.put(UpgradeType.SHIELD,
-                createSprite("images/upgrades/shield_stage_0.png", 1, 1));
+            createSprite("images/upgrades/shield_stage_0.png", 1, 1));
     }
 
     private Sprite createSprite(String path, float width, float height) {
@@ -123,7 +110,6 @@ public class SpaceScreen implements Screen {
         // view should only send model.update(delta) via controller in future
         batch.begin();
 
-        batch.setTransformMatrix(transformMatrix.idt());
         // draw asteroids
         for (Asteroid asteroid : model.getAsteroids()) {
             Sprite asteroidSprite = asteroid.isLarge ? asteroidLarge : asteroidSmall;
@@ -135,27 +121,9 @@ public class SpaceScreen implements Screen {
 
         for (int i = 0; i < model.getSpaceShips().length; i++) {
             SpaceShip ship = model.getSpaceShips()[i];
-            float angle = ship.getRotationAngle();
 
-            // reset the transformation matrix
-            transformMatrix.idt();
-
-            // translate the transformation matrix to the ship's center of rotation
-            // TODO: ship's center of rotation should be provided by the model
-            FloatPair cm = ship.getShipStructure().getCenterOfMass();
-            float x = ship.getX() + cm.x() + 0.5f;
-            float y = ship.getY() + cm.y() + 0.5f;
-
-            transformMatrix.translate(x, y, 0f);
-
-            // apply rotation
-            rotationMatrix.setToRotation(angle);
-            transformMatrix.mul(new Matrix4().set(rotationMatrix));
-
-            // undo the translation
-            transformMatrix.translate(-x, -y, 0f);
-
-            // set the transform matrix for the batch
+            // Get transformation matrix from model
+            Matrix4 transformMatrix = model.getShipTransformMatrix(ship);
             batch.setTransformMatrix(transformMatrix);
 
             for (GridCell<Fuselage> cell : ship.getShipStructure().iterable()) {
@@ -183,8 +151,9 @@ public class SpaceScreen implements Screen {
             }
 
             // draw center of mass as a laser, for testing purposes
-            laser.setX(x - 0.5f * laser.getWidth());
-            laser.setY(y - 0.5f * laser.getHeight());
+            FloatPair cm = model.getShipCenterOfMass(ship);
+            laser.setX(cm.x() - 0.5f * laser.getWidth());
+            laser.setY(cm.y() - 0.5f * laser.getHeight());
             laser.draw(batch);
         }
 

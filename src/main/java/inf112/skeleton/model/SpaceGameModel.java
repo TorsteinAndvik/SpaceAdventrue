@@ -1,5 +1,7 @@
 package inf112.skeleton.model;
 
+import com.badlogic.gdx.math.Matrix3;
+import com.badlogic.gdx.math.Matrix4;
 import inf112.skeleton.controller.ControllableSpaceGameModel;
 import inf112.skeleton.grid.GridCell;
 import inf112.skeleton.grid.IGridDimension;
@@ -9,50 +11,60 @@ import inf112.skeleton.model.SpaceCharacters.Bullet;
 import inf112.skeleton.model.SpaceCharacters.EnemyShip;
 import inf112.skeleton.model.SpaceCharacters.Player;
 import inf112.skeleton.model.SpaceCharacters.SpaceShip;
+import inf112.skeleton.model.utils.FloatPair;
 import inf112.skeleton.view.ViewableSpaceGameModel;
 
 public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpaceGameModel {
 
-    private Player player;
-    private EnemyShip enemyShip;
+    private final Player player;
+    private final EnemyShip enemyShip;
     private Bullet laser;
-    private ShipFactory shipFactory;
-    private SpaceShip[] spaceShips;
+    private final ShipFactory shipFactory;
+    private final SpaceShip[] spaceShips;
     private Asteroid[] asteroids;
     public boolean laserExists;
     private boolean enemyRotationActive;
     private boolean rotateClockwise;
 
+    private final Matrix3 rotationMatrix;
+    private final Matrix4 transformMatrix;
+
+
     public SpaceGameModel() {
         this.shipFactory = new ShipFactory();
         this.player = new Player(
-                shipFactory.playerShip(), "player", "the player's spaceship", 1, 5, 1);
+            shipFactory.playerShip(), "player", "the player's spaceship", 1, 5, 1);
         this.enemyShip = new EnemyShip(
-                shipFactory.createShipFromJson("enemy2.json"),
-                "enemy",
-                "an enemy ship",
-                1,
-                1,
-                5,
-                0);
+            shipFactory.createShipFromJson("enemy2.json"),
+            "enemy",
+            "an enemy ship",
+            1,
+            1,
+            5,
+            0);
 
         createAsteroids();
 
         this.laser = new Bullet("laser", "a laser shot", 0f, 0f, 1, 1f, 0f, 1f);
 
-        spaceShips = new SpaceShip[] { player, enemyShip };
+        this.spaceShips = new SpaceShip[]{player, enemyShip};
+
+        this.rotationMatrix = new Matrix3();
+        this.transformMatrix = new Matrix4();
     }
 
     private void createAsteroids() {
-        Asteroid asteroidLarge = new Asteroid("large asteroid", "a large asteroid", 1f, 6f, 0.6f, -0.20f, 4, 4f, 30f,
-                2f, true);
+        Asteroid asteroidLarge = new Asteroid("large asteroid", "a large asteroid", 1f, 6f, 0.6f,
+            -0.20f, 4, 4f, 30f,
+            2f, true);
         asteroidLarge.setRotationSpeed(60f);
 
-        Asteroid asteroidSmall = new Asteroid("small asteroid", "a small asteroid", 5f, 4f, -0.2f, 0.3f, 1, 1f, 0f, 1f,
-                false);
+        Asteroid asteroidSmall = new Asteroid("small asteroid", "a small asteroid", 5f, 4f, -0.2f,
+            0.3f, 1, 1f, 0f, 1f,
+            false);
         asteroidSmall.setRotationSpeed(-30f);
 
-        this.asteroids = new Asteroid[] { asteroidLarge, asteroidSmall };
+        this.asteroids = new Asteroid[]{asteroidLarge, asteroidSmall};
     }
 
     @Override
@@ -61,16 +73,19 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
             asteroid.update(delta);
         }
         laser.update(delta);
-        for (int i = 0; i < spaceShips.length; i++) {
-            spaceShips[i].update(delta);
+        for (SpaceShip spaceShip : spaceShips) {
+            spaceShip.update(delta);
         }
+        //TODO: remove this call once model is finished such
+        //that it receives model.update(delta) in the future.
+        rotateEnemy(delta);
     }
 
     public void shoot() {
         // TODO: This is awful, never do this.
         this.laser = new Bullet("laser", "a laser shot", player.getCenter().x(),
-                player.getCenter().y(), 1, 1, 0,
-                1);
+            player.getCenter().y(), 1, 1, 0,
+            1);
         laserExists = true;
     }
 
@@ -97,6 +112,47 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         } else {
             this.enemyShip.rotate(rotationalVelocity * deltaTime);
         }
+    }
+
+    /**
+     * Gets the transformed position of a ship based on its rotation
+     *
+     * @param ship the ship to calculate position for
+     * @return the matrix transformation for this ship
+     */
+    public Matrix4 getShipTransformMatrix(SpaceShip ship) {
+        float angle = ship.getRotationAngle();
+
+        //reset the transform matrix
+        transformMatrix.idt();
+
+        // translate the transformation matrix to the ship's center of rotation
+        FloatPair cm = ship.getShipStructure().getCenterOfMass();
+        float x = ship.getX() + cm.x() + 0.5f;
+        float y = ship.getY() + cm.y() + 0.5f;
+
+        transformMatrix.translate(x, y, 0f);
+
+        // apply rotation
+        rotationMatrix.setToRotation(angle);
+        transformMatrix.mul(new Matrix4().set(rotationMatrix));
+
+        //undo the translation
+        transformMatrix.translate(-x, -y, 0f);
+        return new Matrix4(transformMatrix);
+    }
+
+    /**
+     * Gets the center of mass coordinates for a ship
+     *
+     * @param ship the ship to get center of mass for
+     * @return the x,y coordinates of the center of mass
+     */
+    public FloatPair getShipCenterOfMass(SpaceShip ship) {
+        FloatPair cm = ship.getShipStructure().getCenterOfMass();
+        float x = ship.getX() + cm.x() + 0.5f;
+        float y = ship.getY() + cm.y() + 0.5f;
+        return new FloatPair(x, y);
     }
 
     public void toggleEnemyRotationActive() {
