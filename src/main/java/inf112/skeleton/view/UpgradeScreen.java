@@ -120,7 +120,8 @@ public class UpgradeScreen extends InputAdapter implements Screen {
                         upgradeIconZoom),
                 createSprite("images/upgrades/rocket_stage_0.png", upgradeIconZoom,
                         upgradeIconZoom),
-                createSprite("images/upgrades/shield_stage_0.png", upgradeIconZoom, upgradeIconZoom)
+                createSprite("images/upgrades/shield_stage_0.png", upgradeIconZoom,
+                        upgradeIconZoom)
         };
 
         uiIconZoom = fontRegular.getData().lineHeight;
@@ -187,7 +188,6 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
 
     private void drawValidFuselagePlacements() {
-
         ViewableShipStructure structure = model.getPlayerShipStructure();
 
         for (GridCell<Fuselage> cell : structure) {
@@ -200,7 +200,6 @@ public class UpgradeScreen extends InputAdapter implements Screen {
             }
             drawGridSquare(coloredSquare, cell);
         }
-
     }
 
     private void drawValidUpgradePlacements() {
@@ -219,6 +218,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
     private void drawDefaultGrid() {
         ViewableShipStructure shipStructure = model.getPlayerShipStructure();
+
         for (GridCell<Fuselage> cell : shipStructure) {
             if (shipStructure.hasFuselage(cell.pos())) {
                 drawGridSquare(squareGray, cell);
