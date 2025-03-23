@@ -21,11 +21,12 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import inf112.skeleton.controller.UpgradeScreenController;
 import inf112.skeleton.grid.CellPosition;
 import inf112.skeleton.grid.GridCell;
+import inf112.skeleton.model.ShipComponents.Components.ShipStructure;
+import inf112.skeleton.model.ShipComponents.Components.ViewableShipStructure;
 import inf112.skeleton.model.SpaceGameModel;
 import inf112.skeleton.model.UpgradeScreenModel;
 import inf112.skeleton.model.ShipComponents.UpgradeType;
 import inf112.skeleton.model.ShipComponents.Components.Fuselage;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -67,19 +68,17 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     private final float upgradeIconZoom = 0.8f;
     private float uiIconZoom;
     private final String[] upgradeStrings;
-//    private Map<UpgradeType, Sprite> upgradeIconsMap;
+
     Map<UpgradeType, Integer> upgradeTypeMap;
-    //private ViewableShipStructure shipStructure;
+
     int cursorWidth = 64;
     int cursorHeight = 64;
 
     /**
-     * Creates a new upgrade screen with necessary components for rendering and
-     * input handling.
+     * Creates a new upgrade screen with necessary components for rendering and input handling.
      * Initializes viewports, fonts, sprites and upgrade system.
      *
-     * @param spaceGame The main game instance providing sprites, and other
-     *                  resources.
+     * @param spaceGame The main game instance providing sprites, and other resources.
      */
     public UpgradeScreen(final SpaceGame spaceGame, final SpaceGameModel spaceModel) {
         this.game = spaceGame;
@@ -88,7 +87,8 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         this.manager = game.getAssetManager();
         this.viewportGame = game.getScreenViewport();
         this.viewportUI = new ScreenViewport();
-        this.model = new UpgradeScreenModel(spaceModel.getPlayerSpaceShip().getShipStructure());
+        this.model = new UpgradeScreenModel(
+                getExtendedShipStructure(spaceModel.getPlayerSpaceShip().getShipStructure()));
         this.controller = new UpgradeScreenController(this, model, spaceModel, game);
         this.touchPos = new Vector2();
 
@@ -97,7 +97,11 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         loadSprites();
         setupUISprites();
 
-        this.upgradeTypeMap = Map.of(UpgradeType.TURRET, 1, UpgradeType.THRUSTER, 2, UpgradeType.SHIELD, 3);
+        this.upgradeTypeMap = Map.of(
+                UpgradeType.TURRET, 1,
+                UpgradeType.THRUSTER, 2,
+                UpgradeType.SHIELD, 3
+        );
 
         descriptionRect = new Rectangle(0, 0, 0, 0);
 
@@ -109,8 +113,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         squareGreen = createSprite("images/upgrade_grid_tile_green.png", 1, 1);
         squareGray = createSprite("images/upgrade_grid_tile_gray.png", 1, 1);
 
-
-        upgradeIcons = new Sprite[] { // [fuselage, turret, rocket, shield]
+        upgradeIcons = new Sprite[]{ // [fuselage, turret, rocket, shield]
 
                 createSprite("images/upgrades/fuselage_alt_stage_0.png", upgradeIconZoom, upgradeIconZoom),
                 createSprite("images/upgrades/turret_laser_stage_0.png", upgradeIconZoom, upgradeIconZoom),
@@ -412,6 +415,14 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         return canPlaceFuselage || canPlaceUpgrade;
     }
 
+    private ShipStructure getExtendedShipStructure(ViewableShipStructure playerSpaceShip) {
+        return new ShipStructure(
+                ShipStructure.getExpandedGrid(
+                        playerSpaceShip.getGrid(), 2, 2, true
+                )
+        );
+    }
+
 
     private Vector2 worldToGameCoordinates(float worldX, float worldY) {
         touchPos.set(worldX, worldY);
@@ -440,8 +451,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     }
 
     /**
-     * Updates camera zoom level. Used by controller to adjust view magnification
-     * based on user
+     * Updates camera zoom level. Used by controller to adjust view magnification based on user
      * input.
      *
      * @param zoom The new zoom level to apply to camera.
@@ -451,8 +461,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     }
 
     /**
-     * Updates camera position based on screen offset. Handles camera movement and
-     * staying within
+     * Updates camera position based on screen offset. Handles camera movement and staying within
      * world bounds.
      *
      * @param offsetX The x offset in screen coordinates.
