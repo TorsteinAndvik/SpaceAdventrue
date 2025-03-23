@@ -46,6 +46,7 @@ public class LoadingScreen implements Screen {
         // Textures:
         // space objects
         queueTexture("images/space/asteroid_0.png");
+        queueTexture("images/space/asteroid_1.png");
         queueTexture("images/space/laser_shot_0.png");
 
         // upgrade screen
