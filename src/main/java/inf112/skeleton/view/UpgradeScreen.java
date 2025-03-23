@@ -273,7 +273,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
             touchPos.set(Gdx.input.getX(), Gdx.input.getY());
             unprojectTouchPos(touchPos);
             CellPosition cpGrid = convertMouseToGrid(touchPos.x, touchPos.y);
-            if (cellPositionOnGrid(cpGrid)) {
+            if (cellPositionOnGrid(cpGrid) && canPlaceItem(cpGrid)) {
                 upgradeIcons[model.getGrabbedUpgradeIndex()].setX(
                         model.getGridOffsetX() + cpGrid.col() + 0.5f * (1f - upgradeIconZoom));
                 upgradeIcons[model.getGrabbedUpgradeIndex()].setY(
