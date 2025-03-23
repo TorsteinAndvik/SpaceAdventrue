@@ -85,12 +85,11 @@ public class ShipFactory {
     }
 
     /**
-     * @return a <code>this.simpleShip()</code> centered on a 6x5 grid
+     * @return a <code>this.simpleShip()</code> centered on a grid
      */
     public ShipStructure playerShip() {
         ShipStructure ship = this.simpleShip();
-        ship.expandGrid(2, 3,
-                true);
+        ship.expandGrid(2, 2, true);
         return ship;
     }
 }
