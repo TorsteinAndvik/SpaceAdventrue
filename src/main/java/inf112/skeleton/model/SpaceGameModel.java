@@ -54,7 +54,8 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     public void shoot() {
         // TODO: This is awful, never do this.
-        this.laser = new Bullet("laser", "a laser shot", player.getX(), player.getY() + 1, 1, 1, 0,
+        this.laser = new Bullet("laser", "a laser shot", player.getCenter().x(),
+                player.getCenter().y(), 1, 1, 0,
                 1);
         laserExists = true;
     }

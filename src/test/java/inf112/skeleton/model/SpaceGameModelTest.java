@@ -71,7 +71,8 @@ class SpaceGameModelTest {
         assertNotNull(laser);
 
         gameModel.moveLaser();
-        assertEquals(initialPlayerY + gameModel.getSpaceShips()[0].getShipStructure().getHeight(), laser.getY());
+        assertEquals(initialPlayerY + gameModel.getSpaceShips()[0].getShipStructure().getHeight() / 2 + 1,
+                laser.getY());
 
         // A laser shoots from a ship, and is deleted when offscreen, so
         // get the x coordinate of the laser for this loop.
@@ -88,8 +89,8 @@ class SpaceGameModelTest {
         Bullet laser = gameModel.getLaser();
         assertNotNull(laser);
         assertTrue(gameModel.laserExists);
-        assertEquals(2, laser.getY());
-        assertEquals(gameModel.getSpaceShips()[0].getX(), laser.getX());
+        assertEquals(4, laser.getY());
+        assertEquals(gameModel.getSpaceShips()[0].getCenter().x(), laser.getX());
 
     }
 

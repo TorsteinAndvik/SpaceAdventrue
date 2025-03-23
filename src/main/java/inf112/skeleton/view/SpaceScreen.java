@@ -185,7 +185,7 @@ public class SpaceScreen implements Screen {
         batch.setTransformMatrix(new Matrix4().idt());
 
         if (model.laserExists) { // TODO: refactor once cannon-firing logic is added to model
-            laser.setX(model.getLaser().getX() + 0.375f);
+            laser.setX(model.getLaser().getX() - 0.125f);
             laser.setY(model.getLaser().getY() + 0.875f);
             laser.draw(batch);
         }
