@@ -17,9 +17,15 @@ public class ShipStructure implements ViewableShipStructure {
     private FloatPair centerOfMass;
 
     public ShipStructure(int width, int height) {
-        this.grid = new Grid<>(height, width);
+        this(new Grid<>(height, width));
+
+    }
+
+    public ShipStructure(IGrid<Fuselage> grid) {
+        this.grid = grid;
         this.mass = 0f;
         this.centerOfMass = new FloatPair(0f, 0f);
+
     }
 
     public ShipStructure(ShipConfig shipConfig) {
@@ -131,17 +137,39 @@ public class ShipStructure implements ViewableShipStructure {
      * @param center
      */
     public void expandGrid(int addedRows, int addedCols, boolean center) {
-        if (addedRows < 0 || addedCols < 0 || (addedRows == 0 && addedCols == 0)) {
-            return;
-        }
+        grid = getExpandedGrid(grid.copy(), addedRows, addedCols, center);
 
-        IGrid<Fuselage> oldGridCopy = grid.copy();
-
-        grid = new Grid<>(oldGridCopy.rows() + addedRows, oldGridCopy.cols() + addedCols);
         this.mass = 0f;
         this.centerOfMass = new FloatPair(0f, 0f);
 
-        for (GridCell<Fuselage> cell : oldGridCopy) {
+    }
+
+    /**
+     * Expands the given grid by adding rows and columns, either centering the existing content or
+     * shifting it to the bottom-right.
+     *
+     * <p>If {@code addedRows} or {@code addedCols} are negative, or both are zero, the original
+     * grid is returned unchanged.</p>
+     *
+     * @param grid      The original grid to expand.
+     * @param addedRows The number of rows to add.
+     * @param addedCols The number of columns to add.
+     * @param center    If {@code true}, shifts the old grid content to keep it centered in the
+     *                  expanded grid. If {@code false}, shifts the content towards the
+     *                  bottom-right.
+     * @return A new {@code IGrid<Fuselage>} instance with the expanded dimensions, containing the
+     * original grid’s elements repositioned accordingly.
+     */
+    public static IGrid<Fuselage> getExpandedGrid(IGrid<Fuselage> grid, int addedRows,
+            int addedCols, boolean center) {
+        if (addedRows < 0 || addedCols < 0 || (addedRows == 0 && addedCols == 0)) {
+            return grid;
+        }
+
+        IGrid<Fuselage> extGrid = new Grid<>(grid.rows() + addedRows,
+                grid.cols() + addedCols);
+
+        for (GridCell<Fuselage> cell : grid) {
             if (cell.value() == null) {
                 continue;
             }
@@ -153,8 +181,9 @@ public class ShipStructure implements ViewableShipStructure {
             } else {
                 cp = new CellPosition(cell.pos().row() + addedRows, cell.pos().col() + addedCols);
             }
-            set(cp, cell.value());
+            extGrid.set(cp, cell.value());
         }
+        return extGrid;
     }
 
     @Override
@@ -205,5 +234,9 @@ public class ShipStructure implements ViewableShipStructure {
     public UpgradeType getUpgradeType(CellPosition cp) {
         return this.grid.get(cp).getUpgrade().getType();
     }
-    
+
+    @Override
+    public IGrid<Fuselage> getGrid() {
+        return this.grid.copy();
+    }
 }
