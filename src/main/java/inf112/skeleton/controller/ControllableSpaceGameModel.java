@@ -1,22 +1,15 @@
 package inf112.skeleton.controller;
 
-import inf112.skeleton.model.GameState;
 
 public interface ControllableSpaceGameModel {
 
     /**
      * Updates the game model by the given delta time in seconds.
-     * 
+     *
      * @param delta delta time in seconds
      */
     void update(float delta);
 
-    /**
-     * Gets the current game state. @TODO are we doing game states?
-     *
-     * @return The current game state
-     */
-    GameState getGameState();
 
     /**
      * Moves the spaceship by a change in x and a change in y on the game board
@@ -43,8 +36,7 @@ public interface ControllableSpaceGameModel {
     void stopGame();
 
     /**
-     * Starts the game over. Clears the game board and resets every item in the
-     * game.
+     * Starts the game over. Clears the game board and resets every item in the game.
      */
     void startNewGame();
 

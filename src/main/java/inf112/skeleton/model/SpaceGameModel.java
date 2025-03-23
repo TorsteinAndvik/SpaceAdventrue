@@ -208,10 +208,6 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         player.setX(player.getX() + 1);
     }
 
-    @Override
-    public GameState getGameState() {
-        return null;
-    }
 
     @Override
     public IGridDimension getDimension() {
