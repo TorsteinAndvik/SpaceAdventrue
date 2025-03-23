@@ -20,6 +20,7 @@ import inf112.skeleton.grid.GridCell;
 import inf112.skeleton.model.SpaceGameModel;
 import inf112.skeleton.model.ShipComponents.UpgradeType;
 import inf112.skeleton.model.ShipComponents.Components.Fuselage;
+import inf112.skeleton.model.SpaceCharacters.Asteroid;
 import inf112.skeleton.model.SpaceCharacters.SpaceShip;
 import inf112.skeleton.model.utils.FloatPair;
 
@@ -34,7 +35,8 @@ public class SpaceScreen implements Screen {
     BitmapFont fontRegular; // Agency FB Regular
     AssetManager manager;
 
-    Sprite asteroid;
+    Sprite asteroidLarge;
+    Sprite asteroidSmall;
     Sprite laser;
 
     Sprite fuselagePlayer;
@@ -80,7 +82,8 @@ public class SpaceScreen implements Screen {
     }
 
     private void loadSprites() {
-        asteroid = createSprite("images/space/asteroid_0.png", 2, 2);
+        asteroidLarge = createSprite("images/space/asteroid_0.png", 2, 2);
+        asteroidSmall = createSprite("images/space/asteroid_1.png", 1, 1);
         laser = createSprite("images/space/laser_shot_0.png", 0.25f, 0.25f);
 
         fuselagePlayer = createSprite("images/upgrades/fuselage_alt_stage_0.png", 1, 1);
@@ -121,10 +124,14 @@ public class SpaceScreen implements Screen {
         batch.begin();
 
         batch.setTransformMatrix(transformMatrix.idt());
-        asteroid.setRotation(model.getAsteroid().getRotationAngle());
-        asteroid.setX(model.getAsteroid().getX());
-        asteroid.setY(model.getAsteroid().getY());
-        asteroid.draw(batch);
+        // draw asteroids
+        for (Asteroid asteroid : model.getAsteroids()) {
+            Sprite asteroidSprite = asteroid.isLarge ? asteroidLarge : asteroidSmall;
+            asteroidSprite.setRotation(asteroid.getRotationAngle());
+            asteroidSprite.setX(asteroid.getX());
+            asteroidSprite.setY(asteroid.getY());
+            asteroidSprite.draw(batch);
+        }
 
         for (int i = 0; i < model.getSpaceShips().length; i++) {
             SpaceShip ship = model.getSpaceShips()[i];

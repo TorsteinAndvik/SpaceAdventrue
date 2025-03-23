@@ -44,7 +44,7 @@ class SpaceGameModelTest {
     @Test
     public void testInitialization() {
         assertNotNull(gameModel.getSpaceShips());
-        assertNotNull(gameModel.getAsteroid());
+        assertNotNull(gameModel.getAsteroids());
         assertNotNull(gameModel.getLaser());
 
     }

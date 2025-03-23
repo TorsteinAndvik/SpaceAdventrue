@@ -14,11 +14,11 @@ import inf112.skeleton.view.ViewableSpaceGameModel;
 public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpaceGameModel {
 
     private Player player;
-    private Asteroid asteroid;
     private EnemyShip enemyShip;
     private Bullet laser;
     private ShipFactory shipFactory;
     private SpaceShip[] spaceShips;
+    private Asteroid[] asteroids;
     public boolean laserExists;
     private boolean enemyRotationActive;
     private boolean rotateClockwise;
@@ -35,17 +35,31 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                 1,
                 5,
                 0);
-        this.asteroid = new Asteroid("asteroid", "an asteroid", 1f, 6f, 0.5f, -0.25f, 1, 0f, 30f, 4f);
-        this.asteroid.setRotationSpeed(90f);
+
+        createAsteroids();
 
         this.laser = new Bullet("laser", "a laser shot", 0f, 0f, 1, 1f, 0f, 1f);
 
         spaceShips = new SpaceShip[] { player, enemyShip };
     }
 
+    private void createAsteroids() {
+        Asteroid asteroidLarge = new Asteroid("large asteroid", "a large asteroid", 1f, 6f, 0.6f, -0.20f, 4, 4f, 30f,
+                2f, true);
+        asteroidLarge.setRotationSpeed(60f);
+
+        Asteroid asteroidSmall = new Asteroid("small asteroid", "a small asteroid", 5f, 4f, -0.2f, 0.3f, 1, 1f, 0f, 1f,
+                false);
+        asteroidSmall.setRotationSpeed(-30f);
+
+        this.asteroids = new Asteroid[] { asteroidLarge, asteroidSmall };
+    }
+
     @Override
     public void update(float delta) {
-        asteroid.update(delta);
+        for (Asteroid asteroid : asteroids) {
+            asteroid.update(delta);
+        }
         laser.update(delta);
         for (int i = 0; i < spaceShips.length; i++) {
             spaceShips[i].update(delta);
@@ -180,8 +194,8 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     }
 
     @Override
-    public Asteroid getAsteroid() {
-        return this.asteroid;
+    public Asteroid[] getAsteroids() {
+        return this.asteroids;
     }
 
     @Override
