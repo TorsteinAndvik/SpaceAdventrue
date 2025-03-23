@@ -60,12 +60,12 @@ public interface ViewableSpaceGameModel {
     SpaceShip[] getSpaceShips();
 
     /**
-     * Returns the Asteroid object of the MVP //TODO: Remove this once a proper
+     * Returns all Asteroid objects of the MVP //TODO: Remove this once a proper
      * model is in place
      * 
-     * @return the Asteroid object
+     * @return an array ofthe Asteroid objects
      */
-    Asteroid getAsteroid();
+    Asteroid[] getAsteroids();
 
     /**
      * Returns the Bullet object (laser) of the MVP //TODO: Remove this once a
