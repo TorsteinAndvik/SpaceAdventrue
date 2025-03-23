@@ -189,40 +189,40 @@ public class UpgradeScreen extends InputAdapter implements Screen {
             for (int y = 0; y < model.getGridHeight(); y++) {
                 CellPosition cp = new CellPosition(y, x);
 
-        ViewableShipStructure structure = model.getPlayerShipStructure();
+                if (model.isValidFuselagePosition(cp)) {
+                    drawGridSquare(squareGreen, x, y);
 
-        for (GridCell<Fuselage> cell : structure) {
-            Sprite coloredSquare = squareRed;
-            ;
-
-            if (structure.hasFuselage(cell.pos())) {
-                coloredSquare = squareGray;
-            } else if (model.isValidFuselagePosition(cell.pos())) {
-                coloredSquare = squareGreen;
+                } else if (model.getPlayerShipStructure().hasFuselage(cp)) {
+                    drawGridSquare(squareGray, x, y);
+                } else {
+                    drawGridSquare(squareRed, x, y);
+                }
             }
-            drawGridSquare(coloredSquare, cell);
         }
     }
 
     private void drawValidUpgradePlacements() {
-        ViewableShipStructure shipStructure = model.getPlayerShipStructure();
 
-        for (GridCell<Fuselage> cell : shipStructure) {
-            Sprite coloredGrid = squareGray;
+        for (int x = 0; x < model.getGridWidth(); x++) {
+            for (int y = 0; y < model.getGridHeight(); y++) {
+                CellPosition cp = new CellPosition(y, x);
 
-            if (!shipStructure.hasFuselage(cell.pos())) {continue;}
-            if (model.isValidUpgradePosition(cell.pos())) {
-                coloredGrid = squareGreen;
+                if (model.isValidUpgradePosition(cp)) {
+                    drawGridSquare(squareGreen, x, y);
+                } else if (model.getPlayerShipStructure().hasFuselage(cp)) {
+                    drawGridSquare(squareGray, x, y);
+                }
             }
-            drawGridSquare(coloredGrid, cell);
         }
     }
 
     private void drawDefaultGrid() {
-        ViewableShipStructure shipStructure = model.getPlayerShipStructure();
-        for (GridCell<Fuselage> cell : shipStructure) {
-            if (shipStructure.hasFuselage(cell.pos())) {
-                drawGridSquare(squareGray, cell);
+        for (int x = 0; x < model.getGridWidth(); x++) {
+            for (int y = 0; y < model.getGridHeight(); y++) {
+
+                if (model.getPlayerShipStructure().hasFuselage(new CellPosition(y, x))) {
+                    drawGridSquare(squareGray, x, y);
+                }
             }
         }
     }
@@ -387,10 +387,6 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         squareSprite.setX(model.getGridOffsetX() + x);
         squareSprite.setY(model.getGridOffsetY() + y);
         squareSprite.draw(batch);
-    }
-
-    private void drawGridSquare(Sprite squareSprite, GridCell<Fuselage> cell) {
-        drawGridSquare(squareSprite, cell.pos().col(), cell.pos().row());
     }
 
     private void drawUpgrade(CellPosition cp) {
