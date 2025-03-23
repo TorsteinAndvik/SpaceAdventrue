@@ -68,9 +68,8 @@ public class ShipFactory {
     }
 
     public ShipStructure CreateShipFromShipConfig(ShipConfig shipConfig) {
-        ShipStructure ss = new ShipStructure(shipConfig);
-        ss.expandGrid(2, 2, true);
-        return ss;
+        return new ShipStructure(shipConfig);
+
     }
 
     /**
@@ -88,8 +87,7 @@ public class ShipFactory {
      * @return a <code>this.simpleShip()</code> centered on a grid
      */
     public ShipStructure playerShip() {
-        ShipStructure ship = this.simpleShip();
-        ship.expandGrid(2, 2, true);
-        return ship;
+        return this.simpleShip();
+
     }
 }
