@@ -2,7 +2,10 @@ package inf112.skeleton.model.ShipComponents.Components;
 
 import inf112.skeleton.grid.CellPosition;
 import inf112.skeleton.grid.GridCell;
+import inf112.skeleton.grid.IGrid;
 import inf112.skeleton.model.ShipComponents.ShipConfig;
+import inf112.skeleton.model.ShipComponents.ShipConfig.ShipComponent;
+import inf112.skeleton.model.ShipComponents.ShipFactory;
 import inf112.skeleton.model.ShipComponents.UpgradeType;
 import inf112.skeleton.model.constants.PhysicsParameters;
 import inf112.skeleton.model.utils.FloatPair;
@@ -178,6 +181,44 @@ class ShipStructureTest {
                 (1 * (2 * fuselageMass + upgradeMass) + 2 * (2 * fuselageMass + 2 * upgradeMass))
                         / fuselageWithUgradeAddedMass);
         assertEquals(fuselageWithUgradeAddedCM, shipStructure.getCenterOfMass());
+    }
+
+    @Test
+    void ExpandStructureGridCenteredTest() {
+
+        ShipStructure ship = new ShipStructure(1, 2);
+        ship.set(new CellPosition(0, 0), new Fuselage(new Thruster()));
+        ship.set(new CellPosition(1, 0), new Fuselage(new Turret()));
+
+        assertTrue(ship.hasFuselage(new CellPosition(0, 0)));
+        assertTrue(ship.hasFuselage(new CellPosition(1, 0)));
+
+        ship.expandGrid(2, 2, true);
+
+        assertFalse(ship.hasFuselage(new CellPosition(0, 0)));
+        assertFalse(ship.hasFuselage(new CellPosition(1, 0)));
+
+        assertTrue(ship.hasFuselage(new CellPosition(1, 1)));
+        assertTrue(ship.hasFuselage(new CellPosition(2, 1)));
+
+    }
+
+    @Test
+    void ExpandStructureGridTest() {
+
+        ShipStructure ship = new ShipStructure(1, 2);
+        ship.set(new CellPosition(0, 0), new Fuselage(new Thruster()));
+        ship.set(new CellPosition(1, 0), new Fuselage(new Turret()));
+
+        assertTrue(ship.hasFuselage(new CellPosition(0, 0)));
+        assertTrue(ship.hasFuselage(new CellPosition(1, 0)));
+
+        int offset = 2;
+        ship.expandGrid(offset, offset, false);
+
+        assertTrue(ship.hasFuselage(new CellPosition(offset, offset)));
+        assertTrue(ship.hasFuselage(new CellPosition(offset + 1, offset)));
+
     }
 
 }
