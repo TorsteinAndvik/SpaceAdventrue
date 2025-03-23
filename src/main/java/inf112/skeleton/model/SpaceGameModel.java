@@ -26,7 +26,8 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     public SpaceGameModel() {
         this.shipFactory = new ShipFactory();
         this.player = new Player(
-                shipFactory.playerShip(), "player", "the player's spaceship", 1, 5, 1);
+                shipFactory.createShipFromJson("enemy2.json"), "player", "the player's spaceship",
+                1, 5, 1);
         this.enemyShip = new EnemyShip(
                 shipFactory.createShipFromJson("enemy2.json"),
                 "enemy",
@@ -40,19 +41,21 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
         this.laser = new Bullet("laser", "a laser shot", 0f, 0f, 1, 1f, 0f, 1f);
 
-        spaceShips = new SpaceShip[] { player, enemyShip };
+        spaceShips = new SpaceShip[]{player, enemyShip};
     }
 
     private void createAsteroids() {
-        Asteroid asteroidLarge = new Asteroid("large asteroid", "a large asteroid", 1f, 6f, 0.6f, -0.20f, 4, 4f, 30f,
+        Asteroid asteroidLarge = new Asteroid("large asteroid", "a large asteroid", 1f, 6f, 0.6f,
+                -0.20f, 4, 4f, 30f,
                 2f, true);
         asteroidLarge.setRotationSpeed(60f);
 
-        Asteroid asteroidSmall = new Asteroid("small asteroid", "a small asteroid", 5f, 4f, -0.2f, 0.3f, 1, 1f, 0f, 1f,
+        Asteroid asteroidSmall = new Asteroid("small asteroid", "a small asteroid", 5f, 4f, -0.2f,
+                0.3f, 1, 1f, 0f, 1f,
                 false);
         asteroidSmall.setRotationSpeed(-30f);
 
-        this.asteroids = new Asteroid[] { asteroidLarge, asteroidSmall };
+        this.asteroids = new Asteroid[]{asteroidLarge, asteroidSmall};
     }
 
     @Override
@@ -189,7 +192,6 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     @Override
     public SpaceShip getPlayerSpaceShip() {
-        // TODO: Check if this allways will be true
         return this.spaceShips[0];
     }
 
