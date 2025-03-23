@@ -133,10 +133,10 @@ public class UpgradeScreenModel {
      */
     public void updateOffsets(float worldWidth, float worldHeight) {
         float upgradeToGridDelta = 2f;
-        gridOffsetX = (worldWidth - getGridWidth()) / 2f;
-        gridOffsetY = (worldHeight - getGridHeight() - upgradeToGridDelta) / 2f;
+        gridOffsetX = (worldWidth - gridWidth) / 2f;
+        gridOffsetY = (worldHeight - gridHeight - upgradeToGridDelta) / 2f;
         upgradeOffsetX = (worldWidth - numUpgradeOptions) / 2f;
-        upgradeOffsetY = gridOffsetY + getGridHeight() + upgradeToGridDelta / 2f;
+        upgradeOffsetY = gridOffsetY + gridHeight + upgradeToGridDelta / 2f;
     }
 
     public float getCurrentZoom() {

@@ -208,7 +208,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         for (GridCell<Fuselage> cell : shipStructure) {
             Sprite coloredGrid = squareGray;
 
-            if (!shipStructure.hasFuselage(cell.pos())) {continue;}
+            if (!shipStructure.hasFuselage(cell.pos())) { continue; }
             if (model.isValidUpgradePosition(cell.pos())) {
                 coloredGrid = squareGreen;
             }
@@ -228,18 +228,13 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
     private void drawShipGrid() {
 
-        if (model.isUpgradeGrabbed() && grabbedItemIsFuselage()) {
+        if (!model.isUpgradeGrabbed()) {
+            drawDefaultGrid();
+        } else if (grabbedItemIsFuselage()) {
             drawValidFuselagePlacements();
-            return;
-        }
-
-        if (model.isUpgradeGrabbed()) {
+        } else {
             drawValidUpgradePlacements();
-            return;
         }
-
-        drawDefaultGrid();
-
     }
 
     @Override
