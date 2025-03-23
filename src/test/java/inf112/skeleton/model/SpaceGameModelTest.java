@@ -72,7 +72,8 @@ class SpaceGameModelTest {
 
         gameModel.moveLaser();
         assertEquals(
-                initialPlayerY + gameModel.getPlayerSpaceShip().getShipStructure().getHeight() / 2
+                initialPlayerY + gameModel.getPlayerSpaceShip().getShipStructure()
+                        .getHeight() / 2f
                         + 1,
                 laser.getY());
 
@@ -91,7 +92,7 @@ class SpaceGameModelTest {
         Bullet laser = gameModel.getLaser();
         assertNotNull(laser);
         assertTrue(gameModel.laserExists);
-        assertEquals(3, laser.getY()); // TODO: Fix. This test depends on ship grid size.
+        assertEquals(2.5, laser.getY()); // TODO: Fix. This test depends on ship grid size.
         assertEquals(gameModel.getPlayerSpaceShip().getCenter().x(), laser.getX());
 
     }
