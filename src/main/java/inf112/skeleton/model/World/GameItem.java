@@ -1,16 +1,9 @@
 package inf112.skeleton.model.World;
 
-import inf112.skeleton.model.Globals.ItemType;
 
 //@TODO what are some more handy in-game item features?
 public interface GameItem {
 
-    /**
-     * Get the type of in-game item.
-     *
-     * @return an item type.
-     */
-    ItemType getItemType();
 
     /**
      * Get the name of the item.
