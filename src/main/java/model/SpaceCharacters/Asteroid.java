@@ -7,15 +7,15 @@ public class Asteroid extends Projectile {
     public final boolean isLarge;
 
     public Asteroid(String name, String description, float x, float y, float vX, float vY,
-        int hitPoints, float mass, float angle, float radius) {
+            int hitPoints, float mass, float angle, float radius) {
         this(name, description, x, y, vX, vY, hitPoints, mass, angle,
-            radius, false);
+                radius, false);
     }
 
     public Asteroid(String name, String description, float x, float y, float vX, float vY,
-        int hitPoints, float mass, float angle, float radius, boolean isLarge) {
+            int hitPoints, float mass, float angle, float radius, boolean isLarge) {
         super(name, description, CharacterType.ASTEROID, x, y, vX, vY, hitPoints, mass, angle,
-            radius, ROTATION_SPEED);
+                radius, ROTATION_SPEED);
         this.isLarge = isLarge;
     }
 

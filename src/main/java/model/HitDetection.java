@@ -1,17 +1,25 @@
 package model;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import model.Globals.Collideable;
-import model.Globals.DamageDealer;
-import model.Globals.Damageable;
 
 public class HitDetection {
 
     private LinkedList<Collideable> colliders = new LinkedList<>();
+    private final SpaceGameModel model;
+
+    public HitDetection(SpaceGameModel model) {
+        this.model = model;
+    }
 
     public void addCollider(Collideable c) {
         colliders.addFirst(c);
+    }
+
+    public void addColliders(List<Collideable> colliders) {
+        this.colliders.addAll(colliders);
     }
 
     public void removeCollider(Collideable c) {
@@ -31,15 +39,7 @@ public class HitDetection {
 
                 if (objectProximity(collA, collB)) {
                     if (checkCollision(collA, collB)) {
-                        if (collA instanceof DamageDealer && collB instanceof Damageable) {
-                            ((DamageDealer) collA).dealDamage(
-                                    (Damageable) (collB));
-                        }
-
-                        if (collB instanceof DamageDealer && collA instanceof Damageable) {
-                            ((DamageDealer) collB).dealDamage(
-                                    (Damageable) (collA));
-                        }
+                        model.handleCollision(collA, collB);
                     }
                 }
             }
@@ -52,5 +52,4 @@ public class HitDetection {
         float distance = (float) Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
         return (distance < target1.getRadius() + target2.getRadius());
     }
-
 }
