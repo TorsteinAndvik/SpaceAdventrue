@@ -1,7 +1,6 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 
 import model.Globals.Collideable;
 import model.Globals.DamageDealer;
@@ -9,10 +8,14 @@ import model.Globals.Damageable;
 
 public class HitDetection {
 
-    private List<Collideable> colliders = new ArrayList<>();
+    private LinkedList<Collideable> colliders = new LinkedList<>();
 
     public void addCollider(Collideable c) {
-        colliders.add(c);
+        colliders.addFirst(c);
+    }
+
+    public void removeCollider(Collideable c) {
+        colliders.remove(c);
     }
 
     public boolean objectProximity(Collideable c1, Collideable c2) {
