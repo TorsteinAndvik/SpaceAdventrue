@@ -22,13 +22,20 @@ public class HitDetection {
 
     public void checkCollisions() {
         for (int i = 0; i < colliders.size(); i++) {
+            Collideable collA = colliders.get(i);
             for (int j = i + 1; j < colliders.size(); j++) {
-                if (objectProximity(colliders.get(i), colliders.get(j))) {
-                    if (checkCollision(colliders.get(i), colliders.get(j))) {
-                        if (colliders.get(i) instanceof DamageDealer && colliders.get(
-                                j) instanceof Damageable) {
-                            ((DamageDealer) colliders.get(i)).dealDamage(
-                                    (Damageable) (colliders.get(j)));
+                Collideable collB = colliders.get(j);
+
+                if (objectProximity(collA, collB)) {
+                    if (checkCollision(collA, collB)) {
+                        if (collA instanceof DamageDealer && collB instanceof Damageable) {
+                            ((DamageDealer) collA).dealDamage(
+                                    (Damageable) (collB));
+                        }
+
+                        if (collB instanceof DamageDealer && collA instanceof Damageable) {
+                            ((DamageDealer) collB).dealDamage(
+                                    (Damageable) (collA));
                         }
                     }
                 }
