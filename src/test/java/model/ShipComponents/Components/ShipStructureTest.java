@@ -51,7 +51,6 @@ class ShipStructureTest {
         ShipStructure structure = new ShipStructure(10, 10);
         CellPosition cellPosition = new CellPosition(0, 0);
         assertTrue(structure.set(cellPosition));
-        assertNotNull(structure.iterable());
     }
 
     @Test

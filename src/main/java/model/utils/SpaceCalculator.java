@@ -37,12 +37,20 @@ public class SpaceCalculator {
         return (dx == 1 && dy == 0) || (dx == 0 && dy == 1);
     }
 
-    public static List<CellPosition> getOrthogonalNeighbours(CellPosition a) {
+    /**
+     * Returns a list of orthogonally adjacent (non-diagonal) neighboring positions
+     * for a given {@code CellPosition}.
+     *
+     * @param cellPosition the central {@code CellPosition} for which to find neighbors.
+     * @return a list of four orthogonally adjacent {@code CellPosition}s (up, down, left, right).
+     */
+    public static List<CellPosition> getOrthogonalNeighbours(CellPosition cellPosition) {
         List<CellPosition> neighbours = new ArrayList<>();
         int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
 
         for (int[] dir : directions) {
-            neighbours.add(new CellPosition(a.row() + dir[0], a.col() + dir[1]));
+            neighbours.add(
+                new CellPosition(cellPosition.row() + dir[0], cellPosition.col() + dir[1]));
         }
         return neighbours;
     }

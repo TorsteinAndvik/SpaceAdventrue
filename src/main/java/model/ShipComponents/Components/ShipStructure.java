@@ -90,6 +90,16 @@ public class ShipStructure implements ViewableShipStructure {
         this.centerOfMass = newCM;
     }
 
+    /**
+     * Computes the total mass and center of mass of a given {@link ShipStructure}.
+     * <p>
+     * The method iterates over all {@link Fuselage} components in the ship structure,
+     * accumulating their mass and computing a weighted average to determine the center of mass.
+     * </p>
+     *
+     * @param shipStructure The {@link ShipStructure} whose mass properties are to be calculated.
+     * @return A {@link MassProperties} object containing the total mass and center of mass.
+     */
     public static MassProperties getMassProperties(ShipStructure shipStructure) {
         float prevMass;
         float newMass = 0;
@@ -216,11 +226,6 @@ public class ShipStructure implements ViewableShipStructure {
             extGrid.set(cp, cell.value());
         }
         return extGrid;
-    }
-
-    @Override
-    public Iterable<GridCell<Fuselage>> iterable() {
-        return grid;
     }
 
     @Override
