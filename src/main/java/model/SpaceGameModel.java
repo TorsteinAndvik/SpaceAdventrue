@@ -1,6 +1,8 @@
 package model;
 
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
@@ -28,7 +30,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     private final ShipFactory shipFactory;
     private final SpaceShip[] spaceShips; // TODO: Refactor as a LinkedList, only include enemy ships.
     private final HitDetection hitDetection;
-    private Asteroid[] asteroids; // TODO: Refactor as a LinkedList
+    private LinkedList<Asteroid> asteroids;
     public boolean laserExists;
     private boolean enemyRotationActive;
     private boolean rotateClockwise;
@@ -56,7 +58,8 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         this.spaceShips = new SpaceShip[] { player, enemyShip };
 
         this.hitDetection = new HitDetection(this);
-        hitDetection.addColliders(Arrays.asList(player, enemyShip, asteroids[0], asteroids[1], this.laser));
+        hitDetection.addColliders(Arrays.asList(player, enemyShip, asteroids.get(0), asteroids.get(1), this.laser)); // TODO:
+                                                                                                                     // Refactor
 
         this.rotationMatrix = new Matrix3();
         this.transformMatrix = new Matrix4();
@@ -65,19 +68,22 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     private void createAsteroids() {
         float radiusLarge = 1f;
         float radiusSmall = 0.5f;
+
         Asteroid asteroidLarge = new Asteroid("large asteroid", "a large asteroid", 1f + radiusLarge, 6f + radiusLarge,
-                0.3f / 5f,
-                -0.10f / 5f, 4, 4f, 30f,
+                0.3f,
+                -0.10f, 4, 4f, 30f,
                 1f, true);
         asteroidLarge.setRotationSpeed(60f);
 
         Asteroid asteroidSmall = new Asteroid("small asteroid", "a small asteroid", 5f + radiusSmall, 4f + radiusSmall,
-                -0.1f / 5f,
-                0.15f / 5f, 1, 1f, 0f, 0.5f,
+                -0.1f,
+                0.15f, 1, 1f, 0f, 0.5f,
                 false);
         asteroidSmall.setRotationSpeed(-30f);
 
-        this.asteroids = new Asteroid[] { asteroidLarge, asteroidSmall };
+        this.asteroids = new LinkedList<>();
+        asteroids.add(asteroidLarge);
+        asteroids.add(asteroidSmall);
     }
 
     @Override
@@ -126,7 +132,13 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         if (c instanceof SpaceBody) {
             switch (((SpaceBody) c).getCharacterType()) {
                 case ASTEROID: // TODO: Implement remove(Asteroid) case
-                    System.out.println("asteroid destroyed");
+                    System.out.println(c + " destroyed");
+                    for (Asteroid asteroid : asteroids) {
+                        if (asteroid == c) {
+                            asteroids.remove(c);
+                            break;
+                        }
+                    }
                     break;
                 case BULLET: // TODO: Implement remove(Bullet) case
                     break;
@@ -298,7 +310,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     }
 
     @Override
-    public Asteroid[] getAsteroids() {
+    public List<Asteroid> getAsteroids() {
         return this.asteroids;
     }
 
