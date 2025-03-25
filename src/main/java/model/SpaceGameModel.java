@@ -24,11 +24,11 @@ import view.ViewableSpaceGameModel;
 
 public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpaceGameModel {
 
-    private final Player player;
-    private final EnemyShip enemyShip; // TODO: Remove, move all enemy ships to spaceShips
+    private Player player;
+    private SpaceShip enemyShip; // TODO: Remove
     private Bullet laser;
     private final ShipFactory shipFactory;
-    private final SpaceShip[] spaceShips; // TODO: Refactor as a LinkedList, only include enemy ships.
+    private LinkedList<SpaceShip> spaceShips;
     private final HitDetection hitDetection;
     private LinkedList<Asteroid> asteroids;
     public boolean laserExists;
@@ -40,6 +40,22 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     public SpaceGameModel() {
         this.shipFactory = new ShipFactory();
+
+        createSpaceShips();
+
+        createAsteroids();
+
+        this.laser = new Bullet("laser", "a laser shot", 0f, 0f, 1, 1f, 0f, 1f);
+
+        this.hitDetection = new HitDetection(this);
+        hitDetection.addColliders(Arrays.asList(player, enemyShip, asteroids.get(0), asteroids.get(1), this.laser)); // TODO:
+                                                                                                                     // Refactor
+
+        this.rotationMatrix = new Matrix3();
+        this.transformMatrix = new Matrix4();
+    }
+
+    private void createSpaceShips() {
         this.player = new Player(
                 shipFactory.playerShip(), "player", "the player's spaceship", 1, 5, 1);
         this.enemyShip = new EnemyShip(
@@ -51,18 +67,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                 5,
                 0);
 
-        createAsteroids();
-
-        this.laser = new Bullet("laser", "a laser shot", 0f, 0f, 1, 1f, 0f, 1f);
-
-        this.spaceShips = new SpaceShip[] { player, enemyShip };
-
-        this.hitDetection = new HitDetection(this);
-        hitDetection.addColliders(Arrays.asList(player, enemyShip, asteroids.get(0), asteroids.get(1), this.laser)); // TODO:
-                                                                                                                     // Refactor
-
-        this.rotationMatrix = new Matrix3();
-        this.transformMatrix = new Matrix4();
+        this.spaceShips = new LinkedList<SpaceShip>(Arrays.asList(this.player, this.enemyShip));
     }
 
     private void createAsteroids() {
@@ -71,7 +76,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
         Asteroid asteroidLarge = new Asteroid("large asteroid", "a large asteroid", 1f + radiusLarge, 6f + radiusLarge,
                 0.3f,
-                -0.10f, 4, 4f, 30f,
+                -0.10f, 1, 4f, 30f,
                 1f, true);
         asteroidLarge.setRotationSpeed(60f);
 
@@ -101,38 +106,28 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         hitDetection.checkCollisions();
     }
 
-    public void handleCollision(Collideable A, Collideable B) {
-        boolean destroyA = false;
-        boolean destroyB = false;
+    void handleCollision(Collideable A, Collideable B) {
         if (A instanceof DamageDealer && B instanceof Damageable) {
             ((DamageDealer) A).dealDamage((Damageable) B);
             if (((Damageable) B).isDestroyed()) {
-                destroyB = true;
+                remove(B);
             }
         }
 
         if (B instanceof DamageDealer && A instanceof Damageable) {
             ((DamageDealer) B).dealDamage((Damageable) A);
             if (((Damageable) A).isDestroyed()) {
-                destroyA = true;
+                remove(A);
             }
-        }
-
-        if (destroyA) {
-            remove(A);
-        }
-
-        if (destroyB) {
-            remove(B);
         }
     }
 
     private void remove(Collideable c) {
         hitDetection.removeCollider(c);
         if (c instanceof SpaceBody) {
+            System.out.println(c + " destroyed");
             switch (((SpaceBody) c).getCharacterType()) {
-                case ASTEROID: // TODO: Implement remove(Asteroid) case
-                    System.out.println(c + " destroyed");
+                case ASTEROID:
                     for (Asteroid asteroid : asteroids) {
                         if (asteroid == c) {
                             asteroids.remove(c);
@@ -140,12 +135,22 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                         }
                     }
                     break;
+
                 case BULLET: // TODO: Implement remove(Bullet) case
                     break;
+
                 case ENEMY_SHIP:// TODO: Implement remove(Enemy) case
+                    for (SpaceShip ship : this.spaceShips) {
+                        if (ship == c) {
+                            spaceShips.remove(c);
+                            break;
+                        }
+                    }
                     break;
+
                 case PLAYER: // TODO: Implement remove(Player) case (game over)
                     break;
+
                 default:
                     break;
             }
@@ -305,7 +310,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     }
 
     @Override
-    public SpaceShip[] getSpaceShips() {
+    public List<SpaceShip> getSpaceShips() {
         return this.spaceShips;
     }
 

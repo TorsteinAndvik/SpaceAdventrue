@@ -19,8 +19,8 @@ public class UpgradeScreenController extends GenericController {
     private final SpaceGame game;
 
     public UpgradeScreenController(UpgradeScreen view, UpgradeScreenModel upgradeModel,
-        SpaceGameModel spaceModel,
-        SpaceGame game) {
+            SpaceGameModel spaceModel,
+            SpaceGame game) {
         super(); // GenericController gives us touchpos
         this.view = view;
         this.upgradeModel = upgradeModel;
@@ -29,7 +29,7 @@ public class UpgradeScreenController extends GenericController {
     }
 
     public Iterable<GridCell<Fuselage>> getPlayerShipParts() {
-        return spaceModel.getSpaceShips()[0].getShipStructure().iterable();
+        return spaceModel.getSpaceShips().get(0).getShipStructure().iterable();
     }
 
     @Override
@@ -175,27 +175,27 @@ public class UpgradeScreenController extends GenericController {
 
     private CellPosition convertMouseToGrid(float x, float y) {
         return new CellPosition(
-            (int) Math.floor(y - upgradeModel.getGridOffsetY()),
-            (int) Math.floor(x - upgradeModel.getGridOffsetX()));
+                (int) Math.floor(y - upgradeModel.getGridOffsetY()),
+                (int) Math.floor(x - upgradeModel.getGridOffsetX()));
     }
 
     private CellPosition convertMouseToUpgradeBar(float x, float y) {
         return new CellPosition(
-            (int) Math.floor(y - upgradeModel.getUpgradeOffsetY()),
-            (int) Math.floor(x - upgradeModel.getUpgradeOffsetX()));
+                (int) Math.floor(y - upgradeModel.getUpgradeOffsetY()),
+                (int) Math.floor(x - upgradeModel.getUpgradeOffsetX()));
     }
 
     private boolean cellPositionOnGrid(CellPosition cp) {
         int gridX = cp.col();
         int gridY = cp.row();
         return !(gridX < 0 || gridX > upgradeModel.getGridWidth() - 1 ||
-            gridY < 0 || gridY > upgradeModel.getGridHeight() - 1);
+                gridY < 0 || gridY > upgradeModel.getGridHeight() - 1);
     }
 
     private boolean cellPositionOnUpgradeOptions(CellPosition cp) {
         int upgradeX = cp.col();
         int upgradeY = cp.row();
         return !((upgradeY != 0) || (upgradeX < 0) ||
-            (upgradeX > upgradeModel.getNumUpgradeOptions() - 1));
+                (upgradeX > upgradeModel.getNumUpgradeOptions() - 1));
     }
 }

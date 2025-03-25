@@ -38,8 +38,8 @@ class SpaceGameModelTest {
     public void setUp() {
         setup();
         gameModel = new SpaceGameModel();
-        initialPlayerX = gameModel.getSpaceShips()[0].getX();
-        initialPlayerY = gameModel.getSpaceShips()[0].getY();
+        initialPlayerX = gameModel.getSpaceShips().get(0).getX();
+        initialPlayerY = gameModel.getSpaceShips().get(0).getY();
     }
 
     @Test
@@ -53,16 +53,16 @@ class SpaceGameModelTest {
     @Test
     public void testPlayerMovement() {
         gameModel.moveUp();
-        assertEquals(initialPlayerY + 1, gameModel.getSpaceShips()[0].getY());
+        assertEquals(initialPlayerY + 1, gameModel.getSpaceShips().get(0).getY());
 
         gameModel.moveDown();
-        assertEquals(initialPlayerY, gameModel.getSpaceShips()[0].getY());
+        assertEquals(initialPlayerY, gameModel.getSpaceShips().get(0).getY());
 
         gameModel.moveLeft();
-        assertEquals(initialPlayerX - 1, gameModel.getSpaceShips()[0].getX());
+        assertEquals(initialPlayerX - 1, gameModel.getSpaceShips().get(0).getX());
 
         gameModel.moveRight();
-        assertEquals(initialPlayerX, gameModel.getSpaceShips()[0].getX());
+        assertEquals(initialPlayerX, gameModel.getSpaceShips().get(0).getX());
     }
 
     @Test
@@ -72,9 +72,9 @@ class SpaceGameModelTest {
         assertNotNull(laser);
 
         gameModel.moveLaser();
-        assertEquals(initialPlayerY + (float) gameModel.getSpaceShips()[0].getShipStructure()
+        assertEquals(initialPlayerY + (float) gameModel.getSpaceShips().get(0).getShipStructure()
                 .getHeight() / 2 + 1,
-            laser.getY());
+                laser.getY());
 
         // A laser shoots from a ship, and is deleted when offscreen, so
         // get the x coordinate of the laser for this loop.
@@ -92,7 +92,7 @@ class SpaceGameModelTest {
         assertNotNull(laser);
         assertTrue(gameModel.laserExists);
         assertEquals(4, laser.getY());
-        assertEquals(gameModel.getSpaceShips()[0].getCenter().x(), laser.getX());
+        assertEquals(gameModel.getSpaceShips().get(0).getCenter().x(), laser.getX());
 
     }
 
