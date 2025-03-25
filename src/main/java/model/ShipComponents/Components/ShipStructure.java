@@ -17,14 +17,15 @@ public class ShipStructure implements ViewableShipStructure {
     private FloatPair centerOfMass;
 
     public ShipStructure(int width, int height) {
-        this(new Grid<>(height, width));
+        this(new Grid<>(height, width), 0f, new FloatPair(0f, 0f));
+
 
     }
 
-    public ShipStructure(IGrid<Fuselage> grid) {
+    public ShipStructure(IGrid<Fuselage> grid, float mass, FloatPair centerOfMass) {
         this.grid = grid;
-        this.mass = 0f;
-        this.centerOfMass = new FloatPair(0f, 0f);
+        this.mass = mass;
+        this.centerOfMass = centerOfMass;
 
     }
 
@@ -89,6 +90,30 @@ public class ShipStructure implements ViewableShipStructure {
         this.centerOfMass = newCM;
     }
 
+    public static MassProperties getMassProperties(ShipStructure shipStructure) {
+        float prevMass;
+        float newMass = 0;
+        FloatPair centerOfMass = new FloatPair(0f, 0f);
+
+        for (GridCell<Fuselage> cell : shipStructure.grid) {
+            prevMass = newMass;
+            if (cell.value() == null) {
+                continue;
+            }
+            CellPosition pos = cell.pos();
+
+            float currentMass = cell.value().getMass();
+            newMass = prevMass + currentMass;
+
+            float cmX = (prevMass * centerOfMass.x() + currentMass * pos.col()) / newMass;
+            float cmY = (prevMass * centerOfMass.y() + currentMass * pos.row()) / newMass;
+
+            centerOfMass = new FloatPair(cmX, cmY);
+
+        }
+        return new MassProperties(newMass, centerOfMass);
+    }
+
     /**
      * Sets an empty <code>Fuselage</code> at the given position if it is empty and
      * the position is on the grid.
@@ -145,8 +170,9 @@ public class ShipStructure implements ViewableShipStructure {
     public void expandGrid(int addedRows, int addedCols, boolean center) {
         grid = getExpandedGrid(grid.copy(), addedRows, addedCols, center);
 
-        this.mass = 0f;
-        this.centerOfMass = new FloatPair(0f, 0f);
+        MassProperties massProperties = getMassProperties(this);
+        this.mass = massProperties.mass();
+        this.centerOfMass = massProperties.centerOfMass();
 
     }
 
@@ -167,13 +193,13 @@ public class ShipStructure implements ViewableShipStructure {
      * original grid’s elements repositioned accordingly.
      */
     public static IGrid<Fuselage> getExpandedGrid(IGrid<Fuselage> grid, int addedRows,
-            int addedCols, boolean center) {
+        int addedCols, boolean center) {
         if (addedRows < 0 || addedCols < 0 || (addedRows == 0 && addedCols == 0)) {
             return grid;
         }
 
         IGrid<Fuselage> extGrid = new Grid<>(grid.rows() + addedRows,
-                grid.cols() + addedCols);
+            grid.cols() + addedCols);
 
         for (GridCell<Fuselage> cell : grid) {
             if (cell.value() == null) {
@@ -183,7 +209,7 @@ public class ShipStructure implements ViewableShipStructure {
             CellPosition cp;
             if (center) {
                 cp = new CellPosition(cell.pos().row() + (addedRows - addedRows / 2),
-                        cell.pos().col() + (addedCols - addedCols / 2));
+                    cell.pos().col() + (addedCols - addedCols / 2));
             } else {
                 cp = new CellPosition(cell.pos().row() + addedRows, cell.pos().col() + addedCols);
             }
@@ -233,6 +259,9 @@ public class ShipStructure implements ViewableShipStructure {
 
     @Override
     public boolean hasUpgrade(CellPosition cp) {
+        if (!hasFuselage(cp)) {
+            return false;
+        }
         return this.grid.get(cp).hasUpgrade();
     }
 
