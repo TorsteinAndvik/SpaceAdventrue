@@ -3,12 +3,16 @@ package view.Animation;
 public class AnimationStateImpl implements AnimationState {
     private final float x;
     private final float y;
+    private final float width;
+    private final float height;
     private final AnimationType type;
     private float stateTime = 0f;
 
-    public AnimationStateImpl(float x, float y, AnimationType type) {
+    public AnimationStateImpl(float x, float y, float width, float height, AnimationType type) {
         this.x = x;
         this.y = y;
+        this.width = width;
+        this.height = height;
         this.type = type;
     }
 
@@ -25,6 +29,16 @@ public class AnimationStateImpl implements AnimationState {
     @Override
     public float getY() {
         return this.y;
+    }
+
+    @Override
+    public float getWidth() {
+        return this.width;
+    }
+
+    @Override
+    public float getHeight() {
+        return this.height;
     }
 
     @Override

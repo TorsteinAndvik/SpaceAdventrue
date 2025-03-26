@@ -7,6 +7,10 @@ public interface AnimationState {
 
     public float getY();
 
+    public float getWidth();
+
+    public float getHeight();
+
     public AnimationType getAnimationType();
 
     public float getStateTime();

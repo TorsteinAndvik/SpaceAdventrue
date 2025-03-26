@@ -52,6 +52,10 @@ public class SpaceScreen implements Screen {
 
     float stateTime; // for tracking elapsed time for the animation
 
+    // TODO: Add a list of AnimationStates
+    // TODO: loop over list of AnimationStates in render to draw animations
+    // TODO: remove AnimationStates from list once animation is done looping.
+
     public SpaceScreen(final SpaceGame game, final SpaceGameModel model) {
         this.game = game;
         this.batch = this.game.getSpriteBatch();
@@ -100,7 +104,7 @@ public class SpaceScreen implements Screen {
         atlas = manager.get("images/animations/explosion_A.atlas",
                 TextureAtlas.class);
 
-        explotionAnimation = new Animation<TextureRegion>(1f / 10f, atlas.findRegions("explosion"), PlayMode.NORMAL);
+        explotionAnimation = new Animation<TextureRegion>(1f / 12f, atlas.findRegions("explosion"), PlayMode.NORMAL);
     }
 
     private void setupUpgradeHashMap() {
