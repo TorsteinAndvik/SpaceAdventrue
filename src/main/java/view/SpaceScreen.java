@@ -4,10 +4,15 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -41,6 +46,12 @@ public class SpaceScreen implements Screen {
 
     private HashMap<UpgradeType, Sprite> upgradeIcons;
 
+    // Explotion animation
+    Animation<TextureRegion> explotionAnimation;
+    TextureAtlas atlas;
+
+    float stateTime; // for tracking elapsed time for the animation
+
     public SpaceScreen(final SpaceGame game, final SpaceGameModel model) {
         this.game = game;
         this.batch = this.game.getSpriteBatch();
@@ -52,6 +63,7 @@ public class SpaceScreen implements Screen {
 
         setupFonts();
         loadSprites();
+        loadAnimations();
         setupUpgradeHashMap();
     }
 
@@ -77,6 +89,20 @@ public class SpaceScreen implements Screen {
         fuselageEnemy = createSprite("images/upgrades/fuselage_enemy_stage_0.png", 1, 1);
     }
 
+    /**
+     * implemented according to this part of the offical guide:
+     * https://libgdx.com/wiki/graphics/2d/2d-animation#sprite-sheet-example
+     */
+    private void loadAnimations() {
+        stateTime = 0f;
+
+        // method using atlas
+        atlas = manager.get("images/animations/explosion_A.atlas",
+                TextureAtlas.class);
+
+        explotionAnimation = new Animation<TextureRegion>(1f / 10f, atlas.findRegions("explosion"), PlayMode.NORMAL);
+    }
+
     private void setupUpgradeHashMap() {
         upgradeIcons = new HashMap<>();
         upgradeIcons.put(UpgradeType.TURRET,
@@ -88,15 +114,21 @@ public class SpaceScreen implements Screen {
     }
 
     private Sprite createSprite(String path, float width, float height) {
-        Sprite sprite = new Sprite(manager.get(path, Texture.class));
+        Sprite sprite = new Sprite(loadTexture(path));
         sprite.setSize(width, height);
         sprite.setOrigin(width / 2, height / 2);
         return sprite;
     }
 
+    private Texture loadTexture(String path) {
+        return manager.get(path, Texture.class);
+    }
+
     @Override
     public void render(float delta) {
         controller.update(delta);
+        stateTime += delta; // accumulate elapsed animation time
+        TextureRegion currentExplotionFrame = explotionAnimation.getKeyFrame(stateTime);
 
         ScreenUtils.clear(Color.DARK_GRAY);
 
@@ -162,6 +194,15 @@ public class SpaceScreen implements Screen {
             laser.setX(model.getLaser().getX() - 0.125f);
             laser.setY(model.getLaser().getY() + 0.875f);
             laser.draw(batch);
+        }
+
+        // TODO: Remove after testing of animations is done
+        // Draw explotion animation:
+        if (!explotionAnimation.isAnimationFinished(stateTime)) {
+            float x = 8f;
+            float y = 3f;
+
+            batch.draw(currentExplotionFrame, x, y, 1f, 1f);
         }
 
         batch.end();
