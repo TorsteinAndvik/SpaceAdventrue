@@ -49,9 +49,15 @@ public interface ViewableSpaceGameModel {
     int getProgression();
 
     /**
-     * @return an array of all <code>SpaceShip</code> objects in the model
+     * @return a <code>List</code> containing all <code>SpaceShip</code> objects in the model
      */
+
     List<SpaceShip> getSpaceShips();
+
+    /**
+     * @return the player's <code>SpaceShip</code> object
+     */
+    SpaceShip getPlayerSpaceShip();
 
     /**
      * Returns all Asteroid objects of the MVP //TODO: Remove this once a proper

@@ -314,6 +314,10 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         return this.spaceShips;
     }
 
+    public SpaceShip getPlayerSpaceShip() {
+        return this.spaceShips.get(0);
+    }
+
     @Override
     public List<Asteroid> getAsteroids() {
         return this.asteroids;

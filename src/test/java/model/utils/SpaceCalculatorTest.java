@@ -1,9 +1,11 @@
 package model.utils;
 
 import static model.utils.SpaceCalculator.orthogonallyAdjacent;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
 import grid.CellPosition;
 import org.junit.jupiter.api.Test;
 
@@ -26,6 +28,19 @@ public class SpaceCalculatorTest {
         a = new CellPosition(1, 0);
         b = new CellPosition(0, 1);
         assertFalse(orthogonallyAdjacent(a, b));
+
+    }
+
+    @Test
+    void CellPositionNeighgboursTest() {
+        CellPosition a = new CellPosition(1, 1);
+        List<CellPosition> orthNeigh = SpaceCalculator.getOrthogonalNeighbours(a);
+        assertTrue(orthNeigh.contains(new CellPosition(0, 1)));
+        assertTrue(orthNeigh.contains(new CellPosition(2, 1)));
+        assertTrue(orthNeigh.contains(new CellPosition(1, 0)));
+        assertTrue(orthNeigh.contains(new CellPosition(1, 2)));
+        assertEquals(4, orthNeigh.size());
+
 
     }
 }

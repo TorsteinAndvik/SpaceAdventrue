@@ -11,8 +11,8 @@ class CellPositionTest {
 
     @Test
     void sanityCheck() {
-        CellPosition pos = new CellPosition(1, 1);
-        assertEquals(1, pos.col());
+        CellPosition pos = new CellPosition(1, 2);
+        assertEquals(2, pos.col());
         assertEquals(1, pos.row());
     }
 
