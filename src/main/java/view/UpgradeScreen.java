@@ -30,7 +30,8 @@ import model.ShipComponents.Components.Fuselage;
 import java.util.Map;
 
 /**
- * Screen for managing ship upgrades in game. Handles rendering of upgrade grid, options and UI
+ * Screen for managing ship upgrades in game. Handles rendering of upgrade grid,
+ * options and UI
  * elements.
  */
 public class UpgradeScreen extends InputAdapter implements Screen {
@@ -74,10 +75,12 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     int cursorHeight = 64;
 
     /**
-     * Creates a new upgrade screen with necessary components for rendering and input handling.
+     * Creates a new upgrade screen with necessary components for rendering and
+     * input handling.
      * Initializes viewports, fonts, sprites and upgrade system.
      *
-     * @param spaceGame The main game instance providing sprites, and other resources.
+     * @param spaceGame The main game instance providing sprites, and other
+     *                  resources.
      */
     public UpgradeScreen(final SpaceGame spaceGame, final SpaceGameModel spaceModel) {
         this.game = spaceGame;
@@ -160,11 +163,11 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     }
 
     private String[] setupUpgradeStrings() {
-        return new String[]{
-            "Fuselage:\nUsed to expand the ship. New upgrades are attached to Fuselage.",
-            "Turret:\nFires lasers at enemies and asteroids.",
-            "Rocket:\nImproves acceleration and top speed of the ship.",
-            "Shield:\nIncrease the ship's health."
+        return new String[] {
+                "Fuselage:\nUsed to expand the ship. New upgrades are attached to Fuselage.",
+                "Turret:\nFires lasers at enemies and asteroids.",
+                "Rocket:\nImproves acceleration and top speed of the ship.",
+                "Shield:\nIncrease the ship's health."
         };
     }
 
@@ -269,9 +272,9 @@ public class UpgradeScreen extends InputAdapter implements Screen {
             CellPosition cpGrid = convertMouseToGrid(touchPos.x, touchPos.y);
             if (cellPositionOnGrid(cpGrid) && canPlaceItem(cpGrid)) {
                 upgradeIcons[model.getGrabbedUpgradeIndex()].setX(
-                    model.getGridOffsetX() + cpGrid.col() + 0.5f * (1f - upgradeIconZoom));
+                        model.getGridOffsetX() + cpGrid.col() + 0.5f * (1f - upgradeIconZoom));
                 upgradeIcons[model.getGrabbedUpgradeIndex()].setY(
-                    model.getGridOffsetY() + cpGrid.row() + 0.5f * (1f - upgradeIconZoom));
+                        model.getGridOffsetY() + cpGrid.row() + 0.5f * (1f - upgradeIconZoom));
                 upgradeIcons[model.getGrabbedUpgradeIndex()].draw(batch, 0.5f);
             }
 
@@ -299,32 +302,31 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         // zoom (mouse wheel)
         msMiddle.draw(batch);
         fontRegular.draw(batch, "Adjust zoom", fontRegular.getData().lineHeight,
-            fontRegular.getData().lineHeight);
+                fontRegular.getData().lineHeight);
 
         // move camera (right click)
         msRight.draw(batch);
         fontRegular.draw(batch, "Move camera", fontRegular.getData().lineHeight,
-            2 * fontRegular.getData().lineHeight);
+                2 * fontRegular.getData().lineHeight);
 
         // grab upgrade (left click)
         msLeft.draw(batch);
         fontRegular.draw(batch, "Grab upgrade", fontRegular.getData().lineHeight,
-            3 * fontRegular.getData().lineHeight);
+                3 * fontRegular.getData().lineHeight);
 
         // inspect upgrade (T key)
         kbT.draw(batch);
         fontRegular.draw(batch, "Inspect upgrade", fontRegular.getData().lineHeight,
-            4 * fontRegular.getData().lineHeight);
+                4 * fontRegular.getData().lineHeight);
 
         // escape (Esc key)
         kbEsc.setY(viewportUI.getWorldHeight() - 1.15f * fontRegular.getData().lineHeight);
         kbEsc.draw(batch);
         fontRegular.draw(batch, "Change screen", fontRegular.getData().lineHeight,
-            viewportUI.getWorldHeight() - 0.33f * fontRegular.getData().lineHeight);
+                viewportUI.getWorldHeight() - 0.33f * fontRegular.getData().lineHeight);
 
         if (model.isCameraZoomRecently()) {
-            float alpha =
-                model.getCameraZoomDeltaTime() < model.getCameraZoomTextFadeCutoffTime() ? 1f
+            float alpha = model.getCameraZoomDeltaTime() < model.getCameraZoomTextFadeCutoffTime() ? 1f
                     : 1f - (float) Math.pow(
                         (model.getCameraZoomDeltaTime()
                             - model.getCameraZoomTextFadeCutoffTime()),
@@ -333,7 +335,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
                 Color fontColor = new Color(1f, 0.47f, 0.55f, alpha);
                 fontRegular.setColor(fontColor);
                 fontRegular.draw(batch, "Zoom = x" + model.getCurrentZoom(),
-                    0.1f, 5 * fontRegular.getData().lineHeight);
+                        0.1f, 5 * fontRegular.getData().lineHeight);
             }
         }
 
@@ -346,7 +348,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
             float width = 3f;
             float rectanglePadding = 0.1f;
             glyphLayout.setText(fontRegular, upgradeDescription, Color.WHITE, width, Align.left,
-                true);
+                    true);
 
             touchPos.set(Gdx.input.getX(), Gdx.input.getY() + cursorHeight);
             viewportUI.unproject(touchPos);
@@ -358,14 +360,14 @@ public class UpgradeScreen extends InputAdapter implements Screen {
             shape.begin(ShapeType.Filled);
             shape.setColor(Color.DARK_GRAY);
             shape.rect(touchPos.x - rectanglePadding,
-                touchPos.y - rectanglePadding - descriptionRect.height,
-                descriptionRect.width + 2f * rectanglePadding,
-                descriptionRect.height + 2f * rectanglePadding);
+                    touchPos.y - rectanglePadding - descriptionRect.height,
+                    descriptionRect.width + 2f * rectanglePadding,
+                    descriptionRect.height + 2f * rectanglePadding);
             shape.end();
 
             batch.begin();
             fontRegular.draw(batch, glyphLayout,
-                touchPos.x, touchPos.y);
+                    touchPos.x, touchPos.y);
             batch.end();
         }
     }
@@ -401,9 +403,9 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         int upgradeIndex = upgradeTypeMap.getOrDefault(type, 0);
 
         upgradeIcons[upgradeIndex].setX(
-            model.getGridOffsetX() + cp.col() + 0.5f * (1f - upgradeIconZoom));
+                model.getGridOffsetX() + cp.col() + 0.5f * (1f - upgradeIconZoom));
         upgradeIcons[upgradeIndex].setY(
-            model.getGridOffsetY() + cp.row() + 0.5f * (1f - upgradeIconZoom));
+                model.getGridOffsetY() + cp.row() + 0.5f * (1f - upgradeIconZoom));
         upgradeIcons[upgradeIndex].draw(batch);
     }
 
@@ -443,19 +445,20 @@ public class UpgradeScreen extends InputAdapter implements Screen {
      */
     public CellPosition convertMouseToGrid(float x, float y) {
         return new CellPosition(
-            (int) Math.floor(y - model.getGridOffsetY()),
-            (int) Math.floor(x - model.getGridOffsetX()));
+                (int) Math.floor(y - model.getGridOffsetY()),
+                (int) Math.floor(x - model.getGridOffsetX()));
     }
 
     private boolean cellPositionOnGrid(CellPosition cp) {
         int gridX = cp.col();
         int gridY = cp.row();
         return !(gridX < 0 || gridX > model.getGridWidth() - 1 ||
-            gridY < 0 || gridY > model.getGridHeight() - 1);
+                gridY < 0 || gridY > model.getGridHeight() - 1);
     }
 
     /**
-     * Updates camera zoom level. Used by controller to adjust view magnification based on user
+     * Updates camera zoom level. Used by controller to adjust view magnification
+     * based on user
      * input.
      *
      * @param zoom The new zoom level to apply to camera.
@@ -465,7 +468,8 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     }
 
     /**
-     * Updates camera position based on screen offset. Handles camera movement and staying within
+     * Updates camera position based on screen offset. Handles camera movement and
+     * staying within
      * world bounds.
      *
      * @param offsetX The x offset in screen coordinates.
@@ -488,7 +492,8 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     }
 
     /**
-     * Convert screen coordinate to world coordinates. Windows have origin at top-left, game world
+     * Convert screen coordinate to world coordinates. Windows have origin at
+     * top-left, game world
      * at bottom-left.
      *
      * @param pos The position vector to be converted.

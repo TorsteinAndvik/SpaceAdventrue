@@ -12,7 +12,7 @@ import view.ViewableSpaceBody;
 import java.util.Objects;
 
 public abstract class SpaceBody implements SpaceThing, Rotatable, Collideable, ViewableSpaceBody,
-    ControllableSpaceBody {
+        ControllableSpaceBody {
 
     private String name;
     private String description;
@@ -37,8 +37,8 @@ public abstract class SpaceBody implements SpaceThing, Rotatable, Collideable, V
      * @param radius        The radius of the SpaceBody (in meters).
      */
     public SpaceBody(String name, String description, CharacterType characterType,
-        Vector2 position, Vector2 velocity, float mass, float angle, float rotationSpeed,
-        float radius) {
+            Vector2 position, Vector2 velocity, float mass, float angle, float rotationSpeed,
+            float radius) {
         ArgumentChecker.requireNonEmptyString(name, "Name cannot be null or empty.");
         ArgumentChecker.requireNonEmptyString(description, "Description cannot be null or empty.");
         ArgumentChecker.requireNonNull(characterType, "The SpaceBody requires a character type.");
@@ -66,24 +66,27 @@ public abstract class SpaceBody implements SpaceThing, Rotatable, Collideable, V
      * @param y             The y-coordinate of the SpaceBody in space.
      * @param angle         The angle of rotation (in degrees).
      * @param radius        The radius of the SpaceBody (in meters).
-     * @implNote This constructor calls the full constructor with a default mass and rotation speed
-     * of 0.
+     * @implNote This constructor calls the full constructor with a default mass and
+     *           rotation speed
+     *           of 0.
      */
     public SpaceBody(String name, String description, CharacterType characterType, float x, float y,
-        float angle, float radius) {
+            float angle, float radius) {
         this(name, description, characterType, new Vector2(x, y), new Vector2(0, 0), 0, angle, 0,
-            radius);
+                radius);
     }
 
     /**
-     * Creates a default SpaceBody object with all positional, physical, and rotational values set
+     * Creates a default SpaceBody object with all positional, physical, and
+     * rotational values set
      * to zero.
      *
      * @param name          The name of the SpaceBody.
      * @param description   A brief description of the SpaceBody.
      * @param characterType The CharacterType representing the type of SpaceBody.
-     * @implNote This constructor initializes the SpaceBody at (0,0) with zero mass, angle,
-     * velocity, and radius.
+     * @implNote This constructor initializes the SpaceBody at (0,0) with zero mass,
+     *           angle,
+     *           velocity, and radius.
      */
     public SpaceBody(String name, String description, CharacterType characterType) {
         this(name, description, characterType, new Vector2(0, 0), new Vector2(0, 0), 0, 0, 0, 0);
@@ -98,6 +101,11 @@ public abstract class SpaceBody implements SpaceThing, Rotatable, Collideable, V
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 
     @Override

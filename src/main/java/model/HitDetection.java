@@ -1,18 +1,29 @@
 package model;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import model.Globals.Collideable;
-import model.Globals.DamageDealer;
-import model.Globals.Damageable;
 
 public class HitDetection {
 
-    private List<Collideable> colliders = new ArrayList<>();
+    private LinkedList<Collideable> colliders = new LinkedList<>();
+    private final SpaceGameModel model;
+
+    public HitDetection(SpaceGameModel model) {
+        this.model = model;
+    }
 
     public void addCollider(Collideable c) {
-        colliders.add(c);
+        colliders.addFirst(c);
+    }
+
+    public void addColliders(List<Collideable> colliders) {
+        this.colliders.addAll(colliders);
+    }
+
+    public void removeCollider(Collideable c) {
+        colliders.remove(c);
     }
 
     public boolean objectProximity(Collideable c1, Collideable c2) {
@@ -20,29 +31,25 @@ public class HitDetection {
         return true;
     }
 
-
     public void checkCollisions() {
         for (int i = 0; i < colliders.size(); i++) {
+            Collideable collA = colliders.get(i);
             for (int j = i + 1; j < colliders.size(); j++) {
-                if (objectProximity(colliders.get(i), colliders.get(j))) {
-                    if (checkCollision(colliders.get(i), colliders.get(j))) {
-                        if (colliders.get(i) instanceof DamageDealer && colliders.get(
-                            j) instanceof Damageable) {
-                            ((DamageDealer) colliders.get(i)).dealDamage(
-                                (Damageable) (colliders.get(j)));
-                        }
+                Collideable collB = colliders.get(j);
+
+                if (objectProximity(collA, collB)) {
+                    if (checkCollision(collA, collB)) {
+                        model.handleCollision(collA, collB);
                     }
                 }
             }
         }
     }
 
-
     private boolean checkCollision(Collideable target1, Collideable target2) {
-        float distance =
-            Math.abs(target1.getX() - target2.getX()) + Math.abs(target1.getY() - target2.getY());
+        float dx = target1.getX() - target2.getX();
+        float dy = target1.getY() - target2.getY();
+        float distance = (float) Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
         return (distance < target1.getRadius() + target2.getRadius());
     }
-
-
 }

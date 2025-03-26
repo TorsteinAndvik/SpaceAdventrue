@@ -80,11 +80,11 @@ public class SpaceScreen implements Screen {
     private void setupUpgradeHashMap() {
         upgradeIcons = new HashMap<>();
         upgradeIcons.put(UpgradeType.TURRET,
-            createSprite("images/upgrades/turret_laser_stage_0.png", 1, 1));
+                createSprite("images/upgrades/turret_laser_stage_0.png", 1, 1));
         upgradeIcons.put(UpgradeType.THRUSTER,
-            createSprite("images/upgrades/rocket_stage_0.png", 1, 1));
+                createSprite("images/upgrades/rocket_stage_0.png", 1, 1));
         upgradeIcons.put(UpgradeType.SHIELD,
-            createSprite("images/upgrades/shield_stage_0.png", 1, 1));
+                createSprite("images/upgrades/shield_stage_0.png", 1, 1));
     }
 
     private Sprite createSprite(String path, float width, float height) {
@@ -119,9 +119,7 @@ public class SpaceScreen implements Screen {
             asteroidSprite.draw(batch);
         }
 
-        for (int i = 0; i < model.getSpaceShips().length; i++) {
-            SpaceShip ship = model.getSpaceShips()[i];
-
+        for (SpaceShip ship : model.getSpaceShips()) {
             // Get transformation matrix from model
             Matrix4 transformMatrix = model.getShipTransformMatrix(ship);
             batch.setTransformMatrix(transformMatrix);
