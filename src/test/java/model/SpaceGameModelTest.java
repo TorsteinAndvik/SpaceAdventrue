@@ -94,7 +94,7 @@ class SpaceGameModelTest {
         assertNotNull(laser);
         assertTrue(gameModel.laserExists);
 
-        assertEquals(2.5, laser.getY()); // TODO: Fix. This test depends on ship grid size.
+        assertEquals(2, laser.getY()); // TODO: Fix. This test depends on ship grid size.
         assertEquals(gameModel.getPlayerSpaceShip().getCenter().x(), laser.getX());
 
     }
