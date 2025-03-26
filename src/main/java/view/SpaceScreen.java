@@ -126,7 +126,7 @@ public class SpaceScreen implements Screen {
             Matrix4 transformMatrix = model.getShipTransformMatrix(ship);
             batch.setTransformMatrix(transformMatrix);
 
-            for (GridCell<Fuselage> cell : ship.getShipStructure().iterable()) {
+            for (GridCell<Fuselage> cell : ship.getShipStructure()) {
                 if (cell.value() == null) {
                     continue;
                 }

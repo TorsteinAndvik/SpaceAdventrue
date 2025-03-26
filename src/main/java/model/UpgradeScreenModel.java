@@ -1,6 +1,9 @@
 package model;
 
 import com.badlogic.gdx.math.Vector2;
+import grid.CellPosition;
+import model.ShipComponents.Components.ViewableShipStructure;
+import model.utils.SpaceCalculator;
 
 /**
  * Model for the Upgrade Screen. Handles game state for upgrades, camera controls and UI
@@ -35,13 +38,16 @@ public class UpgradeScreenModel {
     private final Vector2 dragPosition;
     private final Vector2 lastDragPosition;
 
+    private final ViewableShipStructure shipStructure;
+
     /**
      * Initializes an upgrade screen model with vectors for tracking positions. Also initializes
      * camera zoom, and sets to middle zoom level.
      */
-    public UpgradeScreenModel(int width, int height) {
-        this.gridWidth = width;
-        this.gridHeight = height;
+    public UpgradeScreenModel(ViewableShipStructure shipStructure) {
+        this.shipStructure = shipStructure;
+        gridWidth = shipStructure.getWidth();
+        gridHeight = shipStructure.getHeight();
         cameraPosition = new Vector2();
         mousePosition = new Vector2();
         dragPosition = new Vector2();
@@ -118,7 +124,7 @@ public class UpgradeScreenModel {
     }
 
     /**
-     * Updates offset for upgrade grid adnd upgrade bar elements. Centers these elements in
+     * Updates offset for upgrade grid and upgrade bar elements. Centers these elements in
      * available screen space.
      *
      * @param worldWidth  The width of the game world in world units.
@@ -234,5 +240,42 @@ public class UpgradeScreenModel {
 
     public void setUpgradeInspectionModeIsActive(boolean value) {
         this.upgradeInspectionModeIsActive = value;
+    }
+
+    public ViewableShipStructure getPlayerShipStructure() {
+        return shipStructure;
+    }
+
+    public boolean isValidFuselagePosition(CellPosition pos) {
+
+        if (shipStructure.hasFuselage(pos)) {
+            return false;
+        }
+
+        for (CellPosition cp : SpaceCalculator.getOrthogonalNeighbours(pos)) {
+
+            if (!isOnGrid(cp)) {
+                continue;
+            }
+
+            if (shipStructure.hasFuselage(cp)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isValidUpgradePosition(CellPosition pos) {
+
+        if (shipStructure.hasFuselage(pos)) {
+            return !shipStructure.hasUpgrade(pos);
+        }
+
+        return false;
+    }
+
+    public boolean isOnGrid(CellPosition cp) {
+        return cp.row() >= 0 && cp.col() >= 0 && cp.row() < gridHeight
+                && cp.col() < gridWidth;
     }
 }

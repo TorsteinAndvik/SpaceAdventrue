@@ -4,21 +4,31 @@ import grid.CellPosition;
 import grid.Grid;
 import grid.GridCell;
 import grid.IGrid;
+import java.util.Iterator;
 import model.ShipComponents.ShipConfig;
 import model.ShipComponents.ShipConfig.ShipComponent;
+import model.ShipComponents.UpgradeType;
 import model.utils.FloatPair;
 
-public class ShipStructure {
+public class ShipStructure implements ViewableShipStructure {
 
     private IGrid<Fuselage> grid;
     private float mass;
     private FloatPair centerOfMass;
 
     public ShipStructure(int width, int height) {
-        this.grid = new Grid<>(height, width);
-        this.mass = 0f;
-        this.centerOfMass = new FloatPair(0f, 0f);
+        this(new Grid<>(height, width), 0f, new FloatPair(0f, 0f));
+
+
     }
+
+    public ShipStructure(IGrid<Fuselage> grid, float mass, FloatPair centerOfMass) {
+        this.grid = grid;
+        this.mass = mass;
+        this.centerOfMass = centerOfMass;
+
+    }
+
 
     public ShipStructure(ShipConfig shipConfig) {
         this(shipConfig.width, shipConfig.height);
@@ -41,12 +51,13 @@ public class ShipStructure {
     }
 
     /**
-     * Sets the fuselage at the given position if it is empty and the position is on the grid.
-     * Updates ship's mass and center of mass accordingly.
+     * Sets the fuselage at the given position if it is empty and the position is on
+     * the grid. Updates ship's mass and center of mass accordingly.
      *
      * @param pos      the <code>CellPosition</code> of the fuselage to be added
      * @param fuselage the <code>Fuselage</code> to be added
-     * @return true if the fuselage was successfully added (i.e. <code>pos</code> is valid and the
+     * @return true if the fuselage was successfully added (i.e. <code>pos</code> is
+     * valid and the
      * position was empty), false otherwise
      */
     public boolean set(CellPosition pos, Fuselage fuselage) {
@@ -80,12 +91,48 @@ public class ShipStructure {
     }
 
     /**
-     * Sets an empty <code>Fuselage</code> at the given position if it is empty and the position is
-     * on the grid. Updates ship's mass and center of mass accordingly.
+     * Computes the total mass and center of mass of a given {@link ShipStructure}.
+     * <p>
+     * The method iterates over all {@link Fuselage} components in the ship structure,
+     * accumulating their mass and computing a weighted average to determine the center of mass.
+     * </p>
+     *
+     * @param shipStructure The {@link ShipStructure} whose mass properties are to be calculated.
+     * @return A {@link MassProperties} object containing the total mass and center of mass.
+     */
+    public static MassProperties getMassProperties(ShipStructure shipStructure) {
+        float prevMass;
+        float newMass = 0;
+        FloatPair centerOfMass = new FloatPair(0f, 0f);
+
+        for (GridCell<Fuselage> cell : shipStructure.grid) {
+            prevMass = newMass;
+            if (cell.value() == null) {
+                continue;
+            }
+            CellPosition pos = cell.pos();
+
+            float currentMass = cell.value().getMass();
+            newMass = prevMass + currentMass;
+
+            float cmX = (prevMass * centerOfMass.x() + currentMass * pos.col()) / newMass;
+            float cmY = (prevMass * centerOfMass.y() + currentMass * pos.row()) / newMass;
+
+            centerOfMass = new FloatPair(cmX, cmY);
+
+        }
+        return new MassProperties(newMass, centerOfMass);
+    }
+
+    /**
+     * Sets an empty <code>Fuselage</code> at the given position if it is empty and
+     * the position is on the grid.
+     * Updates ship's mass and center of mass accordingly.
      *
      * @param pos the <code>CellPosition</code> to add an empty
      *            <code>Fuselage</code> to
-     * @return true if the fuselage was successfully added (i.e. <code>pos</code> is valid and the
+     * @return true if the fuselage was successfully added (i.e. <code>pos</code> is
+     * valid and the
      * position was empty), false otherwise
      */
     public boolean set(CellPosition pos) {
@@ -97,9 +144,11 @@ public class ShipStructure {
      * <code>CellPosition </code>, if the position is valid and holds an empty
      * <code>Fuselage</code>. Updates ship's mass and center of mass accordingly.
      *
-     * @param pos     the <code>CellPosition</code> where the upgrade is be to added to
+     * @param pos     the <code>CellPosition</code> where the upgrade is be to added
+     *                to
      * @param upgrade the <code>ShipUpgrade</code> to be added
-     * @return true if the upgrade was successfully added (i.e. <code>pos</code> is valid and the
+     * @return true if the upgrade was successfully added (i.e. <code>pos</code> is
+     * valid and the
      * position holds an empty <code>Fuselage</code>), false otherwise
      */
     public boolean addUpgrade(CellPosition pos, ShipUpgrade upgrade) {
@@ -129,17 +178,40 @@ public class ShipStructure {
      * @param center
      */
     public void expandGrid(int addedRows, int addedCols, boolean center) {
+        grid = getExpandedGrid(grid.copy(), addedRows, addedCols, center);
+
+        MassProperties massProperties = getMassProperties(this);
+        this.mass = massProperties.mass();
+        this.centerOfMass = massProperties.centerOfMass();
+
+    }
+
+    /**
+     * Expands the given grid by adding rows and columns, either centering the existing content or
+     * shifting it to the bottom-right.
+     *
+     * <p>If {@code addedRows} or {@code addedCols} are negative, or both are zero, the original
+     * grid is returned unchanged.</p>
+     *
+     * @param grid      The original grid to expand.
+     * @param addedRows The number of rows to add.
+     * @param addedCols The number of columns to add.
+     * @param center    If {@code true}, shifts the old grid content to keep it centered in the
+     *                  expanded grid. If {@code false}, shifts the content towards the
+     *                  bottom-right.
+     * @return A new {@code IGrid<Fuselage>} instance with the expanded dimensions, containing the
+     * original grid’s elements repositioned accordingly.
+     */
+    public static IGrid<Fuselage> getExpandedGrid(IGrid<Fuselage> grid, int addedRows,
+        int addedCols, boolean center) {
         if (addedRows < 0 || addedCols < 0 || (addedRows == 0 && addedCols == 0)) {
-            return;
+            return grid;
         }
 
-        IGrid<Fuselage> oldGridCopy = grid.copy();
+        IGrid<Fuselage> extGrid = new Grid<>(grid.rows() + addedRows,
+            grid.cols() + addedCols);
 
-        grid = new Grid<>(oldGridCopy.rows() + addedRows, oldGridCopy.cols() + addedCols);
-        this.mass = 0f;
-        this.centerOfMass = new FloatPair(0f, 0f);
-
-        for (GridCell<Fuselage> cell : oldGridCopy) {
+        for (GridCell<Fuselage> cell : grid) {
             if (cell.value() == null) {
                 continue;
             }
@@ -151,33 +223,60 @@ public class ShipStructure {
             } else {
                 cp = new CellPosition(cell.pos().row() + addedRows, cell.pos().col() + addedCols);
             }
-            set(cp, cell.value());
+            extGrid.set(cp, cell.value());
         }
+        return extGrid;
     }
 
-    public Iterable<GridCell<Fuselage>> iterable() {
-        return grid;
+    @Override
+    public Iterator<GridCell<Fuselage>> iterator() {
+        return this.grid.iterator();
     }
 
+    @Override
     public int getWidth() {
         return grid.cols();
     }
 
+    @Override
     public int getHeight() {
         return grid.rows();
     }
 
-    /**
-     * @return the total mass of the ship.
-     */
+    @Override
     public float getMass() {
         return this.mass;
     }
 
-    /**
-     * @return the ship's center of mass as a <code>FloatPair</code>
-     */
+    @Override
     public FloatPair getCenterOfMass() {
         return this.centerOfMass;
+    }
+
+    @Override
+    public boolean hasFuselage(CellPosition cp) {
+        try {
+            return this.grid.get(cp) != null;
+        } catch (IndexOutOfBoundsException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean hasUpgrade(CellPosition cp) {
+        if (!hasFuselage(cp)) {
+            return false;
+        }
+        return this.grid.get(cp).hasUpgrade();
+    }
+
+    @Override
+    public UpgradeType getUpgradeType(CellPosition cp) {
+        return this.grid.get(cp).getUpgrade().getType();
+    }
+
+    @Override
+    public IGrid<Fuselage> getGrid() {
+        return this.grid.copy();
     }
 }

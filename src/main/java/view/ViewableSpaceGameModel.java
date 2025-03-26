@@ -48,6 +48,10 @@ public interface ViewableSpaceGameModel {
      * @return an array of all <code>SpaceShip</code> objects in the model
      */
     SpaceShip[] getSpaceShips();
+    /**
+     * @return the players <code>SpaceShip</code> object
+     */
+    SpaceShip getPlayerSpaceShip();
 
     /**
      * Returns all Asteroid objects of the MVP //TODO: Remove this once a proper model is in place
