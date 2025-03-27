@@ -136,11 +136,11 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                 case ASTEROID:
                     for (Asteroid asteroid : asteroids) {
                         if (asteroid == c) {
-                            addAnimationState(c, AnimationType.EXPLOSION);
                             asteroids.remove(c);
                             break;
                         }
                     }
+                    addAnimationState(c, AnimationType.EXPLOSION);
                     break;
 
                 case BULLET: // TODO: Implement remove(Bullet) case
