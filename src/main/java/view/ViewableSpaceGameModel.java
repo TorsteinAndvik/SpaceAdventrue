@@ -4,6 +4,7 @@ import java.util.List;
 
 import grid.GridCell;
 import grid.IGridDimension;
+import model.Animation.AnimationCallback;
 import model.SpaceCharacters.Asteroid;
 import model.SpaceCharacters.Bullet;
 import model.SpaceCharacters.SpaceShip;
@@ -49,7 +50,8 @@ public interface ViewableSpaceGameModel {
     int getProgression();
 
     /**
-     * @return a <code>List</code> containing all <code>SpaceShip</code> objects in the model
+     * @return a <code>List</code> containing all <code>SpaceShip</code> objects in
+     *         the model
      */
 
     List<SpaceShip> getSpaceShips();
@@ -75,4 +77,11 @@ public interface ViewableSpaceGameModel {
      * @return the Bullet object
      */
     Bullet getLaser();
+
+    /**
+     * Sets the <code>AnimationCallback</code> for the model
+     * 
+     * @param view
+     */
+    public void setAnimationCallback(AnimationCallback view);
 }

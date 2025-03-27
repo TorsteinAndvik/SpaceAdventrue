@@ -102,6 +102,7 @@ public class TestSpaceGame extends Game implements SpaceGame {
                 this.spaceGameModel = new SpaceGameModel();
             }
             this.spaceScreen = new SpaceScreen(this, this.spaceGameModel);
+            this.spaceGameModel.setAnimationCallback(spaceScreen);
         }
 
         setScreen(this.spaceScreen);

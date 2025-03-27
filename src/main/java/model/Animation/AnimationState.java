@@ -1,4 +1,4 @@
-package view.Animation;
+package model.Animation;
 
 public interface AnimationState {
     public void update(float delta);

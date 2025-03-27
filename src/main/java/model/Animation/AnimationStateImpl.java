@@ -1,4 +1,6 @@
-package view.Animation;
+package model.Animation;
+
+import model.Globals.Collideable;
 
 public class AnimationStateImpl implements AnimationState {
     private final float x;
@@ -13,6 +15,14 @@ public class AnimationStateImpl implements AnimationState {
         this.y = y;
         this.width = width;
         this.height = height;
+        this.type = type;
+    }
+
+    public AnimationStateImpl(Collideable collideable, AnimationType type) {
+        this.x = collideable.getX();
+        this.y = collideable.getY();
+        this.width = 2f * collideable.getRadius();
+        this.height = 2f * collideable.getRadius();
         this.type = type;
     }
 

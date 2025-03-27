@@ -9,6 +9,10 @@ import com.badlogic.gdx.math.Matrix4;
 import controller.ControllableSpaceGameModel;
 import grid.GridCell;
 import grid.IGridDimension;
+import model.Animation.AnimationCallback;
+import model.Animation.AnimationState;
+import model.Animation.AnimationStateImpl;
+import model.Animation.AnimationType;
 import model.Globals.Collideable;
 import model.Globals.DamageDealer;
 import model.Globals.Damageable;
@@ -37,6 +41,8 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     private final Matrix3 rotationMatrix;
     private final Matrix4 transformMatrix;
+
+    private AnimationCallback view;
 
     public SpaceGameModel() {
         this.shipFactory = new ShipFactory();
@@ -76,7 +82,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
         Asteroid asteroidLarge = new Asteroid("large asteroid", "a large asteroid", 1f + radiusLarge, 6f + radiusLarge,
                 0.3f,
-                -0.10f, 1, 4f, 30f,
+                -0.10f, 4, 4f, 30f,
                 1f, true);
         asteroidLarge.setRotationSpeed(60f);
 
@@ -130,6 +136,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                 case ASTEROID:
                     for (Asteroid asteroid : asteroids) {
                         if (asteroid == c) {
+                            addAnimationState(c, AnimationType.EXPLOSION);
                             asteroids.remove(c);
                             break;
                         }
@@ -155,6 +162,10 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                     break;
             }
         }
+    }
+
+    private void addAnimationState(Collideable c, AnimationType type) {
+        view.addAnimationState(new AnimationStateImpl(c, type));
     }
 
     public void shoot() {
@@ -326,5 +337,10 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     @Override
     public Bullet getLaser() {
         return this.laser;
+    }
+
+    @Override
+    public void setAnimationCallback(AnimationCallback view) {
+        this.view = view;
     }
 }
