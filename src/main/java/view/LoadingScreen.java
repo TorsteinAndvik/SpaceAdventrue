@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
@@ -35,7 +36,7 @@ public class LoadingScreen implements Screen {
         this.manager = this.game.getAssetManager();
 
         Pixmap pm = new Pixmap(
-            manager.getFileHandleResolver().resolve("images/pointer_scifi_b.png")); // Custom cursor
+                manager.getFileHandleResolver().resolve("images/pointer_scifi_b.png")); // Custom cursor
         Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 8, 8));
 
         queueAssets();
@@ -67,6 +68,10 @@ public class LoadingScreen implements Screen {
         queueTexture("images/ui/T_Key_Light.png");
         queueTexture("images/ui/Esc_Key_Light.png");
 
+        // animations
+        queueTexture("images/animations/explosion_A.png");
+        queueTextureAtlas("images/animations/explosion_A.atlas");
+
         // Sounds:
         queueSound("audio/blipp.ogg");
 
@@ -92,6 +97,10 @@ public class LoadingScreen implements Screen {
         manager.load(new AssetDescriptor<>(Gdx.files.internal(path), Texture.class));
     }
 
+    private void queueTextureAtlas(String path) {
+        manager.load(new AssetDescriptor<>(Gdx.files.internal(path), TextureAtlas.class));
+    }
+
     private void queueSound(String path) {
         manager.load(new AssetDescriptor<>(Gdx.files.internal(path), Sound.class));
     }
@@ -101,7 +110,7 @@ public class LoadingScreen implements Screen {
         // First assets are queued for loading in the constructor (before this block of
         // code runs), and then calling .update() here will *actually* load them.
         if (manager.update(
-            17)) { // all assets are loaded 1 by 1 //update(17) blocks thread for at least 17ms
+                17)) { // all assets are loaded 1 by 1 //update(17) blocks thread for at least 17ms
             // before passing over to render(), gives roughly 60fps (depends on size of
             // asset, a large enough file might block for longer)
             // ONLY CALL ONE OF THESE FOR TESTING:

@@ -5,9 +5,13 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -18,10 +22,15 @@ import model.ShipComponents.UpgradeType;
 import model.SpaceCharacters.Asteroid;
 import model.SpaceCharacters.SpaceShip;
 import model.SpaceGameModel;
+import model.Animation.AnimationCallback;
+import model.Animation.AnimationState;
+import model.Animation.AnimationType;
 import model.utils.FloatPair;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 
-public class SpaceScreen implements Screen {
+public class SpaceScreen implements Screen, AnimationCallback {
 
     final SpaceGame game;
     final SpaceGameModel model;
@@ -41,6 +50,14 @@ public class SpaceScreen implements Screen {
 
     private HashMap<UpgradeType, Sprite> upgradeIcons;
 
+    // Animations
+    private LinkedList<AnimationState> animationStates;
+    private HashMap<AnimationType, Animation<TextureRegion>> animationMap;
+
+    // TODO: Add a list of AnimationStates
+    // TODO: loop over list of AnimationStates in render to draw animations
+    // TODO: remove AnimationStates from list once animation is done looping.
+
     public SpaceScreen(final SpaceGame game, final SpaceGameModel model) {
         this.game = game;
         this.batch = this.game.getSpriteBatch();
@@ -52,6 +69,7 @@ public class SpaceScreen implements Screen {
 
         setupFonts();
         loadSprites();
+        setupAnimationHashMap();
         setupUpgradeHashMap();
     }
 
@@ -77,6 +95,19 @@ public class SpaceScreen implements Screen {
         fuselageEnemy = createSprite("images/upgrades/fuselage_enemy_stage_0.png", 1, 1);
     }
 
+    private void setupAnimationHashMap() {
+        animationStates = new LinkedList<AnimationState>();
+        animationMap = new HashMap<>();
+
+        TextureAtlas atlas = manager.get("images/animations/explosion_A.atlas",
+                TextureAtlas.class);
+
+        Animation<TextureRegion> explosionAnimation = new Animation<TextureRegion>(1f / 12f,
+                atlas.findRegions("explosion"), PlayMode.NORMAL);
+
+        animationMap.put(AnimationType.EXPLOSION, explosionAnimation);
+    }
+
     private void setupUpgradeHashMap() {
         upgradeIcons = new HashMap<>();
         upgradeIcons.put(UpgradeType.TURRET,
@@ -88,10 +119,14 @@ public class SpaceScreen implements Screen {
     }
 
     private Sprite createSprite(String path, float width, float height) {
-        Sprite sprite = new Sprite(manager.get(path, Texture.class));
+        Sprite sprite = new Sprite(loadTexture(path));
         sprite.setSize(width, height);
         sprite.setOrigin(width / 2, height / 2);
         return sprite;
+    }
+
+    private Texture loadTexture(String path) {
+        return manager.get(path, Texture.class);
     }
 
     @Override
@@ -164,6 +199,24 @@ public class SpaceScreen implements Screen {
             laser.draw(batch);
         }
 
+        // TODO: Remove after testing of animations is done
+        // Draw explosion animation:
+
+        Iterator<AnimationState> animationStatesIterator = animationStates.iterator();
+        while (animationStatesIterator.hasNext()) {
+            AnimationState state = animationStatesIterator.next();
+            state.update(delta);
+
+            Animation<TextureRegion> animation = animationMap.get(state.getAnimationType());
+
+            if (animation.isAnimationFinished(state.getStateTime())) {
+                animationStatesIterator.remove();
+            } else {
+                TextureRegion currentFrame = animation.getKeyFrame(state.getStateTime());
+                batch.draw(currentFrame, state.getX(), state.getY(), state.getWidth(), state.getHeight());
+            }
+        }
+
         batch.end();
     }
 
@@ -192,6 +245,11 @@ public class SpaceScreen implements Screen {
     @Override
     public void show() {
         Gdx.input.setInputProcessor(controller);
+    }
+
+    @Override
+    public void addAnimationState(AnimationState state) {
+        this.animationStates.addFirst(state);
     }
 
 }

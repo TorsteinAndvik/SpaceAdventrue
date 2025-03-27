@@ -38,7 +38,7 @@ public class TestSpaceGame extends Game implements SpaceGame {
         screenViewport = new ScreenViewport();
         screenViewport.setUnitsPerPixel((float) METERS / (float) Gdx.graphics.getWidth());
         extendViewport = new ExtendViewport(Gdx.graphics.getWidth() / METERS,
-            Gdx.graphics.getHeight() / METERS);
+                Gdx.graphics.getHeight() / METERS);
 
         manager = new AssetManager();
 
@@ -102,6 +102,7 @@ public class TestSpaceGame extends Game implements SpaceGame {
                 this.spaceGameModel = new SpaceGameModel();
             }
             this.spaceScreen = new SpaceScreen(this, this.spaceGameModel);
+            this.spaceGameModel.setAnimationCallback(spaceScreen);
         }
 
         setScreen(this.spaceScreen);
