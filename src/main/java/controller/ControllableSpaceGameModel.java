@@ -1,6 +1,5 @@
 package controller;
 
-
 public interface ControllableSpaceGameModel {
 
     /**
@@ -9,7 +8,6 @@ public interface ControllableSpaceGameModel {
      * @param delta delta time in seconds
      */
     void update(float delta);
-
 
     /**
      * Moves the spaceship by a change in x and a change in y on the game board
@@ -36,7 +34,8 @@ public interface ControllableSpaceGameModel {
     void stopGame();
 
     /**
-     * Starts the game over. Clears the game board and resets every item in the game.
+     * Starts the game over. Clears the game board and resets every item in the
+     * game.
      */
     void startNewGame();
 
@@ -45,23 +44,24 @@ public interface ControllableSpaceGameModel {
      */
     void stopMoving();
 
+    // TODO: Update javadocs
     /**
      * Move the spaceship up.
      */
-    void moveUp();
+    void setAccelerateForward(boolean accelerate);
 
     /**
      * Move the spaceship down.
      */
-    void moveDown();
+    void setAccelerateBackward(boolean accelerate);
 
     /**
      * Move the spaceship left.
      */
-    void moveLeft();
+    void setAccelerateCounterClockwise(boolean accelerate);
 
     /**
      * Move the spaceship right.
      */
-    void moveRight();
+    void setAccelerateClockwise(boolean accelerate);
 }

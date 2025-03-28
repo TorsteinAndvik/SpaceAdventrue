@@ -64,6 +64,8 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     private void createSpaceShips() {
         this.player = new Player(
                 shipFactory.playerShip(), "player", "the player's spaceship", 1, 5, 1);
+        this.player.setRotationSpeed(0f);
+
         this.enemyShip = new EnemyShip(
                 shipFactory.createShipFromJson("enemy2.json"),
                 "enemy",
@@ -71,7 +73,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                 1,
                 1,
                 5,
-                0);
+                0f);
 
         this.spaceShips = new LinkedList<SpaceShip>(Arrays.asList(this.player, this.enemyShip));
     }
@@ -190,14 +192,15 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     // rendering of rotated ships in SpaceScreen
     public void rotateEnemy(float deltaTime) {
         if (!this.enemyRotationActive) {
+            this.enemyShip.setRotationSpeed(0f);
             return;
         }
 
         float rotationalVelocity = 45f; // degrees per second
         if (rotateClockwise) {
-            this.enemyShip.rotate(-rotationalVelocity * deltaTime);
+            this.enemyShip.setRotationSpeed(-rotationalVelocity);
         } else {
-            this.enemyShip.rotate(rotationalVelocity * deltaTime);
+            this.enemyShip.setRotationSpeed(rotationalVelocity);
         }
     }
 
@@ -276,23 +279,23 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     }
 
     @Override
-    public void moveUp() {
-        player.setY(player.getY() + 1);
+    public void setAccelerateForward(boolean accelerate) {
+        player.setAccelerateForward(accelerate);
     }
 
     @Override
-    public void moveDown() {
-        player.setY(player.getY() - 1);
+    public void setAccelerateBackward(boolean accelerate) {
+        player.setAccelerateBackward(accelerate);
     }
 
     @Override
-    public void moveLeft() {
-        player.setX(player.getX() - 1);
+    public void setAccelerateCounterClockwise(boolean accelerate) {
+        player.setAccelerateCounterClockwise(accelerate);
     }
 
     @Override
-    public void moveRight() {
-        player.setX(player.getX() + 1);
+    public void setAccelerateClockwise(boolean accelerate) {
+        player.setAccelerateClockwise(accelerate);
     }
 
     @Override

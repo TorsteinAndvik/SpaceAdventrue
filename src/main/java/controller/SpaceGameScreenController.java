@@ -28,19 +28,23 @@ public class SpaceGameScreenController extends GenericController {
     protected boolean handleKeyDown(int keycode) {
         return switch (keycode) {
             case Input.Keys.W -> {
-                model.moveUp();
+                model.setAccelerateForward(true);
+                model.setAccelerateBackward(false);
                 yield true;
             }
             case Input.Keys.S -> {
-                model.moveDown();
+                model.setAccelerateBackward(true);
+                model.setAccelerateForward(false);
                 yield true;
             }
             case Input.Keys.A -> {
-                model.moveLeft();
+                model.setAccelerateCounterClockwise(true);
+                model.setAccelerateClockwise(false);
                 yield true;
             }
             case Input.Keys.D -> {
-                model.moveRight();
+                model.setAccelerateClockwise(true);
+                model.setAccelerateCounterClockwise(false);
                 yield true;
             }
             case Input.Keys.SPACE -> {
@@ -71,10 +75,16 @@ public class SpaceGameScreenController extends GenericController {
     protected boolean handleKeyUp(int keycode) {
         switch (keycode) {
             case Input.Keys.W:
+                model.setAccelerateForward(false);
+                return true;
             case Input.Keys.S:
+                model.setAccelerateBackward(false);
+                return true;
             case Input.Keys.A:
+                model.setAccelerateCounterClockwise(false);
+                return true;
             case Input.Keys.D:
-                model.stopMoving();
+                model.setAccelerateClockwise(false);
                 return true;
             default:
                 return false;

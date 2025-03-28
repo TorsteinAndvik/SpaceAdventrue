@@ -1,8 +1,10 @@
 package model.utils;
 
 /**
- * Utility class for handling rotations in a 2D space. This class represents the rotation of an
- * object by managing its angle in degrees. It provides methods to set, get, and adjust the rotation
+ * Utility class for handling rotations in a 2D space. This class represents the
+ * rotation of an
+ * object by managing its angle in degrees. It provides methods to set, get, and
+ * adjust the rotation
  * angle.
  */
 public class Rotation {
