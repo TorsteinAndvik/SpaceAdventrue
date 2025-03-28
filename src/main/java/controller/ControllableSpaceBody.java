@@ -73,6 +73,13 @@ public interface ControllableSpaceBody {
     void setVelocity(Vector2 velocity);
 
     /**
+     * Scale the velocity of the SpaceBody by the given scalar.
+     * 
+     * @param scale The scalar to scale the velocity by.
+     */
+    void scaleVelocity(float scale);
+
+    /**
      * Get the rotation angle of an object
      *
      * @return the objects rotation angle
@@ -99,6 +106,13 @@ public interface ControllableSpaceBody {
      * @param deltaRotationSpeed the added rotation speed.
      */
     void addRotationSpeed(float deltaRotationSpeed);
+
+    /**
+     * Scale the rotational speed of the SpaceBody by the given scalar.
+     * 
+     * @param scale The scalar to scale the rotational velocity by.
+     */
+    void scaleRotationSpeed(float scale);
 
     /**
      * Rotates an object around a given angle

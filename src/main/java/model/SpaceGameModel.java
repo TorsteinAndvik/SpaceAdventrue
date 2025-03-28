@@ -10,7 +10,6 @@ import controller.ControllableSpaceGameModel;
 import grid.GridCell;
 import grid.IGridDimension;
 import model.Animation.AnimationCallback;
-import model.Animation.AnimationState;
 import model.Animation.AnimationStateImpl;
 import model.Animation.AnimationType;
 import model.Globals.Collideable;
@@ -63,7 +62,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     private void createSpaceShips() {
         this.player = new Player(
-                shipFactory.playerShip(), "player", "the player's spaceship", 1, 5, 1);
+                shipFactory.playerShip(), "player", "the player's spaceship", 1, 8, 1);
         this.player.setRotationSpeed(0f);
 
         this.enemyShip = new EnemyShip(

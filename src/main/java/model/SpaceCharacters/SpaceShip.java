@@ -80,25 +80,44 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
                     * (float) Math.cos(Math.toRadians(rotation.getAngle() + 90f)));
             addVelocityY(deltaTime * PhysicsParameters.accelerationLimitLongitudonal
                     * (float) Math.sin(Math.toRadians(rotation.getAngle() + 90f)));
-        }
-
-        if (accelerateBackward) {
+        } else if (accelerateBackward) {
             addVelocityX(-deltaTime * PhysicsParameters.accelerationLimitLongitudonal
                     * (float) Math.cos(Math.toRadians(rotation.getAngle() + 90f)));
             addVelocityY(-deltaTime * PhysicsParameters.accelerationLimitLongitudonal
                     * (float) Math.sin(Math.toRadians(rotation.getAngle() + 90f)));
+        } else {
+            dampVelocity(deltaTime);
         }
 
         if (accelerateClockwise) {
             addRotationSpeed(-deltaTime * PhysicsParameters.accelerationLimitRotational);
-        }
-
-        if (accelerateCounterClockwise) {
+        } else if (accelerateCounterClockwise) {
             addRotationSpeed(deltaTime * PhysicsParameters.accelerationLimitRotational);
+        } else {
+            dampRotation(deltaTime);
         }
 
         rotate(deltaTime * getRotationSpeed());
         position.add(velocity.x * deltaTime, velocity.y * deltaTime);
+    }
+
+    private void dampVelocity(float deltaTime) {
+        float deltaVelocity = deltaTime * PhysicsParameters.dampingLongitudonal;
+        if (getSpeed() < deltaVelocity) {
+            setVelocityX(0f);
+            setVelocityY(0f);
+        } else {
+            scaleVelocity(1f - deltaVelocity / getSpeed());
+        }
+    }
+
+    private void dampRotation(float deltaTime) {
+        float deltaRotVel = deltaTime * PhysicsParameters.dampingRotational;
+        if (Math.abs(getRotationSpeed()) < deltaRotVel) {
+            setRotationSpeed(0f);
+        } else {
+            scaleRotationSpeed(1f - deltaRotVel / (float) Math.abs(getRotationSpeed()));
+        }
     }
 
     /**

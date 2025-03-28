@@ -25,7 +25,7 @@ public class TestSpaceGame extends Game implements SpaceGame {
     private UpgradeScreen upgradeScreen;
     private SpaceGameModel spaceGameModel;
     private SpaceScreen spaceScreen;
-    private final int METERS = 9; // screen will be meters x meters (we use meters as Game coordinates, NOT pixel
+    private final int METERS = 15; // screen will be meters x meters (we use meters as Game coordinates, NOT pixel
     // coordinates - these depend on window size, awful to work with)
 
     @Override
@@ -44,7 +44,7 @@ public class TestSpaceGame extends Game implements SpaceGame {
 
         this.loadingScreen = new LoadingScreen(this);
 
-        this.setScreen(new LoadingScreen(this));
+        this.setScreen(loadingScreen);
     }
 
     @Override
