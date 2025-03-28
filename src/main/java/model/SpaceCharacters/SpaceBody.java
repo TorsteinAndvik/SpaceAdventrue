@@ -199,6 +199,12 @@ public abstract class SpaceBody implements SpaceThing, Rotatable, Collideable, V
     }
 
     @Override
+    public void scaleRotationSpeed(float scale) {
+        rotation.setRotationSpeed(scale * getRotationSpeed());
+        applyRotationalSpeedLimit();
+    }
+
+    @Override
     public void addRotationSpeed(float deltaRotationSpeed) {
         rotation.setRotationSpeed(rotation.getRotationSpeed() + deltaRotationSpeed);
         applyRotationalSpeedLimit();
@@ -232,6 +238,12 @@ public abstract class SpaceBody implements SpaceThing, Rotatable, Collideable, V
     public void setVelocity(Vector2 velocity) {
         Objects.requireNonNull(velocity, "Velocity can't be null.");
         this.velocity.set(velocity.x, velocity.y);
+        applySpeedLimit();
+    }
+
+    @Override
+    public void scaleVelocity(float scale) {
+        this.velocity.scl(scale);
         applySpeedLimit();
     }
 
