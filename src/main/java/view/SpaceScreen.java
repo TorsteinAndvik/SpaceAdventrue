@@ -169,6 +169,10 @@ public class SpaceScreen implements Screen, AnimationCallback {
             asteroidSprite.setX(asteroid.getX());
             asteroidSprite.setY(asteroid.getY());
             asteroidSprite.draw(batch);
+
+            laser.setX(asteroid.getX());
+            laser.setY(asteroid.getY());
+            laser.draw(batch);
         }
 
         for (SpaceShip ship : model.getSpaceShips()) {
@@ -300,7 +304,6 @@ public class SpaceScreen implements Screen, AnimationCallback {
 
     @Override
     public void resume() {
-
     }
 
     @Override

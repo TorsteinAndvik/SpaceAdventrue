@@ -114,6 +114,7 @@ public class LoadingScreen implements Screen {
             // before passing over to render(), gives roughly 60fps (depends on size of
             // asset, a large enough file might block for longer)
             // ONLY CALL ONE OF THESE FOR TESTING:
+            // TODO: Add startscreen, change screen using a controller
             // game.setUpgradeScreen();
             game.setSpaceScreen();
         }

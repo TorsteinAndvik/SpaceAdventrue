@@ -54,7 +54,8 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         this.hitDetection = new HitDetection(this);
 
         // TODO: Refactor?
-        hitDetection.addColliders(Arrays.asList(player, enemyShip, asteroids.get(0), asteroids.get(1)));
+        hitDetection
+                .addColliders(Arrays.asList(player, enemyShip, asteroids.get(0), asteroids.get(1), asteroids.get(2)));
 
         this.rotationMatrix = new Matrix3();
         this.transformMatrix = new Matrix4();
@@ -81,21 +82,27 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         float radiusLarge = 1f;
         float radiusSmall = 0.5f;
 
-        Asteroid asteroidLarge = new Asteroid("large asteroid", "a large asteroid", 1f + radiusLarge, 6f + radiusLarge,
+        Asteroid asteroidLarge = new Asteroid("large asteroid", "a large asteroid", 1f, 6f,
                 0.3f,
                 -0.10f, 4, 4f, 30f,
-                1f, true);
+                radiusLarge, true);
         asteroidLarge.setRotationSpeed(60f);
 
-        Asteroid asteroidSmall = new Asteroid("small asteroid", "a small asteroid", 5f + radiusSmall, 4f + radiusSmall,
+        Asteroid asteroidSmall = new Asteroid("small asteroid", "a small asteroid", 5f, 4f,
                 -0.1f,
-                0.15f, 1, 1f, 0f, 0.5f,
+                0.15f, 1, 1f, 0f, radiusSmall,
                 false);
         asteroidSmall.setRotationSpeed(-30f);
+
+        Asteroid asteroidSmall2 = new Asteroid("small asteroid", "a small asteroid", 6f,
+                5f,
+                -0.1f, 0.15f, 1, 1f, 0f, radiusSmall, false);
+        asteroidSmall2.setRotationSpeed(40f);
 
         this.asteroids = new LinkedList<>();
         asteroids.add(asteroidLarge);
         asteroids.add(asteroidSmall);
+        asteroids.add(asteroidSmall2);
     }
 
     private void addLaser(float x, float y, int hitPoints, float angle, float speed, float radius) {
