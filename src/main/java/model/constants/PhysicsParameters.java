@@ -12,6 +12,8 @@ public class PhysicsParameters {
 
     public static final float maxVelocityRotational = 180f;
 
+    public static final float laserVelocity = 8f;
+
     // if equal to maxVelocityLongitudonal, max speed is reached in 1s from 0m/s
     public static final float accelerationLimitLongitudonal = 10f;
 

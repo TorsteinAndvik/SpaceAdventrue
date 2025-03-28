@@ -29,12 +29,11 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     private Player player;
     private SpaceShip enemyShip; // TODO: Remove
-    private Bullet laser;
     private final ShipFactory shipFactory;
     private LinkedList<SpaceShip> spaceShips;
     private final HitDetection hitDetection;
     private LinkedList<Asteroid> asteroids;
-    public boolean laserExists;
+    private LinkedList<Bullet> lasers;
     private boolean enemyRotationActive;
     private boolean rotateClockwise;
 
@@ -50,11 +49,12 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
         createAsteroids();
 
-        this.laser = new Bullet("laser", "a laser shot", 0f, 0f, 1, 1f, 0f, 1f);
+        this.lasers = new LinkedList<Bullet>();
 
         this.hitDetection = new HitDetection(this);
-        hitDetection.addColliders(Arrays.asList(player, enemyShip, asteroids.get(0), asteroids.get(1), this.laser)); // TODO:
-                                                                                                                     // Refactor
+
+        // TODO: Refactor?
+        hitDetection.addColliders(Arrays.asList(player, enemyShip, asteroids.get(0), asteroids.get(1)));
 
         this.rotationMatrix = new Matrix3();
         this.transformMatrix = new Matrix4();
@@ -98,12 +98,18 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         asteroids.add(asteroidSmall);
     }
 
+    private void addLaser(float x, float y, int hitPoints, float angle, float speed, float radius) {
+        lasers.addFirst(new Bullet("laser", "a laser shot", x, y, hitPoints, angle, speed, radius));
+    }
+
     @Override
     public void update(float delta) {
         for (Asteroid asteroid : asteroids) {
             asteroid.update(delta);
         }
-        laser.update(delta);
+        for (Bullet laser : lasers) {
+            laser.update(delta);
+        }
         for (SpaceShip spaceShip : spaceShips) {
             spaceShip.update(delta);
         }
@@ -170,21 +176,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     }
 
     public void shoot() {
-        // TODO: This is awful, never do this.
-        this.laser = new Bullet("laser", "a laser shot", player.getCenter().x(),
-                player.getCenter().y(), 1, 1, 0,
-                1);
-        laserExists = true;
-    }
-
-    public void moveLaser() {
-        // TODO: This is also awful.
-        laser.setY(laser.getY() + 1);
-        if (laser.getY() >= 9) {
-            System.out.println("laser deleted offscreen");
-            laserExists = false;
-            this.laser = null;
-        }
+        addLaser(player.getCenter().x(), player.getCenter().y(), 1, 0f, 0f, 0.25f);
     }
 
     // TODO: Remove this once proper model is in place - currently used for testing
@@ -337,8 +329,8 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     }
 
     @Override
-    public Bullet getLaser() {
-        return this.laser;
+    public List<Bullet> getLasers() {
+        return this.lasers;
     }
 
     @Override

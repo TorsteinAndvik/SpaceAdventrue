@@ -70,13 +70,11 @@ public interface ViewableSpaceGameModel {
     List<Asteroid> getAsteroids();
 
     /**
-     * Returns the Bullet object (laser) of the MVP //TODO: Remove this once a
-     * proper model is in
-     * place
+     * Return all lasers in the model
      *
-     * @return the Bullet object
+     * @return a <code>List</code> of <code>Bullet</code> objects
      */
-    Bullet getLaser();
+    List<Bullet> getLasers();
 
     /**
      * Sets the <code>AnimationCallback</code> for the model

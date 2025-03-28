@@ -23,6 +23,7 @@ import grid.GridCell;
 import model.ShipComponents.Components.Fuselage;
 import model.ShipComponents.UpgradeType;
 import model.SpaceCharacters.Asteroid;
+import model.SpaceCharacters.Bullet;
 import model.SpaceCharacters.SpaceShip;
 import model.constants.PhysicsParameters;
 import model.SpaceGameModel;
@@ -209,15 +210,13 @@ public class SpaceScreen implements Screen, AnimationCallback {
         // Reset the transform matrix to the identity matrix
         batch.setTransformMatrix(new Matrix4().idt());
 
-        if (model.laserExists) { // TODO: refactor once cannon-firing logic is added to model
-            laser.setX(model.getLaser().getX() - 0.125f);
-            laser.setY(model.getLaser().getY() + 0.875f);
-            laser.draw(batch);
+        for (Bullet laser : model.getLasers()) {
+            this.laser.setX(laser.getX() - 0.125f);
+            this.laser.setY(laser.getY() + 0.875f);
+            this.laser.draw(batch);
         }
 
-        // TODO: Remove after testing of animations is done
-        // Draw explosion animation:
-
+        // Draw explosion animations:
         Iterator<AnimationState> animationStatesIterator = animationStates.iterator();
         while (animationStatesIterator.hasNext()) {
             AnimationState state = animationStatesIterator.next();
