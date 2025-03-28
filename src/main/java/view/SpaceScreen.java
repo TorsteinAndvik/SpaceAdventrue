@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -13,6 +14,8 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import controller.SpaceGameScreenController;
@@ -37,6 +40,10 @@ public class SpaceScreen implements Screen, AnimationCallback {
     private final SpaceGameScreenController controller;
     private final SpriteBatch batch;
     private final FitViewport viewport;
+    private final OrthographicCamera camera;
+    private Vector3 cameraPosition;
+    private Vector2 lerpPosition;
+
     private BitmapFont fontBold; // Agency FB Bold
     private BitmapFont fontRegular; // Agency FB Regular
     private final AssetManager manager;
@@ -63,6 +70,7 @@ public class SpaceScreen implements Screen, AnimationCallback {
         this.batch = this.game.getSpriteBatch();
         this.manager = this.game.getAssetManager();
         this.viewport = game.getFitViewport();
+        this.camera = (OrthographicCamera) viewport.getCamera();
 
         this.model = model;
         this.controller = new SpaceGameScreenController(this, model, game);
@@ -140,6 +148,7 @@ public class SpaceScreen implements Screen, AnimationCallback {
 
         viewport.apply();
         batch.setProjectionMatrix(viewport.getCamera().combined);
+        updateCamera();
 
         fontBold.setColor(Color.GREEN);
         fontRegular.setColor(Color.RED);
@@ -223,6 +232,16 @@ public class SpaceScreen implements Screen, AnimationCallback {
         batch.end();
     }
 
+    private void updateCamera() {
+        float a = 0.1f;
+        float aInv = 1f - a;
+
+        float x = (aInv * camera.position.x) + (a * model.getPlayerSpaceShip().getCenter().x());
+        float y = (aInv * camera.position.y) + (a * model.getPlayerSpaceShip().getCenter().y());
+
+        camera.position.set(x, y, 0f);
+    }
+
     @Override
     public void dispose() {
     }
@@ -238,11 +257,13 @@ public class SpaceScreen implements Screen, AnimationCallback {
 
     @Override
     public void resize(int width, int height) {
-        viewport.update(width, height, true);
+        viewport.update(width, height, false);
+        camera.position.set(model.getPlayerSpaceShip().getCenter().x(), model.getPlayerSpaceShip().getCenter().y(), 0f);
     }
 
     @Override
     public void resume() {
+
     }
 
     @Override
