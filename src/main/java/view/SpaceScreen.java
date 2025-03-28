@@ -24,6 +24,7 @@ import model.ShipComponents.Components.Fuselage;
 import model.ShipComponents.UpgradeType;
 import model.SpaceCharacters.Asteroid;
 import model.SpaceCharacters.SpaceShip;
+import model.constants.PhysicsParameters;
 import model.SpaceGameModel;
 import model.Animation.AnimationCallback;
 import model.Animation.AnimationState;
@@ -40,9 +41,12 @@ public class SpaceScreen implements Screen, AnimationCallback {
     private final SpaceGameScreenController controller;
     private final SpriteBatch batch;
     private final FitViewport viewport;
+
     private final OrthographicCamera camera;
     private Vector3 cameraPosition;
     private Vector2 lerpPosition;
+    private final float zoomMin = 1f;
+    private final float zoomMax = 2f;
 
     private BitmapFont fontBold; // Agency FB Bold
     private BitmapFont fontRegular; // Agency FB Regular
@@ -232,14 +236,48 @@ public class SpaceScreen implements Screen, AnimationCallback {
         batch.end();
     }
 
+    /**
+     * perform one-dimensional linear interpolation
+     */
+    private float lerp(float source, float target, float alpha) {
+        float alphaInverse = 1f - alpha;
+        return alpha * target + alphaInverse * source;
+    }
+
+    private FloatPair lerp(FloatPair source, FloatPair target, float alpha) {
+        float x = lerp(source.x(), target.x(), alpha);
+        float y = lerp(source.y(), target.y(), alpha);
+        return new FloatPair(x, y);
+    }
+
+    private FloatPair lerp(Vector3 source, FloatPair target, float alpha) {
+        FloatPair sourceFloatPair = new FloatPair(source.x, source.y);
+        return lerp(sourceFloatPair, target, alpha);
+    }
+
     private void updateCamera() {
-        float a = 0.1f;
-        float aInv = 1f - a;
+        cameraLerpToPlayer();
+        cameraZoom();
+    }
 
-        float x = (aInv * camera.position.x) + (a * model.getPlayerSpaceShip().getCenter().x());
-        float y = (aInv * camera.position.y) + (a * model.getPlayerSpaceShip().getCenter().y());
+    private void cameraLerpToPlayer() {
+        FloatPair newPosition = lerp(camera.position, model.getPlayerSpaceShip().getCenter(), 0.1f);
+        setCameraPosition(newPosition);
+    }
 
-        camera.position.set(x, y, 0f);
+    private void setCameraPosition(FloatPair pos) {
+        camera.position.set(pos.x(), pos.y(), 0f);
+    }
+
+    private float getZoomLevel() {
+        float velocityRatio = model.getPlayerSpaceShip().getSpeed() / PhysicsParameters.maxVelocityLongitudonal;
+        float zoomRange = zoomMax - zoomMin;
+        return zoomMin + velocityRatio * zoomRange;
+    }
+
+    private void cameraZoom() {
+        float zoom = lerp(camera.zoom, getZoomLevel(), 0.01f);
+        camera.zoom = zoom;
     }
 
     @Override
