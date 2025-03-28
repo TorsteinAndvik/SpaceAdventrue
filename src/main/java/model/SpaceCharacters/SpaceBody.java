@@ -5,6 +5,7 @@ import controller.ControllableSpaceBody;
 import model.Globals.Collideable;
 import model.Globals.Rotatable;
 import model.Globals.SpaceThing;
+import model.constants.PhysicsParameters;
 import model.utils.ArgumentChecker;
 import model.utils.Rotation;
 import view.ViewableSpaceBody;
@@ -17,9 +18,9 @@ public abstract class SpaceBody implements SpaceThing, Rotatable, Collideable, V
     private String name;
     private String description;
     private final CharacterType characterType;
-    private final Rotation rotation;
-    private final Vector2 position;
-    private final Vector2 velocity;
+    protected final Rotation rotation;
+    protected final Vector2 position;
+    protected final Vector2 velocity;
     private float mass;
     private float radius;
 
@@ -194,22 +195,44 @@ public abstract class SpaceBody implements SpaceThing, Rotatable, Collideable, V
     @Override
     public void setRotationSpeed(float rotationSpeed) {
         rotation.setRotationSpeed(rotationSpeed);
+        applyRotationalSpeedLimit();
+    }
+
+    @Override
+    public void addRotationSpeed(float deltaRotationSpeed) {
+        rotation.setRotationSpeed(rotation.getRotationSpeed() + deltaRotationSpeed);
+        applyRotationalSpeedLimit();
     }
 
     @Override
     public void setVelocityX(float x) {
         velocity.x = x;
+        applySpeedLimit();
     }
 
     @Override
     public void setVelocityY(float y) {
         velocity.y = y;
+        applySpeedLimit();
+    }
+
+    @Override
+    public void addVelocityX(float deltaX) {
+        velocity.x += deltaX;
+        applySpeedLimit();
+    }
+
+    @Override
+    public void addVelocityY(float deltaY) {
+        velocity.y += deltaY;
+        applySpeedLimit();
     }
 
     @Override
     public void setVelocity(Vector2 velocity) {
         Objects.requireNonNull(velocity, "Velocity can't be null.");
         this.velocity.set(velocity.x, velocity.y);
+        applySpeedLimit();
     }
 
     @Override
@@ -230,5 +253,19 @@ public abstract class SpaceBody implements SpaceThing, Rotatable, Collideable, V
     @Override
     public void update(float deltaTime) {
         move(deltaTime);
+    }
+
+    private void applySpeedLimit() {
+        if (getSpeed() > PhysicsParameters.maxVelocityLongitudonal) {
+            velocity.scl(PhysicsParameters.maxVelocityLongitudonal / getSpeed());
+        }
+    }
+
+    private void applyRotationalSpeedLimit() {
+        if (getRotationSpeed() < -PhysicsParameters.maxVelocityRotational) {
+            rotation.setRotationSpeed(-PhysicsParameters.maxVelocityRotational);
+        } else if (getRotationSpeed() > PhysicsParameters.maxVelocityRotational) {
+            rotation.setRotationSpeed(PhysicsParameters.maxVelocityRotational);
+        }
     }
 }

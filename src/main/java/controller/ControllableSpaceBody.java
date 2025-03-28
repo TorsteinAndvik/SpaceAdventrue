@@ -3,7 +3,8 @@ package controller;
 import com.badlogic.gdx.math.Vector2;
 
 /**
- * Represents a controllable SpaceBody that can be moved and updated dynamically. Provides methods
+ * Represents a controllable SpaceBody that can be moved and updated
+ * dynamically. Provides methods
  * to manipulate position, velocity, mass, and radius.
  */
 public interface ControllableSpaceBody {
@@ -51,6 +52,20 @@ public interface ControllableSpaceBody {
     void setVelocityY(float y);
 
     /**
+     * Adds to the x-component of the SpaceBody's velocity.
+     *
+     * @param deltaX The added velocity in the x direction.
+     */
+    void addVelocityX(float deltaX);
+
+    /**
+     * Adds to the y-component of the SpaceBody's velocity.
+     *
+     * @param deltaY The added velocity in the y direction.
+     */
+    void addVelocityY(float deltaY);
+
+    /**
      * Sets the velocity of the SpaceBody using a 2D vector.
      *
      * @param velocity The velocity vector (x, y).
@@ -71,7 +86,6 @@ public interface ControllableSpaceBody {
      */
     void setRotation(float angle);
 
-
     /**
      * Set the rotation speed of a rotatable object.
      *
@@ -80,12 +94,18 @@ public interface ControllableSpaceBody {
     void setRotationSpeed(float rotationSpeed);
 
     /**
+     * Adds to the rotation speed of a rotatable object.
+     *
+     * @param deltaRotationSpeed the added rotation speed.
+     */
+    void addRotationSpeed(float deltaRotationSpeed);
+
+    /**
      * Rotates an object around a given angle
      *
      * @param deltaAngle the angle to rotate
      */
     void rotate(float deltaAngle);
-
 
     /**
      * Updates the state of the SpaceBody.
@@ -93,6 +113,5 @@ public interface ControllableSpaceBody {
      * @param deltaTime the time since last update.
      */
     void update(float deltaTime);
-
 
 }

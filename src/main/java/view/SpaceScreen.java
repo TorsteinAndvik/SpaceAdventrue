@@ -88,10 +88,13 @@ public class SpaceScreen implements Screen, AnimationCallback {
 
     private void loadSprites() {
         asteroidLarge = createSprite("images/space/asteroid_0.png", 2, 2);
+
         asteroidSmall = createSprite("images/space/asteroid_1.png", 1, 1);
+
         laser = createSprite("images/space/laser_shot_0.png", 0.25f, 0.25f);
 
         fuselagePlayer = createSprite("images/upgrades/fuselage_alt_stage_0.png", 1, 1);
+
         fuselageEnemy = createSprite("images/upgrades/fuselage_enemy_stage_0.png", 1, 1);
     }
 
