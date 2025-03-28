@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -13,6 +14,8 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import controller.SpaceGameScreenController;
@@ -21,6 +24,7 @@ import model.ShipComponents.Components.Fuselage;
 import model.ShipComponents.UpgradeType;
 import model.SpaceCharacters.Asteroid;
 import model.SpaceCharacters.SpaceShip;
+import model.constants.PhysicsParameters;
 import model.SpaceGameModel;
 import model.Animation.AnimationCallback;
 import model.Animation.AnimationState;
@@ -37,6 +41,13 @@ public class SpaceScreen implements Screen, AnimationCallback {
     private final SpaceGameScreenController controller;
     private final SpriteBatch batch;
     private final FitViewport viewport;
+
+    private final OrthographicCamera camera;
+    private Vector3 cameraPosition;
+    private Vector2 lerpPosition;
+    private final float zoomMin = 1f;
+    private final float zoomMax = 2f;
+
     private BitmapFont fontBold; // Agency FB Bold
     private BitmapFont fontRegular; // Agency FB Regular
     private final AssetManager manager;
@@ -63,6 +74,7 @@ public class SpaceScreen implements Screen, AnimationCallback {
         this.batch = this.game.getSpriteBatch();
         this.manager = this.game.getAssetManager();
         this.viewport = game.getFitViewport();
+        this.camera = (OrthographicCamera) viewport.getCamera();
 
         this.model = model;
         this.controller = new SpaceGameScreenController(this, model, game);
@@ -140,6 +152,7 @@ public class SpaceScreen implements Screen, AnimationCallback {
 
         viewport.apply();
         batch.setProjectionMatrix(viewport.getCamera().combined);
+        updateCamera();
 
         fontBold.setColor(Color.GREEN);
         fontRegular.setColor(Color.RED);
@@ -223,6 +236,50 @@ public class SpaceScreen implements Screen, AnimationCallback {
         batch.end();
     }
 
+    /**
+     * perform one-dimensional linear interpolation
+     */
+    private float lerp(float source, float target, float alpha) {
+        float alphaInverse = 1f - alpha;
+        return alpha * target + alphaInverse * source;
+    }
+
+    private FloatPair lerp(FloatPair source, FloatPair target, float alpha) {
+        float x = lerp(source.x(), target.x(), alpha);
+        float y = lerp(source.y(), target.y(), alpha);
+        return new FloatPair(x, y);
+    }
+
+    private FloatPair lerp(Vector3 source, FloatPair target, float alpha) {
+        FloatPair sourceFloatPair = new FloatPair(source.x, source.y);
+        return lerp(sourceFloatPair, target, alpha);
+    }
+
+    private void updateCamera() {
+        cameraLerpToPlayer();
+        cameraZoom();
+    }
+
+    private void cameraLerpToPlayer() {
+        FloatPair newPosition = lerp(camera.position, model.getPlayerSpaceShip().getCenter(), 0.1f);
+        setCameraPosition(newPosition);
+    }
+
+    private void setCameraPosition(FloatPair pos) {
+        camera.position.set(pos.x(), pos.y(), 0f);
+    }
+
+    private float getZoomLevel() {
+        float velocityRatio = model.getPlayerSpaceShip().getSpeed() / PhysicsParameters.maxVelocityLongitudonal;
+        float zoomRange = zoomMax - zoomMin;
+        return zoomMin + velocityRatio * zoomRange;
+    }
+
+    private void cameraZoom() {
+        float zoom = lerp(camera.zoom, getZoomLevel(), 0.01f);
+        camera.zoom = zoom;
+    }
+
     @Override
     public void dispose() {
     }
@@ -238,11 +295,13 @@ public class SpaceScreen implements Screen, AnimationCallback {
 
     @Override
     public void resize(int width, int height) {
-        viewport.update(width, height, true);
+        viewport.update(width, height, false);
+        camera.position.set(model.getPlayerSpaceShip().getCenter().x(), model.getPlayerSpaceShip().getCenter().y(), 0f);
     }
 
     @Override
     public void resume() {
+
     }
 
     @Override
