@@ -13,7 +13,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
-import com.badlogic.gdx.math.Frustum;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
@@ -47,7 +46,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
 
     private final OrthographicCamera camera;
     private final float zoomMin = 1f;
-    private final float zoomMax = 2f;
+    private final float zoomMax = 1.5f;
 
     private BitmapFont fontBold; // Agency FB Bold
     private BitmapFont fontRegular; // Agency FB Regular
@@ -65,10 +64,6 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     // Animations
     private LinkedList<AnimationState> animationStates;
     private HashMap<AnimationType, Animation<TextureRegion>> animationMap;
-
-    // TODO: Add a list of AnimationStates
-    // TODO: loop over list of AnimationStates in render to draw animations
-    // TODO: remove AnimationStates from list once animation is done looping.
 
     public SpaceScreen(final SpaceGame game, final SpaceGameModel model) {
         this.game = game;
@@ -205,6 +200,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         batch.setTransformMatrix(new Matrix4().idt());
 
         for (Bullet laser : model.getLasers()) {
+            this.laser.setRotation(laser.getRotationAngle() - 90f);
             this.laser.setCenterX(laser.getX());
             this.laser.setCenterY(laser.getY());
             this.laser.draw(batch);
@@ -226,19 +222,6 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
                         2f * state.getRadius(), 2f * state.getRadius());
             }
         }
-
-        // Draw bounds for testing.
-        Rectangle bounds = getBounds();
-
-        // Bottom left
-        laser.setCenterX(bounds.x);
-        laser.setCenterY(bounds.y);
-        laser.draw(batch);
-
-        // Top right
-        laser.setCenterX(bounds.x + bounds.width);
-        laser.setCenterY(bounds.y + bounds.height);
-        laser.draw(batch);
 
         batch.end();
     }

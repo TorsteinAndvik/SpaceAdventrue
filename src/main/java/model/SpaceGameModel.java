@@ -88,7 +88,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
         Asteroid asteroidLarge = new Asteroid("large asteroid", "a large asteroid", 1f, 6f,
                 0.3f,
-                -0.10f, 400, 4f, 30f,
+                -0.10f, 10, 4f, 30f,
                 radiusLarge, true);
         asteroidLarge.setRotationSpeed(60f);
 
@@ -150,6 +150,15 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
      */
     private void cullLaser(Bullet laser) {
         Rectangle bounds = this.screenBoundsProvider.getBounds();
+
+        if (laser.getX() + laser.getRadius() < bounds.x
+                || laser.getY() + laser.getRadius() < bounds.y
+                || laser.getX() - laser.getRadius() > bounds.x + bounds.width
+                || laser.getY() - laser.getRadius() > bounds.y + bounds.height) {
+            hitDetection.removeCollider(laser);
+            lasers.remove(laser);
+            System.out.println("laser removed out of bounds");
+        }
     }
 
     void handleCollision(Collideable A, Collideable B) {
