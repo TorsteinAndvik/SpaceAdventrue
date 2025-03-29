@@ -15,7 +15,7 @@ public class Main {
         }
         Lwjgl3ApplicationConfiguration cfg = new Lwjgl3ApplicationConfiguration();
         cfg.setTitle("TestSpaceGame");
-        cfg.setWindowedMode(12 * 80, 12 * 80);
+        cfg.setWindowedMode(15 * 80, 15 * 80);
         new Lwjgl3Application(new TestSpaceGame(), cfg);
     }
 }

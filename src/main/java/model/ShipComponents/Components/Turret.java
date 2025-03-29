@@ -15,6 +15,6 @@ public class Turret extends ShipUpgrade {
     }
 
     public static FloatPair turretBarrelLocation() {
-        return new FloatPair(0.5f, 0.875f);
+        return new FloatPair(0f, 0.375f);
     }
 }
