@@ -5,7 +5,6 @@ import controller.ControllableSpaceBody;
 import model.Globals.Collideable;
 import model.Globals.Rotatable;
 import model.Globals.SpaceThing;
-import model.constants.PhysicsParameters;
 import model.utils.ArgumentChecker;
 import model.utils.Rotation;
 import view.ViewableSpaceBody;

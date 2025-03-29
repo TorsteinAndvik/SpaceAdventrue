@@ -1,6 +1,7 @@
 package model;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 
 import controller.ControllableSpaceGameModel;
+import grid.CellPosition;
 import grid.GridCell;
 import grid.IGridDimension;
 import model.Animation.AnimationCallback;
@@ -18,6 +20,7 @@ import model.Globals.Collideable;
 import model.Globals.DamageDealer;
 import model.Globals.Damageable;
 import model.ShipComponents.ShipFactory;
+import model.ShipComponents.Components.Turret;
 import model.SpaceCharacters.Asteroid;
 import model.SpaceCharacters.Bullet;
 import model.SpaceCharacters.EnemyShip;
@@ -64,7 +67,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     private void createSpaceShips() {
         this.player = new Player(
-                shipFactory.playerShip(), "player", "the player's spaceship", 1, 8, 1);
+                shipFactory.createShipFromJson("enemy2.json"), "player", "the player's spaceship", 1, 8, 1);
         this.player.setRotationSpeed(0f);
 
         EnemyShip enemyShip = new EnemyShip(
@@ -119,20 +122,20 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         hitDetection.addCollider(laser);
     }
 
-    private void addLaser(FloatPair pos, int hitPoints, float angle, float speed, float radius,
-            boolean isPlayerLaser) {
-        addLaser(pos.x(), pos.y(), hitPoints, angle, speed, radius, isPlayerLaser);
-    }
-
     @Override
     public void update(float delta) {
         for (Asteroid asteroid : asteroids) {
             asteroid.update(delta);
         }
 
-        for (Bullet laser : lasers) {
+        Iterator<Bullet> laserIterator = lasers.iterator();
+        while (laserIterator.hasNext()) {
+            Bullet laser = laserIterator.next();
             laser.update(delta);
-            cullLaser(laser);
+            if (cullLaser(laser)) {// Remove if too distant to player
+                hitDetection.removeCollider(laser);
+                laserIterator.remove();
+            }
         }
 
         for (SpaceShip spaceShip : spaceShips) {
@@ -148,17 +151,13 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     /**
      * Delete a laser if it moves out of range.
      */
-    private void cullLaser(Bullet laser) {
+    private boolean cullLaser(Bullet laser) {
         Rectangle bounds = this.screenBoundsProvider.getBounds();
 
-        if (laser.getX() + laser.getRadius() < bounds.x
+        return (laser.getX() + laser.getRadius() < bounds.x
                 || laser.getY() + laser.getRadius() < bounds.y
                 || laser.getX() - laser.getRadius() > bounds.x + bounds.width
-                || laser.getY() - laser.getRadius() > bounds.y + bounds.height) {
-            hitDetection.removeCollider(laser);
-            lasers.remove(laser);
-            System.out.println("laser removed out of bounds");
-        }
+                || laser.getY() - laser.getRadius() > bounds.y + bounds.height);
     }
 
     void handleCollision(Collideable A, Collideable B) {
@@ -252,8 +251,22 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     }
 
     public void shoot() {
-        addLaser(getPlayerCenterOfMass(), 1, player.getRotationAngle() + 90f, PhysicsParameters.laserVelocity, 0.125f,
-                true);
+        for (CellPosition cell : player.getTurretPositions()) {
+            float x0 = (float) cell.col() + Turret.turretBarrelLocation().x() - player.getRelativeCenterOfMass().x();
+            float y0 = (float) cell.row() + Turret.turretBarrelLocation().y() - player.getRelativeCenterOfMass().y();
+            float r = (float) Math.sqrt(Math.pow(x0, 2) + Math.pow(y0, 2));
+
+            float offsetAngle = (float) Math.toDegrees(Math.atan2(y0, x0));
+
+            float x1 = r * (float) Math.cos(Math.toRadians(player.getRotationAngle() + offsetAngle));
+            float y1 = r * (float) Math.sin(Math.toRadians(player.getRotationAngle() + offsetAngle));
+
+            float x2 = getPlayerCenterOfMass().x() + x1;
+            float y2 = getPlayerCenterOfMass().y() + y1;
+
+            addLaser(x2, y2, 1, player.getRotationAngle() + 90f, PhysicsParameters.laserVelocity, 0.125f,
+                    true);
+        }
     }
 
     // TODO: Remove this once proper model is in place - currently used for testing
