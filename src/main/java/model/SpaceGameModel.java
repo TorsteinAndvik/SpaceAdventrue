@@ -116,6 +116,11 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         hitDetection.addCollider(laser);
     }
 
+    private void addLaser(FloatPair pos, int hitPoints, float angle, float speed, float radius,
+            boolean isPlayerLaser) {
+        addLaser(pos.x(), pos.y(), hitPoints, angle, speed, radius, isPlayerLaser);
+    }
+
     @Override
     public void update(float delta) {
         for (Asteroid asteroid : asteroids) {
@@ -225,8 +230,8 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     }
 
     public void shoot() {
-        addLaser(player.getX(), player.getY(), 1, player.getRotationAngle() + 90f, PhysicsParameters.laserVelocity,
-                0.125f, true);
+        addLaser(getPlayerCenterOfMass(), 1, player.getRotationAngle() + 90f, PhysicsParameters.laserVelocity, 0.125f,
+                true);
     }
 
     // TODO: Remove this once proper model is in place - currently used for testing
@@ -283,10 +288,16 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
      * @return the x,y coordinates of the center of mass
      */
     public FloatPair getShipCenterOfMass(SpaceShip ship) {
-        FloatPair cm = ship.getShipStructure().getCenterOfMass();
-        float x = ship.getX() + cm.x();
-        float y = ship.getY() + cm.y();
-        return new FloatPair(x, y);
+        return ship.getAbsoluteCenterOfMass();
+    }
+
+    /**
+     * Gets the center of mass coordinates for the player
+     *
+     * @return the x,y coordinates of the player's center of mass
+     */
+    public FloatPair getPlayerCenterOfMass() {
+        return player.getAbsoluteCenterOfMass();
     }
 
     public void toggleEnemyRotationActive() {
@@ -367,7 +378,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         return this.spaceShips;
     }
 
-    public SpaceShip getPlayerSpaceShip() {
+    public SpaceShip getPlayer() {
         return this.spaceShips.get(0);
     }
 

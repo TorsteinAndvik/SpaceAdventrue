@@ -14,7 +14,7 @@ public class Turret extends ShipUpgrade {
         super("Turret", "Fires lasers at enemies and asteroids", UpgradeType.TURRET, stage);
     }
 
-    public FloatPair turretBarrelLocation() {
+    public static FloatPair turretBarrelLocation() {
         return new FloatPair(0.5f, 0.875f);
     }
 }

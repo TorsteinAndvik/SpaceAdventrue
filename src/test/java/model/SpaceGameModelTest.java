@@ -39,8 +39,8 @@ class SpaceGameModelTest {
         setup();
         gameModel = new SpaceGameModel();
 
-        initialPlayerX = gameModel.getPlayerSpaceShip().getX();
-        initialPlayerY = gameModel.getPlayerSpaceShip().getY();
+        initialPlayerX = gameModel.getPlayer().getX();
+        initialPlayerY = gameModel.getPlayer().getY();
     }
 
     @Test

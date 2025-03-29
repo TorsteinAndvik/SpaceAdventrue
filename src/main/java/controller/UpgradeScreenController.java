@@ -29,7 +29,7 @@ public class UpgradeScreenController extends GenericController {
     }
 
     public Iterable<GridCell<Fuselage>> getPlayerShipParts() {
-        return spaceModel.getPlayerSpaceShip().getShipStructure();
+        return spaceModel.getPlayer().getShipStructure();
     }
 
     @Override

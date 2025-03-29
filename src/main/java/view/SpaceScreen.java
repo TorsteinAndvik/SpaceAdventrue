@@ -44,8 +44,6 @@ public class SpaceScreen implements Screen, AnimationCallback {
     private final FitViewport viewport;
 
     private final OrthographicCamera camera;
-    private Vector3 cameraPosition;
-    private Vector2 lerpPosition;
     private final float zoomMin = 1f;
     private final float zoomMax = 2f;
 
@@ -153,7 +151,7 @@ public class SpaceScreen implements Screen, AnimationCallback {
         ScreenUtils.clear(Color.DARK_GRAY);
 
         viewport.apply();
-        batch.setProjectionMatrix(viewport.getCamera().combined);
+        batch.setProjectionMatrix(camera.combined);
         updateCamera();
 
         fontBold.setColor(Color.GREEN);
@@ -169,10 +167,6 @@ public class SpaceScreen implements Screen, AnimationCallback {
             asteroidSprite.setCenterY(asteroid.getY());
 
             asteroidSprite.draw(batch);
-
-            laser.setCenterX(asteroid.getX());
-            laser.setCenterY(asteroid.getY());
-            laser.draw(batch);
         }
 
         for (SpaceShip ship : model.getSpaceShips()) {
@@ -203,24 +197,16 @@ public class SpaceScreen implements Screen, AnimationCallback {
                     upgradeIcons.get(cell.value().getUpgrade().getType()).draw(batch);
                 }
             }
-
-            // draw center of mass as a laser, for testing purposes
-            FloatPair cm = model.getShipCenterOfMass(ship);
-            laser.setCenterX(cm.x());
-            laser.setCenterY(cm.y());
-            laser.draw(batch);
-
-            batch.setTransformMatrix(new Matrix4().idt());
         }
+
+        // Reset the transform matrix to the identity matrix
+        batch.setTransformMatrix(new Matrix4().idt());
 
         for (Bullet laser : model.getLasers()) {
             this.laser.setCenterX(laser.getX());
             this.laser.setCenterY(laser.getY());
             this.laser.draw(batch);
         }
-
-        // Reset the transform matrix to the identity matrix
-        batch.setTransformMatrix(new Matrix4().idt());
 
         // Draw explosion animations:
         Iterator<AnimationState> animationStatesIterator = animationStates.iterator();
@@ -267,7 +253,8 @@ public class SpaceScreen implements Screen, AnimationCallback {
     }
 
     private void cameraLerpToPlayer() {
-        FloatPair newPosition = lerp(camera.position, model.getPlayerSpaceShip().getCenter(), 0.1f);
+        FloatPair newPosition = lerp(camera.position, model.getPlayerCenterOfMass(),
+                0.1f);
         setCameraPosition(newPosition);
     }
 
@@ -276,13 +263,13 @@ public class SpaceScreen implements Screen, AnimationCallback {
     }
 
     private float getZoomLevel() {
-        float velocityRatio = model.getPlayerSpaceShip().getSpeed() / PhysicsParameters.maxVelocityLongitudonal;
+        float velocityRatio = model.getPlayer().getSpeed() / PhysicsParameters.maxVelocityLongitudonal;
         float zoomRange = zoomMax - zoomMin;
         return zoomMin + velocityRatio * zoomRange;
     }
 
     private void cameraZoom() {
-        float zoom = lerp(camera.zoom, getZoomLevel(), 0.01f);
+        float zoom = lerp(camera.zoom, getZoomLevel(), 0.02f);
         camera.zoom = zoom;
     }
 
@@ -302,7 +289,7 @@ public class SpaceScreen implements Screen, AnimationCallback {
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height, false);
-        camera.position.set(model.getPlayerSpaceShip().getCenter().x(), model.getPlayerSpaceShip().getCenter().y(), 0f);
+        setCameraPosition(model.getPlayerCenterOfMass());
     }
 
     @Override

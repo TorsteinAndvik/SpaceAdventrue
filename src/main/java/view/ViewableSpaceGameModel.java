@@ -59,7 +59,7 @@ public interface ViewableSpaceGameModel {
     /**
      * @return the player's <code>SpaceShip</code> object
      */
-    SpaceShip getPlayerSpaceShip();
+    SpaceShip getPlayer();
 
     /**
      * Returns all Asteroid objects of the MVP //TODO: Remove this once a proper

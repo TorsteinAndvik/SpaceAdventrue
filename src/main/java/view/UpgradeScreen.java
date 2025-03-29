@@ -90,7 +90,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         this.viewportGame = game.getScreenViewport();
         this.viewportUI = new ScreenViewport();
         this.model = new UpgradeScreenModel(
-            getExtendedShipStructure(spaceModel.getPlayerSpaceShip().getShipStructure()));
+                getExtendedShipStructure(spaceModel.getPlayer().getShipStructure()));
         this.controller = new UpgradeScreenController(this, model, spaceModel, game);
         this.touchPos = new Vector2();
 
@@ -100,10 +100,9 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         setupUISprites();
 
         this.upgradeTypeMap = Map.of(
-            UpgradeType.TURRET, 1,
-            UpgradeType.THRUSTER, 2,
-            UpgradeType.SHIELD, 3
-        );
+                UpgradeType.TURRET, 1,
+                UpgradeType.THRUSTER, 2,
+                UpgradeType.SHIELD, 3);
 
         descriptionRect = new Rectangle(0, 0, 0, 0);
 
@@ -115,14 +114,14 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         squareGreen = createSprite("images/upgrade_grid_tile_green.png", 1, 1);
         squareGray = createSprite("images/upgrade_grid_tile_gray.png", 1, 1);
 
-        upgradeIcons = new Sprite[]{ // [fuselage, turret, rocket, shield]
-            createSprite("images/upgrades/fuselage_alt_stage_0.png", upgradeIconZoom,
-                upgradeIconZoom),
-            createSprite("images/upgrades/turret_laser_stage_0.png", upgradeIconZoom,
-                upgradeIconZoom),
-            createSprite("images/upgrades/rocket_stage_0.png", upgradeIconZoom,
-                upgradeIconZoom),
-            createSprite("images/upgrades/shield_stage_0.png", upgradeIconZoom, upgradeIconZoom)
+        upgradeIcons = new Sprite[] { // [fuselage, turret, rocket, shield]
+                createSprite("images/upgrades/fuselage_alt_stage_0.png", upgradeIconZoom,
+                        upgradeIconZoom),
+                createSprite("images/upgrades/turret_laser_stage_0.png", upgradeIconZoom,
+                        upgradeIconZoom),
+                createSprite("images/upgrades/rocket_stage_0.png", upgradeIconZoom,
+                        upgradeIconZoom),
+                createSprite("images/upgrades/shield_stage_0.png", upgradeIconZoom, upgradeIconZoom)
         };
 
         uiIconZoom = fontRegular.getData().lineHeight;
@@ -186,7 +185,6 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         glyphLayout = new GlyphLayout();
     }
 
-
     private void drawValidFuselagePlacements() {
         ViewableShipStructure structure = model.getPlayerShipStructure();
 
@@ -208,7 +206,9 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         for (GridCell<Fuselage> cell : shipStructure) {
             Sprite coloredGrid = squareGray;
 
-            if (!shipStructure.hasFuselage(cell.pos())) { continue; }
+            if (!shipStructure.hasFuselage(cell.pos())) {
+                continue;
+            }
             if (model.isValidUpgradePosition(cell.pos())) {
                 coloredGrid = squareGreen;
             }
@@ -328,9 +328,9 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         if (model.isCameraZoomRecently()) {
             float alpha = model.getCameraZoomDeltaTime() < model.getCameraZoomTextFadeCutoffTime() ? 1f
                     : 1f - (float) Math.pow(
-                        (model.getCameraZoomDeltaTime()
-                            - model.getCameraZoomTextFadeCutoffTime()),
-                        2);
+                            (model.getCameraZoomDeltaTime()
+                                    - model.getCameraZoomTextFadeCutoffTime()),
+                            2);
             if (alpha > 0) {
                 Color fontColor = new Color(1f, 0.47f, 0.55f, alpha);
                 fontRegular.setColor(fontColor);
@@ -415,20 +415,17 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
     private boolean canPlaceItem(CellPosition cp) {
         boolean canPlaceFuselage = grabbedItemIsFuselage()
-            && model.isValidFuselagePosition(cp);
-        boolean canPlaceUpgrade =
-            !grabbedItemIsFuselage() && model.isValidUpgradePosition(cp);
+                && model.isValidFuselagePosition(cp);
+        boolean canPlaceUpgrade = !grabbedItemIsFuselage() && model.isValidUpgradePosition(cp);
         return canPlaceFuselage || canPlaceUpgrade;
     }
 
     private ShipStructure getExtendedShipStructure(ViewableShipStructure playerSpaceShip) {
         return new ShipStructure(
-            ShipStructure.getExpandedGrid(
-                playerSpaceShip.getGrid(), 2, 2, true
-            ), playerSpaceShip.getMass(), playerSpaceShip.getCenterOfMass()
-        );
+                ShipStructure.getExpandedGrid(
+                        playerSpaceShip.getGrid(), 2, 2, true),
+                playerSpaceShip.getMass(), playerSpaceShip.getCenterOfMass());
     }
-
 
     private Vector2 worldToGameCoordinates(float worldX, float worldY) {
         touchPos.set(worldX, worldY);

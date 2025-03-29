@@ -1,5 +1,8 @@
 package model.SpaceCharacters;
 
+import java.util.List;
+
+import grid.CellPosition;
 import model.Globals.DamageDealer;
 import model.Globals.Damageable;
 import model.Globals.Repairable;
@@ -53,6 +56,10 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
 
     public boolean isPlayerShip() {
         return false;
+    }
+
+    public List<CellPosition> getTurretPositions() {
+        return shipStructure.getTurretPositions();
     }
 
     public void setAccelerateForward(boolean accelerate) {
@@ -139,13 +146,37 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
     }
 
     /**
-     * @return center point of the ship, as opposed to getX() and getY() which
-     *         return the bottom
-     *         left corner
+     * @return absolute center point of the ship grid.
+     *         Shifts the relative center by the ship's global X and Y coordinates.
      */
-    public FloatPair getCenter() {
+    public FloatPair getAbsoluteCenter() {
         return new FloatPair(getX() + ((float) shipStructure.getWidth()) / 2f,
                 getY() + ((float) shipStructure.getHeight()) / 2f);
+    }
+
+    /**
+     * @return center point of the ship grid relative to its bottom left corner.
+     */
+    public FloatPair getRelativeCenter() {
+        return new FloatPair((float) shipStructure.getWidth() / 2f, (float) shipStructure.getHeight() / 2f);
+    }
+
+    /**
+     * @return absolute center of mass of the ship structure.
+     *         Shifts the relative center of mass by the ship's global X and Y
+     *         coordinates.
+     */
+    public FloatPair getAbsoluteCenterOfMass() {
+        return new FloatPair(getX() + shipStructure.getCenterOfMass().x(),
+                getY() + shipStructure.getCenterOfMass().y());
+    }
+
+    /**
+     * @return center of mass of the ship structure relative to its bottom left
+     *         corner.
+     */
+    public FloatPair getRelativeCenterOfMass() {
+        return shipStructure.getCenterOfMass();
     }
 
     @Override
