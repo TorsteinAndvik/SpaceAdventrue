@@ -20,8 +20,8 @@ public abstract class SpaceBody implements SpaceThing, Rotatable, Collideable, V
     protected final Rotation rotation;
     protected final Vector2 position;
     protected final Vector2 velocity;
-    private float mass;
-    private float radius;
+    protected float mass;
+    protected float radius;
 
     /**
      * Constructs a SpaceBody with the specified attributes.

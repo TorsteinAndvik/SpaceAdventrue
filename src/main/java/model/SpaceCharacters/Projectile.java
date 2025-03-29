@@ -1,11 +1,13 @@
 package model.SpaceCharacters;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Pool.Poolable;
+
 import model.Globals.DamageDealer;
 import model.Globals.Damageable;
 import model.utils.SpaceCalculator;
 
-public abstract class Projectile extends SpaceBody implements Damageable, DamageDealer {
+public abstract class Projectile extends SpaceBody implements Damageable, DamageDealer, Poolable {
 
     private int hitPoints;
     private int maxHitPoints;
@@ -13,7 +15,7 @@ public abstract class Projectile extends SpaceBody implements Damageable, Damage
     private final int multiplier = 1;
 
     public Projectile(String name, String description, CharacterType characterType, float x,
-        float y, int hitPoints, float angle, float speed, float radius) {
+            float y, float speed, int hitPoints, float mass, float angle, float radius) {
         super(name, description, characterType, x, y, angle, radius);
         this.hitPoints = hitPoints;
         this.maxHitPoints = hitPoints;
@@ -21,10 +23,10 @@ public abstract class Projectile extends SpaceBody implements Damageable, Damage
     }
 
     public Projectile(String name, String description, CharacterType characterType, float x,
-        float y, float vX, float vY, int hitPoints, float mass, float angle, float radius,
-        float rotationSpeed) {
+            float y, float vX, float vY, int hitPoints, float mass, float angle, float radius,
+            float rotationSpeed) {
         super(name, description, characterType, new Vector2(x, y), new Vector2(vX, vY), mass, angle,
-            rotationSpeed, radius);
+                rotationSpeed, radius);
         this.hitPoints = hitPoints;
         this.maxHitPoints = hitPoints;
     }
@@ -65,4 +67,37 @@ public abstract class Projectile extends SpaceBody implements Damageable, Damage
     // Mitt forslag er hvis to asteroider kolloderer, vil den som har mest HP
     // "vinne".
 
+    @Override
+    public void reset() {
+        this.position.set(0f, 0f);
+        this.velocity.set(0f, 0f);
+        this.rotation.setAngle(0f);
+        this.rotation.setRotationSpeed(0f);
+        this.hitPoints = 1;
+        this.maxHitPoints = 1;
+    }
+
+    public void init(float x, float y, float vX, float vY, int hitPoints, float mass, float angle, float radius,
+            float rotationSpeed) {
+        position.set(x, y);
+        velocity.set(vX, vY);
+        this.hitPoints = hitPoints;
+        maxHitPoints = hitPoints;
+        this.mass = mass;
+        rotation.setAngle(angle);
+        rotation.setRotationSpeed(rotationSpeed);
+        this.radius = radius;
+    }
+
+    public void init(float x, float y, float speed, int hitPoints, float mass, float angle, float radius,
+            float rotationSpeed) {
+        position.set(x, y);
+        setVelocity(SpaceCalculator.velocityFromAngleSpeed(angle, speed));
+        this.hitPoints = hitPoints;
+        maxHitPoints = hitPoints;
+        this.mass = mass;
+        rotation.setAngle(angle);
+        rotation.setRotationSpeed(rotationSpeed);
+        this.radius = radius;
+    }
 }
