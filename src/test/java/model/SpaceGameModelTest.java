@@ -84,10 +84,4 @@ class SpaceGameModelTest {
      * assertEquals(gameModel.getPlayerSpaceShip().getCenter().x(), laser.getX());
      * }
      */
-
-    @Test
-    public void testMoveSpaceShip() {
-        boolean result = gameModel.moveSpaceShip(1, 1);
-        assertFalse(result);
-    }
 }

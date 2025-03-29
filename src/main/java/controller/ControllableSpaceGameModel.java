@@ -10,15 +10,6 @@ public interface ControllableSpaceGameModel {
     void update(float delta);
 
     /**
-     * Moves the spaceship by a change in x and a change in y on the game board
-     *
-     * @param deltaRow change in y.
-     * @param deltaCol change in x
-     * @return True if move occurred, else False
-     */
-    boolean moveSpaceShip(int deltaRow, int deltaCol);
-
-    /**
      * Starts the game. Sets GameState to ACTIVE_GAME.
      */
     void gameStateActive();

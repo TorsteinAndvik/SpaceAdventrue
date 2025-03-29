@@ -101,6 +101,7 @@ public class SpaceScreen implements Screen, AnimationCallback {
 
     private void loadSprites() {
         asteroidLarge = createSprite("images/space/asteroid_0.png", 2, 2);
+        // asteroidLarge.setOrigin(1f, 1f);
 
         asteroidSmall = createSprite("images/space/asteroid_1.png", 1, 1);
 
@@ -158,20 +159,19 @@ public class SpaceScreen implements Screen, AnimationCallback {
         fontBold.setColor(Color.GREEN);
         fontRegular.setColor(Color.RED);
 
-        model.rotateEnemy(delta); // TODO: Remove this once proper model is in place
-        // view should only send model.update(delta) via controller in future
         batch.begin();
 
         // draw asteroids
         for (Asteroid asteroid : model.getAsteroids()) {
             Sprite asteroidSprite = asteroid.isLarge ? asteroidLarge : asteroidSmall;
             asteroidSprite.setRotation(asteroid.getRotationAngle());
-            asteroidSprite.setX(asteroid.getX());
-            asteroidSprite.setY(asteroid.getY());
+            asteroidSprite.setCenterX(asteroid.getX());
+            asteroidSprite.setCenterY(asteroid.getY());
+
             asteroidSprite.draw(batch);
 
-            laser.setX(asteroid.getX());
-            laser.setY(asteroid.getY());
+            laser.setCenterX(asteroid.getX());
+            laser.setCenterY(asteroid.getY());
             laser.draw(batch);
         }
 
@@ -188,37 +188,39 @@ public class SpaceScreen implements Screen, AnimationCallback {
                 float shipX = ship.getX() + cell.pos().col();
                 float shipY = ship.getY() + cell.pos().row();
                 if (ship.isPlayerShip()) {
-                    fuselagePlayer.setX(shipX);
-                    fuselagePlayer.setY(shipY);
+                    fuselagePlayer.setCenterX(shipX);
+                    fuselagePlayer.setCenterY(shipY);
                     fuselagePlayer.draw(batch);
                 } else {
-                    fuselageEnemy.setX(shipX);
-                    fuselageEnemy.setY(shipY);
+                    fuselageEnemy.setCenterX(shipX);
+                    fuselageEnemy.setCenterY(shipY);
                     fuselageEnemy.draw(batch);
                 }
 
                 if (cell.value().getUpgrade() != null) {
-                    upgradeIcons.get(cell.value().getUpgrade().getType()).setX(shipX);
-                    upgradeIcons.get(cell.value().getUpgrade().getType()).setY(shipY);
+                    upgradeIcons.get(cell.value().getUpgrade().getType()).setCenterX(shipX);
+                    upgradeIcons.get(cell.value().getUpgrade().getType()).setCenterY(shipY);
                     upgradeIcons.get(cell.value().getUpgrade().getType()).draw(batch);
                 }
             }
 
             // draw center of mass as a laser, for testing purposes
             FloatPair cm = model.getShipCenterOfMass(ship);
-            laser.setX(cm.x() - 0.5f * laser.getWidth());
-            laser.setY(cm.y() - 0.5f * laser.getHeight());
+            laser.setCenterX(cm.x());
+            laser.setCenterY(cm.y());
             laser.draw(batch);
+
+            batch.setTransformMatrix(new Matrix4().idt());
+        }
+
+        for (Bullet laser : model.getLasers()) {
+            this.laser.setCenterX(laser.getX());
+            this.laser.setCenterY(laser.getY());
+            this.laser.draw(batch);
         }
 
         // Reset the transform matrix to the identity matrix
         batch.setTransformMatrix(new Matrix4().idt());
-
-        for (Bullet laser : model.getLasers()) {
-            this.laser.setX(laser.getX() - 0.125f);
-            this.laser.setY(laser.getY() + 0.875f);
-            this.laser.draw(batch);
-        }
 
         // Draw explosion animations:
         Iterator<AnimationState> animationStatesIterator = animationStates.iterator();
@@ -232,7 +234,8 @@ public class SpaceScreen implements Screen, AnimationCallback {
                 animationStatesIterator.remove();
             } else {
                 TextureRegion currentFrame = animation.getKeyFrame(state.getStateTime());
-                batch.draw(currentFrame, state.getX(), state.getY(), state.getWidth(), state.getHeight());
+                batch.draw(currentFrame, state.getX() - state.getRadius(), state.getY() - state.getRadius(),
+                        2f * state.getRadius(), 2f * state.getRadius());
             }
         }
 

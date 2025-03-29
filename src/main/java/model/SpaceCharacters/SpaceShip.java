@@ -80,25 +80,43 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
                     * (float) Math.cos(Math.toRadians(rotation.getAngle() + 90f)));
             addVelocityY(deltaTime * PhysicsParameters.accelerationLimitLongitudonal
                     * (float) Math.sin(Math.toRadians(rotation.getAngle() + 90f)));
+            applySpeedLimit();
         } else if (accelerateBackward) {
             addVelocityX(-deltaTime * PhysicsParameters.accelerationLimitLongitudonal
                     * (float) Math.cos(Math.toRadians(rotation.getAngle() + 90f)));
             addVelocityY(-deltaTime * PhysicsParameters.accelerationLimitLongitudonal
                     * (float) Math.sin(Math.toRadians(rotation.getAngle() + 90f)));
+            applySpeedLimit();
         } else {
             dampVelocity(deltaTime);
         }
 
         if (accelerateClockwise) {
             addRotationSpeed(-deltaTime * PhysicsParameters.accelerationLimitRotational);
+            applyRotationalSpeedLimit();
         } else if (accelerateCounterClockwise) {
             addRotationSpeed(deltaTime * PhysicsParameters.accelerationLimitRotational);
+            applyRotationalSpeedLimit();
         } else {
             dampRotation(deltaTime);
         }
 
         rotate(deltaTime * getRotationSpeed());
         position.add(velocity.x * deltaTime, velocity.y * deltaTime);
+    }
+
+    private void applySpeedLimit() {
+        if (getSpeed() > PhysicsParameters.maxVelocityLongitudonal) {
+            velocity.scl(PhysicsParameters.maxVelocityLongitudonal / getSpeed());
+        }
+    }
+
+    private void applyRotationalSpeedLimit() {
+        if (getRotationSpeed() < -PhysicsParameters.maxVelocityRotational) {
+            rotation.setRotationSpeed(-PhysicsParameters.maxVelocityRotational);
+        } else if (getRotationSpeed() > PhysicsParameters.maxVelocityRotational) {
+            rotation.setRotationSpeed(PhysicsParameters.maxVelocityRotational);
+        }
     }
 
     private void dampVelocity(float deltaTime) {
@@ -139,7 +157,6 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
     public void dealDamage(Damageable target) {
         // Damage dealt when ship hits damageable object
         target.takeDamage(getHitPoints());
-
     }
 
     @Override

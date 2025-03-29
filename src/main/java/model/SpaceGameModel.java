@@ -22,13 +22,13 @@ import model.SpaceCharacters.EnemyShip;
 import model.SpaceCharacters.Player;
 import model.SpaceCharacters.SpaceBody;
 import model.SpaceCharacters.SpaceShip;
+import model.constants.PhysicsParameters;
 import model.utils.FloatPair;
 import view.ViewableSpaceGameModel;
 
 public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpaceGameModel {
 
     private Player player;
-    private SpaceShip enemyShip; // TODO: Remove
     private final ShipFactory shipFactory;
     private LinkedList<SpaceShip> spaceShips;
     private final HitDetection hitDetection;
@@ -53,9 +53,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
         this.hitDetection = new HitDetection(this);
 
-        // TODO: Refactor?
-        hitDetection
-                .addColliders(Arrays.asList(player, enemyShip, asteroids.get(0), asteroids.get(1), asteroids.get(2)));
+        registerColliders();
 
         this.rotationMatrix = new Matrix3();
         this.transformMatrix = new Matrix4();
@@ -66,7 +64,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                 shipFactory.playerShip(), "player", "the player's spaceship", 1, 8, 1);
         this.player.setRotationSpeed(0f);
 
-        this.enemyShip = new EnemyShip(
+        EnemyShip enemyShip = new EnemyShip(
                 shipFactory.createShipFromJson("enemy2.json"),
                 "enemy",
                 "an enemy ship",
@@ -75,7 +73,10 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                 5,
                 0f);
 
-        this.spaceShips = new LinkedList<SpaceShip>(Arrays.asList(this.player, this.enemyShip));
+        EnemyShip enemyShip2 = new EnemyShip(
+                shipFactory.createShipFromJson("enemy1.json"), "enemy", "an enemy ship", 7, -3, 3, 0f);
+
+        this.spaceShips = new LinkedList<SpaceShip>(Arrays.asList(this.player, enemyShip, enemyShip2));
     }
 
     private void createAsteroids() {
@@ -84,19 +85,17 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
         Asteroid asteroidLarge = new Asteroid("large asteroid", "a large asteroid", 1f, 6f,
                 0.3f,
-                -0.10f, 4, 4f, 30f,
+                -0.10f, 400, 4f, 30f,
                 radiusLarge, true);
         asteroidLarge.setRotationSpeed(60f);
 
         Asteroid asteroidSmall = new Asteroid("small asteroid", "a small asteroid", 5f, 4f,
-                -0.1f,
-                0.15f, 1, 1f, 0f, radiusSmall,
+                -0.1f, 0.15f, 1, 1f, 0f, radiusSmall,
                 false);
         asteroidSmall.setRotationSpeed(-30f);
 
         Asteroid asteroidSmall2 = new Asteroid("small asteroid", "a small asteroid", 6f,
-                5f,
-                -0.1f, 0.15f, 1, 1f, 0f, radiusSmall, false);
+                4.5f, -0.1f, 0.15f, 1, 1f, 0f, radiusSmall, false);
         asteroidSmall2.setRotationSpeed(40f);
 
         this.asteroids = new LinkedList<>();
@@ -105,8 +104,16 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         asteroids.add(asteroidSmall2);
     }
 
-    private void addLaser(float x, float y, int hitPoints, float angle, float speed, float radius) {
-        lasers.addFirst(new Bullet("laser", "a laser shot", x, y, hitPoints, angle, speed, radius));
+    private void registerColliders() {
+        hitDetection.addColliders(spaceShips);
+        hitDetection.addColliders(asteroids);
+    }
+
+    private void addLaser(float x, float y, int hitPoints, float angle, float speed, float radius,
+            boolean isPlayerLaser) {
+        Bullet laser = new Bullet("laser", "a laser shot", x, y, hitPoints, angle, speed, radius, isPlayerLaser);
+        lasers.addFirst(laser);
+        hitDetection.addCollider(laser);
     }
 
     @Override
@@ -114,12 +121,15 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         for (Asteroid asteroid : asteroids) {
             asteroid.update(delta);
         }
+
         for (Bullet laser : lasers) {
             laser.update(delta);
         }
+
         for (SpaceShip spaceShip : spaceShips) {
             spaceShip.update(delta);
         }
+
         // TODO: remove this call once model is finished such
         // that it receives model.update(delta) in the future.
         rotateEnemy(delta);
@@ -127,22 +137,40 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     }
 
     void handleCollision(Collideable A, Collideable B) {
+        if (isFriendlyFire(A, B)) {
+            return;
+        }
+
         if (A instanceof DamageDealer && B instanceof Damageable) {
             ((DamageDealer) A).dealDamage((Damageable) B);
             if (((Damageable) B).isDestroyed()) {
-                remove(B);
+                remove(B, true);
             }
         }
 
         if (B instanceof DamageDealer && A instanceof Damageable) {
             ((DamageDealer) B).dealDamage((Damageable) A);
             if (((Damageable) A).isDestroyed()) {
-                remove(A);
+                remove(A, true);
             }
         }
     }
 
-    private void remove(Collideable c) {
+    private boolean isFriendlyFire(Collideable A, Collideable B) {
+        if (A instanceof Player && B instanceof Bullet) {
+            if (((Bullet) B).isPlayerBullet) {
+                return true;
+            }
+        } else if (B instanceof Player && A instanceof Bullet) {
+            if (((Bullet) A).isPlayerBullet) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void remove(Collideable c, boolean drawExplosion) {
         hitDetection.removeCollider(c);
         if (c instanceof SpaceBody) {
             System.out.println(c + " destroyed");
@@ -154,18 +182,32 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                             break;
                         }
                     }
-                    addAnimationState(c, AnimationType.EXPLOSION);
+                    if (drawExplosion) {
+                        addAnimationState(c, AnimationType.EXPLOSION);
+                    }
                     break;
 
-                case BULLET: // TODO: Implement remove(Bullet) case
+                case BULLET:
+                    for (Bullet laser : lasers) {
+                        if (laser == c) {
+                            lasers.remove(c);
+                            break;
+                        }
+                    }
+                    if (drawExplosion) {
+                        addAnimationState(c, AnimationType.EXPLOSION);
+                    }
                     break;
 
-                case ENEMY_SHIP:// TODO: Implement remove(Enemy) case
+                case ENEMY_SHIP:
                     for (SpaceShip ship : this.spaceShips) {
                         if (ship == c) {
                             spaceShips.remove(c);
                             break;
                         }
+                    }
+                    if (drawExplosion) {
+                        addAnimationState(c, AnimationType.EXPLOSION);
                     }
                     break;
 
@@ -183,22 +225,26 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     }
 
     public void shoot() {
-        addLaser(player.getCenter().x(), player.getCenter().y(), 1, 0f, 0f, 0.25f);
+        addLaser(player.getX(), player.getY(), 1, player.getRotationAngle() + 90f, PhysicsParameters.laserVelocity,
+                0.125f, true);
     }
 
     // TODO: Remove this once proper model is in place - currently used for testing
     // rendering of rotated ships in SpaceScreen
     public void rotateEnemy(float deltaTime) {
+        if (spaceShips.size() <= 1) {
+            return;
+        }
         if (!this.enemyRotationActive) {
-            this.enemyShip.setRotationSpeed(0f);
+            spaceShips.getLast().setRotationSpeed(0f);
             return;
         }
 
         float rotationalVelocity = 45f; // degrees per second
         if (rotateClockwise) {
-            this.enemyShip.setRotationSpeed(-rotationalVelocity);
+            spaceShips.getLast().setRotationSpeed(-rotationalVelocity);
         } else {
-            this.enemyShip.setRotationSpeed(rotationalVelocity);
+            spaceShips.getLast().setRotationSpeed(rotationalVelocity);
         }
     }
 
@@ -216,8 +262,8 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
         // translate the transformation matrix to the ship's center of rotation
         FloatPair cm = ship.getShipStructure().getCenterOfMass();
-        float x = ship.getX() + cm.x() + 0.5f;
-        float y = ship.getY() + cm.y() + 0.5f;
+        float x = ship.getX() + cm.x();
+        float y = ship.getY() + cm.y();
 
         transformMatrix.translate(x, y, 0f);
 
@@ -238,8 +284,8 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
      */
     public FloatPair getShipCenterOfMass(SpaceShip ship) {
         FloatPair cm = ship.getShipStructure().getCenterOfMass();
-        float x = ship.getX() + cm.x() + 0.5f;
-        float y = ship.getY() + cm.y() + 0.5f;
+        float x = ship.getX() + cm.x();
+        float y = ship.getY() + cm.y();
         return new FloatPair(x, y);
     }
 
@@ -249,11 +295,6 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     public void setEnemyRotationClockwise(boolean clockwise) {
         this.rotateClockwise = clockwise;
-    }
-
-    @Override
-    public boolean moveSpaceShip(int deltaRow, int deltaCol) {
-        return false;
     }
 
     @Override
