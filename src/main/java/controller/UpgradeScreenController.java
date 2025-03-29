@@ -107,7 +107,7 @@ public class UpgradeScreenController extends GenericController {
         touchPos.set(screenX, screenY);
         view.unprojectTouchPos(touchPos);
 
-        CellPosition cpGrid = view.convertMouseToGrid(touchPos.x, touchPos.y);
+        CellPosition cpGrid = convertMouseToGrid(touchPos.x, touchPos.y);
         CellPosition cpUpgrade = convertMouseToUpgradeBar(touchPos.x, touchPos.y);
 
         if (cellPositionOnGrid(cpGrid)) {// TODO: Implement actions when clicking the grid.

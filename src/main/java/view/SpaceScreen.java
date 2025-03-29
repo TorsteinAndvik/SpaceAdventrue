@@ -14,7 +14,6 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -26,6 +25,7 @@ import model.SpaceCharacters.Asteroid;
 import model.SpaceCharacters.Bullet;
 import model.SpaceCharacters.SpaceShip;
 import model.constants.PhysicsParameters;
+import model.ScreenBoundsProvider;
 import model.SpaceGameModel;
 import model.Animation.AnimationCallback;
 import model.Animation.AnimationState;
@@ -35,7 +35,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-public class SpaceScreen implements Screen, AnimationCallback {
+public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvider {
 
     final SpaceGame game;
     final SpaceGameModel model;
@@ -304,6 +304,13 @@ public class SpaceScreen implements Screen, AnimationCallback {
     @Override
     public void addAnimationState(AnimationState state) {
         this.animationStates.addFirst(state);
+    }
+
+    @Override
+    public FloatPair[] getBounds() {
+        FloatPair[] bounds = new FloatPair[4];
+
+        return bounds;
     }
 
 }

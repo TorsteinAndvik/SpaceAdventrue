@@ -40,7 +40,8 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     private final Matrix3 rotationMatrix;
     private final Matrix4 transformMatrix;
 
-    private AnimationCallback view;
+    private AnimationCallback animationCallback;
+    private ScreenBoundsProvider screenBoundsProvider;
 
     public SpaceGameModel() {
         this.shipFactory = new ShipFactory();
@@ -129,6 +130,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
         for (Bullet laser : lasers) {
             laser.update(delta);
+            cullLaser(laser);
         }
 
         for (SpaceShip spaceShip : spaceShips) {
@@ -139,6 +141,13 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         // that it receives model.update(delta) in the future.
         rotateEnemy(delta);
         hitDetection.checkCollisions();
+    }
+
+    /**
+     * Delete a laser if it moves out of range.
+     */
+    private void cullLaser(Bullet laser) {
+
     }
 
     void handleCollision(Collideable A, Collideable B) {
@@ -161,6 +170,8 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         }
     }
 
+    // TODO: Refactor relevant code with a source SpaceShip, such that enemy ships
+    // can fire at each other without damaging themselves
     private boolean isFriendlyFire(Collideable A, Collideable B) {
         if (A instanceof Player && B instanceof Bullet) {
             if (((Bullet) B).isPlayerBullet) {
@@ -226,7 +237,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     }
 
     private void addAnimationState(Collideable c, AnimationType type) {
-        view.addAnimationState(new AnimationStateImpl(c, type));
+        animationCallback.addAnimationState(new AnimationStateImpl(c, type));
     }
 
     public void shoot() {
@@ -393,7 +404,12 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     }
 
     @Override
-    public void setAnimationCallback(AnimationCallback view) {
-        this.view = view;
+    public void setAnimationCallback(AnimationCallback animationCallback) {
+        this.animationCallback = animationCallback;
+    }
+
+    @Override
+    public void setScreenBoundsProvider(ScreenBoundsProvider screenBoundsProvider) {
+        this.screenBoundsProvider = screenBoundsProvider;
     }
 }
