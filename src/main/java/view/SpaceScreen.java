@@ -158,7 +158,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
 
         // draw asteroids
         for (Asteroid asteroid : model.getAsteroids()) {
-            Sprite asteroidSprite = asteroid.isLarge ? asteroidLarge : asteroidSmall;
+            Sprite asteroidSprite = asteroid.isLarge() ? asteroidLarge : asteroidSmall;
             asteroidSprite.setRotation(asteroid.getRotationAngle());
             asteroidSprite.setCenterX(asteroid.getX());
             asteroidSprite.setCenterY(asteroid.getY());

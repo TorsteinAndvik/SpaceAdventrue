@@ -8,6 +8,7 @@ import java.util.List;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Pool;
 
 import controller.ControllableSpaceGameModel;
 import grid.CellPosition;
@@ -38,7 +39,9 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     private LinkedList<SpaceShip> spaceShips;
     private final HitDetection hitDetection;
     private LinkedList<Asteroid> asteroids;
+    private Pool<Asteroid> asteroidPool;
     private LinkedList<Bullet> lasers;
+    private Pool<Bullet> laserPool;
     private boolean enemyRotationActive;
     private boolean rotateClockwise;
 
@@ -50,6 +53,9 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     public SpaceGameModel() {
         this.shipFactory = new ShipFactory();
+
+        createAsteroidPool(100);
+        createLaserPool(300);
 
         createSpaceShips();
 
@@ -63,6 +69,28 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
         this.rotationMatrix = new Matrix3();
         this.transformMatrix = new Matrix4();
+    }
+
+    private void createAsteroidPool(int asteroidPreFill) {
+        this.asteroidPool = new Pool<Asteroid>() {
+            @Override
+            protected Asteroid newObject() {
+                return new Asteroid();
+            }
+        };
+
+        asteroidPool.fill(asteroidPreFill);
+    }
+
+    private void createLaserPool(int laserPreFill) {
+        this.laserPool = new Pool<Bullet>() {
+            @Override
+            protected Bullet newObject() {
+                return new Bullet("laser", "a laser shot", 0f, 0f, 0f, 0f, 1, 0f, 0f, false);
+            }
+        };
+
+        laserPool.fill(laserPreFill);
     }
 
     private void createSpaceShips() {
@@ -89,20 +117,14 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         float radiusLarge = 1f;
         float radiusSmall = 0.5f;
 
-        Asteroid asteroidLarge = new Asteroid("large asteroid", "a large asteroid", 1f, 6f,
-                0.3f,
-                -0.10f, 10, 4f, 30f,
-                radiusLarge, true);
-        asteroidLarge.setRotationSpeed(60f);
+        Asteroid asteroidLarge = asteroidPool.obtain();
+        asteroidLarge.init(1f, 6f, 0.35f, 8, 8f, 10f, radiusLarge, 60f, true);
 
-        Asteroid asteroidSmall = new Asteroid("small asteroid", "a small asteroid", 5f, 4f,
-                -0.1f, 0.15f, 1, 1f, 0f, radiusSmall,
-                false);
-        asteroidSmall.setRotationSpeed(-30f);
+        Asteroid asteroidSmall = asteroidPool.obtain();
+        asteroidSmall.init(5f, 4f, 0.25f, 1, 1f, 170f, radiusSmall, -30f, false);
 
-        Asteroid asteroidSmall2 = new Asteroid("small asteroid", "a small asteroid", 6f,
-                4.5f, -0.1f, 0.15f, 1, 1f, 0f, radiusSmall, false);
-        asteroidSmall2.setRotationSpeed(40f);
+        Asteroid asteroidSmall2 = asteroidPool.obtain();
+        asteroidSmall2.init(6f, 4.5f, 0.3f, 1, 1f, 175f, radiusSmall, 40f, false);
 
         this.asteroids = new LinkedList<>();
         asteroids.add(asteroidLarge);
@@ -115,10 +137,11 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         hitDetection.addColliders(asteroids);
     }
 
-    private void addLaser(float x, float y, int hitPoints, float angle, float speed, float radius,
-            boolean isPlayerLaser) {
-        Bullet laser = new Bullet("laser", "a laser shot", x, y, hitPoints, angle, speed, radius, isPlayerLaser);
-        lasers.addFirst(laser);
+    private void addLaser(float x, float y, float speed, float angle, float radius, boolean isPlayerLaser) {
+        Bullet laser = laserPool.obtain();
+        laser.init(x, y, speed, angle, radius, isPlayerLaser);
+
+        lasers.addLast(laser);
         hitDetection.addCollider(laser);
     }
 
@@ -134,6 +157,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
             laser.update(delta);
             if (cullLaser(laser)) {// Remove if too distant to player
                 hitDetection.removeCollider(laser);
+                laserPool.free(laser);
                 laserIterator.remove();
             }
         }
@@ -184,11 +208,11 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     // can fire at each other without damaging themselves
     private boolean isFriendlyFire(Collideable A, Collideable B) {
         if (A instanceof Player && B instanceof Bullet) {
-            if (((Bullet) B).isPlayerBullet) {
+            if (((Bullet) B).isPlayerBullet()) {
                 return true;
             }
         } else if (B instanceof Player && A instanceof Bullet) {
-            if (((Bullet) A).isPlayerBullet) {
+            if (((Bullet) A).isPlayerBullet()) {
                 return true;
             }
         }
@@ -199,29 +223,28 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     private void remove(Collideable c, boolean drawExplosion) {
         hitDetection.removeCollider(c);
         if (c instanceof SpaceBody) {
+            if (drawExplosion) {
+                addAnimationState(c, AnimationType.EXPLOSION);
+            }
             System.out.println(c + " destroyed");
             switch (((SpaceBody) c).getCharacterType()) {
                 case ASTEROID:
                     for (Asteroid asteroid : asteroids) {
                         if (asteroid == c) {
-                            asteroids.remove(c);
+                            asteroids.remove(asteroid);
+                            asteroidPool.free(asteroid);
                             break;
                         }
-                    }
-                    if (drawExplosion) {
-                        addAnimationState(c, AnimationType.EXPLOSION);
                     }
                     break;
 
                 case BULLET:
                     for (Bullet laser : lasers) {
                         if (laser == c) {
-                            lasers.remove(c);
+                            lasers.remove(laser);
+                            laserPool.free(laser);
                             break;
                         }
-                    }
-                    if (drawExplosion) {
-                        addAnimationState(c, AnimationType.EXPLOSION);
                     }
                     break;
 
@@ -231,9 +254,6 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                             spaceShips.remove(c);
                             break;
                         }
-                    }
-                    if (drawExplosion) {
-                        addAnimationState(c, AnimationType.EXPLOSION);
                     }
                     break;
 
@@ -264,8 +284,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
             float x2 = getPlayerCenterOfMass().x() + x1;
             float y2 = getPlayerCenterOfMass().y() + y1;
 
-            addLaser(x2, y2, 1, player.getRotationAngle() + 90f, PhysicsParameters.laserVelocity, 0.125f,
-                    true);
+            addLaser(x2, y2, PhysicsParameters.laserVelocity, player.getRotationAngle() + 90f, 0.125f, true);
         }
     }
 
