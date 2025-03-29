@@ -13,7 +13,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
+import com.badlogic.gdx.math.Frustum;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -225,6 +227,19 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
             }
         }
 
+        // Draw bounds for testing.
+        Rectangle bounds = getBounds();
+
+        // Bottom left
+        laser.setCenterX(bounds.x);
+        laser.setCenterY(bounds.y);
+        laser.draw(batch);
+
+        // Top right
+        laser.setCenterX(bounds.x + bounds.width);
+        laser.setCenterY(bounds.y + bounds.height);
+        laser.draw(batch);
+
         batch.end();
     }
 
@@ -307,10 +322,14 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     }
 
     @Override
-    public FloatPair[] getBounds() {
-        FloatPair[] bounds = new FloatPair[4];
+    public Rectangle getBounds() {
+
+        float maxWidth = viewport.getWorldWidth() * zoomMax;
+        float maxHeight = viewport.getWorldHeight() * zoomMax;
+
+        Rectangle bounds = new Rectangle(-maxWidth / 2f + camera.position.x,
+                -maxHeight / 2f + camera.position.y, maxWidth, maxHeight);
 
         return bounds;
     }
-
 }

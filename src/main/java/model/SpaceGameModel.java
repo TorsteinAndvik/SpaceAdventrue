@@ -6,6 +6,8 @@ import java.util.List;
 
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Rectangle;
+
 import controller.ControllableSpaceGameModel;
 import grid.GridCell;
 import grid.IGridDimension;
@@ -147,7 +149,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
      * Delete a laser if it moves out of range.
      */
     private void cullLaser(Bullet laser) {
-
+        Rectangle bounds = this.screenBoundsProvider.getBounds();
     }
 
     void handleCollision(Collideable A, Collideable B) {

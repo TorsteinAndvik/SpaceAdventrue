@@ -1,20 +1,16 @@
 package model;
 
-import model.utils.FloatPair;
+import com.badlogic.gdx.math.Rectangle;
 
 public interface ScreenBoundsProvider {
     /**
-     * Creates an array of <code>FloatPair</code> objects that represent the current
-     * bounds of the space. They are ordered as follows:
+     * Creates a <code>Rectangle/<code> objects that represent the current
+     * bounds of the space. 
      * 
-     * <pre>
-     * bottom-left, bottom-right, top-right, top-left
-     * </pre>
+     * The bounds changes as the location of the player changes.
+     * They should therefore not be stored once, but rather calculated on the spot.
      * 
-     * The array changes as the location of the player changes.
-     * It should therefore not be stored once, but rather calculated on the spot.
-     * 
-     * @return an array of <code>FloatPair</code> objects
+     * @return a <code>Ractangle</code> object
      */
-    public FloatPair[] getBounds();
+    public Rectangle getBounds();
 }
