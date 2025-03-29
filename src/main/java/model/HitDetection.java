@@ -18,7 +18,7 @@ public class HitDetection {
         colliders.addFirst(c);
     }
 
-    public void addColliders(List<Collideable> colliders) {
+    public void addColliders(List<? extends Collideable> colliders) {
         this.colliders.addAll(colliders);
     }
 

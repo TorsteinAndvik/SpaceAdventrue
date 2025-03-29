@@ -195,56 +195,53 @@ public abstract class SpaceBody implements SpaceThing, Rotatable, Collideable, V
     @Override
     public void setRotationSpeed(float rotationSpeed) {
         rotation.setRotationSpeed(rotationSpeed);
-        applyRotationalSpeedLimit();
+
     }
 
     @Override
     public void scaleRotationSpeed(float scale) {
         rotation.setRotationSpeed(scale * getRotationSpeed());
-        applyRotationalSpeedLimit();
+
     }
 
     @Override
     public void addRotationSpeed(float deltaRotationSpeed) {
         rotation.setRotationSpeed(rotation.getRotationSpeed() + deltaRotationSpeed);
-        applyRotationalSpeedLimit();
+
     }
 
     @Override
     public void setVelocityX(float x) {
         velocity.x = x;
-        applySpeedLimit();
+
     }
 
     @Override
     public void setVelocityY(float y) {
         velocity.y = y;
-        applySpeedLimit();
+
     }
 
     @Override
     public void addVelocityX(float deltaX) {
         velocity.x += deltaX;
-        applySpeedLimit();
+
     }
 
     @Override
     public void addVelocityY(float deltaY) {
         velocity.y += deltaY;
-        applySpeedLimit();
     }
 
     @Override
     public void setVelocity(Vector2 velocity) {
         Objects.requireNonNull(velocity, "Velocity can't be null.");
         this.velocity.set(velocity.x, velocity.y);
-        applySpeedLimit();
     }
 
     @Override
     public void scaleVelocity(float scale) {
         this.velocity.scl(scale);
-        applySpeedLimit();
     }
 
     @Override
@@ -265,19 +262,5 @@ public abstract class SpaceBody implements SpaceThing, Rotatable, Collideable, V
     @Override
     public void update(float deltaTime) {
         move(deltaTime);
-    }
-
-    private void applySpeedLimit() {
-        if (getSpeed() > PhysicsParameters.maxVelocityLongitudonal) {
-            velocity.scl(PhysicsParameters.maxVelocityLongitudonal / getSpeed());
-        }
-    }
-
-    private void applyRotationalSpeedLimit() {
-        if (getRotationSpeed() < -PhysicsParameters.maxVelocityRotational) {
-            rotation.setRotationSpeed(-PhysicsParameters.maxVelocityRotational);
-        } else if (getRotationSpeed() > PhysicsParameters.maxVelocityRotational) {
-            rotation.setRotationSpeed(PhysicsParameters.maxVelocityRotational);
-        }
     }
 }

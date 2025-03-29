@@ -4,6 +4,7 @@ import java.util.List;
 
 import grid.GridCell;
 import grid.IGridDimension;
+import model.ScreenBoundsProvider;
 import model.Animation.AnimationCallback;
 import model.SpaceCharacters.Asteroid;
 import model.SpaceCharacters.Bullet;
@@ -12,9 +13,9 @@ import model.SpaceCharacters.SpaceShip;
 public interface ViewableSpaceGameModel {
 
     /**
-     * Gets the dimensions of the grid for use by the SpaceGameView
+     * Gets the dimensions of the grid for use by the SpaceGameView.
      *
-     * @return the dimensions of the game
+     * @return the dimensions of the game.
      */
     IGridDimension getDimension();
 
@@ -27,7 +28,7 @@ public interface ViewableSpaceGameModel {
     Iterable<GridCell<Character>> getPixels();
 
     /**
-     * Creates an iterable of the pixels in a SpaceBody
+     * Creates an iterable of the pixels in a SpaceBody.
      *
      * @return An iterable that contains the pixels of a SpaceBody, their positions
      *         and symbols.
@@ -51,37 +52,42 @@ public interface ViewableSpaceGameModel {
 
     /**
      * @return a <code>List</code> containing all <code>SpaceShip</code> objects in
-     *         the model
+     *         the model.
      */
 
     List<SpaceShip> getSpaceShips();
 
     /**
-     * @return the player's <code>SpaceShip</code> object
+     * @return the player's <code>SpaceShip</code> object.
      */
-    SpaceShip getPlayerSpaceShip();
+    SpaceShip getPlayer();
 
     /**
      * Returns all Asteroid objects of the MVP //TODO: Remove this once a proper
-     * model is in place
+     * model is in place.
      *
-     * @return a List of all Asteroid objects
+     * @return a List of all Asteroid objects.
      */
     List<Asteroid> getAsteroids();
 
     /**
-     * Returns the Bullet object (laser) of the MVP //TODO: Remove this once a
-     * proper model is in
-     * place
+     * Return all lasers in the model.
      *
-     * @return the Bullet object
+     * @return a <code>List</code> of <code>Bullet</code> objects
      */
-    Bullet getLaser();
+    List<Bullet> getLasers();
 
     /**
-     * Sets the <code>AnimationCallback</code> for the model
+     * Sets the <code>AnimationCallback</code> for the model.
      * 
-     * @param view
+     * @param animationCallback an AnimationCallback object.
      */
-    public void setAnimationCallback(AnimationCallback view);
+    public void setAnimationCallback(AnimationCallback animationCallback);
+
+    /**
+     * Sets the <code>ScreenBoundsProvider</code> for the model.
+     * 
+     * @param screenBoundsProvider a ScreenBoundsProvider object.
+     */
+    public void setScreenBoundsProvider(ScreenBoundsProvider screenBoundsProvider);
 }
