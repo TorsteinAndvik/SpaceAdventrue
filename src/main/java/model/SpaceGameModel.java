@@ -95,7 +95,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     private void createSpaceShips() {
         this.player = new Player(
-                shipFactory.createShipFromJson("enemy2.json"), "player", "the player's spaceship", 1, 8, 1);
+                shipFactory.createShipFromJson("enemy2.json"), "player", "the player's spaceship", 12, 8, 1);
         this.player.setRotationSpeed(0f);
 
         EnemyShip enemyShip = new EnemyShip(
@@ -118,13 +118,13 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         float radiusSmall = 0.5f;
 
         Asteroid asteroidLarge = asteroidPool.obtain();
-        asteroidLarge.init(1f, 6f, 0.35f, 8, 8f, 10f, radiusLarge, 60f, true);
+        asteroidLarge.init(1f, 6f, 0.35f, 4, 4f, 10f, radiusLarge, 60f, true);
 
         Asteroid asteroidSmall = asteroidPool.obtain();
-        asteroidSmall.init(5f, 4f, 0.25f, 1, 1f, 170f, radiusSmall, -30f, false);
+        asteroidSmall.init(5f, 5f, 0.25f, 1, 1f, 170f, radiusSmall, -30f, false);
 
         Asteroid asteroidSmall2 = asteroidPool.obtain();
-        asteroidSmall2.init(6f, 4.5f, 0.3f, 1, 1f, 175f, radiusSmall, 40f, false);
+        asteroidSmall2.init(6f, 6f, 0.3f, 1, 1f, 175f, radiusSmall, 40f, false);
 
         this.asteroids = new LinkedList<>();
         asteroids.add(asteroidLarge);
@@ -184,7 +184,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                 || laser.getY() - laser.getRadius() > bounds.y + bounds.height);
     }
 
-    void handleCollision(Collideable A, Collideable B) {
+    void handleCollisionOld(Collideable A, Collideable B) {
         if (isFriendlyFire(A, B)) {
             return;
         }
@@ -201,6 +201,33 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
             if (((Damageable) A).isDestroyed()) {
                 remove(A, true);
             }
+        }
+    }
+
+    void handleCollision(Collideable A, Collideable B) {
+        if (isFriendlyFire(A, B)) {
+            return;
+        }
+
+        boolean destroyA = false;
+        boolean destroyB = false;
+
+        if (A instanceof DamageDealer && B instanceof Damageable) {
+            ((DamageDealer) A).dealDamage((Damageable) B);
+            destroyB = ((Damageable) B).isDestroyed();
+        }
+
+        if (B instanceof DamageDealer && A instanceof Damageable) {
+            ((DamageDealer) B).dealDamage((Damageable) A);
+            destroyA = ((Damageable) A).isDestroyed();
+        }
+
+        if (destroyA) {
+            remove(A, true);
+        }
+
+        if (destroyB) {
+            remove(B, true);
         }
     }
 
@@ -223,12 +250,12 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     private void remove(Collideable c, boolean drawExplosion) {
         hitDetection.removeCollider(c);
         if (c instanceof SpaceBody) {
-            if (drawExplosion) {
-                addAnimationState(c, AnimationType.EXPLOSION);
-            }
             System.out.println(c + " destroyed");
             switch (((SpaceBody) c).getCharacterType()) {
                 case ASTEROID:
+                    if (drawExplosion) {
+                        addAnimationState(c, AnimationType.EXPLOSION);
+                    }
                     for (Asteroid asteroid : asteroids) {
                         if (asteroid == c) {
                             asteroids.remove(asteroid);
@@ -239,6 +266,9 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                     break;
 
                 case BULLET:
+                    if (drawExplosion) {
+                        addAnimationState(c, AnimationType.EXPLOSION);
+                    }
                     for (Bullet laser : lasers) {
                         if (laser == c) {
                             lasers.remove(laser);
@@ -251,6 +281,11 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                 case ENEMY_SHIP:
                     for (SpaceShip ship : this.spaceShips) {
                         if (ship == c) {
+                            if (drawExplosion) {
+                                addAnimationState(ship.getAbsoluteCenterOfMass().x(),
+                                        ship.getAbsoluteCenterOfMass().y(),
+                                        ship.getRadius(), AnimationType.EXPLOSION);
+                            }
                             spaceShips.remove(c);
                             break;
                         }
@@ -258,6 +293,9 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                     break;
 
                 case PLAYER: // TODO: Implement remove(Player) case (game over)
+                    if (drawExplosion) {
+                        addAnimationState(c, AnimationType.EXPLOSION);
+                    }
                     break;
 
                 default:
@@ -268,6 +306,10 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     private void addAnimationState(Collideable c, AnimationType type) {
         animationCallback.addAnimationState(new AnimationStateImpl(c, type));
+    }
+
+    private void addAnimationState(float x, float y, float radius, AnimationType type) {
+        animationCallback.addAnimationState(new AnimationStateImpl(x, y, radius, type));
     }
 
     public void shoot() {

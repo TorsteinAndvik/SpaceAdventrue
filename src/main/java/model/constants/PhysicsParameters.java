@@ -4,6 +4,8 @@ public class PhysicsParameters {
 
     public static final float fuselageMass = 1f;
 
+    public static final float fuselageRadius = 0.5f;
+
     public static final float shipUpgradeMass = 0.5f;
 
     // TODO: space ships should calculate a max velocity and acceleration according
