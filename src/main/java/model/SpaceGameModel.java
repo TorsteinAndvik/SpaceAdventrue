@@ -53,8 +53,9 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         this.laser = new Bullet("laser", "a laser shot", 0f, 0f, 1, 1f, 0f, 1f);
 
         this.hitDetection = new HitDetection(this);
-        hitDetection.addColliders(Arrays.asList(player, enemyShip, asteroids.get(0), asteroids.get(1), this.laser)); // TODO:
-                                                                                                                     // Refactor
+        hitDetection.addColliders(
+            Arrays.asList(player, enemyShip, asteroids.get(0), asteroids.get(1),
+                this.laser)); // TODO: Refactor
 
         this.rotationMatrix = new Matrix3();
         this.transformMatrix = new Matrix4();
@@ -62,17 +63,17 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     private void createSpaceShips() {
         this.player = new Player(
-                shipFactory.playerShip(), "player", "the player's spaceship", 1, 8, 1);
+            ShipFactory.playerShip(), "player", "the player's spaceship", 1, 8, 1);
         this.player.setRotationSpeed(0f);
 
         this.enemyShip = new EnemyShip(
-                shipFactory.createShipFromJson("enemy2.json"),
-                "enemy",
-                "an enemy ship",
-                1,
-                1,
-                5,
-                0f);
+            ShipFactory.createShipFromJson("enemy2.json"),
+            "enemy",
+            "an enemy ship",
+            1,
+            1,
+            5,
+            0f);
 
         this.spaceShips = new LinkedList<SpaceShip>(Arrays.asList(this.player, this.enemyShip));
     }
@@ -81,16 +82,18 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         float radiusLarge = 1f;
         float radiusSmall = 0.5f;
 
-        Asteroid asteroidLarge = new Asteroid("large asteroid", "a large asteroid", 1f + radiusLarge, 6f + radiusLarge,
-                0.3f,
-                -0.10f, 4, 4f, 30f,
-                1f, true);
+        Asteroid asteroidLarge = new Asteroid("large asteroid", "a large asteroid",
+            1f + radiusLarge, 6f + radiusLarge,
+            0.3f,
+            -0.10f, 4, 4f, 30f,
+            1f, true);
         asteroidLarge.setRotationSpeed(60f);
 
-        Asteroid asteroidSmall = new Asteroid("small asteroid", "a small asteroid", 5f + radiusSmall, 4f + radiusSmall,
-                -0.1f,
-                0.15f, 1, 1f, 0f, 0.5f,
-                false);
+        Asteroid asteroidSmall = new Asteroid("small asteroid", "a small asteroid",
+            5f + radiusSmall, 4f + radiusSmall,
+            -0.1f,
+            0.15f, 1, 1f, 0f, 0.5f,
+            false);
         asteroidSmall.setRotationSpeed(-30f);
 
         this.asteroids = new LinkedList<>();
@@ -172,8 +175,8 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     public void shoot() {
         // TODO: This is awful, never do this.
         this.laser = new Bullet("laser", "a laser shot", player.getCenter().x(),
-                player.getCenter().y(), 1, 1, 0,
-                1);
+            player.getCenter().y(), 1, 1, 0,
+            1);
         laserExists = true;
     }
 
