@@ -4,7 +4,11 @@ import grid.CellPosition;
 import grid.Grid;
 import grid.GridCell;
 import grid.IGrid;
+
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+
 import model.ShipComponents.ShipConfig;
 import model.ShipComponents.ShipConfig.ShipComponent;
 import model.ShipComponents.UpgradeType;
@@ -19,7 +23,6 @@ public class ShipStructure implements ViewableShipStructure {
 
     public ShipStructure(int width, int height) {
         this(new Grid<>(height, width), 0f, new FloatPair(0f, 0f));
-
 
     }
 
@@ -64,7 +67,7 @@ public class ShipStructure implements ViewableShipStructure {
      * @param pos      the <code>CellPosition</code> of the fuselage to be added
      * @param fuselage the <code>Fuselage</code> to be added
      * @return true if the fuselage was successfully added (i.e. <code>pos</code> is
-     * valid and the position was empty), false otherwise
+     *         valid and the position was empty), false otherwise
      */
     public boolean set(CellPosition pos, Fuselage fuselage) {
         try {
@@ -180,8 +183,7 @@ public class ShipStructure implements ViewableShipStructure {
      * @param pos the <code>CellPosition</code> to add an empty
      *            <code>Fuselage</code> to
      * @return true if the fuselage was successfully added (i.e. <code>pos</code> is
-     * valid and the
-     * position was empty), false otherwise
+     *         valid and the position was empty), false otherwise
      */
     public boolean set(CellPosition pos) {
         return set(pos, new Fuselage());
@@ -196,8 +198,7 @@ public class ShipStructure implements ViewableShipStructure {
      *                to
      * @param upgrade the <code>ShipUpgrade</code> to be added
      * @return true if the upgrade was successfully added (i.e. <code>pos</code> is
-     * valid and the
-     * position holds an empty <code>Fuselage</code>), false otherwise
+     *         valid and the position holds an empty <code>Fuselage</code>), false otherwise
      */
     public boolean addUpgrade(CellPosition pos, ShipUpgrade upgrade) {
         if (upgrade == null || !grid.positionIsOnGrid(pos)) { return false; }
@@ -246,11 +247,11 @@ public class ShipStructure implements ViewableShipStructure {
      * @param center    If {@code true}, shifts the old grid content to keep it centered in the
      *                  expanded grid. If {@code false}, shifts the content towards the
      *                  bottom-right.
-     * @return A new {@code IGrid<Fuselage>} instance with the expanded dimensions, containing the
-     * original grid’s elements repositioned accordingly.
+     * @return A new {@code IGrid<Fuselage>} instance with the expanded dimensions,
+     *         containing the original grid’s elements repositioned accordingly.
      */
     public static IGrid<Fuselage> getExpandedGrid(IGrid<Fuselage> grid, int addedRows,
-        int addedCols, boolean center) {
+            int addedCols, boolean center) {
         if (addedRows < 0 || addedCols < 0 || (addedRows == 0 && addedCols == 0)) {
             return grid;
         }
@@ -278,6 +279,20 @@ public class ShipStructure implements ViewableShipStructure {
     @Override
     public Iterator<GridCell<Fuselage>> iterator() {
         return this.grid.iterator();
+    }
+
+    public List<CellPosition> getTurretPositions() {
+        List<CellPosition> turretPositions = new ArrayList<>();
+        for (GridCell<Fuselage> cell : grid) {
+            if (cell.value() == null) {
+                continue;
+            }
+
+            if (cell.value().hasUpgrade() && cell.value().getUpgrade().getType() == UpgradeType.TURRET) {
+                turretPositions.add(cell.pos());
+            }
+        }
+        return turretPositions;
     }
 
     @Override

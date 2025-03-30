@@ -14,7 +14,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -23,8 +23,10 @@ import grid.GridCell;
 import model.ShipComponents.Components.Fuselage;
 import model.ShipComponents.UpgradeType;
 import model.SpaceCharacters.Asteroid;
+import model.SpaceCharacters.Bullet;
 import model.SpaceCharacters.SpaceShip;
 import model.constants.PhysicsParameters;
+import model.ScreenBoundsProvider;
 import model.SpaceGameModel;
 import model.Animation.AnimationCallback;
 import model.Animation.AnimationState;
@@ -34,7 +36,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-public class SpaceScreen implements Screen, AnimationCallback {
+public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvider {
 
     final SpaceGame game;
     final SpaceGameModel model;
@@ -43,10 +45,8 @@ public class SpaceScreen implements Screen, AnimationCallback {
     private final FitViewport viewport;
 
     private final OrthographicCamera camera;
-    private Vector3 cameraPosition;
-    private Vector2 lerpPosition;
     private final float zoomMin = 1f;
-    private final float zoomMax = 2f;
+    private final float zoomMax = 1.5f;
 
     private BitmapFont fontBold; // Agency FB Bold
     private BitmapFont fontRegular; // Agency FB Regular
@@ -64,10 +64,6 @@ public class SpaceScreen implements Screen, AnimationCallback {
     // Animations
     private LinkedList<AnimationState> animationStates;
     private HashMap<AnimationType, Animation<TextureRegion>> animationMap;
-
-    // TODO: Add a list of AnimationStates
-    // TODO: loop over list of AnimationStates in render to draw animations
-    // TODO: remove AnimationStates from list once animation is done looping.
 
     public SpaceScreen(final SpaceGame game, final SpaceGameModel model) {
         this.game = game;
@@ -100,6 +96,7 @@ public class SpaceScreen implements Screen, AnimationCallback {
 
     private void loadSprites() {
         asteroidLarge = createSprite("images/space/asteroid_0.png", 2, 2);
+        // asteroidLarge.setOrigin(1f, 1f);
 
         asteroidSmall = createSprite("images/space/asteroid_1.png", 1, 1);
 
@@ -111,14 +108,14 @@ public class SpaceScreen implements Screen, AnimationCallback {
     }
 
     private void setupAnimationHashMap() {
-        animationStates = new LinkedList<AnimationState>();
+        animationStates = new LinkedList<>();
         animationMap = new HashMap<>();
 
         TextureAtlas atlas = manager.get("images/animations/explosion_A.atlas",
-                TextureAtlas.class);
+            TextureAtlas.class);
 
-        Animation<TextureRegion> explosionAnimation = new Animation<TextureRegion>(1f / 12f,
-                atlas.findRegions("explosion"), PlayMode.NORMAL);
+        Animation<TextureRegion> explosionAnimation = new Animation<>(1f / 12f,
+            atlas.findRegions("explosion"), PlayMode.NORMAL);
 
         animationMap.put(AnimationType.EXPLOSION, explosionAnimation);
     }
@@ -126,11 +123,11 @@ public class SpaceScreen implements Screen, AnimationCallback {
     private void setupUpgradeHashMap() {
         upgradeIcons = new HashMap<>();
         upgradeIcons.put(UpgradeType.TURRET,
-                createSprite("images/upgrades/turret_laser_stage_0.png", 1, 1));
+            createSprite("images/upgrades/turret_laser_stage_0.png", 1, 1));
         upgradeIcons.put(UpgradeType.THRUSTER,
-                createSprite("images/upgrades/rocket_stage_0.png", 1, 1));
+            createSprite("images/upgrades/rocket_stage_0.png", 1, 1));
         upgradeIcons.put(UpgradeType.SHIELD,
-                createSprite("images/upgrades/shield_stage_0.png", 1, 1));
+            createSprite("images/upgrades/shield_stage_0.png", 1, 1));
     }
 
     private Sprite createSprite(String path, float width, float height) {
@@ -151,22 +148,21 @@ public class SpaceScreen implements Screen, AnimationCallback {
         ScreenUtils.clear(Color.DARK_GRAY);
 
         viewport.apply();
-        batch.setProjectionMatrix(viewport.getCamera().combined);
+        batch.setProjectionMatrix(camera.combined);
         updateCamera();
 
         fontBold.setColor(Color.GREEN);
         fontRegular.setColor(Color.RED);
 
-        model.rotateEnemy(delta); // TODO: Remove this once proper model is in place
-        // view should only send model.update(delta) via controller in future
         batch.begin();
 
         // draw asteroids
         for (Asteroid asteroid : model.getAsteroids()) {
-            Sprite asteroidSprite = asteroid.isLarge ? asteroidLarge : asteroidSmall;
+            Sprite asteroidSprite = asteroid.isLarge() ? asteroidLarge : asteroidSmall;
             asteroidSprite.setRotation(asteroid.getRotationAngle());
-            asteroidSprite.setX(asteroid.getX());
-            asteroidSprite.setY(asteroid.getY());
+            asteroidSprite.setCenterX(asteroid.getX());
+            asteroidSprite.setCenterY(asteroid.getY());
+
             asteroidSprite.draw(batch);
         }
 
@@ -183,41 +179,34 @@ public class SpaceScreen implements Screen, AnimationCallback {
                 float shipX = ship.getX() + cell.pos().col();
                 float shipY = ship.getY() + cell.pos().row();
                 if (ship.isPlayerShip()) {
-                    fuselagePlayer.setX(shipX);
-                    fuselagePlayer.setY(shipY);
+                    fuselagePlayer.setCenterX(shipX);
+                    fuselagePlayer.setCenterY(shipY);
                     fuselagePlayer.draw(batch);
                 } else {
-                    fuselageEnemy.setX(shipX);
-                    fuselageEnemy.setY(shipY);
+                    fuselageEnemy.setCenterX(shipX);
+                    fuselageEnemy.setCenterY(shipY);
                     fuselageEnemy.draw(batch);
                 }
 
                 if (cell.value().getUpgrade() != null) {
-                    upgradeIcons.get(cell.value().getUpgrade().getType()).setX(shipX);
-                    upgradeIcons.get(cell.value().getUpgrade().getType()).setY(shipY);
+                    upgradeIcons.get(cell.value().getUpgrade().getType()).setCenterX(shipX);
+                    upgradeIcons.get(cell.value().getUpgrade().getType()).setCenterY(shipY);
                     upgradeIcons.get(cell.value().getUpgrade().getType()).draw(batch);
                 }
             }
-
-            // draw center of mass as a laser, for testing purposes
-            FloatPair cm = model.getShipCenterOfMass(ship);
-            laser.setX(cm.x() - 0.5f * laser.getWidth());
-            laser.setY(cm.y() - 0.5f * laser.getHeight());
-            laser.draw(batch);
         }
 
         // Reset the transform matrix to the identity matrix
         batch.setTransformMatrix(new Matrix4().idt());
 
-        if (model.laserExists) { // TODO: refactor once cannon-firing logic is added to model
-            laser.setX(model.getLaser().getX() - 0.125f);
-            laser.setY(model.getLaser().getY() + 0.875f);
-            laser.draw(batch);
+        for (Bullet laser : model.getLasers()) {
+            this.laser.setRotation(laser.getRotationAngle() - 90f);
+            this.laser.setCenterX(laser.getX());
+            this.laser.setCenterY(laser.getY());
+            this.laser.draw(batch);
         }
 
-        // TODO: Remove after testing of animations is done
-        // Draw explosion animation:
-
+        // Draw explosion animations:
         Iterator<AnimationState> animationStatesIterator = animationStates.iterator();
         while (animationStatesIterator.hasNext()) {
             AnimationState state = animationStatesIterator.next();
@@ -229,7 +218,9 @@ public class SpaceScreen implements Screen, AnimationCallback {
                 animationStatesIterator.remove();
             } else {
                 TextureRegion currentFrame = animation.getKeyFrame(state.getStateTime());
-                batch.draw(currentFrame, state.getX(), state.getY(), state.getWidth(), state.getHeight());
+                batch.draw(currentFrame, state.getX() - state.getRadius(),
+                    state.getY() - state.getRadius(),
+                    2f * state.getRadius(), 2f * state.getRadius());
             }
         }
 
@@ -261,7 +252,8 @@ public class SpaceScreen implements Screen, AnimationCallback {
     }
 
     private void cameraLerpToPlayer() {
-        FloatPair newPosition = lerp(camera.position, model.getPlayerSpaceShip().getCenter(), 0.1f);
+        FloatPair newPosition = lerp(camera.position, model.getPlayerCenterOfMass(),
+            0.1f);
         setCameraPosition(newPosition);
     }
 
@@ -270,13 +262,14 @@ public class SpaceScreen implements Screen, AnimationCallback {
     }
 
     private float getZoomLevel() {
-        float velocityRatio = model.getPlayerSpaceShip().getSpeed() / PhysicsParameters.maxVelocityLongitudonal;
+        float velocityRatio =
+            model.getPlayer().getSpeed() / PhysicsParameters.maxVelocityLongitudonal;
         float zoomRange = zoomMax - zoomMin;
         return zoomMin + velocityRatio * zoomRange;
     }
 
     private void cameraZoom() {
-        float zoom = lerp(camera.zoom, getZoomLevel(), 0.01f);
+        float zoom = lerp(camera.zoom, getZoomLevel(), 0.02f);
         camera.zoom = zoom;
     }
 
@@ -296,12 +289,11 @@ public class SpaceScreen implements Screen, AnimationCallback {
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height, false);
-        camera.position.set(model.getPlayerSpaceShip().getCenter().x(), model.getPlayerSpaceShip().getCenter().y(), 0f);
+        setCameraPosition(model.getPlayerCenterOfMass());
     }
 
     @Override
     public void resume() {
-
     }
 
     @Override
@@ -314,4 +306,15 @@ public class SpaceScreen implements Screen, AnimationCallback {
         this.animationStates.addFirst(state);
     }
 
+    @Override
+    public Rectangle getBounds() {
+
+        float maxWidth = viewport.getWorldWidth() * zoomMax;
+        float maxHeight = viewport.getWorldHeight() * zoomMax;
+
+        Rectangle bounds = new Rectangle(-maxWidth / 2f + camera.position.x,
+            -maxHeight / 2f + camera.position.y, maxWidth, maxHeight);
+
+        return bounds;
+    }
 }

@@ -5,8 +5,6 @@ import model.constants.PhysicsParameters;
 
 public class Fuselage {
 
-
-    // TODO implement as Colideable
     private ShipUpgrade heldUpgrade;
 
     private float mass = PhysicsParameters.fuselageMass;
@@ -19,11 +17,13 @@ public class Fuselage {
     }
 
     /**
-     * Sets the upgrade held by the fuselage. If there is already an upgrade held, nothing happens.
+     * Sets the upgrade held by the fuselage. If there is already an upgrade held,
+     * nothing happens.
      *
      * @param upgrade The ShipUpgrade to be held by <code>this</code>
-     * @return true if <code>upgrade</code> is set (i.e. no upgrade was previously set), false
-     * otherwise.
+     * @return true if <code>upgrade</code> is set (i.e. no upgrade was previously
+     *         set), false
+     *         otherwise.
      */
     public boolean setUpgrade(ShipUpgrade upgrade) {
         if (heldUpgrade != null) {
@@ -34,7 +34,8 @@ public class Fuselage {
     }
 
     /**
-     * Removes the upgrade held by the fuselage. If there is no upgrade set, nothing happens.
+     * Removes the upgrade held by the fuselage. If there is no upgrade set, nothing
+     * happens.
      *
      * @return The type of the upgrade held by <code>this</code>.
      */
@@ -53,7 +54,7 @@ public class Fuselage {
 
     /**
      * @return <code>true</code> if <code>this</code> currently holds a
-     * <code>ShipUpgrade</code>, otherwise <code>false</code>.
+     *         <code>ShipUpgrade</code>, otherwise <code>false</code>.
      */
     public boolean hasUpgrade() {
         return heldUpgrade != null;
@@ -70,7 +71,7 @@ public class Fuselage {
 
     /**
      * @return combined mass of <code>this</code> and an eventual held
-     * <code>ShipUpgrade</code>.
+     *         <code>ShipUpgrade</code>.
      */
     public float getMass() {
         if (hasUpgrade()) {

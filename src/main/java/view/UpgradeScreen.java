@@ -94,7 +94,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         this.manager = game.getAssetManager();
         this.viewportGame = game.getScreenViewport();
         this.viewportUI = new ScreenViewport();
-        this.model = new UpgradeScreenModel(spaceModel.getPlayerSpaceShip().getShipStructure());
+        this.model = new UpgradeScreenModel(spaceModel.getPlayer().getShipStructure());
         this.controller = new UpgradeScreenController(this, model, spaceModel, game);
         this.touchPos = new Vector2();
 
@@ -183,7 +183,6 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
         glyphLayout = new GlyphLayout();
     }
-
 
     private void drawValidFuselagePlacements() {
         IGrid<Fuselage> grid = model.getExpandedGrid();
@@ -326,7 +325,8 @@ public class UpgradeScreen extends InputAdapter implements Screen {
             float alpha =
                 model.getCameraZoomDeltaTime() < model.getCameraZoomTextFadeCutoffTime() ? 1f
                     : 1f - (float) Math.pow(
-                        (model.getCameraZoomDeltaTime() - model.getCameraZoomTextFadeCutoffTime()),
+                        (model.getCameraZoomDeltaTime()
+                            - model.getCameraZoomTextFadeCutoffTime()),
                         2);
             if (alpha > 0) {
                 Color fontColor = new Color(1f, 0.47f, 0.55f, alpha);

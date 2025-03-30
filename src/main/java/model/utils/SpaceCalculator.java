@@ -10,7 +10,8 @@ public class SpaceCalculator {
     /**
      * Calculates the velocity vector given an angle (in degrees) and speed.
      *
-     * @param angle The angle in degrees, where 0° points to the right (positive x-axis).
+     * @param angle The angle in degrees, where 0° points to the right (positive
+     *              x-axis).
      * @param speed The speed value, which must be non-negative.
      * @return A Vector2 representing the velocity in the x and y directions.
      * @throws IllegalArgumentException if the speed is negative.
@@ -24,7 +25,8 @@ public class SpaceCalculator {
     }
 
     /**
-     * Checks if two cell positions are orthogonally adjacent (horizontally or vertically). Diagonal
+     * Checks if two cell positions are orthogonally adjacent (horizontally or
+     * vertically). Diagonal
      * adjacency is not considered.
      *
      * @param a The first CellPosition.
@@ -41,17 +43,23 @@ public class SpaceCalculator {
      * Returns a list of orthogonally adjacent (non-diagonal) neighboring positions
      * for a given {@code CellPosition}.
      *
-     * @param cellPosition the central {@code CellPosition} for which to find neighbors.
-     * @return a list of four orthogonally adjacent {@code CellPosition}s (up, down, left, right).
+     * @param cellPosition the central {@code CellPosition} for which to find
+     *                     neighbors.
+     * @return a list of four orthogonally adjacent {@code CellPosition}s (up, down,
+     *         left, right).
      */
     public static List<CellPosition> getOrthogonalNeighbours(CellPosition cellPosition) {
         List<CellPosition> neighbours = new ArrayList<>();
-        int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+        int[][] directions = { { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 } };
 
         for (int[] dir : directions) {
             neighbours.add(
-                new CellPosition(cellPosition.row() + dir[0], cellPosition.col() + dir[1]));
+                    new CellPosition(cellPosition.row() + dir[0], cellPosition.col() + dir[1]));
         }
         return neighbours;
+    }
+
+    public static float distance(float x, float y) {
+        return (float) Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
     }
 }
