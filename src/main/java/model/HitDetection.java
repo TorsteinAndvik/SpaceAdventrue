@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import model.Globals.Collideable;
+import model.SpaceCharacters.SpaceShip;
 
 public class HitDetection {
 
@@ -47,8 +48,25 @@ public class HitDetection {
     }
 
     private boolean checkCollision(Collideable target1, Collideable target2) {
-        float dx = target1.getX() - target2.getX();
-        float dy = target1.getY() - target2.getY();
+        float t1X, t1Y, t2X, t2Y;
+        if (target1 instanceof SpaceShip) {
+            t1X = ((SpaceShip) target1).getAbsoluteCenter().x();
+            t1Y = ((SpaceShip) target1).getAbsoluteCenter().y();
+        } else {
+            t1X = target1.getX();
+            t1Y = target1.getY();
+        }
+
+        if (target2 instanceof SpaceShip) {
+            t2X = ((SpaceShip) target2).getAbsoluteCenter().x();
+            t2Y = ((SpaceShip) target2).getAbsoluteCenter().y();
+        } else {
+            t2X = target2.getX();
+            t2Y = target2.getY();
+        }
+
+        float dx = t1X - t2X;
+        float dy = t1Y - t2Y;
         float distance = (float) Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
         return (distance < target1.getRadius() + target2.getRadius());
     }
