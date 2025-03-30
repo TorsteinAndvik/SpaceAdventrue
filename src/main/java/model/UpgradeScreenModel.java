@@ -18,6 +18,7 @@ public class UpgradeScreenModel {
     private final int gridWidth;
     private final int gridHeight;
     private final int numUpgradeOptions = 4;
+    private final int gridExpansion = 2;
     private float gridOffsetX;
     private float gridOffsetY;
     private float upgradeOffsetX;
@@ -91,7 +92,8 @@ public class UpgradeScreenModel {
             if (grabbedItemIsFuselage()) {
                 shipStructure.updateWithFuselage(releasedCellPosition);
             } else {
-                CellPosition actualFuselagePos = releasedCellPosition.offset(-1, -1);
+                CellPosition actualFuselagePos = releasedCellPosition.offset(
+                    -gridExpansion / 2, -gridExpansion / 2);
                 shipStructure.addUpgrade(actualFuselagePos, getGrabbedShipUpgrade());
             }
 
@@ -178,10 +180,12 @@ public class UpgradeScreenModel {
      */
     public void updateOffsets(float worldWidth, float worldHeight) {
         float upgradeToGridDelta = 2f;
-        gridOffsetX = (worldWidth - (shipStructure.getWidth() + 2)) / 2f;
-        gridOffsetY = (worldHeight - (shipStructure.getHeight() + 2) - upgradeToGridDelta) / 2f;
+        gridOffsetX = (worldWidth - (shipStructure.getWidth() + gridExpansion)) / 2f;
+        gridOffsetY =
+            (worldHeight - (shipStructure.getHeight() + gridExpansion) - upgradeToGridDelta) / 2f;
         upgradeOffsetX = (worldWidth - numUpgradeOptions) / 2f;
-        upgradeOffsetY = gridOffsetY + (shipStructure.getHeight() + 2) + upgradeToGridDelta / 2f;
+        upgradeOffsetY =
+            gridOffsetY + (shipStructure.getHeight() + gridExpansion) + upgradeToGridDelta / 2f;
     }
 
     public float getCurrentZoom() {
@@ -289,7 +293,8 @@ public class UpgradeScreenModel {
     }
 
     public IGrid<Fuselage> getExpandedGrid() {
-        return ShipStructure.getExpandedGrid(shipStructure.getGrid(), 2, 2, true);
+        return ShipStructure.getExpandedGrid(shipStructure.getGrid(), gridExpansion, gridExpansion,
+            true);
     }
 
 
