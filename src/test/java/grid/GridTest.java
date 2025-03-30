@@ -68,7 +68,7 @@ class GridTest {
     @Test
     void throwsExceptionWhenGivenInvalidArgs() {
         assertThrows(IllegalArgumentException.class, () -> {
-            IGrid<String> grid = new Grid<>(-1, 3);
+            new Grid<>(-1, 3);
         });
     }
 
@@ -76,7 +76,7 @@ class GridTest {
     void throwsExceptionWhenCoordinatesOutOfBoundsTest() {
         IGrid<String> grid = new Grid<>(3, 3);
         assertThrows(IndexOutOfBoundsException.class, () -> {
-            String x = grid.get(new CellPosition(3, 1));
+            grid.get(new CellPosition(3, 1));
         });
     }
 
