@@ -1,11 +1,15 @@
 package model.SpaceCharacters;
 
+import java.util.List;
+
+import grid.CellPosition;
 import model.Globals.DamageDealer;
 import model.Globals.Damageable;
 import model.Globals.Repairable;
 import model.ShipComponents.Components.ShipStructure;
 import model.constants.PhysicsParameters;
 import model.utils.FloatPair;
+import model.utils.SpaceCalculator;
 
 public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damageable, Repairable {
 
@@ -40,10 +44,7 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
         this.maxHitPoints = maxHitPoints;
         this.shipStructure = shipStructure;
         if (this.shipStructure != null) {
-            this.setRadius(
-                    (float) Math.sqrt(
-                            Math.pow(shipStructure.getWidth() / 2f, 2) + Math.pow(
-                                    shipStructure.getHeight() / 2f, 2)));
+            this.setRadius(SpaceCalculator.distance(shipStructure.getWidth() / 2f, shipStructure.getHeight() / 2f));
         }
     }
 
@@ -53,6 +54,10 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
 
     public boolean isPlayerShip() {
         return false;
+    }
+
+    public List<CellPosition> getTurretPositions() {
+        return shipStructure.getTurretPositions();
     }
 
     public void setAccelerateForward(boolean accelerate) {
@@ -80,25 +85,43 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
                     * (float) Math.cos(Math.toRadians(rotation.getAngle() + 90f)));
             addVelocityY(deltaTime * PhysicsParameters.accelerationLimitLongitudonal
                     * (float) Math.sin(Math.toRadians(rotation.getAngle() + 90f)));
+            applySpeedLimit();
         } else if (accelerateBackward) {
             addVelocityX(-deltaTime * PhysicsParameters.accelerationLimitLongitudonal
                     * (float) Math.cos(Math.toRadians(rotation.getAngle() + 90f)));
             addVelocityY(-deltaTime * PhysicsParameters.accelerationLimitLongitudonal
                     * (float) Math.sin(Math.toRadians(rotation.getAngle() + 90f)));
+            applySpeedLimit();
         } else {
             dampVelocity(deltaTime);
         }
 
         if (accelerateClockwise) {
             addRotationSpeed(-deltaTime * PhysicsParameters.accelerationLimitRotational);
+            applyRotationalSpeedLimit();
         } else if (accelerateCounterClockwise) {
             addRotationSpeed(deltaTime * PhysicsParameters.accelerationLimitRotational);
+            applyRotationalSpeedLimit();
         } else {
             dampRotation(deltaTime);
         }
 
         rotate(deltaTime * getRotationSpeed());
         position.add(velocity.x * deltaTime, velocity.y * deltaTime);
+    }
+
+    private void applySpeedLimit() {
+        if (getSpeed() > PhysicsParameters.maxVelocityLongitudonal) {
+            velocity.scl(PhysicsParameters.maxVelocityLongitudonal / getSpeed());
+        }
+    }
+
+    private void applyRotationalSpeedLimit() {
+        if (getRotationSpeed() < -PhysicsParameters.maxVelocityRotational) {
+            rotation.setRotationSpeed(-PhysicsParameters.maxVelocityRotational);
+        } else if (getRotationSpeed() > PhysicsParameters.maxVelocityRotational) {
+            rotation.setRotationSpeed(PhysicsParameters.maxVelocityRotational);
+        }
     }
 
     private void dampVelocity(float deltaTime) {
@@ -121,13 +144,37 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
     }
 
     /**
-     * @return center point of the ship, as opposed to getX() and getY() which
-     *         return the bottom
-     *         left corner
+     * @return absolute center point of the ship grid.
+     *         Shifts the relative center by the ship's global X and Y coordinates.
      */
-    public FloatPair getCenter() {
+    public FloatPair getAbsoluteCenter() {
         return new FloatPair(getX() + ((float) shipStructure.getWidth()) / 2f,
                 getY() + ((float) shipStructure.getHeight()) / 2f);
+    }
+
+    /**
+     * @return center point of the ship grid relative to its bottom left corner.
+     */
+    public FloatPair getRelativeCenter() {
+        return new FloatPair((float) shipStructure.getWidth() / 2f, (float) shipStructure.getHeight() / 2f);
+    }
+
+    /**
+     * @return absolute center of mass of the ship structure.
+     *         Shifts the relative center of mass by the ship's global X and Y
+     *         coordinates.
+     */
+    public FloatPair getAbsoluteCenterOfMass() {
+        return new FloatPair(getX() + shipStructure.getCenterOfMass().x(),
+                getY() + shipStructure.getCenterOfMass().y());
+    }
+
+    /**
+     * @return center of mass of the ship structure relative to its bottom left
+     *         corner.
+     */
+    public FloatPair getRelativeCenterOfMass() {
+        return shipStructure.getCenterOfMass();
     }
 
     @Override
@@ -137,9 +184,9 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
 
     @Override
     public void dealDamage(Damageable target) {
-        // Damage dealt when ship hits damageable object
-        target.takeDamage(getHitPoints());
-
+        int targetHP = target.getHitPoints();
+        target.takeDamage(this.hitPoints);
+        this.takeDamage(targetHP);
     }
 
     @Override
