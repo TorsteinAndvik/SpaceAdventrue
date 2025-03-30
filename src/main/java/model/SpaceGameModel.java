@@ -30,6 +30,7 @@ import model.SpaceCharacters.SpaceBody;
 import model.SpaceCharacters.SpaceShip;
 import model.constants.PhysicsParameters;
 import model.utils.FloatPair;
+import model.utils.SpaceCalculator;
 import view.ViewableSpaceGameModel;
 
 public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpaceGameModel {
@@ -316,7 +317,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         for (CellPosition cell : player.getTurretPositions()) {
             float x0 = (float) cell.col() + Turret.turretBarrelLocation().x() - player.getRelativeCenterOfMass().x();
             float y0 = (float) cell.row() + Turret.turretBarrelLocation().y() - player.getRelativeCenterOfMass().y();
-            float r = (float) Math.sqrt(Math.pow(x0, 2) + Math.pow(y0, 2));
+            float r = SpaceCalculator.distance(x0, y0);
 
             float offsetAngle = (float) Math.toDegrees(Math.atan2(y0, x0));
 

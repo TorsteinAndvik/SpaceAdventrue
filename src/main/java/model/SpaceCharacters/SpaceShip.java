@@ -9,6 +9,7 @@ import model.Globals.Repairable;
 import model.ShipComponents.Components.ShipStructure;
 import model.constants.PhysicsParameters;
 import model.utils.FloatPair;
+import model.utils.SpaceCalculator;
 
 public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damageable, Repairable {
 
@@ -43,10 +44,7 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
         this.maxHitPoints = maxHitPoints;
         this.shipStructure = shipStructure;
         if (this.shipStructure != null) {
-            this.setRadius(
-                    (float) Math.sqrt(
-                            Math.pow(shipStructure.getWidth() / 2f, 2) + Math.pow(
-                                    shipStructure.getHeight() / 2f, 2)));
+            this.setRadius(SpaceCalculator.distance(shipStructure.getWidth() / 2f, shipStructure.getHeight() / 2f));
         }
     }
 
