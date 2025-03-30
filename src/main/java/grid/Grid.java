@@ -131,6 +131,7 @@ public class Grid<E> implements IGrid<E> {
      * adjusted accordingly
      */
     public static <E> IGrid<E> shrinkGridToFit(IGrid<E> expandedGrid) {
+        boolean hasValidCells = false;
         int minRow = Integer.MAX_VALUE;
         int maxRow = 0;
         int minCol = Integer.MAX_VALUE;
@@ -138,6 +139,7 @@ public class Grid<E> implements IGrid<E> {
 
         for (GridCell<E> cell : expandedGrid) {
             if (cell.value() != null) {
+                hasValidCells = true;
                 int row = cell.pos().row();
                 int col = cell.pos().col();
                 minRow = Math.min(minRow, row);
@@ -147,7 +149,7 @@ public class Grid<E> implements IGrid<E> {
             }
         }
 
-        if (minRow > maxRow || minCol > maxCol) {
+        if (!hasValidCells) {
             return new Grid<>(1, 1);
         }
 
