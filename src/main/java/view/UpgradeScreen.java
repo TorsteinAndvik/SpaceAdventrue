@@ -21,8 +21,9 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import controller.UpgradeScreenController;
 import grid.CellPosition;
 import grid.GridCell;
+import grid.IGrid;
+import java.util.Map.Entry;
 import model.ShipComponents.Components.ShipStructure;
-import model.ShipComponents.Components.ViewableShipStructure;
 import model.SpaceGameModel;
 import model.UpgradeScreenModel;
 import model.ShipComponents.UpgradeType;
@@ -69,7 +70,11 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     private float uiIconZoom;
     private final String[] upgradeStrings;
 
-    Map<UpgradeType, Integer> upgradeTypeMap;
+    private static final Map<UpgradeType, Integer> UpgradeTypeMap = Map.of(
+        UpgradeType.TURRET, 1,
+        UpgradeType.THRUSTER, 2,
+        UpgradeType.SHIELD, 3
+    );
 
     int cursorWidth = 64;
     int cursorHeight = 64;
@@ -89,8 +94,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         this.manager = game.getAssetManager();
         this.viewportGame = game.getScreenViewport();
         this.viewportUI = new ScreenViewport();
-        this.model = new UpgradeScreenModel(
-            getExtendedShipStructure(spaceModel.getPlayerSpaceShip().getShipStructure()));
+        this.model = new UpgradeScreenModel(spaceModel.getPlayerSpaceShip().getShipStructure());
         this.controller = new UpgradeScreenController(this, model, spaceModel, game);
         this.touchPos = new Vector2();
 
@@ -98,12 +102,6 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         setupFonts();
         loadSprites();
         setupUISprites();
-
-        this.upgradeTypeMap = Map.of(
-            UpgradeType.TURRET, 1,
-            UpgradeType.THRUSTER, 2,
-            UpgradeType.SHIELD, 3
-        );
 
         descriptionRect = new Rectangle(0, 0, 0, 0);
 
@@ -163,11 +161,11 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     }
 
     private String[] setupUpgradeStrings() {
-        return new String[] {
-                "Fuselage:\nUsed to expand the ship. New upgrades are attached to Fuselage.",
-                "Turret:\nFires lasers at enemies and asteroids.",
-                "Rocket:\nImproves acceleration and top speed of the ship.",
-                "Shield:\nIncrease the ship's health."
+        return new String[]{
+            "Fuselage:\nUsed to expand the ship. New upgrades are attached to Fuselage.",
+            "Turret:\nFires lasers at enemies and asteroids.",
+            "Rocket:\nImproves acceleration and top speed of the ship.",
+            "Shield:\nIncrease the ship's health."
         };
     }
 
@@ -188,14 +186,13 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
 
     private void drawValidFuselagePlacements() {
-        ViewableShipStructure structure = model.getPlayerShipStructure();
-
-        for (GridCell<Fuselage> cell : structure) {
+        IGrid<Fuselage> grid = model.getExpandedGrid();
+        for (GridCell<Fuselage> cell : grid) {
             Sprite coloredSquare = squareRed;
 
-            if (structure.hasFuselage(cell.pos())) {
+            if (!grid.isEmptyAt(cell.pos())) {
                 coloredSquare = squareGray;
-            } else if (model.isValidFuselagePosition(cell.pos())) {
+            } else if (ShipStructure.isValidFuselagePosition(grid, cell.pos())) {
                 coloredSquare = squareGreen;
             }
             drawGridSquare(coloredSquare, cell);
@@ -203,13 +200,13 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     }
 
     private void drawValidUpgradePlacements() {
-        ViewableShipStructure shipStructure = model.getPlayerShipStructure();
+        IGrid<Fuselage> grid = model.getExpandedGrid();
 
-        for (GridCell<Fuselage> cell : shipStructure) {
+        for (GridCell<Fuselage> cell : grid) {
             Sprite coloredGrid = squareGray;
 
-            if (!shipStructure.hasFuselage(cell.pos())) { continue; }
-            if (model.isValidUpgradePosition(cell.pos())) {
+            if (grid.isEmptyAt(cell.pos())) { continue; }
+            if (ShipStructure.isValidUpgradePosition(grid, cell.pos())) {
                 coloredGrid = squareGreen;
             }
             drawGridSquare(coloredGrid, cell);
@@ -217,17 +214,16 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     }
 
     private void drawDefaultGrid() {
-        ViewableShipStructure shipStructure = model.getPlayerShipStructure();
+        IGrid<Fuselage> grid = model.getExpandedGrid();
 
-        for (GridCell<Fuselage> cell : shipStructure) {
-            if (shipStructure.hasFuselage(cell.pos())) {
+        for (GridCell<Fuselage> cell : grid) {
+            if (!grid.isEmptyAt(cell.pos())) {
                 drawGridSquare(squareGray, cell);
             }
         }
     }
 
     private void drawShipGrid() {
-
         if (!model.isUpgradeGrabbed()) {
             drawDefaultGrid();
         } else if (grabbedItemIsFuselage()) {
@@ -237,9 +233,24 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         }
     }
 
+    private void drawShip() {
+        for (GridCell<Fuselage> cell : model.getExpandedGrid()) {
+            if (cell.value() == null) {
+                continue;
+            }
+            CellPosition pos = cell.pos();
+            drawUpgrade(pos);
+
+            if (cell.value().hasUpgrade()) {
+                UpgradeType type = cell.value().getUpgrade().getType();
+                drawUpgrade(pos, type);
+            }
+        }
+    }
+
     @Override
     public void render(float delta) {
-        model.updateCameraZoomDeltaTime(delta);
+        model.update(delta);
         ScreenUtils.clear(new Color(0f, 64f / 255f, 64f / 255f, 1f));
 
         viewportGame.apply(false);
@@ -253,17 +264,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
         drawShipGrid();
 
-        // draw player's ship
-        for (GridCell<Fuselage> cell : model.getPlayerShipStructure()) {
-            if (cell.value() == null) {
-                continue;
-            }
-            drawUpgrade(cell.pos());
-
-            if (cell.value().hasUpgrade()) {
-                drawUpgrade(cell.pos(), cell.value().getUpgrade().getType());
-            }
-        }
+        drawShip();
 
         if (model.isUpgradeGrabbed()) {
             // draw a ghost copy of upgrade if hovering a grid cell
@@ -272,9 +273,9 @@ public class UpgradeScreen extends InputAdapter implements Screen {
             CellPosition cpGrid = convertMouseToGrid(touchPos.x, touchPos.y);
             if (cellPositionOnGrid(cpGrid) && canPlaceItem(cpGrid)) {
                 upgradeIcons[model.getGrabbedUpgradeIndex()].setX(
-                        model.getGridOffsetX() + cpGrid.col() + 0.5f * (1f - upgradeIconZoom));
+                    model.getGridOffsetX() + cpGrid.col() + 0.5f * (1f - upgradeIconZoom));
                 upgradeIcons[model.getGrabbedUpgradeIndex()].setY(
-                        model.getGridOffsetY() + cpGrid.row() + 0.5f * (1f - upgradeIconZoom));
+                    model.getGridOffsetY() + cpGrid.row() + 0.5f * (1f - upgradeIconZoom));
                 upgradeIcons[model.getGrabbedUpgradeIndex()].draw(batch, 0.5f);
             }
 
@@ -284,11 +285,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
             upgradeIcons[model.getGrabbedUpgradeIndex()].setY(pos.y - 0.5f * upgradeIconZoom);
             upgradeIcons[model.getGrabbedUpgradeIndex()].draw(batch);
         }
-
-        if (model.isReleaseGrabbedUpgrade() && model.isUpgradeGrabbed()) {
-            model.setReleaseGrabbedUpgrade(false);
-            model.setUpgradeGrabbed(false);
-        }
+        model.updateOffsets(viewportGame.getWorldWidth(), viewportGame.getWorldHeight());
 
         batch.end();
 
@@ -302,40 +299,40 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         // zoom (mouse wheel)
         msMiddle.draw(batch);
         fontRegular.draw(batch, "Adjust zoom", fontRegular.getData().lineHeight,
-                fontRegular.getData().lineHeight);
+            fontRegular.getData().lineHeight);
 
         // move camera (right click)
         msRight.draw(batch);
         fontRegular.draw(batch, "Move camera", fontRegular.getData().lineHeight,
-                2 * fontRegular.getData().lineHeight);
+            2 * fontRegular.getData().lineHeight);
 
         // grab upgrade (left click)
         msLeft.draw(batch);
         fontRegular.draw(batch, "Grab upgrade", fontRegular.getData().lineHeight,
-                3 * fontRegular.getData().lineHeight);
+            3 * fontRegular.getData().lineHeight);
 
         // inspect upgrade (T key)
         kbT.draw(batch);
         fontRegular.draw(batch, "Inspect upgrade", fontRegular.getData().lineHeight,
-                4 * fontRegular.getData().lineHeight);
+            4 * fontRegular.getData().lineHeight);
 
         // escape (Esc key)
         kbEsc.setY(viewportUI.getWorldHeight() - 1.15f * fontRegular.getData().lineHeight);
         kbEsc.draw(batch);
         fontRegular.draw(batch, "Change screen", fontRegular.getData().lineHeight,
-                viewportUI.getWorldHeight() - 0.33f * fontRegular.getData().lineHeight);
+            viewportUI.getWorldHeight() - 0.33f * fontRegular.getData().lineHeight);
 
         if (model.isCameraZoomRecently()) {
-            float alpha = model.getCameraZoomDeltaTime() < model.getCameraZoomTextFadeCutoffTime() ? 1f
+            float alpha =
+                model.getCameraZoomDeltaTime() < model.getCameraZoomTextFadeCutoffTime() ? 1f
                     : 1f - (float) Math.pow(
-                        (model.getCameraZoomDeltaTime()
-                            - model.getCameraZoomTextFadeCutoffTime()),
+                        (model.getCameraZoomDeltaTime() - model.getCameraZoomTextFadeCutoffTime()),
                         2);
             if (alpha > 0) {
                 Color fontColor = new Color(1f, 0.47f, 0.55f, alpha);
                 fontRegular.setColor(fontColor);
                 fontRegular.draw(batch, "Zoom = x" + model.getCurrentZoom(),
-                        0.1f, 5 * fontRegular.getData().lineHeight);
+                    0.1f, 5 * fontRegular.getData().lineHeight);
             }
         }
 
@@ -348,7 +345,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
             float width = 3f;
             float rectanglePadding = 0.1f;
             glyphLayout.setText(fontRegular, upgradeDescription, Color.WHITE, width, Align.left,
-                    true);
+                true);
 
             touchPos.set(Gdx.input.getX(), Gdx.input.getY() + cursorHeight);
             viewportUI.unproject(touchPos);
@@ -360,14 +357,14 @@ public class UpgradeScreen extends InputAdapter implements Screen {
             shape.begin(ShapeType.Filled);
             shape.setColor(Color.DARK_GRAY);
             shape.rect(touchPos.x - rectanglePadding,
-                    touchPos.y - rectanglePadding - descriptionRect.height,
-                    descriptionRect.width + 2f * rectanglePadding,
-                    descriptionRect.height + 2f * rectanglePadding);
+                touchPos.y - rectanglePadding - descriptionRect.height,
+                descriptionRect.width + 2f * rectanglePadding,
+                descriptionRect.height + 2f * rectanglePadding);
             shape.end();
 
             batch.begin();
             fontRegular.draw(batch, glyphLayout,
-                    touchPos.x, touchPos.y);
+                touchPos.x, touchPos.y);
             batch.end();
         }
     }
@@ -399,34 +396,58 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     }
 
     private void drawUpgrade(CellPosition cp, UpgradeType type) {
-        drawUpgrade(cp);
-        int upgradeIndex = upgradeTypeMap.getOrDefault(type, 0);
+        int upgradeIndex = getIndexFromUpgradeType(type);
+        if (upgradeIndex <= 0) { return; }
 
         upgradeIcons[upgradeIndex].setX(
-                model.getGridOffsetX() + cp.col() + 0.5f * (1f - upgradeIconZoom));
+            model.getGridOffsetX() + cp.col() + 0.5f * (1f - upgradeIconZoom));
         upgradeIcons[upgradeIndex].setY(
-                model.getGridOffsetY() + cp.row() + 0.5f * (1f - upgradeIconZoom));
+            model.getGridOffsetY() + cp.row() + 0.5f * (1f - upgradeIconZoom));
         upgradeIcons[upgradeIndex].draw(batch);
     }
 
-    private boolean grabbedItemIsFuselage() {
+
+    /**
+     * Checks if the currently grabbed item is a fuselage.
+     *
+     * @return {@code true} if the grabbed upgrade index is {@code 0}, otherwise {@code false}.
+     */
+    public boolean grabbedItemIsFuselage() {
         return model.getGrabbedUpgradeIndex() == 0;
     }
 
-    private boolean canPlaceItem(CellPosition cp) {
-        boolean canPlaceFuselage = grabbedItemIsFuselage()
-            && model.isValidFuselagePosition(cp);
-        boolean canPlaceUpgrade =
-            !grabbedItemIsFuselage() && model.isValidUpgradePosition(cp);
-        return canPlaceFuselage || canPlaceUpgrade;
+    /**
+     * Retrieves the index associated with a given {@code UpgradeType}.
+     *
+     * @param type the {@code UpgradeType} to look up
+     * @return the index of the specified upgrade type, or {@code -1} if not found
+     */
+    public static int getIndexFromUpgradeType(UpgradeType type) {
+        return UpgradeTypeMap.getOrDefault(type, -1);
     }
 
-    private ShipStructure getExtendedShipStructure(ViewableShipStructure playerSpaceShip) {
-        return new ShipStructure(
-            ShipStructure.getExpandedGrid(
-                playerSpaceShip.getGrid(), 2, 2, true
-            ), playerSpaceShip.getMass(), playerSpaceShip.getCenterOfMass()
-        );
+    /**
+     * Retrieves the {@code UpgradeType} associated with a given index.
+     *
+     * @param index the index to look up
+     * @return the corresponding {@code UpgradeType}, or {@code null} if no match is found
+     */
+    public static UpgradeType getUpgradeTypeFromIndex(int index) {
+        for (Entry<UpgradeType, Integer> entry : UpgradeTypeMap.entrySet()) {
+            if (entry.getValue().equals(index)) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
+    private boolean canPlaceItem(CellPosition cp) {
+        IGrid<Fuselage> grid = model.getExpandedGrid();
+        boolean canPlaceFuselage =
+            grabbedItemIsFuselage() && ShipStructure.isValidFuselagePosition(grid, cp);
+        boolean canPlaceUpgrade =
+            !grabbedItemIsFuselage() && ShipStructure.isValidUpgradePosition(grid, cp);
+        return canPlaceFuselage || canPlaceUpgrade;
     }
 
 
@@ -445,15 +466,15 @@ public class UpgradeScreen extends InputAdapter implements Screen {
      */
     public CellPosition convertMouseToGrid(float x, float y) {
         return new CellPosition(
-                (int) Math.floor(y - model.getGridOffsetY()),
-                (int) Math.floor(x - model.getGridOffsetX()));
+            (int) Math.floor(y - model.getGridOffsetY()),
+            (int) Math.floor(x - model.getGridOffsetX()));
     }
 
     private boolean cellPositionOnGrid(CellPosition cp) {
         int gridX = cp.col();
         int gridY = cp.row();
         return !(gridX < 0 || gridX > model.getGridWidth() - 1 ||
-                gridY < 0 || gridY > model.getGridHeight() - 1);
+            gridY < 0 || gridY > model.getGridHeight() - 1);
     }
 
     /**
