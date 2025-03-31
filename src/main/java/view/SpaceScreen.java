@@ -6,8 +6,8 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -17,7 +17,8 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+
 import controller.SpaceGameScreenController;
 import grid.GridCell;
 import model.ShipComponents.Components.Fuselage;
@@ -42,14 +43,13 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     final SpaceGameModel model;
     private final SpaceGameScreenController controller;
     private final SpriteBatch batch;
-    private final FitViewport viewport;
+    private final ScreenViewport viewport;
+    private final ScreenViewport bgViewport;
 
     private final OrthographicCamera camera;
     private final float zoomMin = 1f;
     private final float zoomMax = 1.5f;
 
-    private BitmapFont fontBold; // Agency FB Bold
-    private BitmapFont fontRegular; // Agency FB Regular
     private final AssetManager manager;
 
     private Sprite asteroidLarge;
@@ -61,6 +61,11 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
 
     private HashMap<UpgradeType, Sprite> upgradeIcons;
 
+    // Background
+    private TextureRegion[] background;
+    private float[] backgroundParallax;
+    private float[] backgroundDrift;
+
     // Animations
     private LinkedList<AnimationState> animationStates;
     private HashMap<AnimationType, Animation<TextureRegion>> animationMap;
@@ -69,32 +74,47 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         this.game = game;
         this.batch = this.game.getSpriteBatch();
         this.manager = this.game.getAssetManager();
-        this.viewport = game.getFitViewport();
+        this.viewport = game.getScreenViewport();
+        this.bgViewport = new ScreenViewport();
+        bgViewport.setUnitsPerPixel(viewport.getUnitsPerPixel());
         this.camera = (OrthographicCamera) viewport.getCamera();
 
         this.model = model;
         this.controller = new SpaceGameScreenController(this, model, game);
 
-        setupFonts();
-        loadSprites();
+        setupBackground();
+        setupSprites();
         setupAnimationHashMap();
         setupUpgradeHashMap();
     }
 
-    private void setupFonts() {
-        fontBold = manager.get("fonts/AGENCYB.ttf", BitmapFont.class);
-        fontRegular = manager.get("fonts/AGENCYR.ttf", BitmapFont.class);
+    private void setupBackground() {
+        this.background = new TextureRegion[6];
 
-        // font are set as [integer]pt, need to scale them to our viewport by ratio of
-        // viewport height to screen height in order to use world-unit sized font
-        fontBold.setUseIntegerPositions(false);
-        fontBold.getData().setScale(viewport.getWorldHeight() / Gdx.graphics.getHeight());
+        background[0] = new TextureRegion(manager.get("images/space/background/bkgd_1.png", Texture.class));
+        background[1] = new TextureRegion(manager.get("images/space/background/bkgd_2.png", Texture.class));
+        background[2] = new TextureRegion(manager.get("images/space/background/bkgd_3.png", Texture.class));
+        background[3] = new TextureRegion(manager.get("images/space/background/bkgd_4.png", Texture.class));
+        background[4] = new TextureRegion(manager.get("images/space/background/bkgd_6.png", Texture.class));
+        background[5] = new TextureRegion(manager.get("images/space/background/bkgd_7.png", Texture.class));
 
-        fontRegular.setUseIntegerPositions(false);
-        fontRegular.getData().setScale(viewport.getWorldHeight() / Gdx.graphics.getHeight());
+        this.backgroundParallax = new float[background.length];
+        this.backgroundDrift = new float[background.length];
+
+        int driftOffset = 2; // must be in interval [0, background.length - 1]
+
+        for (int i = 0; i < background.length; i++) {
+            background[i].getTexture().setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
+            backgroundParallax[i] = 0.005f + ((float) Math.pow(i, 1.4)) / 1000f;
+            if (i < driftOffset) {
+                backgroundDrift[i] = 0f;
+            } else {
+                backgroundDrift[i] = backgroundParallax[i - driftOffset];
+            }
+        }
     }
 
-    private void loadSprites() {
+    private void setupSprites() {
         asteroidLarge = createSprite("images/space/asteroid_0.png", 2, 2);
         // asteroidLarge.setOrigin(1f, 1f);
 
@@ -145,14 +165,26 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     public void render(float delta) {
         controller.update(delta);
 
-        ScreenUtils.clear(Color.DARK_GRAY);
+        ScreenUtils.clear(Color.BLACK);
+
+        // draw background
+        this.bgViewport.apply();
+        batch.setProjectionMatrix(bgViewport.getCamera().combined);
+        batch.begin();
+        for (int i = 0; i < background.length; i++) {
+            float parallax = backgroundParallax[i];
+            float drift = backgroundDrift[i];
+            background[i].scroll(
+                    delta * (drift + parallax * model.getPlayer().getVelocity().x),
+                    -delta * (drift + parallax * model.getPlayer().getVelocity().y));
+
+            batch.draw(background[i], 0, 0, bgViewport.getWorldWidth(), bgViewport.getWorldHeight());
+        }
+        batch.end();
 
         viewport.apply();
         batch.setProjectionMatrix(camera.combined);
         updateCamera();
-
-        fontBold.setColor(Color.GREEN);
-        fontRegular.setColor(Color.RED);
 
         batch.begin();
 
@@ -289,6 +321,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height, false);
+        bgViewport.update(width, height, true);
         setCameraPosition(model.getPlayerCenterOfMass());
     }
 
