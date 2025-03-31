@@ -2,8 +2,11 @@ package model.ShipComponents.Components;
 
 import grid.CellPosition;
 import grid.GridCell;
+import grid.IGrid;
 import model.ShipComponents.ShipConfig;
 import model.ShipComponents.UpgradeType;
+import model.SpaceCharacters.Player;
+import model.SpaceCharacters.SpaceShip;
 import model.constants.PhysicsParameters;
 import model.utils.FloatPair;
 
@@ -226,4 +229,117 @@ class ShipStructureTest {
 
     }
 
+
+    @Test
+    void canBuildAtTest() {
+        ShipStructure structure = new ShipStructure(1, 2);
+        structure.set(new CellPosition(0, 0), new Fuselage(new Thruster()));
+        structure.set(new CellPosition(1, 0), new Fuselage(new Turret()));
+
+        CellPosition outsideGridPos = new CellPosition(8, 0);
+        CellPosition alreadyTakenPos = new CellPosition(1, 1);
+        CellPosition cornerPos = new CellPosition(2, 1);
+        CellPosition validPos = new CellPosition(2, 0);
+
+        assertFalse(structure.canBuildAt(outsideGridPos));
+        assertFalse(structure.canBuildAt(alreadyTakenPos));
+        assertFalse(structure.canBuildAt(cornerPos));
+        assertTrue(structure.canBuildAt(validPos));
+
+
+    }
+
+
+    @Test
+    void expandShipTopTest() {
+        SpaceShip ship = new Player(new ShipStructure(1, 2), "name", "description", 100, 0, 0);
+        ShipStructure structure = ship.getShipStructure();
+        structure.set(new CellPosition(0, 0), new Fuselage());
+        structure.set(new CellPosition(1, 0), new Fuselage());
+
+        IGrid<Fuselage> buildGrid = ShipStructure.getExpandedGrid(structure.getGrid(), 2, 2, true);
+
+        // Offset position due to expanded grid in updateScreen
+        CellPosition posAbove = new CellPosition(2, 0).offset(1, 1);
+
+        assertEquals(1, structure.getWidth());
+        assertEquals(2, structure.getHeight());
+
+        assertTrue(buildGrid.positionIsOnGrid(posAbove));
+        assertTrue(buildGrid.isEmptyAt(posAbove));
+        assertTrue(structure.updateWithFuselage(posAbove));
+
+        assertEquals(1, structure.getWidth());
+        assertEquals(3, structure.getHeight());
+
+    }
+
+    @Test
+    void expandShipBottomTest() {
+        SpaceShip ship = new Player(new ShipStructure(1, 2), "name", "description", 100, 0, 0);
+        ShipStructure structure = ship.getShipStructure();
+        structure.set(new CellPosition(0, 0), new Fuselage());
+        structure.set(new CellPosition(1, 0), new Fuselage());
+
+        IGrid<Fuselage> buildGrid = ShipStructure.getExpandedGrid(structure.getGrid(), 2, 2, true);
+
+        // Offset position due to expanded grid in updateScreen
+        CellPosition posBelow = new CellPosition(0, 0).offset(0, 1);
+
+        assertEquals(1, structure.getWidth());
+        assertEquals(2, structure.getHeight());
+
+        assertTrue(buildGrid.positionIsOnGrid(posBelow));
+        assertTrue(buildGrid.isEmptyAt(posBelow));
+        assertTrue(structure.updateWithFuselage(posBelow));
+
+        assertEquals(1, structure.getWidth());
+        assertEquals(3, structure.getHeight());
+    }
+
+    @Test
+    void expandShipLeftTest() {
+        SpaceShip ship = new Player(new ShipStructure(1, 2), "name", "description", 100, 0, 0);
+        ShipStructure structure = ship.getShipStructure();
+        structure.set(new CellPosition(0, 0), new Fuselage());
+        structure.set(new CellPosition(1, 0), new Fuselage());
+
+        IGrid<Fuselage> buildGrid = ShipStructure.getExpandedGrid(structure.getGrid(), 2, 2, true);
+
+        // Offset position due to expanded grid in updateScreen
+        CellPosition posLeft = new CellPosition(1, 0).offset(1, 0);
+
+        assertEquals(1, structure.getWidth());
+        assertEquals(2, structure.getHeight());
+
+        assertTrue(buildGrid.positionIsOnGrid(posLeft));
+        assertTrue(buildGrid.isEmptyAt(posLeft));
+        assertTrue(structure.updateWithFuselage(posLeft));
+
+        assertEquals(2, structure.getWidth());
+        assertEquals(2, structure.getHeight());
+    }
+
+    @Test
+    void expandShipRightTest() {
+        SpaceShip ship = new Player(new ShipStructure(1, 2), "name", "description", 100, 0, 0);
+        ShipStructure structure = ship.getShipStructure();
+        structure.set(new CellPosition(0, 0), new Fuselage());
+        structure.set(new CellPosition(1, 0), new Fuselage());
+
+        IGrid<Fuselage> buildGrid = ShipStructure.getExpandedGrid(structure.getGrid(), 2, 2, true);
+
+        // Offset position due to expanded grid in updateScreen
+        CellPosition posRight = new CellPosition(1, 1).offset(1, 1);
+
+        assertEquals(1, structure.getWidth());
+        assertEquals(2, structure.getHeight());
+
+        assertTrue(buildGrid.positionIsOnGrid(posRight));
+        assertTrue(buildGrid.isEmptyAt(posRight));
+        assertTrue(structure.updateWithFuselage(posRight));
+
+        assertEquals(2, structure.getWidth());
+        assertEquals(2, structure.getHeight());
+    }
 }

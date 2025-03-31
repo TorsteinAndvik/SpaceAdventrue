@@ -54,4 +54,12 @@ public abstract class ShipUpgrade {
             return false;
         }
     }
+
+    public static ShipUpgrade getShipUpgrade(UpgradeType upgradeType) {
+        return switch (upgradeType) {
+            case THRUSTER -> new Thruster();
+            case TURRET -> new Turret();
+            case SHIELD -> new Shield();
+        };
+    }
 }

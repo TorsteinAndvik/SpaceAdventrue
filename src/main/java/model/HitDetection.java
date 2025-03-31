@@ -42,22 +42,14 @@ public class HitDetection {
                 float dy = ship1.getAbsoluteCenter().y() - ship2.getAbsoluteCenter().y();
                 float distance = SpaceCalculator.distance(dx, dy);
 
-                if (distance < ship1.getRadius() + ship2.getRadius()) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return distance < ship1.getRadius() + ship2.getRadius();
 
             } else {
                 float dx = ship1.getAbsoluteCenter().x() - c2.getX();
                 float dy = ship1.getAbsoluteCenter().y() - c2.getY();
                 float distance = SpaceCalculator.distance(dx, dy);
 
-                if (distance < ship1.getRadius() + c2.getRadius()) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return distance < ship1.getRadius() + c2.getRadius();
             }
         }
 
@@ -67,18 +59,11 @@ public class HitDetection {
             float dy = c1.getY() - ship2.getAbsoluteCenter().y();
             float distance = SpaceCalculator.distance(dx, dy);
 
-            if (distance < c1.getRadius() + ship2.getRadius()) {
-                return true;
-            } else {
-                return false;
-            }
+            return distance < c1.getRadius() + ship2.getRadius();
         }
 
-        if (SpaceCalculator.distance(c1.getX() - c2.getX(), c1.getY() - c2.getY()) < c1.getRadius() + c2.getRadius()) {
-            return true;
-        } else {
-            return false;
-        }
+        return SpaceCalculator.distance(c1.getX() - c2.getX(), c1.getY() - c2.getY())
+            < c1.getRadius() + c2.getRadius();
     }
 
     public void checkCollisions() {
@@ -157,8 +142,10 @@ public class HitDetection {
 
             float offsetAngleA = (float) Math.toDegrees(Math.atan2(y0A, x0A));
 
-            float x1A = rA * (float) Math.cos(Math.toRadians(shipA.getRotationAngle() + offsetAngleA));
-            float y1A = rA * (float) Math.sin(Math.toRadians(shipA.getRotationAngle() + offsetAngleA));
+            float x1A =
+                rA * (float) Math.cos(Math.toRadians(shipA.getRotationAngle() + offsetAngleA));
+            float y1A =
+                rA * (float) Math.sin(Math.toRadians(shipA.getRotationAngle() + offsetAngleA));
 
             float x2A = shipA.getAbsoluteCenterOfMass().x() + x1A;
             float y2A = shipA.getAbsoluteCenterOfMass().y() + y1A;
@@ -176,8 +163,10 @@ public class HitDetection {
 
                 float offsetAngleB = (float) Math.toDegrees(Math.atan2(y0B, x0B));
 
-                float x1B = rB * (float) Math.cos(Math.toRadians(shipB.getRotationAngle() + offsetAngleB));
-                float y1B = rB * (float) Math.sin(Math.toRadians(shipB.getRotationAngle() + offsetAngleB));
+                float x1B =
+                    rB * (float) Math.cos(Math.toRadians(shipB.getRotationAngle() + offsetAngleB));
+                float y1B =
+                    rB * (float) Math.sin(Math.toRadians(shipB.getRotationAngle() + offsetAngleB));
 
                 float x2B = shipB.getAbsoluteCenterOfMass().x() + x1B;
                 float y2B = shipB.getAbsoluteCenterOfMass().y() + y1B;

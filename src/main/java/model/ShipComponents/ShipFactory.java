@@ -17,14 +17,14 @@ public class ShipFactory {
     public ShipFactory() {
     }
 
-    public ShipConfig createShipConfigFromJson(String filename) {
+    public static ShipConfig createShipConfigFromJson(String filename) {
         JsonReader json = new JsonReader();
         JsonValue shipData = json.parse(Gdx.files.internal("ships/" + filename));
 
         return createShipConfigFromJson(shipData);
     }
 
-    public ShipConfig createShipConfigFromJson(JsonValue shipData) {
+    public static ShipConfig createShipConfigFromJson(JsonValue shipData) {
 
         if (!ShipValidator.isValid(shipData)) {
             throw new IllegalArgumentException("Invalid ship JSON: does not meet requirements.");
@@ -63,11 +63,11 @@ public class ShipFactory {
         return shipConfig;
     }
 
-    public ShipStructure createShipFromJson(String filename) {
+    public static ShipStructure createShipFromJson(String filename) {
         return CreateShipFromShipConfig(createShipConfigFromJson(filename));
     }
 
-    public ShipStructure CreateShipFromShipConfig(ShipConfig shipConfig) {
+    public static ShipStructure CreateShipFromShipConfig(ShipConfig shipConfig) {
         return new ShipStructure(shipConfig);
 
     }
@@ -76,7 +76,7 @@ public class ShipFactory {
      * @return A 1x2 <code>ShipStructure</code> with a turret at the front and a thruster at the
      * back.
      */
-    public ShipStructure simpleShip() {
+    public static ShipStructure simpleShip() {
         ShipStructure ship = new ShipStructure(1, 2);
         ship.set(new CellPosition(1, 0), new Fuselage(new Turret()));
         ship.set(new CellPosition(0, 0), new Fuselage(new Thruster()));
@@ -86,8 +86,8 @@ public class ShipFactory {
     /**
      * @return a <code>this.simpleShip()</code> centered on a grid
      */
-    public ShipStructure playerShip() {
-        return this.simpleShip();
+    public static ShipStructure playerShip() {
+        return simpleShip();
 
     }
 }

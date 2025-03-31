@@ -108,14 +108,14 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     }
 
     private void setupAnimationHashMap() {
-        animationStates = new LinkedList<AnimationState>();
+        animationStates = new LinkedList<>();
         animationMap = new HashMap<>();
 
         TextureAtlas atlas = manager.get("images/animations/explosion_A.atlas",
-                TextureAtlas.class);
+            TextureAtlas.class);
 
-        Animation<TextureRegion> explosionAnimation = new Animation<TextureRegion>(1f / 12f,
-                atlas.findRegions("explosion"), PlayMode.NORMAL);
+        Animation<TextureRegion> explosionAnimation = new Animation<>(1f / 12f,
+            atlas.findRegions("explosion"), PlayMode.NORMAL);
 
         animationMap.put(AnimationType.EXPLOSION, explosionAnimation);
     }
@@ -123,11 +123,11 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     private void setupUpgradeHashMap() {
         upgradeIcons = new HashMap<>();
         upgradeIcons.put(UpgradeType.TURRET,
-                createSprite("images/upgrades/turret_laser_stage_0.png", 1, 1));
+            createSprite("images/upgrades/turret_laser_stage_0.png", 1, 1));
         upgradeIcons.put(UpgradeType.THRUSTER,
-                createSprite("images/upgrades/rocket_stage_0.png", 1, 1));
+            createSprite("images/upgrades/rocket_stage_0.png", 1, 1));
         upgradeIcons.put(UpgradeType.SHIELD,
-                createSprite("images/upgrades/shield_stage_0.png", 1, 1));
+            createSprite("images/upgrades/shield_stage_0.png", 1, 1));
     }
 
     private Sprite createSprite(String path, float width, float height) {
@@ -218,8 +218,9 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
                 animationStatesIterator.remove();
             } else {
                 TextureRegion currentFrame = animation.getKeyFrame(state.getStateTime());
-                batch.draw(currentFrame, state.getX() - state.getRadius(), state.getY() - state.getRadius(),
-                        2f * state.getRadius(), 2f * state.getRadius());
+                batch.draw(currentFrame, state.getX() - state.getRadius(),
+                    state.getY() - state.getRadius(),
+                    2f * state.getRadius(), 2f * state.getRadius());
             }
         }
 
@@ -252,7 +253,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
 
     private void cameraLerpToPlayer() {
         FloatPair newPosition = lerp(camera.position, model.getPlayerCenterOfMass(),
-                0.1f);
+            0.1f);
         setCameraPosition(newPosition);
     }
 
@@ -261,7 +262,8 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     }
 
     private float getZoomLevel() {
-        float velocityRatio = model.getPlayer().getSpeed() / PhysicsParameters.maxVelocityLongitudonal;
+        float velocityRatio =
+            model.getPlayer().getSpeed() / PhysicsParameters.maxVelocityLongitudonal;
         float zoomRange = zoomMax - zoomMin;
         return zoomMin + velocityRatio * zoomRange;
     }
@@ -311,7 +313,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         float maxHeight = viewport.getWorldHeight() * zoomMax;
 
         Rectangle bounds = new Rectangle(-maxWidth / 2f + camera.position.x,
-                -maxHeight / 2f + camera.position.y, maxWidth, maxHeight);
+            -maxHeight / 2f + camera.position.y, maxWidth, maxHeight);
 
         return bounds;
     }

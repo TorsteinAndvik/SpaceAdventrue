@@ -1,15 +1,16 @@
 package model.Animation;
 
 public interface AnimationState {
-    public void update(float delta);
 
-    public float getX();
+    void update(float delta);
 
-    public float getY();
+    float getX();
 
-    public float getRadius();
+    float getY();
 
-    public AnimationType getAnimationType();
+    float getRadius();
 
-    public float getStateTime();
+    AnimationType getAnimationType();
+
+    float getStateTime();
 }

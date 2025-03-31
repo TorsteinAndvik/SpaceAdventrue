@@ -9,4 +9,7 @@ package grid;
  */
 public record CellPosition(int row, int col) {
 
+    public CellPosition offset(int offsetRow, int offsetCol) {
+        return new CellPosition(this.row() + offsetRow, this.col() + offsetCol);
+    }
 }

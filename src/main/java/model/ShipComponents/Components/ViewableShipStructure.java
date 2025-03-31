@@ -31,6 +31,7 @@ public interface ViewableShipStructure extends Iterable<GridCell<Fuselage>> {
      */
     boolean hasFuselage(CellPosition cp);
 
+
     /**
      * Checks if the given position contains an upgrade.
      *
@@ -56,4 +57,34 @@ public interface ViewableShipStructure extends Iterable<GridCell<Fuselage>> {
      * @return the underlying grid containing the ship structure.
      */
     IGrid<Fuselage> getGrid();
+
+    boolean isOnGrid(CellPosition cp);
+
+    /**
+     * Checks if a fuselage can be placed at the specified position.
+     * A valid position must be empty and adjacent to at least one existing fuselage.
+     *
+     * @param pos The position to check for fuselage placement.
+     * @return {@code true} if the position is valid for fuselage placement, {@code false} otherwise.
+     */
+    boolean isValidFuselagePosition(CellPosition pos);
+
+    /**
+     * Checks if an upgrade can be placed at the specified position.
+     * A valid position must contain a fuselage and must not already have an upgrade.
+     *
+     * @param pos The position to check for upgrade placement.
+     * @return {@code true} if an upgrade can be placed, {@code false} otherwise.
+     */
+    boolean isValidUpgradePosition(CellPosition pos);
+
+    /**
+     * Determines if a fuselage can be built at the specified position.
+     * This method expands the grid by a 2x2 margin before checking the validity of the position.
+     *
+     * @param pos The position to check for fuselage placement.
+     * @return {@code true} if a fuselage can be built at the position, {@code false} otherwise.
+     */
+    boolean canBuildAt(CellPosition pos);
+
 }

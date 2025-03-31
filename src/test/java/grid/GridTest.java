@@ -1,16 +1,14 @@
 package grid;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import grid.CellPosition;
-import grid.Grid;
-import grid.GridCell;
-import grid.IGrid;
 import java.util.ArrayList;
 import java.util.List;
+import model.ShipComponents.Components.Fuselage;
 import org.junit.jupiter.api.Test;
 
 class GridTest {
@@ -69,17 +67,13 @@ class GridTest {
 
     @Test
     void throwsExceptionWhenGivenInvalidArgs() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            IGrid<String> grid = new Grid<>(-1, 3);
-        });
+        assertThrows(IllegalArgumentException.class, () -> new Grid<>(-1, 3));
     }
 
     @Test
     void throwsExceptionWhenCoordinatesOutOfBoundsTest() {
         IGrid<String> grid = new Grid<>(3, 3);
-        assertThrows(IndexOutOfBoundsException.class, () -> {
-            String x = grid.get(new CellPosition(3, 1));
-        });
+        assertThrows(IndexOutOfBoundsException.class, () -> grid.get(new CellPosition(3, 1)));
     }
 
     @Test
@@ -94,9 +88,24 @@ class GridTest {
             items.add(cell);
         }
         assertEquals(3 * 3, items.size());
-        assertTrue(items.contains(new GridCell<String>(new CellPosition(0, 0), "a")));
-        assertTrue(items.contains(new GridCell<String>(new CellPosition(0, 1), "b")));
-        assertTrue(items.contains(new GridCell<String>(new CellPosition(0, 2), "c")));
+        assertTrue(items.contains(new GridCell<>(new CellPosition(0, 0), "a")));
+        assertTrue(items.contains(new GridCell<>(new CellPosition(0, 1), "b")));
+        assertTrue(items.contains(new GridCell<>(new CellPosition(0, 2), "c")));
     }
 
+    @Test
+    void shrinkToFitTest() {
+        IGrid<Fuselage> grid = new Grid<>(3, 3);
+        grid.set(new CellPosition(2, 1), new Fuselage());
+
+        assertEquals(3, grid.rows());
+        assertEquals(3, grid.cols());
+        assertFalse(grid.isEmptyAt(new CellPosition(2, 1)));
+
+        grid = Grid.shrinkGridToFit(grid);
+
+        assertEquals(1, grid.rows());
+        assertEquals(1, grid.cols());
+        assertFalse(grid.isEmptyAt(new CellPosition(0, 0)));
+    }
 }

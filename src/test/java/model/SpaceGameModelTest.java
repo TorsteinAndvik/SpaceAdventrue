@@ -4,17 +4,11 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
-import model.SpaceCharacters.Bullet;
-import model.SpaceGameModel;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SpaceGameModelTest {
 
@@ -52,18 +46,18 @@ class SpaceGameModelTest {
 
     /*
      * // TODO: Not compatible with new movement physics
-     * 
+     *
      * @Test
      * public void testPlayerMovement() {
      * gameModel.accelerateForward();
      * assertEquals(initialPlayerY + 1, gameModel.getPlayerSpaceShip().getY());
-     * 
+     *
      * gameModel.accelerateBackward();
      * assertEquals(initialPlayerY, gameModel.getPlayerSpaceShip().getY());
-     * 
+     *
      * gameModel.accelerateCounterClockwise();
      * assertEquals(initialPlayerX - 1, gameModel.getPlayerSpaceShip().getX());
-     * 
+     *
      * gameModel.accelerateClockwise();
      * assertEquals(initialPlayerX, gameModel.getPlayerSpaceShip().getX());
      * }
@@ -71,14 +65,14 @@ class SpaceGameModelTest {
 
     /*
      * //TODO: Rewrite test to be compatible with refactored lasers in model
-     * 
+     *
      * @Test
      * public void testShoot() {
      * gameModel.shoot();
      * Bullet laser = gameModel.getLaser();
      * assertNotNull(laser);
      * assertTrue(gameModel.laserExists);
-     * 
+     *
      * assertEquals(2, laser.getY()); // TODO: Fix. This test depends on ship grid
      * size.
      * assertEquals(gameModel.getPlayerSpaceShip().getCenter().x(), laser.getX());

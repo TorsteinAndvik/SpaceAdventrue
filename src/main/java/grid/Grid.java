@@ -115,4 +115,59 @@ public class Grid<E> implements IGrid<E> {
         }
         return copy;
     }
+
+    @Override
+    public boolean isEmptyAt(CellPosition pos) {
+        return get(pos) == null;
+    }
+
+    /**
+     * Shrinks a given grid to the minimal bounding box that contains all elements.
+     * Removes excess rows and columns around the content while preserving relative
+     * positions.
+     *
+     * @param expandedGrid the input grid that may contain excess empty space
+     * @return a new grid that fits exactly around the non-null elements, with all positions
+     * adjusted accordingly
+     */
+    public static <E> IGrid<E> shrinkGridToFit(IGrid<E> expandedGrid) {
+        boolean hasValidCells = false;
+        int minRow = Integer.MAX_VALUE;
+        int maxRow = 0;
+        int minCol = Integer.MAX_VALUE;
+        int maxCol = 0;
+
+        for (GridCell<E> cell : expandedGrid) {
+            if (cell.value() != null) {
+                hasValidCells = true;
+                int row = cell.pos().row();
+                int col = cell.pos().col();
+                minRow = Math.min(minRow, row);
+                maxRow = Math.max(maxRow, row);
+                minCol = Math.min(minCol, col);
+                maxCol = Math.max(maxCol, col);
+            }
+        }
+
+        if (!hasValidCells) {
+            return new Grid<>(1, 1);
+        }
+
+        int newRows = maxRow - minRow + 1;
+        int newCols = maxCol - minCol + 1;
+        IGrid<E> shrunkGrid = new Grid<>(newRows, newCols);
+
+        for (GridCell<E> cell : expandedGrid) {
+            if (cell.value() != null) {
+                int row = cell.pos().row() - minRow;
+                int col = cell.pos().col() - minCol;
+                CellPosition newPos = new CellPosition(row, col);
+                shrunkGrid.set(newPos, cell.value());
+            }
+        }
+
+        return shrunkGrid;
+    }
+
+
 }

@@ -26,7 +26,7 @@ public interface IGrid<E> extends IGridDimension, Iterable<GridCell<E>> {
      * Reports whether a position is within bounds for this grid
      *
      * @param pos position to check
-     * @return true if the coordinate is within bounds, false otherwise.
+     * @return true if the position is within bounds, false otherwise.
      */
     boolean positionIsOnGrid(CellPosition pos);
 
@@ -34,4 +34,12 @@ public interface IGrid<E> extends IGridDimension, Iterable<GridCell<E>> {
      * @return a copy of the grid.
      */
     IGrid<E> copy();
+
+    /**
+     * Checks if the specified position in the grid is empty.
+     *
+     * @param pos the {@code CellPosition} to check.
+     * @return {@code true} if the position is empty (i.e., contains {@code null}), {@code false} otherwise.
+     */
+    boolean isEmptyAt(CellPosition pos);
 }
