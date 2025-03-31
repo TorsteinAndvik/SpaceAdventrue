@@ -64,6 +64,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     // Background
     private TextureRegion[] background;
     private float[] backgroundParallax;
+    private float[] backgroundDrift;
 
     // Animations
     private LinkedList<AnimationState> animationStates;
@@ -97,11 +98,19 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         background[4] = new TextureRegion(manager.get("images/space/background/bkgd_6.png", Texture.class));
         background[5] = new TextureRegion(manager.get("images/space/background/bkgd_7.png", Texture.class));
 
-        this.backgroundParallax = new float[6];
+        this.backgroundParallax = new float[background.length];
+        this.backgroundDrift = new float[background.length];
 
-        for (int i = 0; i < 6; i++) {
-            backgroundParallax[i] = ((float) Math.pow(i + 1, 1.5)) / 100000f;
+        int driftOffset = 2; // must be in interval [0, background.length - 1]
+
+        for (int i = 0; i < background.length; i++) {
             background[i].getTexture().setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
+            backgroundParallax[i] = 0.005f + ((float) Math.pow(i, 1.4)) / 1000f;
+            if (i < driftOffset) {
+                backgroundDrift[i] = 0f;
+            } else {
+                backgroundDrift[i] = backgroundParallax[i - driftOffset];
+            }
         }
     }
 
@@ -162,16 +171,14 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         this.bgViewport.apply();
         batch.setProjectionMatrix(bgViewport.getCamera().combined);
         batch.begin();
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < background.length; i++) {
             float parallax = backgroundParallax[i];
+            float drift = backgroundDrift[i];
             background[i].scroll(
-                    parallax * model.getPlayer().getVelocity().x,
-                    -parallax * model.getPlayer().getVelocity().y);
+                    delta * (drift + parallax * model.getPlayer().getVelocity().x),
+                    -delta * (drift + parallax * model.getPlayer().getVelocity().y));
 
-            batch.draw(background[i],
-                    0, 0,
-                    bgViewport.getWorldWidth(),
-                    bgViewport.getWorldHeight());
+            batch.draw(background[i], 0, 0, bgViewport.getWorldWidth(), bgViewport.getWorldHeight());
         }
         batch.end();
 
