@@ -20,7 +20,6 @@ import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-import box2dLight.PointLight;
 import box2dLight.RayHandler;
 import controller.SpaceGameScreenController;
 import grid.GridCell;
