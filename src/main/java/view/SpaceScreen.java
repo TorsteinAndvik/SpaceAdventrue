@@ -16,9 +16,12 @@ import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+import box2dLight.PointLight;
+import box2dLight.RayHandler;
 import controller.SpaceGameScreenController;
 import grid.GridCell;
 import model.ShipComponents.Components.Fuselage;
@@ -33,6 +36,8 @@ import model.Animation.AnimationCallback;
 import model.Animation.AnimationState;
 import model.Animation.AnimationType;
 import model.utils.FloatPair;
+import view.lighting.LaserLight;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -70,6 +75,11 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     private LinkedList<AnimationState> animationStates;
     private HashMap<AnimationType, Animation<TextureRegion>> animationMap;
 
+    // Lighting
+    public static final RayHandler rayHandler = new RayHandler(null);
+    private LinkedList<LaserLight> lights;
+    private Pool<LaserLight> lightPool;
+
     public SpaceScreen(final SpaceGame game, final SpaceGameModel model) {
         this.game = game;
         this.batch = this.game.getSpriteBatch();
@@ -86,6 +96,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         setupSprites();
         setupAnimationHashMap();
         setupUpgradeHashMap();
+        setupLighting();
     }
 
     private void setupBackground() {
@@ -132,10 +143,10 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         animationMap = new HashMap<>();
 
         TextureAtlas atlas = manager.get("images/animations/explosion_A.atlas",
-            TextureAtlas.class);
+                TextureAtlas.class);
 
         Animation<TextureRegion> explosionAnimation = new Animation<>(1f / 12f,
-            atlas.findRegions("explosion"), PlayMode.NORMAL);
+                atlas.findRegions("explosion"), PlayMode.NORMAL);
 
         animationMap.put(AnimationType.EXPLOSION, explosionAnimation);
     }
@@ -143,11 +154,24 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     private void setupUpgradeHashMap() {
         upgradeIcons = new HashMap<>();
         upgradeIcons.put(UpgradeType.TURRET,
-            createSprite("images/upgrades/turret_laser_stage_0.png", 1, 1));
+                createSprite("images/upgrades/turret_laser_stage_0.png", 1, 1));
         upgradeIcons.put(UpgradeType.THRUSTER,
-            createSprite("images/upgrades/rocket_stage_0.png", 1, 1));
+                createSprite("images/upgrades/rocket_stage_0.png", 1, 1));
         upgradeIcons.put(UpgradeType.SHIELD,
-            createSprite("images/upgrades/shield_stage_0.png", 1, 1));
+                createSprite("images/upgrades/shield_stage_0.png", 1, 1));
+    }
+
+    private void setupLighting() {
+        rayHandler.setAmbientLight(Color.BLACK);
+
+        this.lights = new LinkedList<>();
+        this.lightPool = new Pool<LaserLight>() {
+            @Override
+            protected LaserLight newObject() {
+                return new LaserLight();
+            }
+        };
+        lightPool.fill(300);
     }
 
     private Sprite createSprite(String path, float width, float height) {
@@ -164,6 +188,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     @Override
     public void render(float delta) {
         controller.update(delta);
+        updateLaserLightsCount();
 
         ScreenUtils.clear(Color.BLACK);
 
@@ -231,11 +256,18 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         // Reset the transform matrix to the identity matrix
         batch.setTransformMatrix(new Matrix4().idt());
 
-        for (Bullet laser : model.getLasers()) {
+        // draw lasers
+        Iterator<Bullet> laserIterator = model.getLasers().iterator();
+        Iterator<LaserLight> lightsIterator = this.lights.iterator();
+        while (laserIterator.hasNext() && lightsIterator.hasNext()) {
+            Bullet laser = laserIterator.next();
             this.laser.setRotation(laser.getRotationAngle() - 90f);
             this.laser.setCenterX(laser.getX());
             this.laser.setCenterY(laser.getY());
             this.laser.draw(batch);
+
+            LaserLight light = lightsIterator.next();
+            light.setPosition(laser.getX(), laser.getY());
         }
 
         // Draw explosion animations:
@@ -251,12 +283,41 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
             } else {
                 TextureRegion currentFrame = animation.getKeyFrame(state.getStateTime());
                 batch.draw(currentFrame, state.getX() - state.getRadius(),
-                    state.getY() - state.getRadius(),
-                    2f * state.getRadius(), 2f * state.getRadius());
+                        state.getY() - state.getRadius(),
+                        2f * state.getRadius(), 2f * state.getRadius());
             }
         }
 
         batch.end();
+
+        // Lighting
+        rayHandler.setCombinedMatrix(camera);
+        rayHandler.updateAndRender();
+    }
+
+    private void updateLaserLightsCount() {
+        // add lights if necessary
+        int lightDiff = model.getLasers().size() - this.lights.size();
+        for (int i = 0; i < lightDiff; i++) {
+            LaserLight light = lightPool.obtain();
+            light.setActive(true);
+            this.lights.addFirst(light);
+        }
+
+        // remove lights if necessary
+        if (lightDiff < 0) {
+            Iterator<LaserLight> lightsIterator = this.lights.iterator();
+            while (lightDiff < 0) {
+                LaserLight light = lightsIterator.next();
+                lightPool.free(light);
+                lightsIterator.remove();
+                lightDiff++;
+            }
+        }
+        if (model.getLasers().size() != this.lights.size()) {
+            System.out.println("ERROR: model.getLasers().size() [" + model.getLasers().size()
+                    + "] != this.lights.size() [" + this.lights.size() + "]");
+        }
     }
 
     /**
@@ -285,7 +346,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
 
     private void cameraLerpToPlayer() {
         FloatPair newPosition = lerp(camera.position, model.getPlayerCenterOfMass(),
-            0.1f);
+                0.1f);
         setCameraPosition(newPosition);
     }
 
@@ -294,8 +355,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     }
 
     private float getZoomLevel() {
-        float velocityRatio =
-            model.getPlayer().getSpeed() / PhysicsParameters.maxVelocityLongitudonal;
+        float velocityRatio = model.getPlayer().getSpeed() / PhysicsParameters.maxVelocityLongitudonal;
         float zoomRange = zoomMax - zoomMin;
         return zoomMin + velocityRatio * zoomRange;
     }
@@ -307,6 +367,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
 
     @Override
     public void dispose() {
+        rayHandler.dispose();
     }
 
     @Override
@@ -346,7 +407,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         float maxHeight = viewport.getWorldHeight() * zoomMax;
 
         Rectangle bounds = new Rectangle(-maxWidth / 2f + camera.position.x,
-            -maxHeight / 2f + camera.position.y, maxWidth, maxHeight);
+                -maxHeight / 2f + camera.position.y, maxWidth, maxHeight);
 
         return bounds;
     }
