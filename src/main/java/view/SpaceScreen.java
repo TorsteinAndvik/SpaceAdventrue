@@ -112,7 +112,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         this.backgroundParallax = new float[background.length];
         this.backgroundDrift = new float[background.length];
 
-        int driftOffset = 2; // must be in interval [0, background.length - 1]
+        int driftOffset = 4; // must be in interval [0, background.length - 1]
 
         for (int i = 0; i < background.length; i++) {
             background[i].getTexture().setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
@@ -162,7 +162,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     }
 
     private void setupLighting() {
-        rayHandler.setAmbientLight(Color.BLACK);
+        rayHandler.setAmbientLight(new Color(0f, 0f, 0f, 0.85f));
 
         this.lights = new LinkedList<>();
         this.lightPool = new Pool<LaserLight>() {
