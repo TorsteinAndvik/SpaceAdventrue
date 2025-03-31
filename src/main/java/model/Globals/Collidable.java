@@ -1,6 +1,6 @@
 package model.Globals;
 
-public interface Collideable {
+public interface Collidable {
 
     /**
      * @return the x coordinate of the center of the collideable object

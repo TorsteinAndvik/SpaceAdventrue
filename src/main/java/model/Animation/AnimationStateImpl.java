@@ -1,8 +1,9 @@
 package model.Animation;
 
-import model.Globals.Collideable;
+import model.Globals.Collidable;
 
 public class AnimationStateImpl implements AnimationState {
+
     private final float x;
     private final float y;
     private final float radius;
@@ -16,7 +17,7 @@ public class AnimationStateImpl implements AnimationState {
         this.type = type;
     }
 
-    public AnimationStateImpl(Collideable collideable, AnimationType type) {
+    public AnimationStateImpl(Collidable collideable, AnimationType type) {
         this.x = collideable.getX();
         this.y = collideable.getY();
         this.radius = collideable.getRadius();
