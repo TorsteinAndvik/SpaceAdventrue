@@ -44,6 +44,14 @@ public class LoadingScreen implements Screen {
 
     private void queueAssets() {
         // Textures:
+        // background
+        queueTexture("images/space/background/bkgd_1.png");
+        queueTexture("images/space/background/bkgd_2.png");
+        queueTexture("images/space/background/bkgd_3.png");
+        queueTexture("images/space/background/bkgd_4.png");
+        queueTexture("images/space/background/bkgd_6.png");
+        queueTexture("images/space/background/bkgd_7.png");
+
         // space objects
         queueTexture("images/space/asteroid_0.png");
         queueTexture("images/space/asteroid_1.png");
