@@ -55,6 +55,12 @@
       <version>${libgdx.version}</version>
     </dependency>
     <dependency>
+      <!-- stuff for box2dlights -->
+      <groupId>com.badlogicgames.box2dlights</groupId>
+      <artifactId>box2dlights</artifactId>
+      <version>1.5</version>
+    </dependency>
+    <dependency>
       <!-- run libgdx without graphics (for testing)-->
       <groupId>com.badlogicgames.gdx</groupId>
       <artifactId>gdx-backend-headless</artifactId>
