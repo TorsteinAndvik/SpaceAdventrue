@@ -5,6 +5,7 @@ import model.constants.PhysicsParameters;
 
 public class Fuselage {
 
+    public static int RESOURCE_VALUE = 10;
     private ShipUpgrade heldUpgrade;
 
     private float mass = PhysicsParameters.fuselageMass;
@@ -79,5 +80,13 @@ public class Fuselage {
         } else {
             return mass;
         }
+    }
+
+    public int getResourceValue() {
+        if (hasUpgrade()) {
+            return getUpgrade().getResourceValue() + RESOURCE_VALUE;
+        }
+        return RESOURCE_VALUE;
+
     }
 }

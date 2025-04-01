@@ -7,7 +7,6 @@ import model.Globals.Rotatable;
 import model.Globals.SpaceThing;
 import model.utils.ArgumentChecker;
 import model.utils.Rotation;
-import view.ViewableSpaceBody;
 
 import java.util.Objects;
 
@@ -246,6 +245,11 @@ public abstract class SpaceBody implements SpaceThing, Rotatable, Collidable, Vi
     @Override
     public Vector2 getVelocity() {
         return velocity.cpy();
+    }
+
+    @Override
+    public int getResourceValue() {
+        return 0;
     }
 
     /**

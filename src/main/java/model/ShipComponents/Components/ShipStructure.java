@@ -92,7 +92,7 @@ public class ShipStructure implements ViewableShipStructure {
      *
      * @param pos The position where the fuselage should be placed.
      * @return {@code true} if the fuselage was successfully placed, {@code false} if placement was
-     * not possible.
+     *         not possible.
      */
     public boolean updateWithFuselage(CellPosition pos) {
 
@@ -256,8 +256,7 @@ public class ShipStructure implements ViewableShipStructure {
             return grid;
         }
 
-        IGrid<Fuselage> extGrid = new Grid<>(grid.rows() + addedRows,
-            grid.cols() + addedCols);
+        IGrid<Fuselage> extGrid = new Grid<>(grid.rows() + addedRows, grid.cols() + addedCols);
 
         for (GridCell<Fuselage> cell : grid) {
             if (cell.value() == null) {
@@ -267,7 +266,7 @@ public class ShipStructure implements ViewableShipStructure {
             CellPosition cp;
             if (center) {
                 cp = new CellPosition(cell.pos().row() + (addedRows - addedRows / 2),
-                    cell.pos().col() + (addedCols - addedCols / 2));
+                        cell.pos().col() + (addedCols - addedCols / 2));
             } else {
                 cp = new CellPosition(cell.pos().row() + addedRows, cell.pos().col() + addedCols);
             }
@@ -399,7 +398,7 @@ public class ShipStructure implements ViewableShipStructure {
     @Override
     public boolean isOnGrid(CellPosition cp) {
         return cp.row() >= 0 && cp.col() >= 0 && cp.row() < getHeight()
-            && cp.col() < getWidth();
+                && cp.col() < getWidth();
     }
 
     @Override
@@ -425,4 +424,18 @@ public class ShipStructure implements ViewableShipStructure {
 
     }
 
+    /**
+     * The resources to loot from this {@code ShipStructure}
+     *
+     * @return the amount of resources to loot.
+     */
+    public int getResourceValue() {
+        int resourceValue = 0;
+        for (GridCell<Fuselage> gridCells : grid) {
+            if (gridCells.value() != null) {
+                resourceValue += gridCells.value().getResourceValue();
+            }
+        }
+        return resourceValue;
+    }
 }
