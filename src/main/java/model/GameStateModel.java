@@ -1,6 +1,5 @@
 package model;
 
-import com.badlogic.gdx.Game;
 import model.ShipComponents.Components.ShipStructure;
 import model.SpaceCharacters.SpaceShip;
 import model.constants.GameState;
@@ -21,33 +20,34 @@ public class GameStateModel {
     }
 
     public void changeState(GameState newState) {
-        if (newState == GameState.PLAYING && spaceGameModel == null){
+        if (newState == GameState.PLAYING && spaceGameModel == null) {
             spaceGameModel = new SpaceGameModel();
-        } else if (newState == GameState.UPGRADE && spaceGameModel != null){
-            ShipStructure playerShipStructure = ((SpaceShip)spaceGameModel.getPlayer().getShipStructure())
-        if (upgradeScreenModel == null){
-            upgradeScreenModel = new UpgradeScreenModel(playerShipStructure);
-        }
+        } else if (newState == GameState.UPGRADE && spaceGameModel != null) {
+            SpaceShip playerShip = spaceGameModel.getPlayer();
+            ShipStructure playerShipStructure = playerShip.getShipStructure();
+            if (upgradeScreenModel == null) {
+                upgradeScreenModel = new UpgradeScreenModel(playerShipStructure);
+            }
         }
         this.currentState = newState;
     }
 
-    public void onAssetsLoaded(){
+    public void onAssetsLoaded() {
         changeState(GameState.START_GAME);
     }
 
-    public void startNewGame(){
+    public void startNewGame() {
         this.spaceGameModel = new SpaceGameModel();
         this.upgradeScreenModel = null;
         changeState(GameState.PLAYING);
     }
 
-    public void showUpgradeScreen(){
+    public void showUpgradeScreen() {
         changeState(GameState.UPGRADE);
     }
 
-    public void returnToGame(){
-        changeState(GameState.GAME_OVER);
+    public void returnToGame() {
+        changeState(GameState.PLAYING);
     }
 
     public GameState getCurrentState() {
