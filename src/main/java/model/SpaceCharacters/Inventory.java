@@ -7,12 +7,14 @@ import model.World.GameItem;
  */
 public interface Inventory {
 
+    int ITEM_CAPACITY = 10;
+    int INVENTORY_ITEM_CAPACITY = 100;
+
+
     /**
      * Add an item to the inventory. Check if capacity.
-     *
-     * @return true if added to inventory, false otherwise.
      */
-    boolean addToInventory(GameItem item);
+    boolean addItem(GameItem item);
 
     /**
      * Lists character inventory.
@@ -45,4 +47,43 @@ public interface Inventory {
      * @return a GameItem, if it exists.
      */
     GameItem getItemByName(String name);
+
+    /**
+     * Check if the inventory can hold more {@code Items}
+     *
+     * @return {@code true} if it can hold more, {@code false} otherwise.
+     */
+    boolean hasCapacity();
+
+    /**
+     * Check if the inventory can hold more of a given {@code Item}
+     *
+     * @param item The item to check
+     * @return {@code true} if it can hold more, {@code false} otherwise.
+     */
+    boolean hasItemCapacity(GameItem item);
+
+    /**
+     * Add an amount of resources to the inventory
+     *
+     * @param amount The amount of resources to add
+     */
+    void addResource(int amount);
+
+    /**
+     * Spend an amount of resources.
+     *
+     * @param amount The amount of resources to spend
+     * @return true if the resources was spent, false otherwise..
+     */
+    boolean spendResources(int amount);
+
+    /**
+     * Checks if the inventory holds at least the specified amount of resources.
+     *
+     * @param amount The amount of resources to check for.
+     * @return {@code true} if the inventory has at least the given amount, {@code false} otherwise.
+     */
+    boolean hasResourceAmount(int amount);
+
 }
