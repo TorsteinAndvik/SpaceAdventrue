@@ -36,6 +36,7 @@ import model.Animation.AnimationState;
 import model.Animation.AnimationType;
 import model.utils.FloatPair;
 import view.lighting.LaserLight;
+import view.lighting.ThrusterLight;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -76,8 +77,10 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
 
     // Lighting
     public static final RayHandler rayHandler = new RayHandler(null);
-    private LinkedList<LaserLight> lights;
-    private Pool<LaserLight> lightPool;
+    private LinkedList<LaserLight> laserLights;
+    private Pool<LaserLight> laserLightPool;
+    private LinkedList<ThrusterLight> thrusterLights;
+    private Pool<ThrusterLight> thrusterLightPool;
 
     public SpaceScreen(final SpaceGame game, final SpaceGameModel model) {
         this.game = game;
@@ -163,14 +166,23 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     private void setupLighting() {
         rayHandler.setAmbientLight(new Color(0f, 0f, 0f, 0.85f));
 
-        this.lights = new LinkedList<>();
-        this.lightPool = new Pool<LaserLight>() {
+        this.laserLights = new LinkedList<>();
+        this.laserLightPool = new Pool<LaserLight>() {
             @Override
             protected LaserLight newObject() {
                 return new LaserLight();
             }
         };
-        lightPool.fill(300);
+        laserLightPool.fill(300);
+
+        this.thrusterLights = new LinkedList<>();
+        this.thrusterLightPool = new Pool<ThrusterLight>() {
+            @Override
+            protected ThrusterLight newObject() {
+                return new ThrusterLight();
+            }
+        };
+        thrusterLightPool.fill(50);
     }
 
     private Sprite createSprite(String path, float width, float height) {
@@ -187,7 +199,9 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     @Override
     public void render(float delta) {
         controller.update(delta);
+
         updateLaserLightsCount();
+        updateThrusterLightsCount();
 
         ScreenUtils.clear(Color.BLACK);
 
@@ -227,6 +241,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
             Matrix4 transformMatrix = model.getShipTransformMatrix(ship);
             batch.setTransformMatrix(transformMatrix);
 
+            Iterator<ThrusterLight> thrusterLightsIterator = this.thrusterLights.iterator();
             for (GridCell<Fuselage> cell : ship.getShipStructure()) {
                 if (cell.value() == null) {
                     continue;
@@ -248,6 +263,13 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
                     upgradeIcons.get(cell.value().getUpgrade().getType()).setCenterX(shipX);
                     upgradeIcons.get(cell.value().getUpgrade().getType()).setCenterY(shipY);
                     upgradeIcons.get(cell.value().getUpgrade().getType()).draw(batch);
+
+                    if (cell.value().getUpgrade().getType() == UpgradeType.THRUSTER
+                            && thrusterLightsIterator.hasNext()) {
+                        ThrusterLight light = thrusterLightsIterator.next();
+                        light.setPosition(shipX, shipY);
+                        light.setDirection(ship.getRotationAngle() + 180f);
+                    }
                 }
             }
         }
@@ -257,7 +279,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
 
         // draw lasers
         Iterator<Bullet> laserIterator = model.getLasers().iterator();
-        Iterator<LaserLight> lightsIterator = this.lights.iterator();
+        Iterator<LaserLight> lightsIterator = this.laserLights.iterator();
         while (laserIterator.hasNext() && lightsIterator.hasNext()) {
             Bullet laser = laserIterator.next();
             this.laser.setRotation(laser.getRotationAngle() - 90f);
@@ -296,26 +318,53 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
 
     private void updateLaserLightsCount() {
         // add lights if necessary
-        int lightDiff = model.getLasers().size() - this.lights.size();
+        int lightDiff = model.getLasers().size() - this.laserLights.size();
         for (int i = 0; i < lightDiff; i++) {
-            LaserLight light = lightPool.obtain();
+            LaserLight light = laserLightPool.obtain();
             light.setActive(true);
-            this.lights.addFirst(light);
+            this.laserLights.addFirst(light);
         }
 
         // remove lights if necessary
         if (lightDiff < 0) {
-            Iterator<LaserLight> lightsIterator = this.lights.iterator();
+            Iterator<LaserLight> lightsIterator = this.laserLights.iterator();
             while (lightDiff < 0) {
                 LaserLight light = lightsIterator.next();
-                lightPool.free(light);
+                laserLightPool.free(light);
                 lightsIterator.remove();
                 lightDiff++;
             }
         }
-        if (model.getLasers().size() != this.lights.size()) {
+        if (model.getLasers().size() != this.laserLights.size()) {
             System.out.println("ERROR: model.getLasers().size() [" + model.getLasers().size()
-                    + "] != this.lights.size() [" + this.lights.size() + "]");
+                    + "] != this.lights.size() [" + this.laserLights.size() + "]");
+        }
+    }
+
+    private void updateThrusterLightsCount() {
+        // add lights if necessary
+        int numThrusters = 0;
+        for (SpaceShip ship : model.getSpaceShips()) {
+            // numThrusters += ship.getUpgradeTypePositions(UpgradeType.THRUSTER).size();
+        }
+
+        int lightDiff = numThrusters - this.thrusterLights.size();
+
+        for (int i = 0; i < lightDiff; i++) {
+            ThrusterLight light = thrusterLightPool.obtain();
+            light.setActive(true);
+            this.thrusterLights.addFirst(light);
+        }
+
+        // remove lights if necessary
+        if (lightDiff < 0) {
+            Iterator<ThrusterLight> lightsIterator = this.thrusterLights.iterator();
+            while (lightDiff < 0) {
+                ThrusterLight light = lightsIterator.next();
+                thrusterLightPool.free(light);
+                lightsIterator.remove();
+                lightDiff++;
+            }
         }
     }
 

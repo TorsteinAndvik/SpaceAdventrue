@@ -1,0 +1,34 @@
+package view.lighting;
+
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.utils.Pool.Poolable;
+
+import box2dLight.ConeLight;
+import box2dLight.RayHandler;
+import view.SpaceScreen;
+
+public class ThrusterLight extends ConeLight implements Poolable {
+
+    public static final int defaultRayNum = 16;
+    public static final Color defaultColor = Color.ORANGE;
+    public static final float defaultDistance = 2f;
+    public static final float defaultConeDegree = 30f;
+
+    public ThrusterLight(RayHandler rayHandler, int rays, Color color, float distance, float x, float y,
+            float directionDegree, float coneDegree) {
+        super(rayHandler, rays, color, distance, x, y, directionDegree, coneDegree);
+        setActive(false);
+    }
+
+    public ThrusterLight() {
+        this(SpaceScreen.rayHandler, defaultRayNum, defaultColor, defaultDistance, 0f, 0f, 0f, defaultConeDegree);
+    }
+
+    @Override
+    public void reset() {
+        this.setPosition(0f, 0f);
+        this.setActive(false);
+        this.setDirection(0f);
+        this.setConeDegree(0f);
+    }
+}
