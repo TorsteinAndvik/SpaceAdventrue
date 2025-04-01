@@ -105,10 +105,10 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                 1,
                 1,
                 5,
-                0f);
+                45f);
 
         EnemyShip enemyShip2 = new EnemyShip(
-                ShipFactory.createShipFromJson("enemy1.json"), "enemy", "an enemy ship", 7, -3, 3, 0f);
+                ShipFactory.createShipFromJson("enemy1.json"), "enemy", "an enemy ship", 7, -3, 3, -30f);
 
         this.spaceShips = new LinkedList<>(
                 Arrays.asList(this.player, enemyShip, enemyShip2));

@@ -24,6 +24,7 @@ import box2dLight.RayHandler;
 import controller.SpaceGameScreenController;
 import grid.GridCell;
 import model.ShipComponents.Components.Fuselage;
+import model.ShipComponents.Components.Thruster;
 import model.ShipComponents.UpgradeType;
 import model.SpaceCharacters.Asteroid;
 import model.SpaceCharacters.Bullet;
@@ -35,6 +36,7 @@ import model.Animation.AnimationCallback;
 import model.Animation.AnimationState;
 import model.Animation.AnimationType;
 import model.utils.FloatPair;
+import model.utils.SpaceCalculator;
 import view.lighting.LaserLight;
 import view.lighting.ThrusterLight;
 
@@ -164,7 +166,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     }
 
     private void setupLighting() {
-        rayHandler.setAmbientLight(new Color(0f, 0f, 0f, 0.85f));
+        rayHandler.setAmbientLight(new Color(0f, 0f, 0f, 0.75f));
 
         this.laserLights = new LinkedList<>();
         this.laserLightPool = new Pool<LaserLight>() {
@@ -236,12 +238,13 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
             asteroidSprite.draw(batch);
         }
 
+        // draw ships
+        Iterator<ThrusterLight> thrusterLightsIterator = this.thrusterLights.iterator();
         for (SpaceShip ship : model.getSpaceShips()) {
             // Get transformation matrix from model
             Matrix4 transformMatrix = model.getShipTransformMatrix(ship);
             batch.setTransformMatrix(transformMatrix);
 
-            Iterator<ThrusterLight> thrusterLightsIterator = this.thrusterLights.iterator();
             for (GridCell<Fuselage> cell : ship.getShipStructure()) {
                 if (cell.value() == null) {
                     continue;
@@ -266,9 +269,16 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
 
                     if (cell.value().getUpgrade().getType() == UpgradeType.THRUSTER
                             && thrusterLightsIterator.hasNext()) {
+                        FloatPair point = SpaceCalculator.rotatePoint(
+                                cell.pos().col() + Thruster.thrusterFlameLocation().x(),
+                                cell.pos().row() + Thruster.thrusterFlameLocation().y(),
+                                ship.getRelativeCenterOfMass(),
+                                ship.getAbsoluteCenterOfMass(),
+                                ship.getRotationAngle());
+
                         ThrusterLight light = thrusterLightsIterator.next();
-                        light.setPosition(shipX, shipY);
-                        light.setDirection(ship.getRotationAngle() + 180f);
+                        light.setPosition(point.x(), point.y());
+                        light.setDirection(ship.getRotationAngle() - 90f);
                     }
                 }
             }
@@ -345,7 +355,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         // add lights if necessary
         int numThrusters = 0;
         for (SpaceShip ship : model.getSpaceShips()) {
-            // numThrusters += ship.getUpgradeTypePositions(UpgradeType.THRUSTER).size();
+            numThrusters += ship.getUpgradeTypePositions(UpgradeType.THRUSTER).size();
         }
 
         int lightDiff = numThrusters - this.thrusterLights.size();

@@ -19,6 +19,6 @@ public class Thruster extends ShipUpgrade {
      *         centerpoint of <code>this</code> and the exhaust (location of flame).
      */
     public static FloatPair thrusterFlameLocation() {
-        return new FloatPair(0f, -0.34375f);
+        return new FloatPair(0f, -0.15f);
     }
 }

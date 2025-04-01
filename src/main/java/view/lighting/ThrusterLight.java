@@ -9,10 +9,10 @@ import view.SpaceScreen;
 
 public class ThrusterLight extends ConeLight implements Poolable {
 
-    public static final int defaultRayNum = 16;
+    public static final int defaultRayNum = 12;
     public static final Color defaultColor = Color.ORANGE;
     public static final float defaultDistance = 2f;
-    public static final float defaultConeDegree = 30f;
+    public static final float defaultConeDegree = 24f;
 
     public ThrusterLight(RayHandler rayHandler, int rays, Color color, float distance, float x, float y,
             float directionDegree, float coneDegree) {
