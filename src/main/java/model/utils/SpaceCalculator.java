@@ -2,6 +2,7 @@ package model.utils;
 
 import com.badlogic.gdx.math.Vector2;
 import grid.CellPosition;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,5 +62,50 @@ public class SpaceCalculator {
 
     public static float distance(float x, float y) {
         return (float) Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+    }
+
+    /**
+     * Rotates a point around a center of rotation by a given angle, and translates
+     * it.
+     * 
+     * @param point            the <code>FloatPair</code> to be rotated
+     * @param centerOfRotation the <code>FloatPair</code> at the center of rotation
+     * @param translation      the <code>FloatPair</code> the rotated point will be
+     *                         translated by
+     * @param angle            the angle in degrees to rotate the point by
+     * @return the rotated and translated <code>FloatPair</code>
+     */
+    public static FloatPair rotatePoint(FloatPair point, FloatPair centerOfRotation, FloatPair translation,
+            float angle) {
+        return rotatePoint(point.x(), point.y(), centerOfRotation, translation, angle);
+    }
+
+    /**
+     * Rotates a point's x and y coordinates around a center of rotation by a given
+     * angle, and translates it.
+     * 
+     * @param x                the x coordinate of the point to be rotated
+     * @param y                the y coordinate of the point to be rotated
+     * @param centerOfRotation the <code>FloatPair</code> at the center of rotation
+     * @param translation      the <code>FloatPair</code> the rotated point will be
+     *                         translated by
+     * @param angle            the angle in degrees to rotate the point by
+     * @return the rotated and translated <code>FloatPair</code>
+     */
+    public static FloatPair rotatePoint(float x, float y, FloatPair centerOfRotation, FloatPair translation,
+            float angle) {
+        float x0 = x - centerOfRotation.x();
+        float y0 = y - centerOfRotation.y();
+        float r = SpaceCalculator.distance(x0, y0);
+
+        float offsetAngle = (float) Math.toDegrees(Math.atan2(y0, x0));
+
+        float x1 = r * (float) Math.cos(Math.toRadians(angle + offsetAngle));
+        float y1 = r * (float) Math.sin(Math.toRadians(angle + offsetAngle));
+
+        float x2 = translation.x() + x1;
+        float y2 = translation.y() + y1;
+
+        return new FloatPair(x2, y2);
     }
 }

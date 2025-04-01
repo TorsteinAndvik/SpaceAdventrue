@@ -138,6 +138,11 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         hitDetection.addColliders(asteroids);
     }
 
+    private void addLaser(FloatPair pos, float speed, float angle, float radius,
+            boolean isPlayerLaser) {
+        addLaser(pos.x(), pos.y(), speed, angle, radius, isPlayerLaser);
+    }
+
     private void addLaser(float x, float y, float speed, float angle, float radius,
             boolean isPlayerLaser) {
         Bullet laser = laserPool.obtain();
@@ -292,7 +297,8 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
                 case PLAYER: // TODO: Implement remove(Player) case (game over)
                     if (drawExplosion) {
-                        addAnimationState(c, AnimationType.EXPLOSION);
+                        addAnimationState(getPlayerCenterOfMass().x(), getPlayerCenterOfMass().y(), player.getRadius(),
+                                AnimationType.EXPLOSION);
                     }
                     break;
 
@@ -312,21 +318,13 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     public void shoot() {
         for (CellPosition cell : player.getUpgradeTypePositions(UpgradeType.TURRET)) {
-            float x0 = (float) cell.col() + Turret.turretBarrelLocation().x()
-                    - player.getRelativeCenterOfMass().x();
-            float y0 = (float) cell.row() + Turret.turretBarrelLocation().y()
-                    - player.getRelativeCenterOfMass().y();
-            float r = SpaceCalculator.distance(x0, y0);
 
-            float offsetAngle = (float) Math.toDegrees(Math.atan2(y0, x0));
+            float x = (float) cell.col() + Turret.turretBarrelLocation().x();
+            float y = (float) cell.row() + Turret.turretBarrelLocation().y();
+            FloatPair point = SpaceCalculator.rotatePoint(x, y, player.getRelativeCenterOfMass(),
+                    getPlayerCenterOfMass(), player.getRotationAngle());
 
-            float x1 = r * (float) Math.cos(Math.toRadians(player.getRotationAngle() + offsetAngle));
-            float y1 = r * (float) Math.sin(Math.toRadians(player.getRotationAngle() + offsetAngle));
-
-            float x2 = getPlayerCenterOfMass().x() + x1;
-            float y2 = getPlayerCenterOfMass().y() + y1;
-
-            addLaser(x2, y2, PhysicsParameters.laserVelocity, player.getRotationAngle() + 90f,
+            addLaser(point, PhysicsParameters.laserVelocity, player.getRotationAngle() + 90f,
                     0.125f, true);
         }
     }
