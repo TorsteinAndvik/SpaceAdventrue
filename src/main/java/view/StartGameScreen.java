@@ -1,12 +1,17 @@
 package view;
 
+import app.TestSpaceGame;
 import com.badlogic.gdx.Screen;
+import model.GameStateModel;
 
 public class StartGameScreen implements Screen {
 
+    public StartGameScreen(TestSpaceGame testSpaceGame, GameStateModel gameStateModel) {
+    }
+
     @Override
     public void show() {
-        
+
     }
 
     @Override

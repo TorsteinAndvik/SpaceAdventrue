@@ -17,6 +17,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader.FreeTypeFontLoaderParameter;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import model.GameStateModel;
 
 public class LoadingScreen implements Screen {
 
@@ -30,7 +31,7 @@ public class LoadingScreen implements Screen {
     int boldFontSize = 42;
     int regularFontSize = 36;
 
-    public LoadingScreen(final SpaceGame game) {
+    public LoadingScreen(final SpaceGame game, GameStateModel gameStateModel) {
         this.game = game;
         this.batch = this.game.getSpriteBatch();
         this.manager = this.game.getAssetManager();
