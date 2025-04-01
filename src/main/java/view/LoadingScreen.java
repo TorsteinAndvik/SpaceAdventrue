@@ -1,5 +1,6 @@
 package view;
 
+import app.TestSpaceGame;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetDescriptor;
@@ -21,7 +22,8 @@ import model.GameStateModel;
 
 public class LoadingScreen implements Screen {
 
-    final SpaceGame game;
+    private final SpaceGame game;
+    private final GameStateModel gameStateModel;
     SpriteBatch batch;
     Viewport viewport;
     AssetManager manager; // An assetmanager helps with loading assets and disposing them once they are no
@@ -31,8 +33,9 @@ public class LoadingScreen implements Screen {
     int boldFontSize = 42;
     int regularFontSize = 36;
 
-    public LoadingScreen(final SpaceGame game, GameStateModel gameStateModel) {
+    public LoadingScreen(SpaceGame game, GameStateModel gameStateModel) {
         this.game = game;
+        this.gameStateModel = gameStateModel;
         this.batch = this.game.getSpriteBatch();
         this.manager = this.game.getAssetManager();
 
@@ -125,7 +128,14 @@ public class LoadingScreen implements Screen {
             // ONLY CALL ONE OF THESE FOR TESTING:
             // TODO: Add startscreen, change screen using a controller
             // game.setUpgradeScreen();
-            game.setScreen(new StartGameScreen(game));
+
+            //notify the model that all assets are loaded
+            gameStateModel.onAssetsLoaded();
+
+            // show start screen
+            if (game instanceof TestSpaceGame) {
+                ((TestSpaceGame) game).setStartScreen();
+            }
         }
 
         float progress = manager.getProgress();
