@@ -29,37 +29,6 @@ public class PlayerInventory implements Inventory {
     }
 
     @Override
-    public String listInventory() {
-        if (items.isEmpty() && resources == 0) {
-            return "Inventory is empty.";
-        }
-
-        StringBuilder inventoryList = new StringBuilder("Inventory:\n");
-
-        int maxLength = 0;
-        for (GameItem item : items.keySet()) {
-            int length = (item.name() + " (" + item.description() + ")").length();
-            maxLength = Math.max(maxLength, length);
-        }
-        int padding = 4;
-        int spaceCount = Math.max(maxLength - "Resources".length(), 0);
-        String space = " ".repeat(spaceCount + padding);
-        inventoryList.append("Resources").append(space).append(resources).append("\n");
-
-        List<Entry<GameItem, Integer>> sortedItems = new ArrayList<>(items.entrySet());
-        sortedItems.sort(Comparator.comparing(entry -> entry.getKey().name()));
-
-        for (Entry<GameItem, Integer> entry : sortedItems) {
-            String itemInfo = entry.getKey().name() + " (" + entry.getKey().description() + ")";
-            space = " ".repeat(maxLength - itemInfo.length() + padding);
-            inventoryList.append(itemInfo).append(space).append(entry.getValue()).append("\n");
-
-            //    String.format("%-" + (maxLength + 2) + "s %5d%n", itemInfo, entry.getValue()));
-        }
-        return inventoryList.toString().trim();
-    }
-
-    @Override
     public boolean containsItem(GameItem item) {
         return items.getOrDefault(item, 0) > 0;
     }
@@ -117,5 +86,33 @@ public class PlayerInventory implements Inventory {
         return items.values().stream().mapToInt(Integer::intValue).sum();
     }
 
+    @Override
+    public String listInventory() {
+        if (items.isEmpty() && resources == 0) {
+            return "Inventory is empty.";
+        }
+
+        StringBuilder inventoryList = new StringBuilder("Inventory:\n");
+
+        int maxLength = 0;
+        for (GameItem item : items.keySet()) {
+            int length = (item.name() + " (" + item.description() + ")").length();
+            maxLength = Math.max(maxLength, length);
+        }
+        int padding = 4;
+        int spaceCount = Math.max(maxLength - "Resources".length(), 0);
+        String space = " ".repeat(spaceCount + padding);
+        inventoryList.append("Resources").append(space).append(resources).append("\n");
+
+        List<Entry<GameItem, Integer>> sortedItems = new ArrayList<>(items.entrySet());
+        sortedItems.sort(Comparator.comparing(entry -> entry.getKey().name()));
+
+        for (Entry<GameItem, Integer> entry : sortedItems) {
+            String itemInfo = entry.getKey().name() + " (" + entry.getKey().description() + ")";
+            space = " ".repeat(maxLength - itemInfo.length() + padding);
+            inventoryList.append(itemInfo).append(space).append(entry.getValue()).append("\n");
+        }
+        return inventoryList.toString().trim();
+    }
 
 }
