@@ -6,6 +6,8 @@ import model.utils.FloatPair;
 
 public class Turret extends ShipUpgrade {
 
+    public static int RESOURCE_BASE_VALUE = 5;
+
     public Turret() {
         this(UpgradeStage.ZERO);
     }

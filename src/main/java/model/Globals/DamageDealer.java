@@ -7,6 +7,11 @@ public interface DamageDealer {
      *
      * @param target the target to deal damage to.
      */
-    void dealDamage(Damageable target);
+    void dealDamage(Damageable target, int damage);
+
+    /**
+     * @return The amount of damage dealt by the {@code DamageDealer}
+     */
+    int getDamage();
 
 }

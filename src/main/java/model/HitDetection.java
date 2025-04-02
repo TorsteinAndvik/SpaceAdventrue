@@ -5,8 +5,10 @@ import java.util.List;
 
 import grid.CellPosition;
 import grid.GridCell;
-import model.Globals.Collideable;
+import model.Globals.Collidable;
 import model.ShipComponents.Components.Fuselage;
+import model.SpaceCharacters.Bullet;
+import model.SpaceCharacters.Player;
 import model.SpaceCharacters.SpaceShip;
 import model.constants.PhysicsParameters;
 import model.utils.FloatPair;
@@ -14,31 +16,28 @@ import model.utils.SpaceCalculator;
 
 public class HitDetection {
 
-    private LinkedList<Collideable> colliders = new LinkedList<>();
+    private LinkedList<Collidable> colliders = new LinkedList<>();
     private final SpaceGameModel model;
 
     public HitDetection(SpaceGameModel model) {
         this.model = model;
     }
 
-    public void addCollider(Collideable c) {
+    public void addCollider(Collidable c) {
         colliders.addFirst(c);
     }
 
-    public void addColliders(List<? extends Collideable> colliders) {
+    public void addColliders(List<? extends Collidable> colliders) {
         this.colliders.addAll(colliders);
     }
 
-    public void removeCollider(Collideable c) {
+    public void removeCollider(Collidable c) {
         colliders.remove(c);
     }
 
-    public boolean objectProximity(Collideable c1, Collideable c2) {
-        if (c1 instanceof SpaceShip) {
-            SpaceShip ship1 = (SpaceShip) c1;
-
-            if (c2 instanceof SpaceShip) {
-                SpaceShip ship2 = (SpaceShip) c2;
+    public boolean objectProximity(Collidable c1, Collidable c2) {
+        if (c1 instanceof SpaceShip ship1) {
+            if (c2 instanceof SpaceShip ship2) {
                 float dx = ship1.getAbsoluteCenter().x() - ship2.getAbsoluteCenter().x();
                 float dy = ship1.getAbsoluteCenter().y() - ship2.getAbsoluteCenter().y();
                 float distance = SpaceCalculator.distance(dx, dy);
@@ -54,8 +53,7 @@ public class HitDetection {
             }
         }
 
-        if (c2 instanceof SpaceShip) {
-            SpaceShip ship2 = (SpaceShip) c2;
+        if (c2 instanceof SpaceShip ship2) {
             float dx = c1.getX() - ship2.getAbsoluteCenter().x();
             float dy = c1.getY() - ship2.getAbsoluteCenter().y();
             float distance = SpaceCalculator.distance(dx, dy);
@@ -63,14 +61,15 @@ public class HitDetection {
             return distance < c1.getRadius() + ship2.getRadius();
         }
 
-        return SpaceCalculator.distance(c1.getX() - c2.getX(), c1.getY() - c2.getY()) < c1.getRadius() + c2.getRadius();
+        return SpaceCalculator.distance(c1.getX() - c2.getX(), c1.getY() - c2.getY())
+                < c1.getRadius() + c2.getRadius();
     }
 
     public void checkCollisions() {
         for (int i = 0; i < colliders.size(); i++) {
-            Collideable collA = colliders.get(i);
+            Collidable collA = colliders.get(i);
             for (int j = i + 1; j < colliders.size(); j++) {
-                Collideable collB = colliders.get(j);
+                Collidable collB = colliders.get(j);
                 if (objectProximity(collA, collB)) {
                     checkCollision(collA, collB);
                 }
@@ -78,14 +77,15 @@ public class HitDetection {
         }
     }
 
-    private boolean checkCollision(Collideable target1, Collideable target2) {
-        if (target1 instanceof SpaceShip) {
-            if (target2 instanceof SpaceShip) {
-                return doubleShipCollision((SpaceShip) target1, (SpaceShip) target2);
-            }
-            return shipCollision((SpaceShip) target1, target2);
-        } else if (target2 instanceof SpaceShip) {
-            return shipCollision((SpaceShip) target2, target1);
+    private boolean checkCollision(Collidable target1, Collidable target2) {
+        if (target1 instanceof SpaceShip ship1 && target2 instanceof SpaceShip ship2) {
+            return doubleShipCollision(ship1, ship2);
+        }
+        if (target1 instanceof SpaceShip ship1) {
+            return shipCollision(ship1, target2);
+        }
+        if (target2 instanceof SpaceShip ship2) {
+            return shipCollision(ship2, target1);
         }
 
         float dx = target1.getX() - target2.getX();
@@ -99,7 +99,7 @@ public class HitDetection {
         return false;
     }
 
-    private boolean shipCollision(SpaceShip ship, Collideable c) {
+    private boolean shipCollision(SpaceShip ship, Collidable c) {
         for (GridCell<Fuselage> gridCell : ship.getShipStructure().getGrid()) {
             if (gridCell.value() == null) {
                 continue;
@@ -148,6 +148,28 @@ public class HitDetection {
                     return true;
                 }
             }
+        }
+        return false;
+    }
+
+    /**
+     * Holds the rules for what counts as friendly fire.
+     * <p>
+     * Checks if two collidables has the same source, or if one emerged from the other.
+     *
+     * @param A The first collidable
+     * @param B The second collidable
+     * @return false if the interaction is friendly fire, true otherwise.
+     */
+    public static boolean isFriendlyFire(Collidable A, Collidable B) {
+        if ((A instanceof Player player) && (B instanceof Bullet bullet)) {
+            return bullet.getSourceID().equals(player.getID());
+
+        } else if ((B instanceof Player player) && (A instanceof Bullet bullet)) {
+            return bullet.getSourceID().equals(player.getID());
+
+        } else if ((A instanceof Bullet bulletA) && (B instanceof Bullet bulletB)) {
+            return bulletA.getSourceID().equals(bulletB.getSourceID());
         }
         return false;
     }

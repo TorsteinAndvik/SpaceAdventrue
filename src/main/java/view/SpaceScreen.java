@@ -213,7 +213,8 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         batch.begin();
         for (int i = 0; i < background.length; i++) {
             float parallax = backgroundParallax[i];
-            float drift = backgroundDrift[i];
+            float drift =
+                    backgroundDrift[i] / 50; // TODO: 1/50 Torstein sin magiske faktor for background drift. Noen uenig?
             background[i].scroll(
                     delta * (drift + parallax * model.getPlayer().getVelocity().x),
                     -delta * (drift + parallax * model.getPlayer().getVelocity().y));

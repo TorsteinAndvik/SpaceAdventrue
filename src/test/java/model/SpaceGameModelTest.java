@@ -4,11 +4,22 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
+import model.Animation.AnimationCallback;
+import model.Animation.AnimationState;
+import model.SpaceCharacters.Asteroid;
+import model.SpaceCharacters.Bullet;
+import model.SpaceCharacters.EnemyShip;
+import model.SpaceCharacters.Inventory;
+import model.SpaceCharacters.Player;
+import model.SpaceCharacters.SpaceShip;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SpaceGameModelTest {
 
@@ -32,7 +43,12 @@ class SpaceGameModelTest {
     public void setUp() {
         setup();
         gameModel = new SpaceGameModel();
+        gameModel.setAnimationCallback(new AnimationCallback() {
+            @Override
+            public void addAnimationState(AnimationState state) {
 
+            }
+        });
         initialPlayerX = gameModel.getPlayer().getX();
         initialPlayerY = gameModel.getPlayer().getY();
     }
@@ -78,4 +94,58 @@ class SpaceGameModelTest {
      * assertEquals(gameModel.getPlayerSpaceShip().getCenter().x(), laser.getX());
      * }
      */
+
+    @Test
+    void friendlyFireBulletBulletTest() {
+        gameModel.shoot();
+        gameModel.shoot();
+
+        assertEquals(2, gameModel.getLasers().size());
+
+        Bullet firstLaser = gameModel.getLasers().get(0);
+        Bullet secondLaser = gameModel.getLasers().get(1);
+        assertTrue(HitDetection.isFriendlyFire(firstLaser, secondLaser));
+
+        SpaceShip enemy_1 = new EnemyShip(null, "enemy 1", "small", 0, 0, 1, 0);
+        Bullet thirdLaser = new Bullet("Interrupting laser", "blue", 0,
+                0, 0, 0, 1, false);
+        thirdLaser.setSourceID(enemy_1.getID());
+        assertFalse(HitDetection.isFriendlyFire(firstLaser, thirdLaser));
+
+        SpaceShip enemy_2 = new EnemyShip(null, "enemy 2", "small", 0, 0, 1, 0);
+        Bullet fourthLaser = new Bullet("Interrupting laser", "red",
+                firstLaser.getX() + firstLaser.getRadius(),
+                firstLaser.getY() + firstLaser.getRadius(), 0, 0, 1, false);
+        fourthLaser.setSourceID(enemy_2.getID());
+        assertFalse(HitDetection.isFriendlyFire(thirdLaser, fourthLaser));
+
+    }
+
+    @Test
+    void friendlyFireBulletShipTest() {
+        gameModel.shoot();
+        Bullet laser = gameModel.getLasers().get(0);
+
+        SpaceShip enemy_1 = new EnemyShip(null, "enemy 1", "small", 0, 0, 1, 0);
+
+        assertTrue(HitDetection.isFriendlyFire(gameModel.getPlayer(), laser));
+        assertFalse(HitDetection.isFriendlyFire(laser, enemy_1));
+
+    }
+
+    @Test
+    void collectResourcesTest() {
+        Inventory inventory = ((Player) gameModel.getPlayer()).getInventory();
+        Asteroid a = gameModel.getAsteroids().get(0);
+        assertFalse(inventory.hasResourceAmount(a.getResourceValue()));
+
+        while (!a.isDestroyed()) {
+            gameModel.shoot();
+            Bullet laser = gameModel.getLasers().get(0);
+            laser.setX(a.getX());
+            laser.setY(a.getY());
+            gameModel.handleCollision(a, laser);
+        }
+        assertTrue(inventory.hasResourceAmount(a.getResourceValue()));
+    }
 }

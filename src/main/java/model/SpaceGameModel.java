@@ -17,8 +17,7 @@ import grid.IGridDimension;
 import model.Animation.AnimationCallback;
 import model.Animation.AnimationStateImpl;
 import model.Animation.AnimationType;
-import model.Globals.Collideable;
-import model.Globals.DamageDealer;
+import model.Globals.Collidable;
 import model.Globals.Damageable;
 import model.ShipComponents.ShipFactory;
 import model.ShipComponents.UpgradeType;
@@ -105,10 +104,10 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                 1,
                 1,
                 5,
-                45f);
+                0f);
 
         EnemyShip enemyShip2 = new EnemyShip(
-                ShipFactory.createShipFromJson("enemy1.json"), "enemy", "an enemy ship", 7, -3, 3, -30f);
+                ShipFactory.createShipFromJson("enemy1.json"), "enemy", "an enemy ship", 7, -3, 3, 0f);
 
         this.spaceShips = new LinkedList<>(
                 Arrays.asList(this.player, enemyShip, enemyShip2));
@@ -138,18 +137,13 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         hitDetection.addColliders(asteroids);
     }
 
-    private void addLaser(FloatPair pos, float speed, float angle, float radius,
-            boolean isPlayerLaser) {
-        addLaser(pos.x(), pos.y(), speed, angle, radius, isPlayerLaser);
-    }
-
-    private void addLaser(float x, float y, float speed, float angle, float radius,
+    private Bullet addLaser(float x, float y, float speed, float angle, float radius,
             boolean isPlayerLaser) {
         Bullet laser = laserPool.obtain();
         laser.init(x, y, speed, angle, radius, isPlayerLaser);
-
         lasers.addLast(laser);
         hitDetection.addCollider(laser);
+        return laser;
     }
 
     @Override
@@ -191,66 +185,40 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                 || laser.getY() - laser.getRadius() > bounds.y + bounds.height);
     }
 
-    void handleCollisionOld(Collideable A, Collideable B) {
-        if (isFriendlyFire(A, B)) {
+
+    void handleCollision(Collidable A, Collidable B) {
+        if (HitDetection.isFriendlyFire(A, B)) {
             return;
         }
-
-        if (A instanceof DamageDealer && B instanceof Damageable) {
-            ((DamageDealer) A).dealDamage((Damageable) B);
-            if (((Damageable) B).isDestroyed()) {
-                remove(B, true);
-            }
-        }
-
-        if (B instanceof DamageDealer && A instanceof Damageable) {
-            ((DamageDealer) B).dealDamage((Damageable) A);
-            if (((Damageable) A).isDestroyed()) {
-                remove(A, true);
-            }
-        }
-    }
-
-    void handleCollision(Collideable A, Collideable B) {
-        if (isFriendlyFire(A, B)) {
-            return;
-        }
-
         boolean destroyA = false;
         boolean destroyB = false;
+        SpaceBody.crash(A, B);
 
-        if (A instanceof DamageDealer && B instanceof Damageable) {
-            ((DamageDealer) A).dealDamage((Damageable) B);
-            destroyB = ((Damageable) B).isDestroyed();
+        if (B instanceof Damageable b) {
+            destroyB = b.isDestroyed();
         }
 
-        if (B instanceof DamageDealer && A instanceof Damageable) {
-            ((DamageDealer) B).dealDamage((Damageable) A);
-            destroyA = ((Damageable) A).isDestroyed();
+        if (A instanceof Damageable a) {
+            destroyA = a.isDestroyed();
         }
 
         if (destroyA) {
+            if (B instanceof Bullet bullet && bullet.isPlayerBullet()) {
+                collectResources(A);
+            }
             remove(A, true);
         }
 
         if (destroyB) {
+            if (A instanceof Bullet bullet && bullet.isPlayerBullet()) {
+                collectResources(B);
+            }
             remove(B, true);
         }
     }
 
-    // TODO: Refactor relevant code with a source SpaceShip, such that enemy ships
-    // can fire at each other without damaging themselves
-    private boolean isFriendlyFire(Collideable A, Collideable B) {
-        if (A instanceof Player && B instanceof Bullet) {
-            return ((Bullet) B).isPlayerBullet();
-        } else if (B instanceof Player && A instanceof Bullet) {
-            return ((Bullet) A).isPlayerBullet();
-        }
 
-        return false;
-    }
-
-    private void remove(Collideable c, boolean drawExplosion) {
+    private void remove(Collidable c, boolean drawExplosion) {
         hitDetection.removeCollider(c);
         if (c instanceof SpaceBody) {
             System.out.println(c + " destroyed");
@@ -308,12 +276,21 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         }
     }
 
-    private void addAnimationState(Collideable c, AnimationType type) {
+    private void addAnimationState(Collidable c, AnimationType type) {
         animationCallback.addAnimationState(new AnimationStateImpl(c, type));
     }
 
     private void addAnimationState(float x, float y, float radius, AnimationType type) {
         animationCallback.addAnimationState(new AnimationStateImpl(x, y, radius, type));
+    }
+
+    private void collectResources(Collidable collidable) {
+        if (collidable instanceof SpaceBody spaceBody) {
+            player.getInventory().addResource(spaceBody.getResourceValue());
+
+            //TODO: Remove when displayed on screen
+            System.out.println(player.getInventory().listInventory());
+        }
     }
 
     public void shoot() {

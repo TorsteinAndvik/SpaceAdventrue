@@ -91,8 +91,7 @@ public class ShipStructure implements ViewableShipStructure {
      * Expands the grid temporarily to ensure sufficient space for placement.
      *
      * @param pos The position where the fuselage should be placed.
-     * @return {@code true} if the fuselage was successfully placed, {@code false}
-     *         if placement was
+     * @return {@code true} if the fuselage was successfully placed, {@code false} if placement was
      *         not possible.
      */
     public boolean updateWithFuselage(CellPosition pos) {
@@ -277,8 +276,7 @@ public class ShipStructure implements ViewableShipStructure {
             return grid;
         }
 
-        IGrid<Fuselage> extGrid = new Grid<>(grid.rows() + addedRows,
-                grid.cols() + addedCols);
+        IGrid<Fuselage> extGrid = new Grid<>(grid.rows() + addedRows, grid.cols() + addedCols);
 
         for (GridCell<Fuselage> cell : grid) {
             if (cell.value() == null) {
@@ -457,4 +455,18 @@ public class ShipStructure implements ViewableShipStructure {
 
     }
 
+    /**
+     * The resources to loot from this {@code ShipStructure}
+     *
+     * @return the amount of resources to loot.
+     */
+    public int getResourceValue() {
+        int resourceValue = 0;
+        for (GridCell<Fuselage> gridCells : grid) {
+            if (gridCells.value() != null) {
+                resourceValue += gridCells.value().getResourceValue();
+            }
+        }
+        return resourceValue;
+    }
 }

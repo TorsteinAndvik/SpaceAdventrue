@@ -14,7 +14,7 @@ public class SpaceShipTest {
     @BeforeEach()
     void setup() {
         spaceShip = new Player(null, "The Black Swan", "A beautiful pirate ship.",
-            100, 0, 100);
+                100, 0, 100);
     }
 
     @Test
@@ -48,9 +48,9 @@ public class SpaceShipTest {
     @Test
     void dealDamageTest() {
         SpaceShip enemyShip = new Player(null, "The White Swan", "A boring ship.",
-            49, 0, 49);
+                49, 0, 49);
         assertEquals(49, enemyShip.getHitPoints());
-        spaceShip.dealDamage(enemyShip);
+        spaceShip.dealDamage(enemyShip, spaceShip.getDamage());
         assertEquals(0, enemyShip.getHitPoints());
     }
 
