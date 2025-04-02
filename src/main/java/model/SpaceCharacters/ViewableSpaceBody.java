@@ -1,8 +1,7 @@
-package view;
+package model.SpaceCharacters;
 
 
 import com.badlogic.gdx.math.Vector2;
-import model.SpaceCharacters.CharacterType;
 
 public interface ViewableSpaceBody {
 
@@ -55,5 +54,11 @@ public interface ViewableSpaceBody {
      */
     CharacterType getCharacterType();
 
+    /**
+     * The resources to loot from this {@code SpaceBody}
+     *
+     * @return the amount of resources to loot.
+     */
+    int getResourceValue();
 
 }

@@ -61,7 +61,7 @@ public class HitDetection {
         }
 
         return SpaceCalculator.distance(c1.getX() - c2.getX(), c1.getY() - c2.getY())
-            < c1.getRadius() + c2.getRadius();
+                < c1.getRadius() + c2.getRadius();
     }
 
     public void checkCollisions() {
@@ -77,13 +77,14 @@ public class HitDetection {
     }
 
     private boolean checkCollision(Collidable target1, Collidable target2) {
-        if (target1 instanceof SpaceShip) {
-            if (target2 instanceof SpaceShip) {
-                return doubleShipCollision((SpaceShip) target1, (SpaceShip) target2);
-            }
-            return shipCollision((SpaceShip) target1, target2);
-        } else if (target2 instanceof SpaceShip) {
-            return shipCollision((SpaceShip) target2, target1);
+        if (target1 instanceof SpaceShip ship1 && target2 instanceof SpaceShip ship2) {
+            return doubleShipCollision(ship1, ship2);
+        }
+        if (target1 instanceof SpaceShip ship1) {
+            return shipCollision(ship1, target2);
+        }
+        if (target2 instanceof SpaceShip ship2) {
+            return shipCollision(ship2, target1);
         }
 
         float dx = target1.getX() - target2.getX();
@@ -140,10 +141,8 @@ public class HitDetection {
 
             float offsetAngleA = (float) Math.toDegrees(Math.atan2(y0A, x0A));
 
-            float x1A =
-                rA * (float) Math.cos(Math.toRadians(shipA.getRotationAngle() + offsetAngleA));
-            float y1A =
-                rA * (float) Math.sin(Math.toRadians(shipA.getRotationAngle() + offsetAngleA));
+            float x1A = rA * (float) Math.cos(Math.toRadians(shipA.getRotationAngle() + offsetAngleA));
+            float y1A = rA * (float) Math.sin(Math.toRadians(shipA.getRotationAngle() + offsetAngleA));
 
             float x2A = shipA.getAbsoluteCenterOfMass().x() + x1A;
             float y2A = shipA.getAbsoluteCenterOfMass().y() + y1A;
@@ -161,10 +160,8 @@ public class HitDetection {
 
                 float offsetAngleB = (float) Math.toDegrees(Math.atan2(y0B, x0B));
 
-                float x1B =
-                    rB * (float) Math.cos(Math.toRadians(shipB.getRotationAngle() + offsetAngleB));
-                float y1B =
-                    rB * (float) Math.sin(Math.toRadians(shipB.getRotationAngle() + offsetAngleB));
+                float x1B = rB * (float) Math.cos(Math.toRadians(shipB.getRotationAngle() + offsetAngleB));
+                float y1B = rB * (float) Math.sin(Math.toRadians(shipB.getRotationAngle() + offsetAngleB));
 
                 float x2B = shipB.getAbsoluteCenterOfMass().x() + x1B;
                 float y2B = shipB.getAbsoluteCenterOfMass().y() + y1B;

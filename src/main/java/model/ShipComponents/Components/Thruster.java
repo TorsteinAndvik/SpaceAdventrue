@@ -5,6 +5,8 @@ import model.ShipComponents.UpgradeType;
 
 public class Thruster extends ShipUpgrade {
 
+    public static int RESOURCE_BASE_VALUE = 3;
+
     public Thruster() {
         this(UpgradeStage.ZERO);
     }

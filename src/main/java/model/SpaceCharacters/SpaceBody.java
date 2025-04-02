@@ -3,16 +3,17 @@ package model.SpaceCharacters;
 import com.badlogic.gdx.math.Vector2;
 import controller.ControllableSpaceBody;
 import model.Globals.Collidable;
+import model.Globals.DamageDealer;
+import model.Globals.Damageable;
 import model.Globals.Rotatable;
 import model.Globals.SpaceThing;
 import model.utils.ArgumentChecker;
 import model.utils.Rotation;
-import view.ViewableSpaceBody;
 
 import java.util.Objects;
 
 public abstract class SpaceBody implements SpaceThing, Rotatable, Collidable, ViewableSpaceBody,
-    ControllableSpaceBody {
+        ControllableSpaceBody {
 
     private String name;
     private String description;
@@ -37,8 +38,8 @@ public abstract class SpaceBody implements SpaceThing, Rotatable, Collidable, Vi
      * @param radius        The radius of the SpaceBody (in meters).
      */
     public SpaceBody(String name, String description, CharacterType characterType,
-        Vector2 position, Vector2 velocity, float mass, float angle, float rotationSpeed,
-        float radius) {
+            Vector2 position, Vector2 velocity, float mass, float angle, float rotationSpeed,
+            float radius) {
         ArgumentChecker.requireNonEmptyString(name, "Name cannot be null or empty.");
         ArgumentChecker.requireNonEmptyString(description, "Description cannot be null or empty.");
         ArgumentChecker.requireNonNull(characterType, "The SpaceBody requires a character type.");
@@ -67,13 +68,13 @@ public abstract class SpaceBody implements SpaceThing, Rotatable, Collidable, Vi
      * @param angle         The angle of rotation (in degrees).
      * @param radius        The radius of the SpaceBody (in meters).
      * @implNote This constructor calls the full constructor with a default mass and
-     *     rotation speed
-     *     of 0.
+     *         rotation speed
+     *         of 0.
      */
     public SpaceBody(String name, String description, CharacterType characterType, float x, float y,
-        float angle, float radius) {
+            float angle, float radius) {
         this(name, description, characterType, new Vector2(x, y), new Vector2(0, 0), 0, angle, 0,
-            radius);
+                radius);
     }
 
     /**
@@ -85,8 +86,7 @@ public abstract class SpaceBody implements SpaceThing, Rotatable, Collidable, Vi
      * @param description   A brief description of the SpaceBody.
      * @param characterType The CharacterType representing the type of SpaceBody.
      * @implNote This constructor initializes the SpaceBody at (0,0) with zero mass,
-     *     angle,
-     *     velocity, and radius.
+     *         angle, velocity, and radius.
      */
     public SpaceBody(String name, String description, CharacterType characterType) {
         this(name, description, characterType, new Vector2(0, 0), new Vector2(0, 0), 0, 0, 0, 0);
@@ -248,6 +248,11 @@ public abstract class SpaceBody implements SpaceThing, Rotatable, Collidable, Vi
         return velocity.cpy();
     }
 
+    @Override
+    public int getResourceValue() {
+        return 0;
+    }
+
     /**
      * Moves the SpaceBody based on the given time step.
      *
@@ -261,5 +266,22 @@ public abstract class SpaceBody implements SpaceThing, Rotatable, Collidable, Vi
     @Override
     public void update(float deltaTime) {
         move(deltaTime);
+    }
+
+    public static void crash(Collidable A, Collidable B) {
+        int damageA = 0;
+        int damageB = 0;
+        if (A instanceof DamageDealer a) {
+            damageA = a.getDamage();
+        }
+        if (B instanceof DamageDealer b) {
+            damageB = b.getDamage();
+        }
+        if (A instanceof DamageDealer a && B instanceof Damageable b) {
+            a.dealDamage(b, damageA);
+        }
+        if (B instanceof DamageDealer b && A instanceof Damageable a) {
+            b.dealDamage(a, damageB);
+        }
     }
 }
