@@ -187,10 +187,8 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
     }
 
     @Override
-    public void dealDamage(Damageable target) {
-        int targetHP = target.getHitPoints();
-        target.takeDamage(this.hitPoints);
-        this.takeDamage(targetHP);
+    public void dealDamage(Damageable target, int damage) {
+        target.takeDamage(damage);
     }
 
     @Override
@@ -229,5 +227,10 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
     @Override
     public int getResourceValue() {
         return getShipStructure().getResourceValue();
+    }
+
+    @Override
+    public int getDamage() {
+        return hitPoints;
     }
 }

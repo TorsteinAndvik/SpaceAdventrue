@@ -15,7 +15,7 @@ public abstract class Projectile extends SpaceBody implements Damageable, Damage
     private final int multiplier = 1;
 
     public Projectile(String name, String description, CharacterType characterType, float x,
-        float y, float speed, int hitPoints, float mass, float angle, float radius) {
+            float y, float speed, int hitPoints, float mass, float angle, float radius) {
         super(name, description, characterType, x, y, angle, radius);
         this.setMass(mass);
         this.hitPoints = hitPoints;
@@ -24,10 +24,10 @@ public abstract class Projectile extends SpaceBody implements Damageable, Damage
     }
 
     public Projectile(String name, String description, CharacterType characterType, float x,
-        float y, float vX, float vY, int hitPoints, float mass, float angle, float radius,
-        float rotationSpeed) {
+            float y, float vX, float vY, int hitPoints, float mass, float angle, float radius,
+            float rotationSpeed) {
         super(name, description, characterType, new Vector2(x, y), new Vector2(vX, vY), mass, angle,
-            rotationSpeed, radius);
+                rotationSpeed, radius);
         this.hitPoints = hitPoints;
         this.maxHitPoints = hitPoints;
     }
@@ -55,13 +55,13 @@ public abstract class Projectile extends SpaceBody implements Damageable, Damage
         this.hitPoints = Math.max(this.hitPoints - hitPoints, 0);
     }
 
-    @Override
-    public void dealDamage(Damageable target) {
-        int targetHP = target.getHitPoints();
-        target.takeDamage(this.multiplier * this.hitPoints);
-        this.takeDamage(targetHP);
-        // Forslag: Lage en Crash metode i stedet for å "take damage" i "deal
-        // damage"-metoden.
+
+    public void dealDamage(Damageable target, int damage) {
+        target.takeDamage(damage);
+    }
+
+    public int getDamage() {
+        return this.multiplier * this.hitPoints;
     }
 
     @Override
@@ -70,14 +70,14 @@ public abstract class Projectile extends SpaceBody implements Damageable, Damage
         this.velocity.set(0f, 0f);
         this.rotation.setAngle(0f);
         this.rotation.setRotationSpeed(0f);
-        this.hitPoints = 1;
+        this.hitPoints = 0;
         this.maxHitPoints = 1;
         this.sourceID = "";
     }
 
     public void init(float x, float y, float vX, float vY, int hitPoints, float mass, float angle,
-        float radius,
-        float rotationSpeed) {
+            float radius,
+            float rotationSpeed) {
         position.set(x, y);
         velocity.set(vX, vY);
         this.hitPoints = hitPoints;
@@ -90,8 +90,8 @@ public abstract class Projectile extends SpaceBody implements Damageable, Damage
     }
 
     public void init(float x, float y, float speed, int hitPoints, float mass, float angle,
-        float radius,
-        float rotationSpeed) {
+            float radius,
+            float rotationSpeed) {
         Vector2 velocity = SpaceCalculator.velocityFromAngleSpeed(angle, speed);
         init(x, y, velocity.x, velocity.y, hitPoints, mass, angle, radius, rotationSpeed);
     }

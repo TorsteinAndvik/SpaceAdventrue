@@ -18,7 +18,6 @@ import model.Animation.AnimationCallback;
 import model.Animation.AnimationStateImpl;
 import model.Animation.AnimationType;
 import model.Globals.Collidable;
-import model.Globals.DamageDealer;
 import model.Globals.Damageable;
 import model.ShipComponents.ShipFactory;
 import model.ShipComponents.Components.Turret;
@@ -185,42 +184,21 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                 || laser.getY() - laser.getRadius() > bounds.y + bounds.height);
     }
 
-    void handleCollisionOld(Collidable A, Collidable B) {
-        if (HitDetection.isFriendlyFire(A, B)) {
-            return;
-        }
-
-        if (A instanceof DamageDealer && B instanceof Damageable) {
-            ((DamageDealer) A).dealDamage((Damageable) B);
-            if (((Damageable) B).isDestroyed()) {
-                remove(B, true);
-            }
-        }
-
-        if (B instanceof DamageDealer && A instanceof Damageable) {
-            ((DamageDealer) B).dealDamage((Damageable) A);
-            if (((Damageable) A).isDestroyed()) {
-                remove(A, true);
-            }
-        }
-    }
 
     void handleCollision(Collidable A, Collidable B) {
         if (HitDetection.isFriendlyFire(A, B)) {
             return;
         }
-
         boolean destroyA = false;
         boolean destroyB = false;
+        SpaceBody.crash(A, B);
 
-        if (A instanceof DamageDealer && B instanceof Damageable) {
-            ((DamageDealer) A).dealDamage((Damageable) B);
-            destroyB = ((Damageable) B).isDestroyed();
+        if (B instanceof Damageable b) {
+            destroyB = b.isDestroyed();
         }
 
-        if (B instanceof DamageDealer && A instanceof Damageable) {
-            ((DamageDealer) B).dealDamage((Damageable) A);
-            destroyA = ((Damageable) A).isDestroyed();
+        if (A instanceof Damageable a) {
+            destroyA = a.isDestroyed();
         }
 
         if (destroyA) {
