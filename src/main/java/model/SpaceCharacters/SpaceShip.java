@@ -6,6 +6,7 @@ import grid.CellPosition;
 import model.Globals.DamageDealer;
 import model.Globals.Damageable;
 import model.Globals.Repairable;
+import model.ShipComponents.UpgradeType;
 import model.ShipComponents.Components.ShipStructure;
 import model.constants.PhysicsParameters;
 import model.utils.FloatPair;
@@ -60,8 +61,8 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
         return false;
     }
 
-    public List<CellPosition> getTurretPositions() {
-        return shipStructure.getTurretPositions();
+    public List<CellPosition> getUpgradeTypePositions(UpgradeType type) {
+        return shipStructure.getUpgradeTypePositions(type);
     }
 
     public void setAccelerateForward(boolean accelerate) {

@@ -11,6 +11,7 @@ import model.SpaceCharacters.Bullet;
 import model.SpaceCharacters.Player;
 import model.SpaceCharacters.SpaceShip;
 import model.constants.PhysicsParameters;
+import model.utils.FloatPair;
 import model.utils.SpaceCalculator;
 
 public class HitDetection {
@@ -106,19 +107,12 @@ public class HitDetection {
 
             CellPosition cell = gridCell.pos();
 
-            float x0 = (float) cell.col() - ship.getRelativeCenterOfMass().x();
-            float y0 = (float) cell.row() - ship.getRelativeCenterOfMass().y();
-            float r = SpaceCalculator.distance(x0, y0);
+            float x = (float) cell.col();
+            float y = (float) cell.row();
+            FloatPair point = SpaceCalculator.rotatePoint(x, y, ship.getRelativeCenterOfMass(),
+                    ship.getAbsoluteCenterOfMass(), ship.getRotationAngle());
 
-            float offsetAngle = (float) Math.toDegrees(Math.atan2(y0, x0));
-
-            float x1 = r * (float) Math.cos(Math.toRadians(ship.getRotationAngle() + offsetAngle));
-            float y1 = r * (float) Math.sin(Math.toRadians(ship.getRotationAngle() + offsetAngle));
-
-            float x2 = ship.getAbsoluteCenterOfMass().x() + x1;
-            float y2 = ship.getAbsoluteCenterOfMass().y() + y1;
-
-            float d = SpaceCalculator.distance(x2 - c.getX(), y2 - c.getY());
+            float d = SpaceCalculator.distance(point.x() - c.getX(), point.y() - c.getY());
             if (d < PhysicsParameters.fuselageRadius + c.getRadius()) {
                 model.handleCollision(ship, c);
                 return true;
@@ -135,17 +129,8 @@ public class HitDetection {
 
             CellPosition cellA = gridCellA.pos();
 
-            float x0A = (float) cellA.col() - shipA.getRelativeCenterOfMass().x();
-            float y0A = (float) cellA.row() - shipA.getRelativeCenterOfMass().y();
-            float rA = SpaceCalculator.distance(x0A, y0A);
-
-            float offsetAngleA = (float) Math.toDegrees(Math.atan2(y0A, x0A));
-
-            float x1A = rA * (float) Math.cos(Math.toRadians(shipA.getRotationAngle() + offsetAngleA));
-            float y1A = rA * (float) Math.sin(Math.toRadians(shipA.getRotationAngle() + offsetAngleA));
-
-            float x2A = shipA.getAbsoluteCenterOfMass().x() + x1A;
-            float y2A = shipA.getAbsoluteCenterOfMass().y() + y1A;
+            FloatPair pointA = SpaceCalculator.rotatePoint(cellA.col(), cellA.row(), shipA.getRelativeCenterOfMass(),
+                    shipA.getAbsoluteCenterOfMass(), shipA.getRotationAngle());
 
             for (GridCell<Fuselage> gridCellB : shipB.getShipStructure().getGrid()) {
                 if (gridCellB.value() == null) {
@@ -154,19 +139,10 @@ public class HitDetection {
 
                 CellPosition cellB = gridCellB.pos();
 
-                float x0B = (float) cellB.col() - shipB.getRelativeCenterOfMass().x();
-                float y0B = (float) cellB.row() - shipB.getRelativeCenterOfMass().y();
-                float rB = SpaceCalculator.distance(x0B, y0B);
+                FloatPair pointB = SpaceCalculator.rotatePoint(cellB.col(), cellB.row(),
+                        shipB.getRelativeCenterOfMass(), shipB.getAbsoluteCenterOfMass(), shipB.getRotationAngle());
 
-                float offsetAngleB = (float) Math.toDegrees(Math.atan2(y0B, x0B));
-
-                float x1B = rB * (float) Math.cos(Math.toRadians(shipB.getRotationAngle() + offsetAngleB));
-                float y1B = rB * (float) Math.sin(Math.toRadians(shipB.getRotationAngle() + offsetAngleB));
-
-                float x2B = shipB.getAbsoluteCenterOfMass().x() + x1B;
-                float y2B = shipB.getAbsoluteCenterOfMass().y() + y1B;
-
-                float d = SpaceCalculator.distance(x2A - x2B, y2A - y2B);
+                float d = SpaceCalculator.distance(pointA.x() - pointB.x(), pointA.y() - pointB.y());
                 if (d < 2 * PhysicsParameters.fuselageRadius) {
                     model.handleCollision(shipA, shipB);
                     return true;

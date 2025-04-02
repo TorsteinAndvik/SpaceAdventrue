@@ -9,9 +9,9 @@ import view.SpaceScreen;
 
 public class LaserLight extends PointLight implements Poolable {
 
-    public static final int defaultRayNum = 8;
+    public static final int defaultRayNum = 10;
     public static final Color defaultColor = Color.CYAN;
-    public static final float defaultDistance = 0.9f;
+    public static final float defaultDistance = 1.5f;
 
     public LaserLight(RayHandler rayHandler, int rays, Color color, float distance, float x, float y) {
         super(rayHandler, rays, color, distance, x, y);
