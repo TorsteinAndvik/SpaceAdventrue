@@ -10,6 +10,7 @@ public class GameStateModel {
     private SpaceGameModel spaceGameModel;
     private UpgradeScreenModel upgradeScreenModel;
 
+    private int selectedButtonIndex = 0;
 
     /**
      * Creates a new GameStateModel that will manage game states
@@ -60,6 +61,19 @@ public class GameStateModel {
 
     public UpgradeScreenModel getUpgradeScreenModel() {
         return this.upgradeScreenModel;
+    }
+
+
+    public int getSelectedButtonIndex() {
+        return selectedButtonIndex;
+    }
+
+    public void setSelectedButtonIndex(int selectedButtonIndex) {
+        this.selectedButtonIndex = selectedButtonIndex;
+    }
+
+    public boolean hasActiveGame() {
+        return spaceGameModel != null && spaceGameModel.getPlayer() != null;
     }
 
 
