@@ -301,7 +301,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
             FloatPair point = SpaceCalculator.rotatePoint(x, y, player.getRelativeCenterOfMass(),
                     getPlayerCenterOfMass(), player.getRotationAngle());
 
-            addLaser(point, PhysicsParameters.laserVelocity, player.getRotationAngle() + 90f,
+            addLaser(point.x(), point.y(), PhysicsParameters.laserVelocity, player.getRotationAngle() + 90f,
                     0.125f, true);
         }
     }
