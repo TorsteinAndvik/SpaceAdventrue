@@ -1,5 +1,6 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -53,9 +54,11 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     private RandomAsteroidFactory RandomAsteroidFactory;
     private DirectionalAsteriodFactory DirectionalAsteriodFactory;
+    private boolean b;
 
     public SpaceGameModel() {
-
+        this.RandomAsteroidFactory = new RandomAsteroidFactory();
+        this.DirectionalAsteriodFactory = new DirectionalAsteriodFactory();
         createAsteroidPool(100);
         createLaserPool(300);
 
@@ -72,10 +75,6 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         this.rotationMatrix = new Matrix3();
         this.transformMatrix = new Matrix4();
 
-        this.RandomAsteroidFactory = new RandomAsteroidFactory();
-        this.DirectionalAsteriodFactory = new DirectionalAsteriodFactory();
-        this.RandomAsteroidFactory.setBufferRadius(this.screenBoundsProvider.getBounds());
-        this.DirectionalAsteriodFactory.setBufferRadius(this.screenBoundsProvider.getBounds());
     }
 
     private void createAsteroidPool(int asteroidPreFill) {
@@ -102,23 +101,23 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     private void createSpaceShips() {
         this.player = new Player(
-            ShipFactory.playerShip(), "player", "the player's spaceship", 1, 8, 1);
+                ShipFactory.playerShip(), "player", "the player's spaceship", 1, 8, 1);
         this.player.setRotationSpeed(0f);
 
         EnemyShip enemyShip = new EnemyShip(
-            ShipFactory.createShipFromJson("enemy2.json"),
-            "enemy",
-            "an enemy ship",
-            1,
-            1,
-            5,
-            0f);
+                ShipFactory.createShipFromJson("enemy2.json"),
+                "enemy",
+                "an enemy ship",
+                1,
+                1,
+                5,
+                0f);
 
         EnemyShip enemyShip2 = new EnemyShip(
-            ShipFactory.createShipFromJson("enemy1.json"), "enemy", "an enemy ship", 7, -3, 3, 0f);
+                ShipFactory.createShipFromJson("enemy1.json"), "enemy", "an enemy ship", 7, -3, 3, 0f);
 
         this.spaceShips = new LinkedList<>(
-            Arrays.asList(this.player, enemyShip, enemyShip2));
+                Arrays.asList(this.player, enemyShip, enemyShip2));
     }
 
     private void createAsteroids() {
@@ -133,8 +132,14 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
         Asteroid asteroidSmall2 = asteroidPool.obtain();
         asteroidSmall2.init(6f, 6f, 0.3f, 1, 1f, 175f, radiusSmall, 40f, false);
-
+        // this.RandomAsteroidFactory.setBufferRadius(this.screenBoundsProvider.getBounds());
+        this.DirectionalAsteriodFactory.setShip(player);
+        List<Asteroid> showerList;
+        showerList = this.DirectionalAsteriodFactory.getAsteroidShower();
         this.asteroids = new LinkedList<>();
+        for (Asteroid asteroid : showerList) {
+            asteroids.add(asteroid);
+        }
         asteroids.add(asteroidLarge);
         asteroids.add(asteroidSmall);
         asteroids.add(asteroidSmall2);
@@ -146,7 +151,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     }
 
     private Bullet addLaser(float x, float y, float speed, float angle, float radius,
-        boolean isPlayerLaser) {
+            boolean isPlayerLaser) {
         Bullet laser = laserPool.obtain();
         laser.init(x, y, speed, angle, radius, isPlayerLaser);
         lasers.addLast(laser);
@@ -157,15 +162,26 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     @Override
     public void update(float delta) {
 
-        if (delta % 15==0){
-            if (this.player.getSpeed() > PhysicsParameters.maxVelocityLongitudonal*0.5){
-            this.DirectionalAsteriodFactory.setShip(player);
-            this.DirectionalAsteriodFactory.getAsteroidShower();
-            } else {
-                this.RandomAsteroidFactory.setShip(player);
-                this.RandomAsteroidFactory.getAsteroidShower();
-            }
-        }
+        // if (Math.floor(delta) % 1000000000 == 0) {
+        // List<Asteroid> showerList = new ArrayList<>();
+        // //
+        // this.RandomAsteroidFactory.setBufferRadius(this.screenBoundsProvider.getBounds());
+        // //
+        // this.DirectionalAsteriodFactory.setBufferRadius(this.screenBoundsProvider.getBounds());
+        // if (this.player.getSpeed() > PhysicsParameters.maxVelocityLongitudonal * 0.5)
+        // {
+        // this.DirectionalAsteriodFactory.setShip(player);
+        // showerList = this.DirectionalAsteriodFactory.getAsteroidShower();
+        // } else {
+        // this.RandomAsteroidFactory.setShip(player);
+        // showerList.add(this.RandomAsteroidFactory.getAsteroid());
+        // }
+        // for (Asteroid asteroid : showerList) {
+        // if (asteroid.getSpeed() > PhysicsParameters.maxVelocityLongitudonal) {
+        // asteroids.add(asteroid);
+        // }
+        // }
+        // }
 
         for (Asteroid asteroid : asteroids) {
             asteroid.update(delta);
@@ -199,9 +215,9 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         Rectangle bounds = this.screenBoundsProvider.getBounds();
 
         return (laser.getX() + laser.getRadius() < bounds.x
-            || laser.getY() + laser.getRadius() < bounds.y
-            || laser.getX() - laser.getRadius() > bounds.x + bounds.width
-            || laser.getY() - laser.getRadius() > bounds.y + bounds.height);
+                || laser.getY() + laser.getRadius() < bounds.y
+                || laser.getX() - laser.getRadius() > bounds.x + bounds.width
+                || laser.getY() - laser.getRadius() > bounds.y + bounds.height);
     }
 
     void handleCollisionOld(Collidable A, Collidable B) {
@@ -251,7 +267,6 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         }
     }
 
-
     private void remove(Collidable c, boolean drawExplosion) {
         hitDetection.removeCollider(c);
         if (c instanceof SpaceBody) {
@@ -288,8 +303,8 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                         if (ship == c) {
                             if (drawExplosion) {
                                 addAnimationState(ship.getAbsoluteCenterOfMass().x(),
-                                    ship.getAbsoluteCenterOfMass().y(),
-                                    ship.getRadius(), AnimationType.EXPLOSION);
+                                        ship.getAbsoluteCenterOfMass().y(),
+                                        ship.getRadius(), AnimationType.EXPLOSION);
                             }
                             spaceShips.remove(c);
                             break;
@@ -320,25 +335,23 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     public void shoot() {
         for (CellPosition cell : player.getTurretPositions()) {
             float x0 = (float) cell.col() + Turret.turretBarrelLocation().x()
-                - player.getRelativeCenterOfMass().x();
+                    - player.getRelativeCenterOfMass().x();
             float y0 = (float) cell.row() + Turret.turretBarrelLocation().y()
-                - player.getRelativeCenterOfMass().y();
+                    - player.getRelativeCenterOfMass().y();
             float r = SpaceCalculator.distance(x0, y0);
 
             float offsetAngle = (float) Math.toDegrees(Math.atan2(y0, x0));
 
-            float x1 =
-                r * (float) Math.cos(Math.toRadians(player.getRotationAngle() + offsetAngle));
-            float y1 =
-                r * (float) Math.sin(Math.toRadians(player.getRotationAngle() + offsetAngle));
+            float x1 = r * (float) Math.cos(Math.toRadians(player.getRotationAngle() + offsetAngle));
+            float y1 = r * (float) Math.sin(Math.toRadians(player.getRotationAngle() + offsetAngle));
 
             float x2 = getPlayerCenterOfMass().x() + x1;
             float y2 = getPlayerCenterOfMass().y() + y1;
 
             addLaser(x2, y2, PhysicsParameters.laserVelocity,
-                player.getRotationAngle() + 90f,
-                0.125f, true).setSourceID(player.getID());
-            
+                    player.getRotationAngle() + 90f,
+                    0.125f, true).setSourceID(player.getID());
+
         }
     }
 
