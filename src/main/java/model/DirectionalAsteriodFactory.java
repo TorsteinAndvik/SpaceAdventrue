@@ -16,7 +16,8 @@ public class DirectionalAsteriodFactory extends AsteroidFactory {
      * @return A randomly spawned Asteroid object.
      */
     public Asteroid getAsteroid() {
-        float circleRng = (float) ((Math.random() * 2 * (direction)) - direction);
+        float circleRng = ((float) ((int) Math.random() * 2 * (direction * 100) - direction * 100)) / 100;
+
         Asteroid spawn = spawnAsteroidFromAngle(circleRng);
         return spawn;
     }
@@ -33,7 +34,7 @@ public class DirectionalAsteriodFactory extends AsteroidFactory {
         List<Asteroid> showerList = new ArrayList<Asteroid>();
         List<Float> rngList = new ArrayList<Float>();
         while (showerList.size() < asteroidNumber) {
-            float circleRng = (float) ((Math.random() * 2 * (direction)) - direction);
+            float circleRng = ((float) ((int) Math.random() * 2 * (direction * 100) - direction * 100)) / 100;
             if (!rngList.contains((float) Math.round(circleRng * 10))) {
                 rngList.add((float) Math.round(circleRng * 10));
                 Asteroid newAsteroid = spawnAsteroidFromAngle(circleRng);
@@ -52,7 +53,7 @@ public class DirectionalAsteriodFactory extends AsteroidFactory {
      *                  is the whole 360 degrees.
      */
     public void setDirection(float direction) {
-        this.direction = (float) Math.min(direction, 0.5);
+        this.direction = Math.min(direction, 0.5f);
 
     }
 

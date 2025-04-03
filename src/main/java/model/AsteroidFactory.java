@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Pool;
 
 import model.SpaceCharacters.Asteroid;
 import model.SpaceCharacters.SpaceBody;
@@ -13,6 +14,7 @@ public abstract class AsteroidFactory {
 
     private float bufferRadius = 20;
     private SpaceShip player;
+    private Pool<Asteroid> asteroidPool;
 
     /**
      * Spawns an asteroid at a given position and sets its velocity to intercept the
@@ -24,12 +26,19 @@ public abstract class AsteroidFactory {
      *         aimed at the player.
      */
     public Asteroid spawnAsteroidFromPos(float x, float y) {
-        float sizeRng = (int) (Math.random() * (3 - 1)) + 1;
-        float interceptTimeRng = (int) (Math.random() * (5 - 1)) + 1;
+        int sizeRng = (int) (Math.random() * (3 - 1)) + 1;
+        float interceptTimeRng = (int) (Math.random() * (20 - 5)) + 5;
         float rotationRng = (int) (Math.random() * (5 - 0)) + 0;
         List<Float> interceptVelocity = interceptFromPosition(interceptTimeRng, x, y, this.player);
-        Asteroid spawn = new Asteroid("Asteroid", "Watch out, its an asteroid!", x, y, interceptVelocity.get(0),
-                interceptVelocity.get(1), 100 * sizeRng, 45, 1 * sizeRng, rotationRng);
+        boolean size = false;
+        float radius = 0.5f;
+        if (sizeRng == 4) {
+            radius = 1f;
+            size = true;
+        }
+        Asteroid spawn = asteroidPool.obtain();
+        spawn.init(x, y, interceptVelocity.get(0), interceptVelocity.get(1),
+                2 * sizeRng, 2 * sizeRng, 0, radius, 10 * rotationRng, size);
         return spawn;
     }
 
@@ -43,15 +52,24 @@ public abstract class AsteroidFactory {
      *         aimed at the player.
      */
     public Asteroid spawnAsteroidFromAngle(float spawnRng) {
-        float sizeRng = (int) (Math.random() * (3 - 1)) + 1;
-        float interceptTimeRng = (int) (Math.random() * (5 - 1)) + 1;
-        float rotationRng = (int) (Math.random() * (5 - 0)) + 0;
+        int sizeRng = (int) (Math.random() * (4 - 1)) + 1;
+        float interceptTimeRng = (int) (Math.random() * (20 - 10)) + 10;
+        float rotationRng = (int) (Math.random() * (20)) - 10;
         List<Float> spawnPos = spawnLocation(spawnRng);
-        List<Float> interceptVelocity = interceptFromPosition(interceptTimeRng, spawnPos.get(0), spawnPos.get(1),
+        List<Float> interceptVelocity = interceptFromPosition((Math.min(interceptTimeRng * Math.min(sizeRng, 1f), 30)),
+                spawnPos.get(0), spawnPos.get(1),
                 this.player);
-        Asteroid spawn = new Asteroid("Asteroid", "Watch out, its an asteroid!", spawnPos.get(0), spawnPos.get(1),
-                interceptVelocity.get(0), interceptVelocity.get(1), 100 * sizeRng, 45, 1 * sizeRng, rotationRng);
+        boolean size = false;
+        float radius = 0.5f;
+        if (sizeRng == 4) {
+            radius = 1f;
+            size = true;
+        }
+        Asteroid spawn = asteroidPool.obtain();
+        spawn.init(spawnPos.get(0), spawnPos.get(1), interceptVelocity.get(0), interceptVelocity.get(1),
+                sizeRng * ((int) interceptTimeRng / 10), sizeRng, 0, radius, 10 * rotationRng, size);
         return spawn;
+
     }
 
     public void setShip(SpaceShip player) {
@@ -99,8 +117,10 @@ public abstract class AsteroidFactory {
      *         vector.
      */
     private <V extends SpaceBody> List<Float> interceptFromPosition(float deltaTime, float x, float y, V interceptee) {
-        float velocityX = ((interceptee.getX() - x) / deltaTime) + interceptee.getVelocity().x;
-        float velocityY = ((interceptee.getY() - y) / deltaTime) + interceptee.getVelocity().y;
+        float velocityX = ((interceptee.getX() + (((int) Math.random() * 2 * (10) - 10) / 10) - x) / deltaTime)
+                + interceptee.getVelocity().x;
+        float velocityY = ((interceptee.getY() + (((int) Math.random() * 2 * (10) - 10) / 10) - y) / deltaTime)
+                + interceptee.getVelocity().y;
         List<Float> velocity = new ArrayList<>();
         velocity.add(velocityX);
         velocity.add(velocityY);
@@ -127,7 +147,11 @@ public abstract class AsteroidFactory {
 
     public void setBufferRadius(Rectangle bounds) {
         float diagonal = bounds.getHeight() * bounds.getHeight() + bounds.getWidth() * bounds.getWidth();
-        this.bufferRadius = diagonal / 2;
+        this.bufferRadius = (float) (Math.sqrt(diagonal) / 0.8);
+    }
+
+    public void setPool(Pool<Asteroid> asteroidPool) {
+        this.asteroidPool = asteroidPool;
     }
 
 }
