@@ -51,6 +51,9 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     private AnimationCallback animationCallback;
     private ScreenBoundsProvider screenBoundsProvider;
 
+    private RandomAsteroidFactory RandomAsteroidFactory;
+    private DirectionalAsteriodFactory DirectionalAsteriodFactory;
+
     public SpaceGameModel() {
 
         createAsteroidPool(100);
@@ -68,6 +71,11 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
         this.rotationMatrix = new Matrix3();
         this.transformMatrix = new Matrix4();
+
+        this.RandomAsteroidFactory = new RandomAsteroidFactory();
+        this.DirectionalAsteriodFactory = new DirectionalAsteriodFactory();
+        this.RandomAsteroidFactory.setBufferRadius(this.screenBoundsProvider.getBounds());
+        this.DirectionalAsteriodFactory.setBufferRadius(this.screenBoundsProvider.getBounds());
     }
 
     private void createAsteroidPool(int asteroidPreFill) {
@@ -148,6 +156,17 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     @Override
     public void update(float delta) {
+
+        if (delta % 15==0){
+            if (this.player.getSpeed() > PhysicsParameters.maxVelocityLongitudonal*0.5){
+            this.DirectionalAsteriodFactory.setShip(player);
+            this.DirectionalAsteriodFactory.getAsteroidShower();
+            } else {
+                this.RandomAsteroidFactory.setShip(player);
+                this.RandomAsteroidFactory.getAsteroidShower();
+            }
+        }
+
         for (Asteroid asteroid : asteroids) {
             asteroid.update(delta);
         }

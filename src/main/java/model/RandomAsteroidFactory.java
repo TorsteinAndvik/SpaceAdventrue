@@ -5,26 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.SpaceCharacters.Asteroid;
-import model.SpaceCharacters.Player;
-import model.SpaceCharacters.SpaceBody;
-import model.SpaceCharacters.SpaceShip;
+
 
 public class RandomAsteroidFactory extends AsteroidFactory{
-
-
-    // public static void main(String[] args) {
-    //         SpaceShip spaceShip = new Player(null, "The Black Swan", "A beautiful pirate ship.",
-    //         100, 0, 100);
-    //         spaceShip.addVelocityX(10);
-    //         spaceShip.addVelocityY(-10);
-    //     RandomAsteroidFactory TestFactory = new RandomAsteroidFactory();
-    //     TestFactory.setShip(spaceShip);
-    //     List<Asteroid> test=TestFactory.getAsteroidShower();
-    //     for (int i=0; i< test.size(); i++){
-    //         System.out.println("Asteroid"+i+" is in position"+test.get(i).getX()+" "+test.get(i).getY()+" and has the velocity "+test.get(i).getVelocity());
-
-    //     }
-    // }
 
 
     /**

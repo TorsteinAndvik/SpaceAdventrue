@@ -3,13 +3,15 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.badlogic.gdx.math.Rectangle;
+
 import model.SpaceCharacters.Asteroid;
 import model.SpaceCharacters.SpaceBody;
 import model.SpaceCharacters.SpaceShip;
 
 public abstract class AsteroidFactory{
 
-    private final float bufferRadius = 10;
+    private float bufferRadius = 10;
     private SpaceShip player;
 
 
@@ -111,6 +113,11 @@ public abstract class AsteroidFactory{
 
 
 
+    public void setBufferRadius(Rectangle bounds){
+        float diagonal = bounds.getHeight()*bounds.getHeight()+bounds.getWidth()*bounds.getWidth();
+        this.bufferRadius=diagonal/2;
+    }
+    
 
 
 }

@@ -5,7 +5,7 @@ import java.util.List;
 
 import model.SpaceCharacters.Asteroid;
 
-public class DirectionalAsteridFactory extends AsteroidFactory{
+public class DirectionalAsteriodFactory extends AsteroidFactory{
 
     private float direction =(float) 0.15;
 
