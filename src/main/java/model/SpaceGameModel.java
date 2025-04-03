@@ -1,5 +1,6 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -51,8 +52,11 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     private AnimationCallback animationCallback;
     private ScreenBoundsProvider screenBoundsProvider;
 
-    public SpaceGameModel() {
+    private RandomAsteroidFactory randomAsteroidFactory;
+    private float asteroidTimer = 0;
 
+    public SpaceGameModel() {
+        this.randomAsteroidFactory = new RandomAsteroidFactory();
         createAsteroidPool(100);
         createLaserPool(300);
 
@@ -68,6 +72,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
         this.rotationMatrix = new Matrix3();
         this.transformMatrix = new Matrix4();
+
     }
 
     private void createAsteroidPool(int asteroidPreFill) {
@@ -125,11 +130,31 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
         Asteroid asteroidSmall2 = asteroidPool.obtain();
         asteroidSmall2.init(6f, 6f, 0.3f, 1, 1f, 175f, radiusSmall, 40f, false);
+        this.asteroids = new LinkedList<Asteroid>();
 
-        this.asteroids = new LinkedList<>();
         asteroids.add(asteroidLarge);
         asteroids.add(asteroidSmall);
         asteroids.add(asteroidSmall2);
+    }
+
+    private void runAsteroidFactory() {
+        List<Asteroid> showerList;
+        if (this.player.getSpeed() > PhysicsParameters.maxVelocityLongitudonal * 0.5) {
+            // this.DirectionalAsteriodFactory.setShip(player);
+            // this.DirectionalAsteriodFactory.setPool(asteroidPool);
+            // showerList = this.DirectionalAsteriodFactory.getAsteroidShower();
+            this.randomAsteroidFactory.setShip(player);
+            this.randomAsteroidFactory.setPool(asteroidPool);
+            showerList = this.randomAsteroidFactory.getAsteroidShower();
+        } else {
+            this.randomAsteroidFactory.setShip(player);
+            this.randomAsteroidFactory.setPool(asteroidPool);
+            showerList = this.randomAsteroidFactory.getAsteroidShower();
+        }
+        for (Asteroid asteroid : showerList) {
+            asteroids.add(asteroid);
+            hitDetection.addCollider(asteroid);
+        }
     }
 
     private void registerColliders() {
@@ -163,6 +188,23 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
             }
         }
 
+        Iterator<Asteroid> asteroidIterator = asteroids.iterator();
+        while (asteroidIterator.hasNext()) {
+            Asteroid iter = asteroidIterator.next();
+            iter.update(delta);
+            if (cullObject(iter)) {// Remove if too distant to player
+                hitDetection.removeCollider(iter);
+                asteroidPool.free(iter);
+                asteroidIterator.remove();
+            }
+        }
+
+        this.asteroidTimer += delta;
+        if (asteroidTimer > 5) { // 5 for testing
+            runAsteroidFactory();
+            asteroidTimer = 0;
+        }
+
         for (SpaceShip spaceShip : spaceShips) {
             spaceShip.update(delta);
         }
@@ -171,18 +213,27 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         // that it receives model.update(delta) in the future.
         rotateEnemy(delta);
         hitDetection.checkCollisions();
+
     }
 
     /**
      * Delete a laser if it moves out of range.
      */
-    private boolean cullLaser(Bullet laser) {
+    private <T extends SpaceBody> boolean cullLaser(T laser) {
         Rectangle bounds = this.screenBoundsProvider.getBounds();
 
         return (laser.getX() + laser.getRadius() < bounds.x
                 || laser.getY() + laser.getRadius() < bounds.y
                 || laser.getX() - laser.getRadius() > bounds.x + bounds.width
                 || laser.getY() - laser.getRadius() > bounds.y + bounds.height);
+    }
+
+    private <T extends SpaceBody> boolean cullObject(T object) {
+        Rectangle bounds = this.screenBoundsProvider.getBounds();
+        float distance = (this.player.getX() - object.getX()) * (this.player.getX() - object.getX())
+                + (this.player.getY() - object.getY()) * (this.player.getY() - object.getY());
+        float diagonal = bounds.getHeight() * bounds.getHeight() + bounds.getWidth() * bounds.getWidth();
+        return (distance > diagonal);
     }
 
 
@@ -216,7 +267,6 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
             remove(B, true);
         }
     }
-
 
     private void remove(Collidable c, boolean drawExplosion) {
         hitDetection.removeCollider(c);
