@@ -1,5 +1,6 @@
 package view;
 
+import app.TestSpaceGame;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetDescriptor;
@@ -17,10 +18,12 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader.FreeTypeFontLoaderParameter;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import model.GameStateModel;
 
 public class LoadingScreen implements Screen {
 
-    final SpaceGame game;
+    private final SpaceGame game;
+    private final GameStateModel gameStateModel;
     SpriteBatch batch;
     Viewport viewport;
     AssetManager manager; // An assetmanager helps with loading assets and disposing them once they are no
@@ -30,13 +33,14 @@ public class LoadingScreen implements Screen {
     int boldFontSize = 42;
     int regularFontSize = 36;
 
-    public LoadingScreen(final SpaceGame game) {
+    public LoadingScreen(SpaceGame game, GameStateModel gameStateModel) {
         this.game = game;
+        this.gameStateModel = gameStateModel;
         this.batch = this.game.getSpriteBatch();
         this.manager = this.game.getAssetManager();
 
         Pixmap pm = new Pixmap(
-                manager.getFileHandleResolver().resolve("images/pointer_scifi_b.png")); // Custom cursor
+            manager.getFileHandleResolver().resolve("images/pointer_scifi_b.png")); // Custom cursor
         Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 8, 8));
 
         queueAssets();
@@ -118,13 +122,20 @@ public class LoadingScreen implements Screen {
         // First assets are queued for loading in the constructor (before this block of
         // code runs), and then calling .update() here will *actually* load them.
         if (manager.update(
-                17)) { // all assets are loaded 1 by 1 //update(17) blocks thread for at least 17ms
+            17)) { // all assets are loaded 1 by 1 //update(17) blocks thread for at least 17ms
             // before passing over to render(), gives roughly 60fps (depends on size of
             // asset, a large enough file might block for longer)
             // ONLY CALL ONE OF THESE FOR TESTING:
             // TODO: Add startscreen, change screen using a controller
             // game.setUpgradeScreen();
-            game.setSpaceScreen();
+
+            //notify the model that all assets are loaded
+            gameStateModel.onAssetsLoaded();
+
+            // show start screen
+            if (game instanceof TestSpaceGame) {
+                ((TestSpaceGame) game).setStartScreen();
+            }
         }
 
         float progress = manager.getProgress();

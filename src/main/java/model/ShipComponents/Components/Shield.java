@@ -5,6 +5,8 @@ import model.ShipComponents.UpgradeType;
 
 public class Shield extends ShipUpgrade {
 
+    public static int RESOURCE_BASE_VALUE = 7;
+
     public Shield() {
         this(UpgradeStage.ZERO);
     }

@@ -62,4 +62,19 @@ public abstract class ShipUpgrade {
             case SHIELD -> new Shield();
         };
     }
+
+    /**
+     * The resources to loot from this {@code ShipUpgrade}
+     *
+     * @return the amount of resources to loot.
+     */
+    public int getResourceValue() {
+        int value = switch (type) {
+            case THRUSTER -> Thruster.RESOURCE_BASE_VALUE;
+            case TURRET -> Turret.RESOURCE_BASE_VALUE;
+            case SHIELD -> Shield.RESOURCE_BASE_VALUE;
+        };
+
+        return value * (stage.ordinal() + 1);
+    }
 }

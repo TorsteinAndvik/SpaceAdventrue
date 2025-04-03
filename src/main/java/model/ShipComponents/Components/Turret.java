@@ -6,6 +6,8 @@ import model.utils.FloatPair;
 
 public class Turret extends ShipUpgrade {
 
+    public static int RESOURCE_BASE_VALUE = 5;
+
     public Turret() {
         this(UpgradeStage.ZERO);
     }
@@ -14,6 +16,10 @@ public class Turret extends ShipUpgrade {
         super("Turret", "Fires lasers at enemies and asteroids", UpgradeType.TURRET, stage);
     }
 
+    /**
+     * @return a <code>FloatPair</code> giving the x / y offset between the
+     *         centerpoint of <code>this</code> and the tip of the turret's barrel.
+     */
     public static FloatPair turretBarrelLocation() {
         return new FloatPair(0f, 0.375f);
     }

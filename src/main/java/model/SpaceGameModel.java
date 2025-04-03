@@ -19,9 +19,9 @@ import model.Animation.AnimationCallback;
 import model.Animation.AnimationStateImpl;
 import model.Animation.AnimationType;
 import model.Globals.Collidable;
-import model.Globals.DamageDealer;
 import model.Globals.Damageable;
 import model.ShipComponents.ShipFactory;
+import model.ShipComponents.UpgradeType;
 import model.ShipComponents.Components.Turret;
 import model.SpaceCharacters.Asteroid;
 import model.SpaceCharacters.Bullet;
@@ -236,49 +236,34 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         return (distance > diagonal);
     }
 
-    void handleCollisionOld(Collidable A, Collidable B) {
-        if (HitDetection.isFriendlyFire(A, B)) {
-            return;
-        }
-
-        if (A instanceof DamageDealer && B instanceof Damageable) {
-            ((DamageDealer) A).dealDamage((Damageable) B);
-            if (((Damageable) B).isDestroyed()) {
-                remove(B, true);
-            }
-        }
-
-        if (B instanceof DamageDealer && A instanceof Damageable) {
-            ((DamageDealer) B).dealDamage((Damageable) A);
-            if (((Damageable) A).isDestroyed()) {
-                remove(A, true);
-            }
-        }
-    }
 
     void handleCollision(Collidable A, Collidable B) {
         if (HitDetection.isFriendlyFire(A, B)) {
             return;
         }
-
         boolean destroyA = false;
         boolean destroyB = false;
+        SpaceBody.crash(A, B);
 
-        if (A instanceof DamageDealer && B instanceof Damageable) {
-            ((DamageDealer) A).dealDamage((Damageable) B);
-            destroyB = ((Damageable) B).isDestroyed();
+        if (B instanceof Damageable b) {
+            destroyB = b.isDestroyed();
         }
 
-        if (B instanceof DamageDealer && A instanceof Damageable) {
-            ((DamageDealer) B).dealDamage((Damageable) A);
-            destroyA = ((Damageable) A).isDestroyed();
+        if (A instanceof Damageable a) {
+            destroyA = a.isDestroyed();
         }
 
         if (destroyA) {
+            if (B instanceof Bullet bullet && bullet.isPlayerBullet()) {
+                collectResources(A);
+            }
             remove(A, true);
         }
 
         if (destroyB) {
+            if (A instanceof Bullet bullet && bullet.isPlayerBullet()) {
+                collectResources(B);
+            }
             remove(B, true);
         }
     }
@@ -330,7 +315,8 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
                 case PLAYER: // TODO: Implement remove(Player) case (game over)
                     if (drawExplosion) {
-                        addAnimationState(c, AnimationType.EXPLOSION);
+                        addAnimationState(getPlayerCenterOfMass().x(), getPlayerCenterOfMass().y(), player.getRadius(),
+                                AnimationType.EXPLOSION);
                     }
                     break;
 
@@ -348,26 +334,25 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         animationCallback.addAnimationState(new AnimationStateImpl(x, y, radius, type));
     }
 
+    private void collectResources(Collidable collidable) {
+        if (collidable instanceof SpaceBody spaceBody) {
+            player.getInventory().addResource(spaceBody.getResourceValue());
+
+            //TODO: Remove when displayed on screen
+            System.out.println(player.getInventory().listInventory());
+        }
+    }
+
     public void shoot() {
-        for (CellPosition cell : player.getTurretPositions()) {
-            float x0 = (float) cell.col() + Turret.turretBarrelLocation().x()
-                    - player.getRelativeCenterOfMass().x();
-            float y0 = (float) cell.row() + Turret.turretBarrelLocation().y()
-                    - player.getRelativeCenterOfMass().y();
-            float r = SpaceCalculator.distance(x0, y0);
+        for (CellPosition cell : player.getUpgradeTypePositions(UpgradeType.TURRET)) {
 
-            float offsetAngle = (float) Math.toDegrees(Math.atan2(y0, x0));
+            float x = (float) cell.col() + Turret.turretBarrelLocation().x();
+            float y = (float) cell.row() + Turret.turretBarrelLocation().y();
+            FloatPair point = SpaceCalculator.rotatePoint(x, y, player.getRelativeCenterOfMass(),
+                    getPlayerCenterOfMass(), player.getRotationAngle());
 
-            float x1 = r * (float) Math.cos(Math.toRadians(player.getRotationAngle() + offsetAngle));
-            float y1 = r * (float) Math.sin(Math.toRadians(player.getRotationAngle() + offsetAngle));
-
-            float x2 = getPlayerCenterOfMass().x() + x1;
-            float y2 = getPlayerCenterOfMass().y() + y1;
-
-            addLaser(x2, y2, PhysicsParameters.laserVelocity,
-                    player.getRotationAngle() + 90f,
+            addLaser(point.x(), point.y(), PhysicsParameters.laserVelocity, player.getRotationAngle() + 90f,
                     0.125f, true).setSourceID(player.getID());
-
         }
     }
 
