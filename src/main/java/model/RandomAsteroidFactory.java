@@ -2,10 +2,13 @@ package model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import model.SpaceCharacters.Asteroid;
 
 public class RandomAsteroidFactory extends AsteroidFactory {
+
+    private Random rng = new Random();
 
     /**
      * Generates a single asteroid at a random position along at a set radius from
@@ -14,7 +17,7 @@ public class RandomAsteroidFactory extends AsteroidFactory {
      * @return A randomly spawned Asteroid object.
      */
     public Asteroid getAsteroid() {
-        float circleRng = (float) (Math.random());
+        float circleRng = rng.nextFloat();
         Asteroid spawn = spawnAsteroidFromAngle(circleRng);
         return spawn;
     }
@@ -27,18 +30,15 @@ public class RandomAsteroidFactory extends AsteroidFactory {
      */
 
     public List<Asteroid> getAsteroidShower() {
-        float asteroidNumber = (int) (Math.random() * (8 - 1)) + 1;
+
+        int asteroidNumber = rng.nextInt(8) + 1; // [1, 8]
         List<Asteroid> showerList = new ArrayList<Asteroid>();
-        List<Float> rngList = new ArrayList<Float>();
-        while (showerList.size() < asteroidNumber) {
-            float circleRng = (float) (Math.random());
-            if (!rngList.contains((float) Math.round(circleRng * 10))) {
-                rngList.add((float) Math.round(circleRng * 10));
-                showerList.add(spawnAsteroidFromAngle(circleRng));
-            }
+
+        for (int i = 0; i < asteroidNumber; i++) {
+            float circleRng = rng.nextFloat();
+            showerList.add(spawnAsteroidFromAngle(circleRng));
         }
+
         return showerList;
-
     }
-
 }

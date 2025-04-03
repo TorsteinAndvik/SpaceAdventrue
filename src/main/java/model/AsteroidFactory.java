@@ -1,20 +1,23 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Random;
 
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool;
 
 import model.SpaceCharacters.Asteroid;
 import model.SpaceCharacters.SpaceBody;
 import model.SpaceCharacters.SpaceShip;
+import model.utils.FloatPair;
+import model.utils.SpaceCalculator;
 
 public abstract class AsteroidFactory {
 
-    private float bufferRadius = 20;
+    private float bufferRadius = 17f;
     private SpaceShip player;
     private Pool<Asteroid> asteroidPool;
+    private Random rng = new Random();
 
     /**
      * Spawns an asteroid at a given position and sets its velocity to intercept the
@@ -26,20 +29,13 @@ public abstract class AsteroidFactory {
      *         aimed at the player.
      */
     public Asteroid spawnAsteroidFromPos(float x, float y) {
-        int sizeRng = (int) (Math.random() * (3 - 1)) + 1;
-        float interceptTimeRng = (int) (Math.random() * (20 - 5)) + 5;
-        float rotationRng = (int) (Math.random() * (5 - 0)) + 0;
-        List<Float> interceptVelocity = interceptFromPosition(interceptTimeRng, x, y, this.player);
-        boolean size = false;
-        float radius = 0.5f;
-        if (sizeRng == 4) {
-            radius = 1f;
-            size = true;
-        }
-        Asteroid spawn = asteroidPool.obtain();
-        spawn.init(x, y, interceptVelocity.get(0), interceptVelocity.get(1),
-                2 * sizeRng, 2 * sizeRng, 0, radius, 10 * rotationRng, size);
-        return spawn;
+        int sizeRng = rng.nextInt(4) + 1; // [1, 4]
+        float interceptTimeRng = rng.nextFloat(5, 20); // [5, 20)
+        float rotationRng = rng.nextFloat(0, 5); // [0, 5)
+
+        Vector2 interceptVelocity = interceptFromPosition(interceptTimeRng, x, y, this.player);
+
+        return createAsteroid(x, y, interceptVelocity, sizeRng, rotationRng);
     }
 
     /**
@@ -52,24 +48,31 @@ public abstract class AsteroidFactory {
      *         aimed at the player.
      */
     public Asteroid spawnAsteroidFromAngle(float spawnRng) {
-        int sizeRng = (int) (Math.random() * (4 - 1)) + 1;
-        float interceptTimeRng = (int) (Math.random() * (20 - 10)) + 10;
-        float rotationRng = (int) (Math.random() * (20)) - 10;
-        List<Float> spawnPos = spawnLocation(spawnRng);
-        List<Float> interceptVelocity = interceptFromPosition((Math.min(interceptTimeRng * Math.min(sizeRng, 1f), 30)),
-                spawnPos.get(0), spawnPos.get(1),
-                this.player);
-        boolean size = false;
-        float radius = 0.5f;
-        if (sizeRng == 4) {
-            radius = 1f;
-            size = true;
-        }
-        Asteroid spawn = asteroidPool.obtain();
-        spawn.init(spawnPos.get(0), spawnPos.get(1), interceptVelocity.get(0), interceptVelocity.get(1),
-                sizeRng * ((int) interceptTimeRng / 10), sizeRng, 0, radius, 10 * rotationRng, size);
-        return spawn;
+        int sizeRng = rng.nextInt(4) + 1; // [1, 4]
+        float interceptTimeRng = rng.nextFloat(10, 20); // [10, 20)
+        float rotationRng = rng.nextFloat(-10, 10); // [-10, 10)
 
+        FloatPair spawnPos = spawnLocation(spawnRng);
+        Vector2 interceptVelocity = interceptFromPosition((Math.min(interceptTimeRng * Math.max(sizeRng, 1f), 30)),
+                spawnPos.x(), spawnPos.y(), this.player);
+
+        return createAsteroid(spawnPos.x(), spawnPos.y(), interceptVelocity, sizeRng, rotationRng);
+    }
+
+    private Asteroid createAsteroid(float x, float y, Vector2 velocity, int size, float rotationSpeed) {
+        boolean isLarge = false;
+        float radius = 0.5f;
+        if (size == 4) {
+            radius = 1f;
+            isLarge = true;
+        }
+
+        int hp = 2 * size;
+        float mass = 2f * size;
+
+        Asteroid spawn = asteroidPool.obtain();
+        spawn.init(x, y, velocity.x, velocity.y, hp, mass, 0, radius, rotationSpeed, isLarge);
+        return spawn;
     }
 
     public void setShip(SpaceShip player) {
@@ -81,23 +84,16 @@ public abstract class AsteroidFactory {
      * interceptee in a given time.
      *
      * @param deltaTime   The time in which the interception should occur.
-     * @param interceptor The object that is attempting to intercept.
-     * @param interceptee The object being intercepted.
-     * @param <T>         A type extending <code>SpaceBody</code>, representing the
-     *                    interceptor.
-     * @param <V>         A type extending <code>SpaceBody</code>, representing the
-     *                    interceptee.
-     * @return A list containing the X and Y components of the required velocity
-     *         vector.
+     * @param interceptor The <code>SpaceBody</code> object that is attempting to
+     *                    intercept.
+     * @param interceptee The <code>SpaceBody</code> object being intercepted.
+     * @return a <code>Vector2</code> velocity vector.
      */
-    private <T extends SpaceBody, V extends SpaceBody> List<Float> interceptFromObject(float deltaTime, T interceptor,
-            V interceptee) {
+    private Vector2 interceptFromObject(float deltaTime, SpaceBody interceptor, SpaceBody interceptee) {
         float velocityX = ((interceptee.getX() - interceptor.getX()) / deltaTime) + interceptee.getVelocity().x;
         float velocityY = ((interceptee.getY() - interceptor.getX()) / deltaTime) + interceptee.getVelocity().y;
-        List<Float> velocity = new ArrayList<>();
-        velocity.add(velocityX);
-        velocity.add(velocityY);
-        return velocity;
+
+        return new Vector2(velocityX, velocityY);
 
     }
 
@@ -108,23 +104,34 @@ public abstract class AsteroidFactory {
      * @param deltaTime   The time in which the interception should occur.
      * @param x           The x coordinate of the object that is attempting to
      *                    intercept.
-     * @param x           The y coordinate of the object that is attempting to
+     * @param y           The y coordinate of the object that is attempting to
      *                    intercept.
-     * @param interceptee The object being intercepted.
-     * @param <V>         A type extending <code>SpaceBody</code>, representing the
-     *                    interceptee.
-     * @return A list containing the X and Y components of the required velocity
-     *         vector.
+     * @param interceptee The <code>SpaceBody</code> object being intercepted.
+     * 
+     * @return a <code>Vector2</code> velocity vector.
      */
-    private <V extends SpaceBody> List<Float> interceptFromPosition(float deltaTime, float x, float y, V interceptee) {
-        float velocityX = ((interceptee.getX() + (((int) Math.random() * 2 * (10) - 10) / 10) - x) / deltaTime)
-                + interceptee.getVelocity().x;
-        float velocityY = ((interceptee.getY() + (((int) Math.random() * 2 * (10) - 10) / 10) - y) / deltaTime)
-                + interceptee.getVelocity().y;
-        List<Float> velocity = new ArrayList<>();
-        velocity.add(velocityX);
-        velocity.add(velocityY);
+    private Vector2 interceptFromPosition(float deltaTime, float x, float y, SpaceBody interceptee) {
+
+        float targetX, targetY;
+        if (interceptee instanceof SpaceShip) {
+            targetX = ((SpaceShip) interceptee).getAbsoluteCenterOfMass().x()
+                    + interceptee.getVelocity().x * deltaTime;
+
+            targetY = ((SpaceShip) interceptee).getAbsoluteCenterOfMass().y()
+                    + interceptee.getVelocity().y * deltaTime;
+        } else {
+            targetX = interceptee.getX() + interceptee.getVelocity().x * deltaTime;
+            targetY = interceptee.getY() + interceptee.getVelocity().y * deltaTime;
+        }
+
+        float distance = SpaceCalculator.distance(targetX - x, targetY - y);
+        float speed = distance / (2f * deltaTime); // TODO: Why does /2f work?
+
+        float angle = (float) Math.toDegrees(Math.atan2(targetY - y, targetX - x));
+
+        Vector2 velocity = SpaceCalculator.velocityFromAngleSpeed(angle, speed);
         return velocity;
+
     }
 
     /**
@@ -133,21 +140,25 @@ public abstract class AsteroidFactory {
      *
      * @param spawnRNG A random value between 0 and 1 used to determine the position
      *                 on the circle.
-     * @return A list containing the x and y coordinates of the spawn location.
+     * @return A <code>FloatPair</code> describing the spawn location.
      */
-    private List<Float> spawnLocation(float spawnRNG) {
-        float spawnX = this.player.getX() + this.bufferRadius * (float) Math.cos(2 * Math.PI * spawnRNG + Math.PI / 2);
-        float spawnY = this.player.getY() + this.bufferRadius * (float) Math.sin(2 * Math.PI * spawnRNG + Math.PI / 2);
-        List<Float> pos = new ArrayList<>();
-        pos.add(spawnX);
-        pos.add(spawnY);
-        return pos;
+    private FloatPair spawnLocation(float spawnRNG) {
+        float angle = (float) Math.PI * (2f * spawnRNG + 0.5f);
+
+        float spawnX = this.player.getAbsoluteCenterOfMass().x()
+                + this.bufferRadius * (float) Math.cos(angle);
+
+        float spawnY = this.player.getAbsoluteCenterOfMass().y()
+                + this.bufferRadius * (float) Math.sin(angle);
+
+        return new FloatPair(spawnX, spawnY);
 
     }
 
     public void setBufferRadius(Rectangle bounds) {
-        float diagonal = bounds.getHeight() * bounds.getHeight() + bounds.getWidth() * bounds.getWidth();
-        this.bufferRadius = (float) (Math.sqrt(diagonal) / 0.8);
+        float diagonal = (float) Math
+                .sqrt(bounds.getHeight() * bounds.getHeight() + bounds.getWidth() * bounds.getWidth());
+        this.bufferRadius = diagonal / 2f;
     }
 
     public void setPool(Pool<Asteroid> asteroidPool) {

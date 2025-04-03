@@ -52,13 +52,11 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     private AnimationCallback animationCallback;
     private ScreenBoundsProvider screenBoundsProvider;
 
-    private RandomAsteroidFactory RandomAsteroidFactory;
-    private DirectionalAsteroidFactory DirectionalAsteroidFactory;
+    private RandomAsteroidFactory randomAsteroidFactory;
     private float asteroidTimer = 0;
 
     public SpaceGameModel() {
-        this.RandomAsteroidFactory = new RandomAsteroidFactory();
-        this.DirectionalAsteroidFactory = new DirectionalAsteroidFactory();
+        this.randomAsteroidFactory = new RandomAsteroidFactory();
         createAsteroidPool(100);
         createLaserPool(300);
 
@@ -145,13 +143,13 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
             // this.DirectionalAsteriodFactory.setShip(player);
             // this.DirectionalAsteriodFactory.setPool(asteroidPool);
             // showerList = this.DirectionalAsteriodFactory.getAsteroidShower();
-            this.RandomAsteroidFactory.setShip(player);
-            this.RandomAsteroidFactory.setPool(asteroidPool);
-            showerList = this.RandomAsteroidFactory.getAsteroidShower();
+            this.randomAsteroidFactory.setShip(player);
+            this.randomAsteroidFactory.setPool(asteroidPool);
+            showerList = this.randomAsteroidFactory.getAsteroidShower();
         } else {
-            this.RandomAsteroidFactory.setShip(player);
-            this.RandomAsteroidFactory.setPool(asteroidPool);
-            showerList = this.RandomAsteroidFactory.getAsteroidShower();
+            this.randomAsteroidFactory.setShip(player);
+            this.randomAsteroidFactory.setPool(asteroidPool);
+            showerList = this.randomAsteroidFactory.getAsteroidShower();
         }
         for (Asteroid asteroid : showerList) {
             asteroids.add(asteroid);
@@ -175,7 +173,6 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     @Override
     public void update(float delta) {
-
         for (Asteroid asteroid : asteroids) {
             asteroid.update(delta);
         }
