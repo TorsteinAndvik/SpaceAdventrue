@@ -53,12 +53,12 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     private ScreenBoundsProvider screenBoundsProvider;
 
     private RandomAsteroidFactory RandomAsteroidFactory;
-    private DirectionalAsteriodFactory DirectionalAsteriodFactory;
+    private DirectionalAsteroidFactory DirectionalAsteroidFactory;
     private float asteroidTimer = 0;
 
     public SpaceGameModel() {
         this.RandomAsteroidFactory = new RandomAsteroidFactory();
-        this.DirectionalAsteriodFactory = new DirectionalAsteriodFactory();
+        this.DirectionalAsteroidFactory = new DirectionalAsteroidFactory();
         createAsteroidPool(100);
         createLaserPool(300);
 
