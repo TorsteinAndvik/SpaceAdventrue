@@ -94,6 +94,13 @@ public class SpaceGameScreenController extends GenericController {
         };
     }
 
+    public void reset() {
+        model.setAccelerateForward(false);
+        model.setAccelerateBackward(false);
+        model.setAccelerateClockwise(false);
+        model.setAccelerateCounterClockwise(false);
+    }
+
     @Override
     protected boolean leftClick(int screenX, int screenY) {
         return false;
