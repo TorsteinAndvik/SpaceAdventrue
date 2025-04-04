@@ -14,10 +14,16 @@ import model.utils.SpaceCalculator;
 
 public abstract class AsteroidFactory {
 
-    private float bufferRadius = 17f;
-    private SpaceShip player;
-    private Pool<Asteroid> asteroidPool;
     private Random rng = new Random();
+
+    private float bufferRadius;
+    private SpaceShip player;
+    private final Pool<Asteroid> asteroidPool = new Pool<Asteroid>() {
+        @Override
+        protected Asteroid newObject() {
+            return new Asteroid();
+        }
+    };
 
     /**
      * Spawns an asteroid at a given position and sets its velocity to intercept the
@@ -67,34 +73,16 @@ public abstract class AsteroidFactory {
             isLarge = true;
         }
 
-        int hp = 2 * size;
+        int hitPoints = 2 * size;
         float mass = 2f * size;
 
         Asteroid spawn = asteroidPool.obtain();
-        spawn.init(x, y, velocity.x, velocity.y, hp, mass, 0, radius, rotationSpeed, isLarge);
+        spawn.init(x, y, velocity.x, velocity.y, hitPoints, mass, 0, radius, rotationSpeed, isLarge);
         return spawn;
     }
 
     public void setShip(SpaceShip player) {
         this.player = player;
-    }
-
-    /**
-     * Calculates the velocity vector required for an interceptor object to reach an
-     * interceptee in a given time.
-     *
-     * @param deltaTime   The time in which the interception should occur.
-     * @param interceptor The <code>SpaceBody</code> object that is attempting to
-     *                    intercept.
-     * @param interceptee The <code>SpaceBody</code> object being intercepted.
-     * @return a <code>Vector2</code> velocity vector.
-     */
-    private Vector2 interceptFromObject(float deltaTime, SpaceBody interceptor, SpaceBody interceptee) {
-        float velocityX = ((interceptee.getX() - interceptor.getX()) / deltaTime) + interceptee.getVelocity().x;
-        float velocityY = ((interceptee.getY() - interceptor.getX()) / deltaTime) + interceptee.getVelocity().y;
-
-        return new Vector2(velocityX, velocityY);
-
     }
 
     /**
@@ -125,7 +113,7 @@ public abstract class AsteroidFactory {
         }
 
         float distance = SpaceCalculator.distance(targetX - x, targetY - y);
-        float speed = distance / (2f * deltaTime); // TODO: Why does /2f work?
+        float speed = distance / (2f * deltaTime); // TODO: Why does dividing by 2 fix collision course?
 
         float angle = (float) Math.toDegrees(Math.atan2(targetY - y, targetX - x));
 
@@ -161,8 +149,11 @@ public abstract class AsteroidFactory {
         this.bufferRadius = diagonal / 2f;
     }
 
-    public void setPool(Pool<Asteroid> asteroidPool) {
-        this.asteroidPool = asteroidPool;
+    public void free(Asteroid asteroid) {
+        asteroidPool.free(asteroid);
     }
 
+    public void fill(int asteroidPreFill) {
+        asteroidPool.fill(asteroidPreFill);
+    }
 }
