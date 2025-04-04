@@ -18,6 +18,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import box2dLight.RayHandler;
@@ -51,7 +52,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     private final SpaceGameScreenController controller;
     private final SpriteBatch batch;
     private final ScreenViewport viewport;
-    private final ScreenViewport bgViewport;
+    private final ExtendViewport bgViewport;
 
     private final OrthographicCamera camera;
     private final float zoomMin = 1f;
@@ -89,8 +90,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         this.batch = this.game.getSpriteBatch();
         this.manager = this.game.getAssetManager();
         this.viewport = game.getScreenViewport();
-        this.bgViewport = new ScreenViewport();
-        bgViewport.setUnitsPerPixel(viewport.getUnitsPerPixel());
+        this.bgViewport = game.getExtendViewport();
         this.camera = (OrthographicCamera) viewport.getCamera();
 
         this.model = model;
@@ -202,8 +202,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     public void render(float delta) {
         controller.update(delta);
 
-        updateLaserLightsCount();
-        updateThrusterLightsCount();
+        updateLightCounts();
 
         ScreenUtils.clear(Color.BLACK);
 
@@ -328,6 +327,11 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         rayHandler.updateAndRender();
     }
 
+    private void updateLightCounts() {
+        updateLaserLightsCount();
+        updateThrusterLightsCount();
+    }
+
     private void updateLaserLightsCount() {
         // add lights if necessary
         int lightDiff = model.getLasers().size() - this.laserLights.size();
@@ -433,6 +437,9 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     @Override
     public void hide() {
         Gdx.input.setInputProcessor(null);
+        for (ThrusterLight light : this.thrusterLights) {
+            thrusterLightPool.free(light);
+        }
     }
 
     @Override
@@ -450,9 +457,12 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     public void resume() {
     }
 
+    boolean firstTime = true;
+
     @Override
     public void show() {
         Gdx.input.setInputProcessor(controller);
+        controller.reset();
     }
 
     @Override

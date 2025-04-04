@@ -33,7 +33,7 @@ public class TestSpaceGame extends Game implements SpaceGame {
 
         // screen will be meters x meters (we use meters as Game coordinates, NOT pixel
         // coordinates - these depend on window size, awful to work with)
-        fitViewport = new FitViewport(16f / 9f * METERS, METERS);
+        fitViewport = new FitViewport(METERS, METERS);
         screenViewport = new ScreenViewport();
         screenViewport.setUnitsPerPixel((float) METERS / (float) Gdx.graphics.getWidth());
         extendViewport = new ExtendViewport(Gdx.graphics.getWidth() / METERS,

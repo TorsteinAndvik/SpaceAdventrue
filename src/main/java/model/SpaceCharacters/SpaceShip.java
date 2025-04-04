@@ -84,7 +84,6 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
     @Override
     protected void move(float deltaTime) {
         if (accelerateForward) {
-            System.out.println(getMass());
             addVelocityX(deltaTime * PhysicsParameters.accelerationLimitLongitudonal
                     * (float) Math.cos(Math.toRadians(rotation.getAngle() + 90f)) / getMass());
             addVelocityY(deltaTime * PhysicsParameters.accelerationLimitLongitudonal
