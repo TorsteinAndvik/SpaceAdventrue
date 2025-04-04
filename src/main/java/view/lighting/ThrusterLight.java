@@ -28,8 +28,8 @@ public class ThrusterLight extends ConeLight implements Poolable {
     @Override
     public void reset() {
         this.setPosition(0f, 0f);
-        this.setActive(false);
         this.setDirection(0f);
         this.setConeDegree(0f);
+        this.setActive(false);
     }
 }
