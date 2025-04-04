@@ -1,4 +1,4 @@
-package view;
+package view.screens;
 
 import app.TestSpaceGame;
 import com.badlogic.gdx.Gdx;
@@ -40,7 +40,6 @@ public class StartGameScreen implements Screen {
     private final BitmapFont titleFont;
     private final BitmapFont regularFont;
 
-
     private TextureRegion[] background;
     private float[] backgroundParallax;
     private float[] backgroundDrift;
@@ -53,7 +52,6 @@ public class StartGameScreen implements Screen {
     private final Color TITLE_COLOR = new Color(0.9f, 0.9f, 1f, 1f);
     private final Color BUTTON_COLOR = Color.WHITE;
     private final Color BUTTON_HOVER_COLOR = new Color(0.8f, 0.8f, 1f, 1f);
-
 
     private final List<MenuButton> menuButtons = new ArrayList<>();
     private final float BUTTON_WIDTH = 4f;
@@ -101,24 +99,25 @@ public class StartGameScreen implements Screen {
     }
 
     /**
-     * Borrowed in its entirety from the SpaceScreen. TODO: Maybe refactor into a setup background
+     * Borrowed in its entirety from the SpaceScreen. TODO: Maybe refactor into a
+     * setup background
      * class?
      */
     private void setupBackground() {
         this.background = new TextureRegion[6];
 
         background[0] = new TextureRegion(
-            assetManager.get("images/space/background/bkgd_1.png", Texture.class));
+                assetManager.get("images/space/background/bkgd_1.png", Texture.class));
         background[1] = new TextureRegion(
-            assetManager.get("images/space/background/bkgd_2.png", Texture.class));
+                assetManager.get("images/space/background/bkgd_2.png", Texture.class));
         background[2] = new TextureRegion(
-            assetManager.get("images/space/background/bkgd_3.png", Texture.class));
+                assetManager.get("images/space/background/bkgd_3.png", Texture.class));
         background[3] = new TextureRegion(
-            assetManager.get("images/space/background/bkgd_4.png", Texture.class));
+                assetManager.get("images/space/background/bkgd_4.png", Texture.class));
         background[4] = new TextureRegion(
-            assetManager.get("images/space/background/bkgd_6.png", Texture.class));
+                assetManager.get("images/space/background/bkgd_6.png", Texture.class));
         background[5] = new TextureRegion(
-            assetManager.get("images/space/background/bkgd_7.png", Texture.class));
+                assetManager.get("images/space/background/bkgd_7.png", Texture.class));
 
         this.backgroundParallax = new float[background.length];
         this.backgroundDrift = new float[background.length];
@@ -149,9 +148,9 @@ public class StartGameScreen implements Screen {
         menuButtons.clear();
         menuButtons.add(new MenuButton("START GAME", worldCenterX, startY));
         menuButtons.add(
-            new MenuButton("OPTIONS", worldCenterX, startY - spacing));
+                new MenuButton("OPTIONS", worldCenterX, startY - spacing));
         menuButtons.add(
-            new MenuButton("EXIT", worldCenterX, startY - 2 * spacing));
+                new MenuButton("EXIT", worldCenterX, startY - 2 * spacing));
 
         menuInitialized = true;
     }
@@ -168,11 +167,10 @@ public class StartGameScreen implements Screen {
         gameStateModel.changeState(GameState.START_GAME);
         setupMenu();
 
-        //reset mouse position
+        // reset mouse position
         mousePosition.set(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 2f);
         lastMousePosition.set(mousePosition);
     }
-
 
     @Override
     public void render(float delta) {
@@ -195,7 +193,7 @@ public class StartGameScreen implements Screen {
         spriteBatch.begin();
         for (TextureRegion layer : background) {
             spriteBatch.draw(layer, 0, 0, backgroundViewport.getWorldWidth(),
-                backgroundViewport.getWorldHeight());
+                    backgroundViewport.getWorldHeight());
         }
         spriteBatch.end();
 
@@ -247,9 +245,8 @@ public class StartGameScreen implements Screen {
         float relativeY = (mousePosition.y - screenCenterY) / screenCenterY;
 
         Vector2 mouseVelocity = new Vector2(
-            relativeX * mouseInfluence,
-            relativeY * mouseInfluence
-        );
+                relativeX * mouseInfluence,
+                relativeY * mouseInfluence);
 
         // update each background layer
         for (int i = 0; i < background.length; i++) {
@@ -259,12 +256,10 @@ public class StartGameScreen implements Screen {
             // scrollX is negative when mouse is to the right
             // scrollY is positive when mouse is to the bottom
             background[i].scroll(
-                delta * (drift - parallax * mouseVelocity.x),
-                delta * (drift + parallax * mouseVelocity.y)
-            );
+                    delta * (drift - parallax * mouseVelocity.x),
+                    delta * (drift + parallax * mouseVelocity.y));
         }
     }
-
 
     private void renderButtons(SpriteBatch spriteBatch) {
         if (!menuInitialized) {
@@ -274,7 +269,7 @@ public class StartGameScreen implements Screen {
         for (int i = 0; i < menuButtons.size(); i++) {
             MenuButton button = menuButtons.get(i);
 
-            //set color
+            // set color
             if (i == gameStateModel.getSelectedButtonIndex()) {
                 float pulse = 1.0f + 0.1f * (float) Math.sin(stateTime * 5.0f);
                 regularFont.getData().setScale(viewport.getUnitsPerPixel() * pulse);
@@ -296,9 +291,7 @@ public class StartGameScreen implements Screen {
                     button.getX() - BUTTON_WIDTH / 2f,
                     button.getY() - BUTTON_HEIGHT / 2f,
                     BUTTON_WIDTH,
-                    BUTTON_HEIGHT
-                )
-            );
+                    BUTTON_HEIGHT));
 
             // draw button text
             regularFont.draw(spriteBatch, buttonText, textX, textY);
@@ -308,11 +301,10 @@ public class StartGameScreen implements Screen {
         regularFont.getData().setScale(viewport.getUnitsPerPixel());
     }
 
-
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height, true);
-        //also update background
+        // also update background
         backgroundViewport.update(width, height, true);
 
         setupFonts();
@@ -352,7 +344,6 @@ public class StartGameScreen implements Screen {
 
     }
 
-
     public List<MenuButton> getMenuButtons() {
         return menuButtons;
     }
@@ -363,4 +354,3 @@ public class StartGameScreen implements Screen {
         return worldCoords;
     }
 }
-

@@ -4,7 +4,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 import model.SpaceGameModel;
 import view.SpaceGame;
-import view.SpaceScreen;
+import view.screens.SpaceScreen;
 
 public class SpaceGameScreenController extends GenericController {
 
