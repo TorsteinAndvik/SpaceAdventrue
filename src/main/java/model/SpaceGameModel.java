@@ -112,14 +112,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     private void createAsteroids() {
         randomAsteroidFactory.setSpawnPerimeter(this.screenBoundsProvider.getBounds());
 
-        List<Asteroid> showerList;
-
-        if (this.player.getSpeed() > PhysicsParameters.maxVelocityLongitudonal * 0.5) {
-            showerList = this.randomAsteroidFactory.getAsteroidShower();
-        } else {
-            showerList = this.randomAsteroidFactory.getAsteroidShower();
-        }
-        for (Asteroid asteroid : showerList) {
+        for (Asteroid asteroid : randomAsteroidFactory.getAsteroidShower()) {
             asteroids.add(asteroid);
             hitDetection.addCollider(asteroid);
         }
