@@ -1,7 +1,5 @@
 package app;
 
-import java.awt.DisplayMode;
-
 import org.lwjgl.system.Configuration;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;

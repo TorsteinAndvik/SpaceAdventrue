@@ -162,7 +162,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
         this.asteroidTimer += delta;
         if (asteroidTimer > 5) { // 5 for testing
-            // createAsteroids();
+            createAsteroids();
             asteroidTimer = 0;
         }
 
