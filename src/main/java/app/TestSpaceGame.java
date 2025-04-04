@@ -9,11 +9,11 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import model.GameStateModel;
 import model.SpaceGameModel;
-import view.LoadingScreen;
 import view.SpaceGame;
-import view.SpaceScreen;
-import view.StartGameScreen;
-import view.UpgradeScreen;
+import view.screens.LoadingScreen;
+import view.screens.SpaceScreen;
+import view.screens.StartGameScreen;
+import view.screens.UpgradeScreen;
 
 public class TestSpaceGame extends Game implements SpaceGame {
 

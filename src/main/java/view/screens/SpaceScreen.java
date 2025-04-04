@@ -1,4 +1,4 @@
-package view;
+package view.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -38,6 +38,7 @@ import model.Animation.AnimationState;
 import model.Animation.AnimationType;
 import model.utils.FloatPair;
 import model.utils.SpaceCalculator;
+import view.SpaceGame;
 import view.lighting.LaserLight;
 import view.lighting.ThrusterLight;
 

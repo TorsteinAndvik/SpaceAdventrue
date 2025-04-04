@@ -5,7 +5,7 @@ import com.badlogic.gdx.utils.Pool.Poolable;
 
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
-import view.SpaceScreen;
+import view.screens.SpaceScreen;
 
 public class LaserLight extends PointLight implements Poolable {
 

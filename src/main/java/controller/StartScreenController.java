@@ -1,23 +1,21 @@
 package controller;
 
-
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector3;
 import java.util.List;
 import model.GameStateModel;
 import model.utils.MenuButton;
 import view.SpaceGame;
-import view.StartGameScreen;
+import view.screens.StartGameScreen;
 
 public class StartScreenController extends GenericController {
-
 
     private final GameStateModel model;
     private final StartGameScreen view;
     private final SpaceGame game;
 
     public StartScreenController(StartGameScreen view, GameStateModel model,
-        SpaceGame game) {
+            SpaceGame game) {
         this.model = model;
         this.view = view;
         this.game = game;
@@ -43,7 +41,7 @@ public class StartScreenController extends GenericController {
                 return true;
             case Input.Keys.DOWN:
                 model.setSelectedButtonIndex(
-                    Math.min(menuButtons.size() - 1, model.getSelectedButtonIndex() + 1));
+                        Math.min(menuButtons.size() - 1, model.getSelectedButtonIndex() + 1));
                 view.playBlipSound(0.4f);
                 return true;
             case Input.Keys.ENTER:
@@ -93,7 +91,7 @@ public class StartScreenController extends GenericController {
     }
 
     private void showOptionsScreen() {
-        //TODO: Implement options screen
+        // TODO: Implement options screen
     }
 
     private void exitGame() {
@@ -103,7 +101,7 @@ public class StartScreenController extends GenericController {
     public boolean mouseMoved(int screenX, int screenY) {
         Vector3 worldCoords = view.unprojectScreenCoords(screenX, screenY);
 
-        //check if mouse hovers over any button
+        // check if mouse hovers over any button
         List<MenuButton> menuButtons = view.getMenuButtons();
         for (int i = 0; i < menuButtons.size(); i++) {
             if (menuButtons.get(i).getBounds().contains(worldCoords.x, worldCoords.y)) {
@@ -116,7 +114,6 @@ public class StartScreenController extends GenericController {
         }
         return false;
     }
-
 
     @Override
     protected boolean leftClick(int screenX, int screenY) {

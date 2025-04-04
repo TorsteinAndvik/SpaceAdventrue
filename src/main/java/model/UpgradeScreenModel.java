@@ -6,11 +6,12 @@ import grid.IGrid;
 import model.ShipComponents.Components.Fuselage;
 import model.ShipComponents.Components.ShipStructure;
 import model.ShipComponents.Components.ShipUpgrade;
+import view.screens.UpgradeScreen;
 import model.ShipComponents.UpgradeType;
-import view.UpgradeScreen;
 
 /**
- * Model for the Upgrade Screen. Handles game state for upgrades, camera controls and UI
+ * Model for the Upgrade Screen. Handles game state for upgrades, camera
+ * controls and UI
  * positioning.
  */
 public class UpgradeScreenModel {
@@ -24,8 +25,8 @@ public class UpgradeScreenModel {
     private float upgradeOffsetX;
     private float upgradeOffsetY;
 
-    private final float[] cameraZoomLevels = {0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1f, 1.1f, 1.2f, 1.3f,
-        1.4f, 1.5f};
+    private final float[] cameraZoomLevels = { 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1f, 1.1f, 1.2f, 1.3f,
+            1.4f, 1.5f };
     private int cameraCurrentZoomLevel;
     private float cameraZoomDeltaTime;
     private final float cameraZoomTextFadeCutoffTime = 0.5f;
@@ -47,7 +48,8 @@ public class UpgradeScreenModel {
     private final ShipStructure shipStructure;
 
     /**
-     * Initializes an upgrade screen model with vectors for tracking positions. Also initializes
+     * Initializes an upgrade screen model with vectors for tracking positions. Also
+     * initializes
      * camera zoom, and sets to middle zoom level.
      */
     public UpgradeScreenModel(ShipStructure structure) {
@@ -78,12 +80,17 @@ public class UpgradeScreenModel {
     /**
      * Updates the game state based on the elapsed time (delta).
      *
-     * <p>This method handles camera zoom updates and processes the release of a grabbed upgrade.
-     * If an upgrade is grabbed and released, it is either placed as a fuselage or as a ship
+     * <p>
+     * This method handles camera zoom updates and processes the release of a
+     * grabbed upgrade.
+     * If an upgrade is grabbed and released, it is either placed as a fuselage or
+     * as a ship
      * upgrade.
-     * After placing the upgrade, relevant state variables are reset.</p>
+     * After placing the upgrade, relevant state variables are reset.
+     * </p>
      *
-     * @param delta The time elapsed since the last update, used for time-based calculations.
+     * @param delta The time elapsed since the last update, used for time-based
+     *              calculations.
      */
     public void update(float delta) {
         updateCameraZoomDeltaTime(delta);
@@ -93,7 +100,7 @@ public class UpgradeScreenModel {
                 shipStructure.updateWithFuselage(releasedCellPosition);
             } else {
                 CellPosition actualFuselagePos = releasedCellPosition.offset(
-                    -gridExpansion / 2, -gridExpansion / 2);
+                        -gridExpansion / 2, -gridExpansion / 2);
                 shipStructure.addUpgrade(actualFuselagePos, getGrabbedShipUpgrade());
             }
 
@@ -115,16 +122,17 @@ public class UpgradeScreenModel {
         return ShipUpgrade.getShipUpgrade(upgradeType);
     }
 
-
     /**
-     * Upgrade camera zoom level based on scroll input. Clamps zoom level between minimum and
+     * Upgrade camera zoom level based on scroll input. Clamps zoom level between
+     * minimum and
      * maximum zoom. Triggers zoom level display UI.
      *
-     * @param amount The scroll amount to adjust zoom by (positive values = zoom out etc.)
+     * @param amount The scroll amount to adjust zoom by (positive values = zoom out
+     *               etc.)
      */
     public void updateCameraZoom(float amount) {
         cameraCurrentZoomLevel = Math.min(Math.max(cameraCurrentZoomLevel + (int) amount, 0),
-            cameraZoomLevels.length - 1);
+                cameraZoomLevels.length - 1);
         cameraZoomRecently = true;
         cameraZoomDeltaTime = 0f;
     }
@@ -138,8 +146,7 @@ public class UpgradeScreenModel {
         if (cameraZoomRecently) {
             cameraZoomDeltaTime += delta;
             if (cameraZoomDeltaTime > cameraZoomTextFadeCutoffTime) {
-                float fadeAmount =
-                    1f - (float) Math.pow((cameraZoomDeltaTime - cameraZoomTextFadeCutoffTime), 2);
+                float fadeAmount = 1f - (float) Math.pow((cameraZoomDeltaTime - cameraZoomTextFadeCutoffTime), 2);
                 if (fadeAmount < 0) {
                     cameraZoomRecently = false;
                 }
@@ -148,7 +155,8 @@ public class UpgradeScreenModel {
     }
 
     /**
-     * Updates the drag position for mouse input tracking. Stores current position as last position
+     * Updates the drag position for mouse input tracking. Stores current position
+     * as last position
      * before updating
      *
      * @param x The new x-coordinate in screen coordinates.
@@ -160,19 +168,21 @@ public class UpgradeScreenModel {
     }
 
     /**
-     * Calculated the delta between the current and last drag positions. Used for camera movement
+     * Calculated the delta between the current and last drag positions. Used for
+     * camera movement
      * and drag-and-drop operations
      *
      * @return A Vector2 containing the x and y differences between drag positions.
      */
     public Vector2 getDragDelta() {
         return new Vector2(
-            lastDragPosition.x - dragPosition.x,
-            lastDragPosition.y - dragPosition.y);
+                lastDragPosition.x - dragPosition.x,
+                lastDragPosition.y - dragPosition.y);
     }
 
     /**
-     * Updates offset for upgrade grid and upgrade bar elements. Centers these elements in
+     * Updates offset for upgrade grid and upgrade bar elements. Centers these
+     * elements in
      * available screen space.
      *
      * @param worldWidth  The width of the game world in world units.
@@ -181,11 +191,9 @@ public class UpgradeScreenModel {
     public void updateOffsets(float worldWidth, float worldHeight) {
         float upgradeToGridDelta = 2f;
         gridOffsetX = (worldWidth - (shipStructure.getWidth() + gridExpansion)) / 2f;
-        gridOffsetY =
-            (worldHeight - (shipStructure.getHeight() + gridExpansion) - upgradeToGridDelta) / 2f;
+        gridOffsetY = (worldHeight - (shipStructure.getHeight() + gridExpansion) - upgradeToGridDelta) / 2f;
         upgradeOffsetX = (worldWidth - numUpgradeOptions) / 2f;
-        upgradeOffsetY =
-            gridOffsetY + (shipStructure.getHeight() + gridExpansion) + upgradeToGridDelta / 2f;
+        upgradeOffsetY = gridOffsetY + (shipStructure.getHeight() + gridExpansion) + upgradeToGridDelta / 2f;
     }
 
     public float getCurrentZoom() {
@@ -294,9 +302,8 @@ public class UpgradeScreenModel {
 
     public IGrid<Fuselage> getExpandedGrid() {
         return ShipStructure.getExpandedGrid(shipStructure.getGrid(), gridExpansion, gridExpansion,
-            true);
+                true);
     }
-
 
     public void setReleasedCellPosition(CellPosition cellPosition) {
         releasedCellPosition = cellPosition;

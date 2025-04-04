@@ -1,4 +1,4 @@
-package view;
+package view.screens;
 
 import app.TestSpaceGame;
 import com.badlogic.gdx.Gdx;
@@ -19,6 +19,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader.FreeTypeFontLoaderParameter;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import model.GameStateModel;
+import view.SpaceGame;
 
 public class LoadingScreen implements Screen {
 
@@ -40,7 +41,7 @@ public class LoadingScreen implements Screen {
         this.manager = this.game.getAssetManager();
 
         Pixmap pm = new Pixmap(
-            manager.getFileHandleResolver().resolve("images/pointer_scifi_b.png")); // Custom cursor
+                manager.getFileHandleResolver().resolve("images/pointer_scifi_b.png")); // Custom cursor
         Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 8, 8));
 
         queueAssets();
@@ -122,14 +123,14 @@ public class LoadingScreen implements Screen {
         // First assets are queued for loading in the constructor (before this block of
         // code runs), and then calling .update() here will *actually* load them.
         if (manager.update(
-            17)) { // all assets are loaded 1 by 1 //update(17) blocks thread for at least 17ms
+                17)) { // all assets are loaded 1 by 1 //update(17) blocks thread for at least 17ms
             // before passing over to render(), gives roughly 60fps (depends on size of
             // asset, a large enough file might block for longer)
             // ONLY CALL ONE OF THESE FOR TESTING:
             // TODO: Add startscreen, change screen using a controller
             // game.setUpgradeScreen();
 
-            //notify the model that all assets are loaded
+            // notify the model that all assets are loaded
             gameStateModel.onAssetsLoaded();
 
             // show start screen
