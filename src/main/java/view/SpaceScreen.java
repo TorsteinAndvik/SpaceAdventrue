@@ -202,8 +202,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     public void render(float delta) {
         controller.update(delta);
 
-        updateLaserLightsCount();
-        updateThrusterLightsCount();
+        updateLightCounts();
 
         ScreenUtils.clear(Color.BLACK);
 
@@ -328,6 +327,11 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         rayHandler.updateAndRender();
     }
 
+    private void updateLightCounts() {
+        updateLaserLightsCount();
+        updateThrusterLightsCount();
+    }
+
     private void updateLaserLightsCount() {
         // add lights if necessary
         int lightDiff = model.getLasers().size() - this.laserLights.size();
@@ -433,6 +437,9 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     @Override
     public void hide() {
         Gdx.input.setInputProcessor(null);
+        for (ThrusterLight light : this.thrusterLights) {
+            thrusterLightPool.free(light);
+        }
     }
 
     @Override
