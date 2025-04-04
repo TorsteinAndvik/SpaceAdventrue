@@ -109,8 +109,11 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                 Arrays.asList(this.player, enemyShip, enemyShip2));
     }
 
-    private void runAsteroidFactory() {
+    private void createAsteroids() {
+        randomAsteroidFactory.setSpawnPerimeter(this.screenBoundsProvider.getBounds());
+
         List<Asteroid> showerList;
+
         if (this.player.getSpeed() > PhysicsParameters.maxVelocityLongitudonal * 0.5) {
             showerList = this.randomAsteroidFactory.getAsteroidShower();
         } else {
@@ -138,8 +141,6 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     @Override
     public void update(float delta) {
-        randomAsteroidFactory.setBufferRadius(this.screenBoundsProvider.getBounds());
-
         for (Asteroid asteroid : asteroids) {
             asteroid.update(delta);
         }
@@ -168,7 +169,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
         this.asteroidTimer += delta;
         if (asteroidTimer > 5) { // 5 for testing
-            runAsteroidFactory();
+            createAsteroids();
             asteroidTimer = 0;
         }
 
