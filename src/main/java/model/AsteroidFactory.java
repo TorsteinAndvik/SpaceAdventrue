@@ -118,18 +118,22 @@ public abstract class AsteroidFactory {
         int side = rng.nextInt(4);
 
         float spawnX, spawnY;
-        if (side == 0) { // Bot
-            spawnY = spawnPerimeter.y - radius;
-            spawnX = rng.nextFloat(spawnPerimeter.x, spawnPerimeter.x + spawnPerimeter.width);
-        } else if (side == 1) { // Right
-            spawnX = spawnPerimeter.x + spawnPerimeter.width + radius;
-            spawnY = rng.nextFloat(spawnPerimeter.y, spawnPerimeter.y + spawnPerimeter.height);
-        } else if (side == 2) { // Top
-            spawnY = spawnPerimeter.y + spawnPerimeter.height + radius;
-            spawnX = rng.nextFloat(spawnPerimeter.x, spawnPerimeter.x + spawnPerimeter.width);
-        } else { // Left
-            spawnX = spawnPerimeter.x - radius;
-            spawnY = rng.nextFloat(spawnPerimeter.y, spawnPerimeter.y + spawnPerimeter.height);
+        try {
+            if (side == 0) { // Bot
+                spawnY = spawnPerimeter.y - radius;
+                spawnX = rng.nextFloat(spawnPerimeter.x, spawnPerimeter.x + spawnPerimeter.width);
+            } else if (side == 1) { // Right
+                spawnX = spawnPerimeter.x + spawnPerimeter.width + radius;
+                spawnY = rng.nextFloat(spawnPerimeter.y, spawnPerimeter.y + spawnPerimeter.height);
+            } else if (side == 2) { // Top
+                spawnY = spawnPerimeter.y + spawnPerimeter.height + radius;
+                spawnX = rng.nextFloat(spawnPerimeter.x, spawnPerimeter.x + spawnPerimeter.width);
+            } else { // Left
+                spawnX = spawnPerimeter.x - radius;
+                spawnY = rng.nextFloat(spawnPerimeter.y, spawnPerimeter.y + spawnPerimeter.height);
+            }
+        } catch (IllegalArgumentException e) {
+            return new FloatPair(0f, 0f);
         }
 
         return new FloatPair(spawnX, spawnY);

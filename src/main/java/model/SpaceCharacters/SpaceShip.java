@@ -84,28 +84,27 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
     @Override
     protected void move(float deltaTime) {
         if (accelerateForward) {
-            // rotate by 90f since in view 0 degrees is North.
-            // TODO: refactor after ship rotation is fully moved to model (if possible)
+            System.out.println(getMass());
             addVelocityX(deltaTime * PhysicsParameters.accelerationLimitLongitudonal
-                    * (float) Math.cos(Math.toRadians(rotation.getAngle() + 90f)));
+                    * (float) Math.cos(Math.toRadians(rotation.getAngle() + 90f)) / getMass());
             addVelocityY(deltaTime * PhysicsParameters.accelerationLimitLongitudonal
-                    * (float) Math.sin(Math.toRadians(rotation.getAngle() + 90f)));
+                    * (float) Math.sin(Math.toRadians(rotation.getAngle() + 90f)) / getMass());
             applySpeedLimit();
         } else if (accelerateBackward) {
             addVelocityX(-deltaTime * PhysicsParameters.accelerationLimitLongitudonal
-                    * (float) Math.cos(Math.toRadians(rotation.getAngle() + 90f)));
+                    * (float) Math.cos(Math.toRadians(rotation.getAngle() + 90f)) / getMass());
             addVelocityY(-deltaTime * PhysicsParameters.accelerationLimitLongitudonal
-                    * (float) Math.sin(Math.toRadians(rotation.getAngle() + 90f)));
+                    * (float) Math.sin(Math.toRadians(rotation.getAngle() + 90f)) / getMass());
             applySpeedLimit();
         } else {
             dampVelocity(deltaTime);
         }
 
         if (accelerateClockwise) {
-            addRotationSpeed(-deltaTime * PhysicsParameters.accelerationLimitRotational);
+            addRotationSpeed(-deltaTime * PhysicsParameters.accelerationLimitRotational / getMass());
             applyRotationalSpeedLimit();
         } else if (accelerateCounterClockwise) {
-            addRotationSpeed(deltaTime * PhysicsParameters.accelerationLimitRotational);
+            addRotationSpeed(deltaTime * PhysicsParameters.accelerationLimitRotational / getMass());
             applyRotationalSpeedLimit();
         } else {
             dampRotation(deltaTime);
@@ -223,7 +222,9 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
      *
      * @return The ID as a {@code String}
      */
-    public String getID() { return this.id; }
+    public String getID() {
+        return this.id;
+    }
 
     @Override
     public int getResourceValue() {
@@ -233,5 +234,14 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
     @Override
     public int getDamage() {
         return hitPoints;
+    }
+
+    public boolean isAccelerating() {
+        return accelerateBackward || accelerateForward || accelerateClockwise || accelerateCounterClockwise;
+    }
+
+    @Override
+    public float getMass() {
+        return shipStructure.getMass();
     }
 }
