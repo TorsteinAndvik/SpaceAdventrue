@@ -26,12 +26,12 @@ public class PercentageBar {
 
     public PercentageBar(Rectangle dimensions, float maxValue, float currentValue, Color barColor, Color bgColor) {
         this.dimensions = dimensions;
-        this.maxValue = maxValue;
-        this.currentValue = currentValue;
+        this.bar = new Rectangle(dimensions.x, dimensions.y, 0f, dimensions.height);
+        setMaxValue(maxValue);
+        setCurrentValue(currentValue);
         this.barColor = barColor;
         this.bgColor = bgColor;
 
-        this.bar = new Rectangle(dimensions.x, dimensions.y, 0f, dimensions.height);
         updateBar();
     }
 
@@ -41,6 +41,12 @@ public class PercentageBar {
 
     public PercentageBar(Rectangle dimensions, float maxValue) {
         this(dimensions, maxValue, maxValue);
+    }
+
+    public PercentageBar(float maxValue, float currentValue) {
+        this();
+        setMaxValue(maxValue);
+        setCurrentValue(currentValue);
     }
 
     public PercentageBar() {
