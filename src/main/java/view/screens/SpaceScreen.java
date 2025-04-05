@@ -40,6 +40,7 @@ import model.Animation.AnimationState;
 import model.Animation.AnimationType;
 import model.utils.FloatPair;
 import model.utils.SpaceCalculator;
+import view.Palette;
 import view.SpaceGame;
 import view.bars.HealthBar;
 import view.lighting.LaserLight;
@@ -94,7 +95,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     private HealthBar<SpaceShip> healthBarPlayer;
 
     // hitboxes (testing/debugging)
-    private boolean showHitboxes = true;
+    private boolean showHitboxes = false;
 
     public SpaceScreen(final SpaceGame game, final SpaceGameModel model) {
         this.game = game;
@@ -202,8 +203,9 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
 
     public void setupPlayerHealthBar() {
         healthBarPlayer = new HealthBar<SpaceShip>(model.getPlayer(), new FloatPair(0, 0.5f));
-        healthBarPlayer.setScale(0.8f, 0.1f);
-        healthBarPlayer.setBarColor(Palette.BACKGROUND_GREEN);
+        healthBarPlayer.setScale(0.85f, 0.12f);
+        healthBarPlayer.setBarColor(Palette.BACKGROUND_GREEN_LIGHT);
+        healthBarPlayer.setBackgroundColor(Palette.BACKGROUND_GREEN_DARK);
         healthBarPlayer.setDrawOutline(true);
     }
 

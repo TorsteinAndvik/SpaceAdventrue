@@ -11,6 +11,7 @@ public class PercentageBar {
     protected float currentValue;
     protected float scaleX = 1f;
     protected float scaleY = 1f;
+    protected float outlineScale = 0.2f;
 
     private static final float MIN_SCALE = 0.001f;
 
@@ -102,7 +103,7 @@ public class PercentageBar {
 
         float outlineWidth = 0f;
         if (drawOutline) {
-            outlineWidth = 0.1f * Math.min(scaleX * dimensions.width, scaleY * dimensions.height);
+            outlineWidth = 0.2f * Math.min(scaleX * dimensions.width, scaleY * dimensions.height);
             renderer.setColor(outlineColor);
             renderer.rect(dimensions.x, dimensions.y, scaleX * dimensions.width, scaleY * dimensions.height);
         }
@@ -295,5 +296,22 @@ public class PercentageBar {
      */
     public void setDrawOutline(boolean drawOutline) {
         this.drawOutline = drawOutline;
+    }
+
+    /**
+     * Sets the scale of the outline, to a minimum of <code>0.01f</code> and a
+     * maximum of <code>0.49f</code>. When drawing, the outline is a percentage
+     * (given by <code>outlineScale</code>) of whichever
+     * of the bar's width or height is smaller.
+     * <p>
+     * Note that an outline scale of <code>0.01f</code> will essentially make the
+     * outline invisible,
+     * while an outline scale of <code>0.49f</code> will make the percentage bar
+     * itself essentially invisible.
+     * 
+     * @param outlineScale float to set outline scale to.
+     */
+    public void setOutlineScale(float outlineScale) {
+        this.outlineScale = Math.max(Math.min(outlineScale, 0.49f), 0.01f);
     }
 }

@@ -24,6 +24,7 @@ import java.util.List;
 import model.GameStateModel;
 import model.constants.GameState;
 import model.utils.MenuButton;
+import view.Palette;
 
 public class StartGameScreen implements Screen {
 

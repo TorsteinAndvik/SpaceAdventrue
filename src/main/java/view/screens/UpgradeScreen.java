@@ -24,6 +24,7 @@ import grid.GridCell;
 import grid.IGrid;
 import java.util.Map.Entry;
 import model.ShipComponents.Components.ShipStructure;
+import view.Palette;
 import view.SpaceGame;
 import model.SpaceGameModel;
 import model.UpgradeScreenModel;
