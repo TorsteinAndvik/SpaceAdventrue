@@ -12,6 +12,8 @@ public class PercentageBar {
     protected float scaleX = 1f;
     protected float scaleY = 1f;
     protected float outlineScale = 0.2f;
+    protected float notchScale = 0.2f;
+    protected int numNotches = 0;
 
     private static final float MIN_SCALE = 0.001f;
 
@@ -24,9 +26,7 @@ public class PercentageBar {
 
     protected boolean visible = true;
     protected boolean drawOutline = false;
-
-    // TODO: Extend functionality with a drawOutline option
-    // TODO: Extend functionality with a drawNotches option
+    protected boolean halfNotch = false;
 
     public PercentageBar(Rectangle dimensions, float maxValue, float currentValue,
             Color barColor, Color bgColor, Color outlineColor) {
@@ -90,7 +90,9 @@ public class PercentageBar {
      * <code>this</code> is only drawn if visibility has been set to true
      * by <code>setVisible(true)</code>. <code>this</code> is visible by default.
      * <p>
-     * The ShapeRenderer must be begun and ended outside this method.
+     * The <code>ShapeRenderer</code> must be begun and ended outside this method.
+     * It is highly recommended to use
+     * <code>ShapeRenderer.begin(ShapeType.Filled)</code> before drawing.
      * 
      * @param renderer the ShapeRenderer to draw with.
      */
@@ -103,7 +105,7 @@ public class PercentageBar {
 
         float outlineWidth = 0f;
         if (drawOutline) {
-            outlineWidth = 0.2f * Math.min(scaleX * dimensions.width, scaleY * dimensions.height);
+            outlineWidth = outlineScale * minDimension();
             renderer.setColor(outlineColor);
             renderer.rect(dimensions.x, dimensions.y, scaleX * dimensions.width, scaleY * dimensions.height);
         }
@@ -116,7 +118,33 @@ public class PercentageBar {
         renderer.rect(bar.x + outlineWidth, bar.y + outlineWidth,
                 scaleX * bar.width - 2f * outlineWidth, scaleY * bar.height - 2f * outlineWidth);
 
+        if (numNotches != 0) {
+            float notchWidth = notchScale * minDimension();
+            float notchDistance = (scaleX * dimensions.width - 2f * outlineWidth) / (numNotches + 1);
+
+            float height = scaleY * dimensions.height - 2f * outlineWidth;
+            if (halfNotch) {
+                height /= 2f;
+            }
+
+            float y = dimensions.y;
+            if (halfNotch) {
+                y += height;
+            }
+
+            for (int i = 0; i < numNotches; i++) {
+                renderer.setColor(outlineColor);
+
+                renderer.rect(dimensions.x + outlineWidth + (i + 1) * notchDistance,
+                        y + outlineWidth, notchWidth, height);
+            }
+        }
+
         renderer.setColor(oldColor);
+    }
+
+    private float minDimension() {
+        return Math.min(scaleX * dimensions.width, scaleY * dimensions.height);
     }
 
     /**
@@ -313,5 +341,21 @@ public class PercentageBar {
      */
     public void setOutlineScale(float outlineScale) {
         this.outlineScale = Math.max(Math.min(outlineScale, 0.49f), 0.01f);
+    }
+
+    /**
+     * @param numNotches int to set number of notches to,
+     *                   automatically limited to be between 0 and 10.
+     */
+    public void setNumNotches(int numNotches) {
+        this.numNotches = Math.max(Math.min(numNotches, 10), 0);
+    }
+
+    public void setNotchScale(float notchScale) {
+        this.notchScale = notchScale;
+    }
+
+    public void setHalfNotch(boolean halfNotch) {
+        this.halfNotch = halfNotch;
     }
 }

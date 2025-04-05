@@ -203,10 +203,12 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
 
     public void setupPlayerHealthBar() {
         healthBarPlayer = new HealthBar<SpaceShip>(model.getPlayer(), new FloatPair(0, 0.5f));
-        healthBarPlayer.setScale(0.85f, 0.12f);
+        healthBarPlayer.setScale(0.85f, 0.125f);
         healthBarPlayer.setBarColor(Palette.BACKGROUND_GREEN_LIGHT);
         healthBarPlayer.setBackgroundColor(Palette.BACKGROUND_GREEN_DARK);
         healthBarPlayer.setDrawOutline(true);
+        healthBarPlayer.setNumNotches(5);
+        healthBarPlayer.setHalfNotch(true);
     }
 
     private Sprite createSprite(String path, float width, float height) {
