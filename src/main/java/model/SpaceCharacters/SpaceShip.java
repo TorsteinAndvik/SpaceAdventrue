@@ -151,8 +151,8 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
      *         Shifts the relative center by the ship's global X and Y coordinates.
      */
     public FloatPair getAbsoluteCenter() {
-        return new FloatPair(getX() + shipStructure.getWidth() / 2f,
-                getY() + shipStructure.getHeight() / 2f);
+        return new FloatPair(getX() + shipStructure.getWidth() / 2f - PhysicsParameters.fuselageRadius,
+                getY() + shipStructure.getHeight() / 2f - PhysicsParameters.fuselageRadius);
     }
 
     /**

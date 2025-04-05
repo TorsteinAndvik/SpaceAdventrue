@@ -26,13 +26,15 @@ public class PercentageBarTest {
         float maxValue = 5f;
         Color barColor = Color.FIREBRICK;
         Color bgColor = Color.MAROON;
-        PercentageBar newBar = new PercentageBar(rect, maxValue, currentValue, barColor, bgColor);
+        Color outlineColor = Color.ROYAL;
+        PercentageBar newBar = new PercentageBar(rect, maxValue, currentValue, barColor, bgColor, outlineColor);
 
         assertEquals(rect, newBar.dimensions);
         assertEquals(currentValue, newBar.currentValue);
         assertEquals(maxValue, newBar.maxValue);
         assertEquals(barColor, newBar.barColor);
         assertEquals(bgColor, newBar.bgColor);
+        assertEquals(outlineColor, newBar.outlineColor);
         assertEquals(rect.x, newBar.bar.x);
         assertEquals(rect.y, newBar.bar.y);
         assertEquals(rect.height, newBar.bar.height);

@@ -93,6 +93,9 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     // Health bars
     private HealthBar<SpaceShip> healthBarPlayer;
 
+    // hitboxes (testing/debugging)
+    private boolean showHitboxes = true;
+
     public SpaceScreen(final SpaceGame game, final SpaceGameModel model) {
         this.game = game;
         this.batch = this.game.getSpriteBatch();
@@ -134,7 +137,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
             if (i < driftOffset) {
                 backgroundDrift[i] = 0f;
             } else {
-                backgroundDrift[i] = backgroundParallax[i - driftOffset];
+                backgroundDrift[i] = backgroundParallax[i - driftOffset] / 2.5f;
             }
         }
     }
@@ -201,6 +204,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         healthBarPlayer = new HealthBar<SpaceShip>(model.getPlayer(), new FloatPair(0, 0.5f));
         healthBarPlayer.setScale(0.8f, 0.1f);
         healthBarPlayer.setBarColor(Palette.BACKGROUND_GREEN);
+        healthBarPlayer.setDrawOutline(true);
     }
 
     private Sprite createSprite(String path, float width, float height) {
@@ -228,8 +232,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         batch.begin();
         for (int i = 0; i < background.length; i++) {
             float parallax = backgroundParallax[i];
-            float drift = backgroundDrift[i] / 50; // TODO: 1/50 Torstein sin magiske faktor for background drift. Noen
-                                                   // uenig?
+            float drift = backgroundDrift[i];
             background[i].scroll(
                     delta * (drift + parallax * model.getPlayer().getVelocity().x),
                     -delta * (drift + parallax * model.getPlayer().getVelocity().y));
@@ -347,6 +350,21 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         shape.begin(ShapeType.Filled);
         healthBarPlayer.draw(shape);
         shape.end();
+
+        // draw hitboxes for testing
+        if (showHitboxes) {
+            shape.setProjectionMatrix(camera.combined);
+            shape.begin(ShapeType.Line);
+            shape.setColor(Color.CYAN);
+            for (Asteroid asteroid : model.getAsteroids()) {
+                shape.circle(asteroid.getX(), asteroid.getY(), asteroid.getRadius(), 100);
+            }
+            shape.setColor(Color.MAGENTA);
+            for (SpaceShip ship : model.getSpaceShips()) {
+                shape.circle(ship.getAbsoluteCenter().x(), ship.getAbsoluteCenter().y(), ship.getRadius(), 100);
+            }
+            shape.end();
+        }
     }
 
     private void updateLightCounts() {

@@ -11,32 +11,39 @@ public class PercentageBar {
     protected float currentValue;
     protected float scaleX = 1f;
     protected float scaleY = 1f;
+
     private static final float MIN_SCALE = 0.001f;
 
     protected Rectangle dimensions;
     protected Rectangle bar;
 
+    protected Color outlineColor;
     protected Color barColor;
     protected Color bgColor;
 
     protected boolean visible = true;
+    protected boolean drawOutline = false;
 
     // TODO: Extend functionality with a drawOutline option
     // TODO: Extend functionality with a drawNotches option
 
-    public PercentageBar(Rectangle dimensions, float maxValue, float currentValue, Color barColor, Color bgColor) {
+    public PercentageBar(Rectangle dimensions, float maxValue, float currentValue,
+            Color barColor, Color bgColor, Color outlineColor) {
         this.dimensions = dimensions;
-        this.bar = new Rectangle(dimensions.x, dimensions.y, 0f, dimensions.height);
+        this.bar = copyRectangle(dimensions);
+
         setMaxValue(maxValue);
         setCurrentValue(currentValue);
-        this.barColor = barColor;
-        this.bgColor = bgColor;
 
         updateBar();
+
+        this.barColor = barColor;
+        this.bgColor = bgColor;
+        this.outlineColor = outlineColor;
     }
 
     public PercentageBar(Rectangle dimensions, float maxValue, float currentValue) {
-        this(dimensions, maxValue, currentValue, Color.BLACK, Color.WHITE);
+        this(dimensions, maxValue, currentValue, Color.BLACK, Color.WHITE, Color.BLACK);
     }
 
     public PercentageBar(Rectangle dimensions, float maxValue) {
@@ -51,6 +58,10 @@ public class PercentageBar {
 
     public PercentageBar() {
         this(new Rectangle(0f, 0f, 1f, 1f), 1f);
+    }
+
+    private Rectangle copyRectangle(Rectangle rect) {
+        return new Rectangle(rect.x, rect.y, rect.width, rect.height);
     }
 
     /**
@@ -89,11 +100,20 @@ public class PercentageBar {
 
         Color oldColor = renderer.getColor();
 
+        float outlineWidth = 0f;
+        if (drawOutline) {
+            outlineWidth = 0.1f * Math.min(scaleX * dimensions.width, scaleY * dimensions.height);
+            renderer.setColor(outlineColor);
+            renderer.rect(dimensions.x, dimensions.y, scaleX * dimensions.width, scaleY * dimensions.height);
+        }
+
         renderer.setColor(bgColor);
-        renderer.rect(dimensions.x, dimensions.y, scaleX * dimensions.width, scaleY * dimensions.height);
+        renderer.rect(dimensions.x + outlineWidth, dimensions.y + outlineWidth,
+                scaleX * dimensions.width - 2f * outlineWidth, scaleY * dimensions.height - 2f * outlineWidth);
 
         renderer.setColor(barColor);
-        renderer.rect(bar.x, bar.y, scaleX * bar.width, scaleY * bar.height);
+        renderer.rect(bar.x + outlineWidth, bar.y + outlineWidth,
+                scaleX * bar.width - 2f * outlineWidth, scaleY * bar.height - 2f * outlineWidth);
 
         renderer.setColor(oldColor);
     }
@@ -113,12 +133,30 @@ public class PercentageBar {
     }
 
     /**
+     * @param outlineColor the new color of the outline.
+     */
+    public void setOutlineColor(Color outlineColor) {
+        this.outlineColor = outlineColor;
+    }
+
+    /**
      * @param barColor the new color of the bar.
      * @param bgColor  the new color of the background.
      */
     public void setColors(Color barColor, Color bgColor) {
         setBarColor(barColor);
         setBackgroundColor(bgColor);
+    }
+
+    /**
+     * @param barColor     the new color of the bar.
+     * @param bgColor      the new color of the background.
+     * @param outlineColor the new color of the outline.
+     */
+    public void setColors(Color barColor, Color bgColor, Color outlineColor) {
+        setBarColor(barColor);
+        setBackgroundColor(bgColor);
+        setOutlineColor(outlineColor);
     }
 
     /**
@@ -246,12 +284,16 @@ public class PercentageBar {
     }
 
     /**
-     * Set visibility of the percentage bar.
-     * Must be set to <code>true</code> to be drawn.
-     * 
-     * @param visible boolean to set visibility to.
+     * @param visible boolean to set visibility of <code>this</code> to.
      */
     public void setVisible(boolean visible) {
         this.visible = visible;
+    }
+
+    /**
+     * @param drawOutline boolean to set outline visibility to.
+     */
+    public void setDrawOutline(boolean drawOutline) {
+        this.drawOutline = drawOutline;
     }
 }
