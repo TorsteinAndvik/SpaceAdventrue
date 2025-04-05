@@ -4,17 +4,22 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 
+import model.utils.FloatPair;
+
 public class PercentageBar {
     protected float maxValue;
     protected float currentValue;
     protected float scaleX = 1f;
     protected float scaleY = 1f;
+    private static final float MIN_SCALE = 0.001f;
 
     protected Rectangle dimensions;
     protected Rectangle bar;
 
     protected Color barColor;
     protected Color bgColor;
+
+    protected boolean visible = true;
 
     // TODO: Extend functionality with a drawOutline option
     // TODO: Extend functionality with a drawNotches option
@@ -25,6 +30,9 @@ public class PercentageBar {
         this.currentValue = currentValue;
         this.barColor = barColor;
         this.bgColor = bgColor;
+
+        this.bar = new Rectangle(dimensions.x, dimensions.y, 0f, dimensions.height);
+        updateBar();
     }
 
     public PercentageBar(Rectangle dimensions, float maxValue, float currentValue) {
@@ -39,6 +47,11 @@ public class PercentageBar {
         this(new Rectangle(0f, 0f, 1f, 1f), 1f);
     }
 
+    /**
+     * Updates the current value of the bar by the given delta.
+     * 
+     * @param delta the amount to update the current value by.
+     */
     public void update(float delta) {
         setCurrentValue(currentValue + delta);
     }
@@ -55,12 +68,19 @@ public class PercentageBar {
      * using its width and height scaled by the scalars set by
      * <code>setScale(float scaleX, float scaleY)</code> or
      * <code>setScale(float scale)</code>.
-     * 
+     * <p>
+     * <code>this</code> is only drawn if visibility has been set to true
+     * by <code>setVisible(true)</code>. <code>this</code> is visible by default.
+     * <p>
      * The ShapeRenderer must be begun and ended outside this method.
      * 
      * @param renderer the ShapeRenderer to draw with.
      */
     public void draw(ShapeRenderer renderer) {
+        if (!visible) {
+            return;
+        }
+
         Color oldColor = renderer.getColor();
 
         renderer.setColor(bgColor);
@@ -72,57 +92,131 @@ public class PercentageBar {
         renderer.setColor(oldColor);
     }
 
+    /**
+     * @param barColor the new color of the bar.
+     */
     public void setBarColor(Color barColor) {
         this.barColor = barColor;
     }
 
+    /**
+     * @param barColor the new color of the background.
+     */
     public void setBackgroundColor(Color bgColor) {
         this.bgColor = bgColor;
     }
 
+    /**
+     * @param barColor the new color of the bar.
+     * @param bgColor  the new color of the background.
+     */
     public void setColors(Color barColor, Color bgColor) {
         setBarColor(barColor);
         setBackgroundColor(bgColor);
     }
 
     /**
-     * Sets the current value of the bar to a minimum of 0.
+     * Sets the current value of the bar to a minimum of 0
+     * and a maximum of <code>maxValue</code>.
+     * <p>
      * Updates the bar width.
      * 
      * @param currentValue the new current value
      */
     public void setCurrentValue(float currentValue) {
-        this.currentValue = Math.max(0f, currentValue);
+        this.currentValue = Math.min(Math.max(0f, currentValue), maxValue);
         updateBar();
     }
 
     /**
-     * Sets the max value of the bar to a minimum of 0.
+     * Sets the max value of the bar to a minimum of <code>1f</code>.
+     * <p>
+     * If current value would become larger than <code>maxValue</code>,
+     * the current value is set equal to <code>maxValue</code>.
+     * <p>
      * Updates the bar width.
      * 
      * @param maxValue the new max value
      */
     public void setMaxValue(float maxValue) {
-        this.maxValue = Math.max(0f, maxValue);
+        this.maxValue = Math.max(1f, maxValue);
+        this.currentValue = Math.min(currentValue, maxValue);
+        updateBar();
     }
 
     /**
-     * Sets the scaling of the bar when drawing.
+     * Sets the scaling of the bar when drawing,
+     * to a minimum of {@value #MIN_SCALE}.
      * 
      * @param scaleX the scalar for the bar's width
      * @param scaleY the scalar for the bar's height
      */
     public void setScale(float scaleX, float scaleY) {
-        this.scaleX = Math.max(0f, scaleX);
-        this.scaleY = Math.max(0f, scaleY);
+        this.scaleX = Math.max(MIN_SCALE, scaleX);
+        this.scaleY = Math.max(MIN_SCALE, scaleY);
     }
 
     /**
-     * Sets the scaling of the bar when drawing.
+     * Sets the scaling of the bar when drawing,
+     * to a minimum of {@value #MIN_SCALE}.
      * 
      * @param scale the scale to set x-scale and y-scale to.
      */
     public void setScale(float scale) {
         setScale(scale, scale);
+    }
+
+    /**
+     * Sets the bottom-left position of the percentage bar.
+     * 
+     * @param x
+     * @param y
+     */
+    public void setPosition(float x, float y) {
+        dimensions.x = x;
+        dimensions.y = y;
+        bar.x = x;
+        bar.y = y;
+    }
+
+    /**
+     * Sets the bottom-left position of the percentage bar.
+     * 
+     * @param pos a FloatPair holding the x and y coordinates to set the position to
+     */
+    public void setPosition(FloatPair pos) {
+        setPosition(pos.x(), pos.y());
+    }
+
+    /**
+     * @return a <code>FloatPair</code> holding the x and y coordinates of the
+     *         percentage bar.
+     */
+    public FloatPair getPosition() {
+        return new FloatPair(dimensions.x, dimensions.y);
+    }
+
+    /**
+     * Sets the dimensions of the percentage bar.
+     * Updates the percentage bar's width if necessary.
+     * 
+     * @param dimensions the new dimensions
+     */
+    public void setDimensions(Rectangle dimensions) {
+        this.dimensions = dimensions;
+        bar.x = dimensions.x;
+        bar.y = dimensions.y;
+        bar.height = dimensions.height;
+        updateBar();
+    }
+
+    /**
+     * Set visibility of the percentage bar.
+     * Must be set to <code>true</code> to be drawn.
+     * 
+     * @param visible boolean to set visibility to.
+     */
+    public void setVisible(boolean visible) {
+        this.visible = visible;
     }
 }
