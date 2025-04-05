@@ -1,6 +1,5 @@
 package model.SpaceCharacters;
 
-
 import com.badlogic.gdx.math.Vector2;
 
 public interface ViewableSpaceBody {
@@ -10,12 +9,10 @@ public interface ViewableSpaceBody {
      */
     float getX();
 
-
     /**
      * @return the y-coordinate of a SpaceBody object.
      */
     float getY();
-
 
     /**
      * Get the mass of a SpaceBody object.

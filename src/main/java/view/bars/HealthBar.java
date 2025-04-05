@@ -3,13 +3,14 @@ package view.bars;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 import model.Globals.Damageable;
+import model.SpaceCharacters.ViewableSpaceBody;
 import model.utils.FloatPair;
 
-public class HealthBar extends PercentageBar {
-    Damageable subject;
+public class HealthBar<T extends Damageable & ViewableSpaceBody> extends PercentageBar {
+    T subject;
     FloatPair offset;
 
-    public HealthBar(Damageable subject, FloatPair offset) {
+    public HealthBar(T subject, FloatPair offset) {
         super(subject.getMaxHitPoints(), subject.getHitPoints());
         this.subject = subject;
         this.offset = offset;
@@ -39,6 +40,7 @@ public class HealthBar extends PercentageBar {
     public void draw(ShapeRenderer renderer) {
         setMaxValue(subject.getMaxHitPoints());
         setCurrentValue(subject.getHitPoints());
+        this.setCenter(subject.getX(), subject.getY());
         super.draw(renderer);
     }
 }

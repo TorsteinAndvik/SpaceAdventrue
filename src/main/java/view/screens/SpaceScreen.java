@@ -13,6 +13,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
@@ -39,6 +41,7 @@ import model.Animation.AnimationType;
 import model.utils.FloatPair;
 import model.utils.SpaceCalculator;
 import view.SpaceGame;
+import view.bars.HealthBar;
 import view.lighting.LaserLight;
 import view.lighting.ThrusterLight;
 
@@ -52,6 +55,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     final SpaceGameModel model;
     private final SpaceGameScreenController controller;
     private final SpriteBatch batch;
+    private final ShapeRenderer shape;
     private final ScreenViewport viewport;
     private final ExtendViewport bgViewport;
 
@@ -86,9 +90,13 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     private LinkedList<ThrusterLight> thrusterLights;
     private Pool<ThrusterLight> thrusterLightPool;
 
+    // Health bars
+    private HealthBar<SpaceShip> healthBarPlayer;
+
     public SpaceScreen(final SpaceGame game, final SpaceGameModel model) {
         this.game = game;
         this.batch = this.game.getSpriteBatch();
+        this.shape = this.game.getShapeRenderer();
         this.manager = this.game.getAssetManager();
         this.viewport = game.getScreenViewport();
         this.bgViewport = game.getExtendViewport();
@@ -102,6 +110,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         setupAnimationHashMap();
         setupUpgradeHashMap();
         setupLighting();
+        setupPlayerHealthBar();
     }
 
     private void setupBackground() {
@@ -186,6 +195,12 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
             }
         };
         thrusterLightPool.fill(50);
+    }
+
+    public void setupPlayerHealthBar() {
+        healthBarPlayer = new HealthBar<SpaceShip>(model.getPlayer(), new FloatPair(0, 0.5f));
+        healthBarPlayer.setScale(0.8f, 0.1f);
+        healthBarPlayer.setBarColor(Palette.BACKGROUND_GREEN);
     }
 
     private Sprite createSprite(String path, float width, float height) {
@@ -326,6 +341,12 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         // Lighting
         rayHandler.setCombinedMatrix(camera);
         rayHandler.updateAndRender();
+
+        // Health bar
+        shape.setProjectionMatrix(camera.combined);
+        shape.begin(ShapeType.Filled);
+        healthBarPlayer.draw(shape);
+        shape.end();
     }
 
     private void updateLightCounts() {
