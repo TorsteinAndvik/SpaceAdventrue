@@ -1,4 +1,4 @@
-package view;
+package view.bars;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
