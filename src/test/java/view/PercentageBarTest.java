@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 
+import model.utils.FloatPair;
+
 public class PercentageBarTest {
 
     PercentageBar bar;
@@ -57,6 +59,19 @@ public class PercentageBarTest {
     }
 
     @Test
+    public void dimensionsTest() {
+        Rectangle rect = new Rectangle(0f, 1f, 2f, 3f);
+        bar.setDimensions(rect);
+        assertEquals(rect, bar.dimensions);
+        assertEquals(2f * bar.currentValue / bar.maxValue, bar.bar.width);
+
+        Rectangle rect2 = new Rectangle(0f, 1f, 3f, 3f);
+        bar.setDimensions(rect2);
+        assertEquals(rect2, bar.dimensions);
+        assertEquals(3f * bar.currentValue / bar.maxValue, bar.bar.width);
+    }
+
+    @Test
     public void ratioTest() {
         bar.setMaxValue(1f);
         bar.setCurrentValue(1f);
@@ -85,5 +100,34 @@ public class PercentageBarTest {
         bar.setScale(3f, 0.5f);
         assertEquals(3f, bar.scaleX);
         assertEquals(0.5f, bar.scaleY);
+    }
+
+    @Test
+    public void visibilityTest() {
+        bar.setVisible(true);
+        assertEquals(true, bar.visible);
+        bar.setVisible(true);
+        assertEquals(true, bar.visible);
+        bar.setVisible(false);
+        assertEquals(false, bar.visible);
+        bar.setVisible(false);
+        assertEquals(false, bar.visible);
+        bar.setVisible(true);
+        assertEquals(true, bar.visible);
+    }
+
+    @Test
+    public void setPositionTest() {
+        bar.setPosition(new FloatPair(-1f, 2f));
+        assertEquals(new Rectangle(-1f, 2f, 1f, 1f), bar.dimensions);
+        assertEquals(new Rectangle(-1f, 2f, 1f, 1f), bar.bar);
+    }
+
+    @Test
+    public void setCenterTest() {
+        bar.setCurrentValue(0.7f);
+        bar.setCenter(new FloatPair(-3f, 5f));
+        assertEquals(new Rectangle(-3.5f, 4.5f, 1f, 1f), bar.dimensions);
+        assertEquals(new Rectangle(-3.5f, 4.5f, 0.7f, 1f), bar.bar);
     }
 }

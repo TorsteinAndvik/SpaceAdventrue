@@ -5,12 +5,13 @@ import com.badlogic.gdx.utils.Pool.Poolable;
 
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
+import view.screens.Palette;
 import view.screens.SpaceScreen;
 
 public class LaserLight extends PointLight implements Poolable {
 
     public static final int defaultRayNum = 10;
-    public static final Color defaultColor = Color.CYAN;
+    public static final Color defaultColor = Palette.LASER_LIGHT_PLAYER;
     public static final float defaultDistance = 1.5f;
 
     public LaserLight(RayHandler rayHandler, int rays, Color color, float distance, float x, float y) {
