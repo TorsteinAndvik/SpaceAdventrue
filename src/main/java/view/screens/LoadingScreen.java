@@ -8,27 +8,30 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader.FreeTypeFontLoaderParameter;
-import com.badlogic.gdx.utils.viewport.Viewport;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import model.GameStateModel;
+import view.PercentageBar;
 import view.SpaceGame;
 
 public class LoadingScreen implements Screen {
 
     private final SpaceGame game;
     private final GameStateModel gameStateModel;
-    SpriteBatch batch;
-    Viewport viewport;
-    AssetManager manager; // An assetmanager helps with loading assets and disposing them once they are no
-    // longer needed
+    private ScreenViewport viewport;
+    private ShapeRenderer shape;
+    private AssetManager manager;
+    private PercentageBar loadingProgressBar;
 
     // Constants
     int boldFontSize = 42;
@@ -37,14 +40,23 @@ public class LoadingScreen implements Screen {
     public LoadingScreen(SpaceGame game, GameStateModel gameStateModel) {
         this.game = game;
         this.gameStateModel = gameStateModel;
-        this.batch = this.game.getSpriteBatch();
         this.manager = this.game.getAssetManager();
+        this.viewport = this.game.getScreenViewport();
+        this.shape = this.game.getShapeRenderer();
 
         Pixmap pm = new Pixmap(
                 manager.getFileHandleResolver().resolve("images/pointer_scifi_b.png")); // Custom cursor
         Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 8, 8));
 
+        setupProgressBar();
+
         queueAssets();
+    }
+
+    private void setupProgressBar() {
+        loadingProgressBar = new PercentageBar();
+        loadingProgressBar.setColors(Palette.BACKGROUND_GREEN, Color.WHITE);
+        loadingProgressBar.setScale(10f, 0.2f);
     }
 
     private void queueAssets() {
@@ -122,25 +134,27 @@ public class LoadingScreen implements Screen {
     public void render(float delta) {
         // First assets are queued for loading in the constructor (before this block of
         // code runs), and then calling .update() here will *actually* load them.
-        if (manager.update(
-                17)) { // all assets are loaded 1 by 1 //update(17) blocks thread for at least 17ms
-            // before passing over to render(), gives roughly 60fps (depends on size of
-            // asset, a large enough file might block for longer)
-            // ONLY CALL ONE OF THESE FOR TESTING:
-            // TODO: Add startscreen, change screen using a controller
-            // game.setUpgradeScreen();
-
+        if (manager.update(17)) { // 17ms ~= 60fps
             // notify the model that all assets are loaded
             gameStateModel.onAssetsLoaded();
 
             // show start screen
-            if (game instanceof TestSpaceGame) {
+            if (Gdx.input.isTouched() && game instanceof TestSpaceGame) {
+                loadingProgressBar.setVisible(false);
                 ((TestSpaceGame) game).setStartScreen();
             }
         }
 
         float progress = manager.getProgress();
-        System.out.println("Loading assets: " + 100f * progress + "%");
+        loadingProgressBar.setCurrentValue(progress);
+
+        viewport.apply(true);
+        shape.setProjectionMatrix(viewport.getCamera().combined);
+
+        shape.begin(ShapeType.Filled);
+        loadingProgressBar.setCenter(viewport.getWorldWidth() / 2f, viewport.getWorldHeight() / 2f);
+        loadingProgressBar.draw(shape);
+        shape.end();
     }
 
     @Override
@@ -157,7 +171,7 @@ public class LoadingScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        game.getFitViewport().update(width, height, true);
+        viewport.update(width, height, true);
     }
 
     @Override

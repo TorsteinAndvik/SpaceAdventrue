@@ -147,6 +147,9 @@ public class PercentageBar {
     /**
      * Sets the scaling of the bar when drawing,
      * to a minimum of {@value #MIN_SCALE}.
+     * <p>
+     * Note that if you're rescaling and using <code>setCenter()</code>,
+     * the center must be set after the scaling.
      * 
      * @param scaleX the scalar for the bar's width
      * @param scaleY the scalar for the bar's height
@@ -159,6 +162,9 @@ public class PercentageBar {
     /**
      * Sets the scaling of the bar when drawing,
      * to a minimum of {@value #MIN_SCALE}.
+     * <p>
+     * Note that if you're rescaling and using <code>setCenter()</code>,
+     * the center must be set after the scaling.
      * 
      * @param scale the scale to set x-scale and y-scale to.
      */
@@ -182,10 +188,33 @@ public class PercentageBar {
     /**
      * Sets the bottom-left position of the percentage bar.
      * 
-     * @param pos a FloatPair holding the x and y coordinates to set the position to
+     * @param pos a <code>FloatPair</code> holding the x and y coordinates to set
+     *            the position to
      */
     public void setPosition(FloatPair pos) {
         setPosition(pos.x(), pos.y());
+    }
+
+    /**
+     * Sets the center position of the percentage bar.
+     * 
+     * @param x
+     * @param y
+     */
+    public void setCenter(float x, float y) {
+        float renderedWidth = scaleX * dimensions.width;
+        float renderedHeight = scaleY * dimensions.height;
+        setPosition(x - renderedWidth / 2f, y - renderedHeight / 2f);
+    }
+
+    /**
+     * Sets the center position of the percentage bar.
+     * 
+     * @param pos a <code>FloatPair</code> holding the x and y coordinates to set
+     *            the center position to
+     */
+    public void setCenter(FloatPair pos) {
+        setCenter(pos.x(), pos.y());
     }
 
     /**

@@ -167,7 +167,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     }
 
     private void setupLighting() {
-        rayHandler.setAmbientLight(new Color(0f, 0f, 0f, 0.75f));
+        rayHandler.setAmbientLight(Palette.AMBIENT_LIGHT);
 
         this.laserLights = new LinkedList<>();
         this.laserLightPool = new Pool<LaserLight>() {

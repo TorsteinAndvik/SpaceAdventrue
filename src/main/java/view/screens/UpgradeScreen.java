@@ -90,7 +90,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     public UpgradeScreen(final SpaceGame spaceGame, final SpaceGameModel spaceModel) {
         this.game = spaceGame;
         this.batch = game.getSpriteBatch();
-        this.shape = new ShapeRenderer();
+        this.shape = game.getShapeRenderer();
         this.manager = game.getAssetManager();
         this.viewportGame = game.getScreenViewport();
         this.viewportUI = new ScreenViewport();
@@ -252,7 +252,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     @Override
     public void render(float delta) {
         model.update(delta);
-        ScreenUtils.clear(new Color(0f, 64f / 255f, 64f / 255f, 1f));
+        ScreenUtils.clear(Palette.BACKGROUND_GREEN);
 
         viewportGame.apply(false);
         batch.setProjectionMatrix(viewportGame.getCamera().combined);
@@ -330,7 +330,8 @@ public class UpgradeScreen extends InputAdapter implements Screen {
                                     - model.getCameraZoomTextFadeCutoffTime()),
                             2);
             if (alpha > 0) {
-                Color fontColor = new Color(1f, 0.47f, 0.55f, alpha);
+                Color fontColor = Palette.FONT_RED;
+                fontColor.a = alpha;
                 fontRegular.setColor(fontColor);
                 fontRegular.draw(batch, "Zoom = x" + model.getCurrentZoom(),
                         0.1f, 5 * fontRegular.getData().lineHeight);
