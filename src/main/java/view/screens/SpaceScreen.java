@@ -415,32 +415,13 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         }
     }
 
-    /**
-     * perform one-dimensional linear interpolation
-     */
-    private float lerp(float source, float target, float alpha) {
-        float alphaInverse = 1f - alpha;
-        return alpha * target + alphaInverse * source;
-    }
-
-    private FloatPair lerp(FloatPair source, FloatPair target, float alpha) {
-        float x = lerp(source.x(), target.x(), alpha);
-        float y = lerp(source.y(), target.y(), alpha);
-        return new FloatPair(x, y);
-    }
-
-    private FloatPair lerp(Vector3 source, FloatPair target, float alpha) {
-        FloatPair sourceFloatPair = new FloatPair(source.x, source.y);
-        return lerp(sourceFloatPair, target, alpha);
-    }
-
     private void updateCamera() {
         cameraLerpToPlayer();
         cameraZoom();
     }
 
     private void cameraLerpToPlayer() {
-        FloatPair newPosition = lerp(camera.position, model.getPlayerCenterOfMass(),
+        FloatPair newPosition = SpaceCalculator.lerp(camera.position, model.getPlayerCenterOfMass(),
                 0.1f);
         setCameraPosition(newPosition);
     }
@@ -456,7 +437,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     }
 
     private void cameraZoom() {
-        float zoom = lerp(camera.zoom, getZoomLevel(), 0.02f);
+        float zoom = SpaceCalculator.lerp(camera.zoom, getZoomLevel(), 0.02f);
         camera.zoom = zoom;
     }
 

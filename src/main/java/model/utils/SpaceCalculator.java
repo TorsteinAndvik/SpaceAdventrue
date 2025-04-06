@@ -1,6 +1,8 @@
 package model.utils;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+
 import grid.CellPosition;
 
 import java.util.ArrayList;
@@ -64,6 +66,29 @@ public class SpaceCalculator {
         return (float) Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
     }
 
+    public static float distance(FloatPair posA, FloatPair posB) {
+        return distance(posA.x() - posB.x(), posA.y() - posB.y());
+    }
+
+    public static float distance(float x, float y, FloatPair pos) {
+        return distance(x - pos.x(), y - pos.y());
+    }
+
+    public static float angleBetweenPoints(float x1, float y1, float x2, float y2) {
+        float x = x1 - x2;
+        float y = y1 - y2;
+
+        return (float) Math.toDegrees(Math.atan2(y, x));
+    }
+
+    public static float angleBetweenPoints(float x, float y, FloatPair pos) {
+        return angleBetweenPoints(x, y, pos.x(), pos.y());
+    }
+
+    public static float angleBetweenPoints(FloatPair posA, FloatPair posB) {
+        return angleBetweenPoints(posA.x(), posA.y(), posB.x(), posB.y());
+    }
+
     /**
      * Rotates a point around a center of rotation by a given angle, and translates
      * it.
@@ -94,18 +119,51 @@ public class SpaceCalculator {
      */
     public static FloatPair rotatePoint(float x, float y, FloatPair centerOfRotation, FloatPair translation,
             float angle) {
-        float x0 = x - centerOfRotation.x();
-        float y0 = y - centerOfRotation.y();
-        float r = SpaceCalculator.distance(x0, y0);
 
-        float offsetAngle = (float) Math.toDegrees(Math.atan2(y0, x0));
+        float r = distance(x, y, centerOfRotation);
 
-        float x1 = r * (float) Math.cos(Math.toRadians(angle + offsetAngle));
-        float y1 = r * (float) Math.sin(Math.toRadians(angle + offsetAngle));
+        float offsetAngle = angleBetweenPoints(x, y, centerOfRotation);
 
-        float x2 = translation.x() + x1;
-        float y2 = translation.y() + y1;
+        float x0 = r * (float) Math.cos(Math.toRadians(angle + offsetAngle));
+        float y0 = r * (float) Math.sin(Math.toRadians(angle + offsetAngle));
 
-        return new FloatPair(x2, y2);
+        float x1 = translation.x() + x0;
+        float y1 = translation.y() + y0;
+
+        return new FloatPair(x1, y1);
+    }
+
+    // TODO: Write complete javadocs
+    /**
+     * perform one-dimensional linear interpolation
+     */
+    public static float lerp(float source, float target, float alpha) {
+        float alphaInverse = 1f - alpha;
+        return alpha * target + alphaInverse * source;
+    }
+
+    /**
+     * perform two-dimensional linear interpolation
+     */
+    public static FloatPair lerp(FloatPair source, FloatPair target, float alpha) {
+        float x = lerp(source.x(), target.x(), alpha);
+        float y = lerp(source.y(), target.y(), alpha);
+        return new FloatPair(x, y);
+    }
+
+    /**
+     * perform two-dimensional linear interpolation
+     */
+    public static FloatPair lerp(Vector2 source, FloatPair target, float alpha) {
+        FloatPair sourceFloatPair = new FloatPair(source.x, source.y);
+        return lerp(sourceFloatPair, target, alpha);
+    }
+
+    /**
+     * perform two-dimensional linear interpolation
+     */
+    public static FloatPair lerp(Vector3 source, FloatPair target, float alpha) {
+        FloatPair sourceFloatPair = new FloatPair(source.x, source.y);
+        return lerp(sourceFloatPair, target, alpha);
     }
 }
