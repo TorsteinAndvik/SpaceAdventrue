@@ -7,7 +7,8 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-import controller.MusicManager;
+import controller.audio.MusicManager;
+import controller.audio.SoundManager;
 
 public interface SpaceGame {
 
@@ -55,4 +56,9 @@ public interface SpaceGame {
      * @return the application's <code>MusicManager</code>.
      */
     MusicManager getMusicManager();
+
+    /**
+     * @return the application's <code>SoundManager</code>.
+     */
+    SoundManager getSoundManager();
 }

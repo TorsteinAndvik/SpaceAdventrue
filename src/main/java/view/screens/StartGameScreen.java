@@ -20,6 +20,8 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import controller.StartScreenController;
+import controller.audio.SoundEffect;
+
 import java.util.ArrayList;
 import java.util.List;
 import model.GameStateModel;
@@ -36,7 +38,6 @@ public class StartGameScreen implements Screen {
     private final ScreenViewport backgroundViewport;
     private final OrthographicCamera camera;
     private final AssetManager assetManager;
-    private final Sound blipSound;
     private final StartScreenController controller;
 
     private final BitmapFont titleFont;
@@ -79,7 +80,6 @@ public class StartGameScreen implements Screen {
 
         this.titleFont = assetManager.get("fonts/AGENCYB.ttf", BitmapFont.class);
         this.regularFont = assetManager.get("fonts/AGENCYR.ttf", BitmapFont.class);
-        this.blipSound = assetManager.get("audio/blipp.ogg", Sound.class);
         this.glyphLayout = new GlyphLayout();
 
         this.controller = new StartScreenController(this, gameStateModel, game);
@@ -155,12 +155,6 @@ public class StartGameScreen implements Screen {
                 new MenuButton("EXIT", worldCenterX, startY - 2 * spacing));
 
         menuInitialized = true;
-    }
-
-    public void playBlipSound(float volume) {
-        if (blipSound != null) {
-            blipSound.play(volume);
-        }
     }
 
     @Override

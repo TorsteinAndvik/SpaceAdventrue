@@ -2,6 +2,11 @@ package controller;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector3;
+
+import controller.audio.MusicManager;
+import controller.audio.SoundEffect;
+import controller.audio.SoundManager;
+
 import java.util.List;
 import model.GameStateModel;
 import model.utils.MenuButton;
@@ -14,6 +19,7 @@ public class StartScreenController extends GenericController {
     private final StartGameScreen view;
     private final SpaceGame game;
     private MusicManager musicManager;
+    private SoundManager soundManager;
 
     public StartScreenController(StartGameScreen view, GameStateModel model,
             SpaceGame game) {
@@ -21,6 +27,7 @@ public class StartScreenController extends GenericController {
         this.view = view;
         this.game = game;
         setupMusic();
+        setupAudio();
     }
 
     @Override
@@ -33,6 +40,11 @@ public class StartScreenController extends GenericController {
         musicManager.play();
     }
 
+    private void setupAudio() {
+        soundManager = game.getSoundManager();
+        soundManager.init();
+    }
+
     @Override
     protected boolean handleKeyDown(int keycode) {
         List<MenuButton> menuButtons = view.getMenuButtons();
@@ -43,13 +55,12 @@ public class StartScreenController extends GenericController {
         switch (keycode) {
             case Input.Keys.UP:
                 model.setSelectedButtonIndex(Math.max(0, model.getSelectedButtonIndex() - 1));
-                view.playBlipSound(0.4f);
-                System.out.println("play blip");
+                soundManager.play(SoundEffect.BLIPP, 0.4f);
                 return true;
             case Input.Keys.DOWN:
                 model.setSelectedButtonIndex(
                         Math.min(menuButtons.size() - 1, model.getSelectedButtonIndex() + 1));
-                view.playBlipSound(0.4f);
+                soundManager.play(SoundEffect.BLIPP, 0.4f);
                 return true;
             case Input.Keys.ENTER:
             case Input.Keys.SPACE:
@@ -77,7 +88,7 @@ public class StartScreenController extends GenericController {
     }
 
     public void activateButton(int index) {
-        view.playBlipSound(0.7f);
+        soundManager.play(SoundEffect.BLIPP, 0.7f);
 
         switch (index) {
             case 0:
@@ -114,7 +125,7 @@ public class StartScreenController extends GenericController {
             if (menuButtons.get(i).getBounds().contains(worldCoords.x, worldCoords.y)) {
                 if (model.getSelectedButtonIndex() != i) {
                     model.setSelectedButtonIndex(i);
-                    view.playBlipSound(0.2f);
+                    soundManager.play(SoundEffect.BLIPP, 0.2f);
                 }
                 return true;
             }
