@@ -11,6 +11,9 @@ import model.ShipComponents.Components.ShipStructure;
 import model.constants.PhysicsParameters;
 import model.utils.FloatPair;
 import model.utils.SpaceCalculator;
+import view.Palette;
+import view.bars.ShipHealthBar;
+
 import java.util.UUID;
 
 public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damageable, Repairable {
@@ -24,11 +27,14 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
     private boolean accelerateClockwise;
     private boolean accelerateCounterClockwise;
 
+    private ShipHealthBar healthBar;
+
     private ShipStructure shipStructure;
 
     public SpaceShip(ShipStructure shipStructure, String name, String description,
             CharacterType characterType, float x,
             float y, int maxHealthPoints, float angle) {
+
         this(shipStructure, name, description, characterType, x, y, maxHealthPoints,
                 maxHealthPoints, angle);
     }
@@ -36,21 +42,48 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
     public SpaceShip(ShipStructure shipStructure, String name, String description,
             CharacterType characterType, float x,
             float y, int maxHitPoints, int hitPoints, float angle) {
+
         super(name, description, characterType, x, y, angle, 0f);
+
         if (hitPoints <= 0 || maxHitPoints <= 0) {
             throw new IllegalArgumentException("Hit points must be positive on ship creation");
         }
+
         if (maxHitPoints < hitPoints) {
             throw new IllegalArgumentException("Hit points can't be higher than max hit points");
         }
+
         this.hitPoints = hitPoints;
         this.maxHitPoints = maxHitPoints;
         this.shipStructure = shipStructure;
+
         if (this.shipStructure != null) {
             this.setRadius(SpaceCalculator.distance(shipStructure.getWidth() / 2f,
                     shipStructure.getHeight() / 2f));
         }
+
         id = UUID.randomUUID().toString();
+
+        makeHealthBar();
+    }
+
+    private void makeHealthBar() {
+        healthBar = new ShipHealthBar(this, new FloatPair(0, 0.2f));
+        healthBar.setScale(0.9f, 0.13f);
+        if (isPlayerShip()) {
+            healthBar.setBarColor(Palette.MUTED_GREEN_LIGHT);
+            healthBar.setBackgroundColor(Palette.MUTED_GREEN_DARK);
+        } else {
+            healthBar.setBarColor(Palette.MUTED_RED_LIGHT);
+            healthBar.setBackgroundColor(Palette.MUTED_RED_DARK);
+        }
+        healthBar.setDrawOutline(true);
+        healthBar.setNumNotches(4);
+        healthBar.setHalfNotch(true);
+    }
+
+    public ShipHealthBar getHealthBar() {
+        return healthBar;
     }
 
     public ShipStructure getShipStructure() {

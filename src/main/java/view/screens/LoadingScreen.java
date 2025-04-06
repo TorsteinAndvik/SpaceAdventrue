@@ -56,7 +56,7 @@ public class LoadingScreen implements Screen {
 
     private void setupProgressBar() {
         loadingProgressBar = new PercentageBar();
-        loadingProgressBar.setColors(Palette.BACKGROUND_GREEN, Color.WHITE);
+        loadingProgressBar.setColors(Palette.MUTED_GREEN, Color.WHITE);
         loadingProgressBar.setScale(10f, 0.2f);
     }
 

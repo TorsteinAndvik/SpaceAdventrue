@@ -2,17 +2,16 @@ package view.bars;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
-import model.Globals.Damageable;
-import model.SpaceCharacters.ViewableSpaceBody;
+import model.SpaceCharacters.SpaceShip;
 import model.utils.FloatPair;
 
-public class HealthBar<T extends Damageable & ViewableSpaceBody> extends PercentageBar {
-    T subject;
+public class ShipHealthBar extends PercentageBar {
+    SpaceShip ship;
     FloatPair offset;
 
-    public HealthBar(T subject, FloatPair offset) {
-        super(subject.getMaxHitPoints(), subject.getHitPoints());
-        this.subject = subject;
+    public ShipHealthBar(SpaceShip ship, FloatPair offset) {
+        super(ship.getMaxHitPoints(), ship.getHitPoints());
+        this.ship = ship;
         this.offset = offset;
     }
 
@@ -38,9 +37,9 @@ public class HealthBar<T extends Damageable & ViewableSpaceBody> extends Percent
 
     @Override
     public void draw(ShapeRenderer renderer) {
-        setMaxValue(subject.getMaxHitPoints());
-        setCurrentValue(subject.getHitPoints());
-        this.setCenter(subject.getX(), subject.getY());
+        setMaxValue(ship.getMaxHitPoints());
+        setCurrentValue(ship.getHitPoints());
+        this.setCenter(ship.getAbsoluteCenterOfMass());
         super.draw(renderer);
     }
 }

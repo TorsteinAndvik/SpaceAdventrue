@@ -42,7 +42,6 @@ import model.utils.FloatPair;
 import model.utils.SpaceCalculator;
 import view.Palette;
 import view.SpaceGame;
-import view.bars.HealthBar;
 import view.lighting.LaserLight;
 import view.lighting.ThrusterLight;
 
@@ -91,9 +90,6 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     private LinkedList<ThrusterLight> thrusterLights;
     private Pool<ThrusterLight> thrusterLightPool;
 
-    // Health bars
-    private HealthBar<SpaceShip> healthBarPlayer;
-
     // hitboxes (testing/debugging)
     private boolean showHitboxes = false;
 
@@ -114,7 +110,6 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         setupAnimationHashMap();
         setupUpgradeHashMap();
         setupLighting();
-        setupPlayerHealthBar();
     }
 
     private void setupBackground() {
@@ -199,16 +194,6 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
             }
         };
         thrusterLightPool.fill(50);
-    }
-
-    public void setupPlayerHealthBar() {
-        healthBarPlayer = new HealthBar<SpaceShip>(model.getPlayer(), new FloatPair(0, 0.5f));
-        healthBarPlayer.setScale(0.9f, 0.13f);
-        healthBarPlayer.setBarColor(Palette.BACKGROUND_GREEN_LIGHT);
-        healthBarPlayer.setBackgroundColor(Palette.BACKGROUND_GREEN_DARK);
-        healthBarPlayer.setDrawOutline(true);
-        healthBarPlayer.setNumNotches(4);
-        healthBarPlayer.setHalfNotch(true);
     }
 
     private Sprite createSprite(String path, float width, float height) {
@@ -349,10 +334,12 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         rayHandler.setCombinedMatrix(camera);
         rayHandler.updateAndRender();
 
-        // Health bar
+        // Health bars
         shape.setProjectionMatrix(camera.combined);
         shape.begin(ShapeType.Filled);
-        healthBarPlayer.draw(shape);
+        for (SpaceShip ship : model.getSpaceShips()) {
+            ship.getHealthBar().draw(shape);
+        }
         shape.end();
 
         // draw hitboxes for testing

@@ -253,7 +253,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     @Override
     public void render(float delta) {
         model.update(delta);
-        ScreenUtils.clear(Palette.BACKGROUND_GREEN);
+        ScreenUtils.clear(Palette.MUTED_GREEN);
 
         viewportGame.apply(false);
         batch.setProjectionMatrix(viewportGame.getCamera().combined);
