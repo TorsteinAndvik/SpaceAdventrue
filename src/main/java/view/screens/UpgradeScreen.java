@@ -59,6 +59,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     private Sprite squareRed;
     private Sprite squareGreen;
     private Sprite squareGray;
+    private Sprite diamond;
     private Rectangle descriptionRect;
 
     // ui sprites:
@@ -114,7 +115,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         squareGreen = createSprite("images/upgrade_grid_tile_green.png", 1, 1);
         squareGray = createSprite("images/upgrade_grid_tile_gray.png", 1, 1);
 
-        upgradeIcons = new Sprite[] { // [fuselage, turret, rocket, shield]
+        upgradeIcons = new Sprite[]{ // [fuselage, turret, rocket, shield]
                 createSprite("images/upgrades/fuselage_alt_stage_0.png", upgradeIconZoom,
                         upgradeIconZoom),
                 createSprite("images/upgrades/turret_laser_stage_0.png", upgradeIconZoom,
@@ -123,7 +124,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
                         upgradeIconZoom),
                 createSprite("images/upgrades/shield_stage_0.png", upgradeIconZoom, upgradeIconZoom)
         };
-
+        diamond = createSprite("images/space/diamond.png", 1, 1);
         uiIconZoom = fontRegular.getData().lineHeight;
 
         msLeft = createSprite("images/ui/Mouse_Left_Key_Light.png", uiIconZoom, uiIconZoom);
@@ -162,7 +163,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     }
 
     private String[] setupUpgradeStrings() {
-        return new String[] {
+        return new String[]{
                 "Fuselage:\nUsed to expand the ship. New upgrades are attached to Fuselage.",
                 "Turret:\nFires lasers at enemies and asteroids.",
                 "Rocket:\nImproves acceleration and top speed of the ship.",
@@ -324,6 +325,9 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         fontRegular.draw(batch, "Change screen", fontRegular.getData().lineHeight,
                 viewportUI.getWorldHeight() - 0.33f * fontRegular.getData().lineHeight);
 
+        diamond.setY(viewportUI.getWorldHeight() - 2.33f);
+        diamond.draw(batch);
+        
         if (model.isCameraZoomRecently()) {
             float alpha = model.getCameraZoomDeltaTime() < model.getCameraZoomTextFadeCutoffTime() ? 1f
                     : 1f - (float) Math.pow(
