@@ -232,7 +232,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
 
         viewport.apply();
         batch.setProjectionMatrix(camera.combined);
-        updateCamera();
+        updateCamera(delta);
 
         batch.begin();
 
@@ -415,14 +415,14 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         }
     }
 
-    private void updateCamera() {
-        cameraLerpToPlayer();
-        cameraZoom();
+    private void updateCamera(float delta) {
+        cameraLerpToPlayer(delta);
+        cameraZoom(delta);
     }
 
-    private void cameraLerpToPlayer() {
+    private void cameraLerpToPlayer(float delta) {
         FloatPair newPosition = SpaceCalculator.lerp(camera.position, model.getPlayerCenterOfMass(),
-                0.1f);
+                6f * delta);
         setCameraPosition(newPosition);
     }
 
@@ -436,8 +436,8 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         return zoomMin + velocityRatio * zoomRange;
     }
 
-    private void cameraZoom() {
-        float zoom = SpaceCalculator.lerp(camera.zoom, getZoomLevel(), 0.02f);
+    private void cameraZoom(float delta) {
+        float zoom = SpaceCalculator.lerp(camera.zoom, getZoomLevel(), 1.2f * delta);
         camera.zoom = zoom;
     }
 

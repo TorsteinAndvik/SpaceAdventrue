@@ -12,8 +12,6 @@ import com.badlogic.gdx.utils.Pool;
 
 import controller.ControllableSpaceGameModel;
 import grid.CellPosition;
-import grid.GridCell;
-import grid.IGridDimension;
 import model.Animation.AnimationCallback;
 import model.Animation.AnimationStateImpl;
 import model.Animation.AnimationType;
@@ -28,6 +26,7 @@ import model.SpaceCharacters.EnemyShip;
 import model.SpaceCharacters.Player;
 import model.SpaceCharacters.SpaceBody;
 import model.SpaceCharacters.SpaceShip;
+import model.ai.LerpBrain;
 import model.constants.PhysicsParameters;
 import model.utils.FloatPair;
 import model.utils.SpaceCalculator;
@@ -41,8 +40,6 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     private LinkedList<Asteroid> asteroids;
     private LinkedList<Bullet> lasers;
     private Pool<Bullet> laserPool;
-    private boolean enemyRotationActive;
-    private boolean rotateClockwise;
 
     private final Matrix3 rotationMatrix;
     private final Matrix4 transformMatrix;
@@ -101,6 +98,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                 1,
                 5,
                 0f);
+        enemyShip.setBrain(new LerpBrain(enemyShip, player));
 
         EnemyShip enemyShip2 = new EnemyShip(
                 ShipFactory.createShipFromJson("enemy1.json"), "enemy", "an enemy ship", 7, -3, 3, 0f);
@@ -170,9 +168,6 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
             spaceShip.update(delta);
         }
 
-        // TODO: remove this call once model is finished such
-        // that it receives model.update(delta) in the future.
-        rotateEnemy(delta);
         hitDetection.checkCollisions();
 
     }
@@ -321,25 +316,6 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         }
     }
 
-    // TODO: Remove this once proper model is in place - currently used for testing
-    // rendering of rotated ships in SpaceScreen
-    public void rotateEnemy(float deltaTime) {
-        if (spaceShips.size() <= 1) {
-            return;
-        }
-        if (!this.enemyRotationActive) {
-            spaceShips.getLast().setRotationSpeed(0f);
-            return;
-        }
-
-        float rotationalVelocity = 45f; // degrees per second
-        if (rotateClockwise) {
-            spaceShips.getLast().setRotationSpeed(-rotationalVelocity);
-        } else {
-            spaceShips.getLast().setRotationSpeed(rotationalVelocity);
-        }
-    }
-
     /**
      * Gets the transformed position of a ship based on its rotation
      *
@@ -387,14 +363,6 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         return player.getAbsoluteCenterOfMass();
     }
 
-    public void toggleEnemyRotationActive() {
-        this.enemyRotationActive = !this.enemyRotationActive;
-    }
-
-    public void setEnemyRotationClockwise(boolean clockwise) {
-        this.rotateClockwise = clockwise;
-    }
-
     @Override
     public void gameStateActive() {
     }
@@ -433,21 +401,6 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     @Override
     public void setAccelerateClockwise(boolean accelerate) {
         player.setAccelerateClockwise(accelerate);
-    }
-
-    @Override
-    public IGridDimension getDimension() {
-        return null;
-    }
-
-    @Override
-    public Iterable<GridCell<Character>> getPixels() {
-        return null;
-    }
-
-    @Override
-    public Iterable<GridCell<Character>> getPixelsInSpaceBody() {
-        return null;
     }
 
     @Override

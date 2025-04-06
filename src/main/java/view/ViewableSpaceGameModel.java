@@ -2,8 +2,6 @@ package view;
 
 import java.util.List;
 
-import grid.GridCell;
-import grid.IGridDimension;
 import model.ScreenBoundsProvider;
 import model.Animation.AnimationCallback;
 import model.SpaceCharacters.Asteroid;
@@ -11,29 +9,6 @@ import model.SpaceCharacters.Bullet;
 import model.SpaceCharacters.SpaceShip;
 
 public interface ViewableSpaceGameModel {
-
-    /**
-     * Gets the dimensions of the grid for use by the SpaceGameView.
-     *
-     * @return the dimensions of the game.
-     */
-    IGridDimension getDimension();
-
-    /**
-     * Creates an iterable of the pixels in the game board.
-     *
-     * @return An iterable that contains all pixels on the board, their position and
-     * symbol.
-     */
-    Iterable<GridCell<Character>> getPixels();
-
-    /**
-     * Creates an iterable of the pixels in a SpaceBody.
-     *
-     * @return An iterable that contains the pixels of a SpaceBody, their positions
-     * and symbols.
-     */
-    Iterable<GridCell<Character>> getPixelsInSpaceBody();
 
     /**
      * Returns the current game score.
@@ -52,7 +27,7 @@ public interface ViewableSpaceGameModel {
 
     /**
      * @return a <code>List</code> containing all <code>SpaceShip</code> objects in
-     * the model.
+     *         the model.
      */
 
     List<SpaceShip> getSpaceShips();
@@ -63,15 +38,14 @@ public interface ViewableSpaceGameModel {
     SpaceShip getPlayer();
 
     /**
-     * Returns all Asteroid objects of the MVP //TODO: Remove this once a proper
-     * model is in place.
+     * Returns all <code>Asteroid</code> in the model
      *
      * @return a List of all Asteroid objects.
      */
     List<Asteroid> getAsteroids();
 
     /**
-     * Return all lasers in the model.
+     * Return all <code>Bullet</code> objects in the model.
      *
      * @return a <code>List</code> of <code>Bullet</code> objects
      */

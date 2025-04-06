@@ -4,9 +4,9 @@ import model.SpaceCharacters.EnemyShip;
 import model.SpaceCharacters.Player;
 import model.utils.SpaceCalculator;
 
-public class lerpBrain extends Brain {
+public class LerpBrain extends Brain {
 
-    public lerpBrain(EnemyShip ship, Player player) {
+    public LerpBrain(EnemyShip ship, Player player) {
         super(ship, player);
     }
 
@@ -14,7 +14,8 @@ public class lerpBrain extends Brain {
     public void update(float delta) {
         float angle = SpaceCalculator.angleBetweenPoints(ship.getAbsoluteCenterOfMass(),
                 player.getAbsoluteCenterOfMass());
-        ship.setRotation(delta);
+        float newAngle = SpaceCalculator.lerp(0f, angle, delta);
+        ship.setRotation(newAngle);
     }
 
     private float hoverDistance() {
