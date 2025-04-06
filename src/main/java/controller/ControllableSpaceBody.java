@@ -144,6 +144,6 @@ public interface ControllableSpaceBody {
      *
      * @param deltaTime the time since last update.
      */
-    void update(float deltaTime);
+    public void update(float deltaTime);
 
 }

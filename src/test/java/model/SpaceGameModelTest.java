@@ -97,8 +97,8 @@ class SpaceGameModelTest {
 
     @Test
     void friendlyFireBulletBulletTest() {
-        gameModel.shoot();
-        gameModel.shoot();
+        gameModel.playerShoot();
+        gameModel.playerShoot();
 
         assertEquals(2, gameModel.getLasers().size());
 
@@ -123,7 +123,7 @@ class SpaceGameModelTest {
 
     @Test
     void friendlyFireBulletShipTest() {
-        gameModel.shoot();
+        gameModel.playerShoot();
         Bullet laser = gameModel.getLasers().get(0);
 
         SpaceShip enemy_1 = new EnemyShip(null, "enemy 1", "small", 0, 0, 1, 0);

@@ -48,7 +48,7 @@ public class SpaceGameScreenController extends GenericController {
                 yield true;
             }
             case Input.Keys.SPACE -> {
-                model.shoot();
+                model.playerShoot();
                 yield true;
             }
             case Input.Keys.ESCAPE -> {

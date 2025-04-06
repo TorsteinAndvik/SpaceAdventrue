@@ -166,10 +166,12 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
         for (SpaceShip spaceShip : spaceShips) {
             spaceShip.update(delta);
+            if (spaceShip.isShooting()) {
+                shoot(spaceShip);
+            }
         }
 
         hitDetection.checkCollisions();
-
     }
 
     /**
@@ -303,17 +305,22 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         }
     }
 
-    public void shoot() {
-        for (CellPosition cell : player.getUpgradeTypePositions(UpgradeType.TURRET)) {
+    public void playerShoot() {
+        player.setIsShooting(true);
+    }
+
+    public void shoot(SpaceShip ship) {
+        for (CellPosition cell : ship.getUpgradeTypePositions(UpgradeType.TURRET)) {
 
             float x = (float) cell.col() + Turret.turretBarrelLocation().x();
             float y = (float) cell.row() + Turret.turretBarrelLocation().y();
-            FloatPair point = SpaceCalculator.rotatePoint(x, y, player.getRelativeCenterOfMass(),
-                    getPlayerCenterOfMass(), player.getRotationAngle());
+            FloatPair point = SpaceCalculator.rotatePoint(x, y, ship.getRelativeCenterOfMass(),
+                    ship.getAbsoluteCenterOfMass(), ship.getRotationAngle());
 
-            addLaser(point.x(), point.y(), PhysicsParameters.laserVelocity, player.getRotationAngle() + 90f,
-                    0.125f, true).setSourceID(player.getID());
+            addLaser(point.x(), point.y(), PhysicsParameters.laserVelocity, ship.getRotationAngle() + 90f,
+                    0.125f, ship.isPlayerShip()).setSourceID(player.getID());
         }
+        ship.hasShot();
     }
 
     /**

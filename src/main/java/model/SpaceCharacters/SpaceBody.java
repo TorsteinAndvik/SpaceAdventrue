@@ -271,14 +271,9 @@ public abstract class SpaceBody implements SpaceThing, Rotatable, Collidable, Vi
      *
      * @param deltaTime The time step for movement calculation (in seconds).
      */
-    protected void move(float deltaTime) {
+    public void update(float deltaTime) {
         position.add(velocity.x * deltaTime, velocity.y * deltaTime);
         rotation.update(deltaTime);
-    }
-
-    @Override
-    public void update(float deltaTime) {
-        move(deltaTime);
     }
 
     public static void crash(Collidable A, Collidable B) {
