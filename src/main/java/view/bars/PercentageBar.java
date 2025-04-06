@@ -11,8 +11,8 @@ public class PercentageBar {
     protected float currentValue;
     protected float scaleX = 1f;
     protected float scaleY = 1f;
-    protected float outlineScale = 0.2f;
-    protected float notchScale = 0.2f;
+    protected float outlineScale = 0.15f;
+    protected float notchScale = 0.15f;
     protected int numNotches = 0;
 
     private static final float MIN_SCALE = 0.001f;
@@ -112,11 +112,13 @@ public class PercentageBar {
 
         renderer.setColor(bgColor);
         renderer.rect(dimensions.x + outlineWidth, dimensions.y + outlineWidth,
-                scaleX * dimensions.width - 2f * outlineWidth, scaleY * dimensions.height - 2f * outlineWidth);
+                Math.max(scaleX * dimensions.width - 2f * outlineWidth, 0f),
+                Math.max(scaleY * dimensions.height - 2f * outlineWidth, 0f));
 
         renderer.setColor(barColor);
         renderer.rect(bar.x + outlineWidth, bar.y + outlineWidth,
-                scaleX * bar.width - 2f * outlineWidth, scaleY * bar.height - 2f * outlineWidth);
+                Math.max(scaleX * bar.width - 2f * outlineWidth, 0),
+                Math.max(scaleY * bar.height - 2f * outlineWidth, 0f));
 
         if (numNotches != 0) {
             float notchWidth = notchScale * minDimension();
