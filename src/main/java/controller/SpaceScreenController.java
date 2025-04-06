@@ -6,14 +6,14 @@ import model.SpaceGameModel;
 import view.SpaceGame;
 import view.screens.SpaceScreen;
 
-public class SpaceGameScreenController extends GenericController {
+public class SpaceScreenController extends GenericController {
 
     private final SpaceGameModel model;
     private final SpaceScreen view;
     private final SpaceGame game;
     private final Vector2 touchPos;
 
-    public SpaceGameScreenController(SpaceScreen view, SpaceGameModel model, SpaceGame game) {
+    public SpaceScreenController(SpaceScreen view, SpaceGameModel model, SpaceGame game) {
         this.model = model;
         this.view = view;
         this.game = game;

@@ -24,7 +24,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import box2dLight.RayHandler;
-import controller.SpaceGameScreenController;
+import controller.SpaceScreenController;
 import grid.GridCell;
 import model.ShipComponents.Components.Fuselage;
 import model.ShipComponents.Components.Thruster;
@@ -53,7 +53,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
 
     final SpaceGame game;
     final SpaceGameModel model;
-    private final SpaceGameScreenController controller;
+    private final SpaceScreenController controller;
     private final SpriteBatch batch;
     private final ShapeRenderer shape;
     private final ScreenViewport viewport;
@@ -103,7 +103,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         this.camera = (OrthographicCamera) viewport.getCamera();
 
         this.model = model;
-        this.controller = new SpaceGameScreenController(this, model, game);
+        this.controller = new SpaceScreenController(this, model, game);
 
         setupBackground();
         setupSprites();
