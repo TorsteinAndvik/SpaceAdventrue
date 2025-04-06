@@ -115,12 +115,18 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     private void setupBackground() {
         this.background = new TextureRegion[6];
 
-        background[0] = new TextureRegion(manager.get("images/space/background/bkgd_1.png", Texture.class));
-        background[1] = new TextureRegion(manager.get("images/space/background/bkgd_2.png", Texture.class));
-        background[2] = new TextureRegion(manager.get("images/space/background/bkgd_3.png", Texture.class));
-        background[3] = new TextureRegion(manager.get("images/space/background/bkgd_4.png", Texture.class));
-        background[4] = new TextureRegion(manager.get("images/space/background/bkgd_6.png", Texture.class));
-        background[5] = new TextureRegion(manager.get("images/space/background/bkgd_7.png", Texture.class));
+        background[0] = new TextureRegion(
+                manager.get("images/space/background/bkgd_1.png", Texture.class));
+        background[1] = new TextureRegion(
+                manager.get("images/space/background/bkgd_2.png", Texture.class));
+        background[2] = new TextureRegion(
+                manager.get("images/space/background/bkgd_3.png", Texture.class));
+        background[3] = new TextureRegion(
+                manager.get("images/space/background/bkgd_4.png", Texture.class));
+        background[4] = new TextureRegion(
+                manager.get("images/space/background/bkgd_6.png", Texture.class));
+        background[5] = new TextureRegion(
+                manager.get("images/space/background/bkgd_7.png", Texture.class));
 
         this.backgroundParallax = new float[background.length];
         this.backgroundDrift = new float[background.length];
@@ -133,7 +139,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
             if (i < driftOffset) {
                 backgroundDrift[i] = 0f;
             } else {
-                backgroundDrift[i] = backgroundParallax[i - driftOffset] / 2.5f;
+                backgroundDrift[i] = backgroundParallax[i - driftOffset] / 2f;
             }
         }
     }

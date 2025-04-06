@@ -124,7 +124,7 @@ public class StartGameScreen implements Screen {
         this.backgroundParallax = new float[background.length];
         this.backgroundDrift = new float[background.length];
 
-        int driftOffset = 4;
+        int driftOffset = 4; // must be in interval [0, background.length - 1]
 
         for (int i = 0; i < background.length; i++) {
             background[i].getTexture().setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
@@ -132,7 +132,7 @@ public class StartGameScreen implements Screen {
             if (i < driftOffset) {
                 backgroundDrift[i] = 0f;
             } else {
-                backgroundDrift[i] = backgroundParallax[i - driftOffset];
+                backgroundDrift[i] = backgroundParallax[i - driftOffset] / 2f;
             }
         }
     }
@@ -258,8 +258,8 @@ public class StartGameScreen implements Screen {
             // scrollX is negative when mouse is to the right
             // scrollY is positive when mouse is to the bottom
             background[i].scroll(
-                    delta * (drift - parallax * mouseVelocity.x),
-                    delta * (drift + parallax * mouseVelocity.y));
+                    delta * (drift + parallax * mouseVelocity.x),
+                    delta * (-drift + parallax * mouseVelocity.y));
         }
     }
 
