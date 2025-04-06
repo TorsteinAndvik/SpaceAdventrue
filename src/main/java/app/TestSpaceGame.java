@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+
+import controller.MusicManager;
 import model.GameStateModel;
 import model.SpaceGameModel;
 import view.SpaceGame;
@@ -21,6 +23,7 @@ public class TestSpaceGame extends Game implements SpaceGame {
     private SpriteBatch batch;
     private ShapeRenderer shape;
     private AssetManager manager;
+    private MusicManager musicManager;
     private FitViewport fitViewport;
     private ExtendViewport extendViewport;
     private ScreenViewport screenViewport;
@@ -43,6 +46,8 @@ public class TestSpaceGame extends Game implements SpaceGame {
                 Gdx.graphics.getHeight() / METERS);
 
         manager = new AssetManager();
+
+        musicManager = new MusicManager(manager);
 
         gameStateModel = new GameStateModel();
 
@@ -130,5 +135,10 @@ public class TestSpaceGame extends Game implements SpaceGame {
         spaceGameModel.setAnimationCallback(spaceScreen);
         spaceGameModel.setScreenBoundsProvider(spaceScreen);
         setScreen(spaceScreen);
+    }
+
+    @Override
+    public MusicManager getMusicManager() {
+        return this.musicManager;
     }
 }

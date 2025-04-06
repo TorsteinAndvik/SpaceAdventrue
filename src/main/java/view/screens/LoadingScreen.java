@@ -7,6 +7,7 @@ import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -98,8 +99,9 @@ public class LoadingScreen implements Screen {
         queueTexture("images/animations/explosion_A.png");
         queueTextureAtlas("images/animations/explosion_A.atlas");
 
-        // Sounds:
+        // Sounds and music:
         queueSound("audio/blipp.ogg");
+        queueMusic("audio/music.mp3");
 
         // Fonts:
         FileHandleResolver resolver = new InternalFileHandleResolver();
@@ -129,6 +131,10 @@ public class LoadingScreen implements Screen {
 
     private void queueSound(String path) {
         manager.load(new AssetDescriptor<>(Gdx.files.internal(path), Sound.class));
+    }
+
+    private void queueMusic(String path) {
+        manager.load(new AssetDescriptor<>(Gdx.files.internal(path), Music.class));
     }
 
     @Override
