@@ -318,7 +318,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                     ship.getAbsoluteCenterOfMass(), ship.getRotationAngle());
 
             addLaser(point.x(), point.y(), PhysicsParameters.laserVelocity, ship.getRotationAngle() + 90f,
-                    0.125f, ship.isPlayerShip()).setSourceID(player.getID());
+                    0.125f, ship.isPlayerShip()).setSourceID(ship.getID());
         }
         ship.hasShot();
     }

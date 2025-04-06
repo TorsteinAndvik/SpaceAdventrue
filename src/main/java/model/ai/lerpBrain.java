@@ -45,6 +45,6 @@ public class LerpBrain extends Brain implements ShooterBrain {
     @Override
     public boolean inFiringRange() {
         float distance = SpaceCalculator.distance(ship.getAbsoluteCenterOfMass(), player.getAbsoluteCenterOfMass());
-        return true;// distance < 1.5f * hoverDistance();
+        return distance < 1.5f * hoverDistance();
     }
 }

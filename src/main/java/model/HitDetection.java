@@ -61,8 +61,7 @@ public class HitDetection {
             return distance < c1.getRadius() + ship2.getRadius();
         }
 
-        return SpaceCalculator.distance(c1.getX() - c2.getX(), c1.getY() - c2.getY())
-                < c1.getRadius() + c2.getRadius();
+        return SpaceCalculator.distance(c1.getX() - c2.getX(), c1.getY() - c2.getY()) < c1.getRadius() + c2.getRadius();
     }
 
     public void checkCollisions() {
@@ -155,18 +154,19 @@ public class HitDetection {
     /**
      * Holds the rules for what counts as friendly fire.
      * <p>
-     * Checks if two collidables has the same source, or if one emerged from the other.
+     * Checks if two collidables has the same source, or if one emerged from the
+     * other.
      *
      * @param A The first collidable
      * @param B The second collidable
      * @return false if the interaction is friendly fire, true otherwise.
      */
     public static boolean isFriendlyFire(Collidable A, Collidable B) {
-        if ((A instanceof Player player) && (B instanceof Bullet bullet)) {
-            return bullet.getSourceID().equals(player.getID());
+        if ((A instanceof SpaceShip ship) && (B instanceof Bullet bullet)) {
+            return bullet.getSourceID().equals(ship.getID());
 
-        } else if ((B instanceof Player player) && (A instanceof Bullet bullet)) {
-            return bullet.getSourceID().equals(player.getID());
+        } else if ((B instanceof SpaceShip ship) && (A instanceof Bullet bullet)) {
+            return bullet.getSourceID().equals(ship.getID());
 
         } else if ((A instanceof Bullet bulletA) && (B instanceof Bullet bulletB)) {
             return bulletA.getSourceID().equals(bulletB.getSourceID());
