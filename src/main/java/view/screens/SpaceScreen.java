@@ -13,6 +13,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
@@ -38,6 +40,7 @@ import model.Animation.AnimationState;
 import model.Animation.AnimationType;
 import model.utils.FloatPair;
 import model.utils.SpaceCalculator;
+import view.Palette;
 import view.SpaceGame;
 import view.lighting.LaserLight;
 import view.lighting.ThrusterLight;
@@ -52,6 +55,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     final SpaceGameModel model;
     private final SpaceGameScreenController controller;
     private final SpriteBatch batch;
+    private final ShapeRenderer shape;
     private final ScreenViewport viewport;
     private final ExtendViewport bgViewport;
 
@@ -86,9 +90,13 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     private LinkedList<ThrusterLight> thrusterLights;
     private Pool<ThrusterLight> thrusterLightPool;
 
+    // hitboxes (testing/debugging)
+    private boolean showHitboxes = false;
+
     public SpaceScreen(final SpaceGame game, final SpaceGameModel model) {
         this.game = game;
         this.batch = this.game.getSpriteBatch();
+        this.shape = this.game.getShapeRenderer();
         this.manager = this.game.getAssetManager();
         this.viewport = game.getScreenViewport();
         this.bgViewport = game.getExtendViewport();
@@ -125,7 +133,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
             if (i < driftOffset) {
                 backgroundDrift[i] = 0f;
             } else {
-                backgroundDrift[i] = backgroundParallax[i - driftOffset];
+                backgroundDrift[i] = backgroundParallax[i - driftOffset] / 2.5f;
             }
         }
     }
@@ -167,7 +175,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     }
 
     private void setupLighting() {
-        rayHandler.setAmbientLight(new Color(0f, 0f, 0f, 0.75f));
+        rayHandler.setAmbientLight(Palette.AMBIENT_LIGHT);
 
         this.laserLights = new LinkedList<>();
         this.laserLightPool = new Pool<LaserLight>() {
@@ -213,8 +221,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         batch.begin();
         for (int i = 0; i < background.length; i++) {
             float parallax = backgroundParallax[i];
-            float drift = backgroundDrift[i] / 50; // TODO: 1/50 Torstein sin magiske faktor for background drift. Noen
-                                                   // uenig?
+            float drift = backgroundDrift[i];
             background[i].scroll(
                     delta * (drift + parallax * model.getPlayer().getVelocity().x),
                     -delta * (drift + parallax * model.getPlayer().getVelocity().y));
@@ -326,6 +333,29 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         // Lighting
         rayHandler.setCombinedMatrix(camera);
         rayHandler.updateAndRender();
+
+        // Health bars
+        shape.setProjectionMatrix(camera.combined);
+        shape.begin(ShapeType.Filled);
+        for (SpaceShip ship : model.getSpaceShips()) {
+            ship.getHealthBar().draw(shape);
+        }
+        shape.end();
+
+        // draw hitboxes for testing
+        if (showHitboxes) {
+            shape.setProjectionMatrix(camera.combined);
+            shape.begin(ShapeType.Line);
+            shape.setColor(Color.CYAN);
+            for (Asteroid asteroid : model.getAsteroids()) {
+                shape.circle(asteroid.getX(), asteroid.getY(), asteroid.getRadius(), 100);
+            }
+            shape.setColor(Color.MAGENTA);
+            for (SpaceShip ship : model.getSpaceShips()) {
+                shape.circle(ship.getAbsoluteCenter().x(), ship.getAbsoluteCenter().y(), ship.getRadius(), 100);
+            }
+            shape.end();
+        }
     }
 
     private void updateLightCounts() {

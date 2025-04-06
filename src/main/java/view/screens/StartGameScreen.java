@@ -24,6 +24,7 @@ import java.util.List;
 import model.GameStateModel;
 import model.constants.GameState;
 import model.utils.MenuButton;
+import view.Palette;
 
 public class StartGameScreen implements Screen {
 
@@ -49,9 +50,9 @@ public class StartGameScreen implements Screen {
     private final float mouseInfluence = 2.0f;
 
     private final String GAME_TITLE = "SPACE ADVENTURE";
-    private final Color TITLE_COLOR = new Color(0.9f, 0.9f, 1f, 1f);
+    private final Color TITLE_COLOR = Palette.TITLE_FONT_COLOR;
     private final Color BUTTON_COLOR = Color.WHITE;
-    private final Color BUTTON_HOVER_COLOR = new Color(0.8f, 0.8f, 1f, 1f);
+    private final Color BUTTON_HOVER_COLOR = Palette.TITLE_FONT_HIGHLIGHT_COLOR;
 
     private final List<MenuButton> menuButtons = new ArrayList<>();
     private final float BUTTON_WIDTH = 4f;

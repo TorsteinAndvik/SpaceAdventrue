@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -18,6 +19,7 @@ import view.screens.UpgradeScreen;
 public class TestSpaceGame extends Game implements SpaceGame {
 
     private SpriteBatch batch;
+    private ShapeRenderer shape;
     private AssetManager manager;
     private FitViewport fitViewport;
     private ExtendViewport extendViewport;
@@ -30,6 +32,7 @@ public class TestSpaceGame extends Game implements SpaceGame {
     @Override
     public void create() {
         batch = new SpriteBatch();
+        shape = new ShapeRenderer();
 
         // screen will be meters x meters (we use meters as Game coordinates, NOT pixel
         // coordinates - these depend on window size, awful to work with)
@@ -59,6 +62,11 @@ public class TestSpaceGame extends Game implements SpaceGame {
     @Override
     public ExtendViewport getExtendViewport() {
         return extendViewport;
+    }
+
+    @Override
+    public ShapeRenderer getShapeRenderer() {
+        return shape;
     }
 
     @Override

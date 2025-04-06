@@ -5,13 +5,14 @@ import com.badlogic.gdx.utils.Pool.Poolable;
 
 import box2dLight.ConeLight;
 import box2dLight.RayHandler;
+import view.Palette;
 import view.screens.SpaceScreen;
 
 public class ThrusterLight extends ConeLight implements Poolable {
 
     public static final int defaultRayNum = 12;
     // public static final Color defaultColor = Color.YELLOW;
-    public static final Color defaultColor = new Color(1f, 0.9f, 0f, 1f);
+    public static final Color defaultColor = Palette.THRUSTER_LIGHT;
     public static final float defaultDistance = 2.4f;
     public static final float defaultConeDegree = 24f;
 
