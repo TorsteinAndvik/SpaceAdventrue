@@ -19,9 +19,9 @@ public class LerpBrain extends Brain implements ShooterBrain {
 
         float newAngle;
         if (ship.getRotationAngle() <= angle + 180f) {
-            newAngle = SpaceCalculator.lerp1D(ship.getRotationAngle(), angle + 90f, 1.5f * delta);
+            newAngle = SpaceCalculator.lerp1D(ship.getRotationAngle(), angle + 90f, 1.75f * delta);
         } else {
-            newAngle = SpaceCalculator.lerp1D(ship.getRotationAngle() - 360f, angle + 90f, 1.5f * delta);
+            newAngle = SpaceCalculator.lerp1D(ship.getRotationAngle() - 360f, angle + 90f, 1.75f * delta);
         }
 
         ship.setRotation(newAngle);

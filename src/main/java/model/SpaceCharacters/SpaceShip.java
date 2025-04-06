@@ -33,7 +33,7 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
 
     // shooting logic
     private boolean isShooting = false;
-    protected float fireRate = 0.5f;
+    protected float fireRate = 1f;
     protected float timeSinceLastShot = 0f;
 
     public SpaceShip(ShipStructure shipStructure, String name, String description,
@@ -281,6 +281,10 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
     @Override
     public float getMass() {
         return shipStructure.getMass();
+    }
+
+    public void setFireRate(float fireRate) {
+        this.fireRate = fireRate;
     }
 
     public boolean isShooting() {

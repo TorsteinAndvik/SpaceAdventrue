@@ -86,9 +86,10 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     }
 
     private void createSpaceShips() {
-        this.player = new Player(
+        player = new Player(
                 ShipFactory.playerShip(), "player", "the player's spaceship", 20, 8, 1);
-        this.player.setRotationSpeed(0f);
+        player.setRotationSpeed(0f);
+        player.setFireRate(0.4f);
 
         EnemyShip enemyShip = new EnemyShip(
                 ShipFactory.createShipFromJson("enemy2.json"),
@@ -99,10 +100,12 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                 5,
                 -90f);
         enemyShip.setBrain(new LerpBrain(enemyShip, player));
+        enemyShip.setFireRate(0.75f);
 
         EnemyShip enemyShip2 = new EnemyShip(
                 ShipFactory.createShipFromJson("enemy1.json"), "enemy", "an enemy ship", 7, -3, 3, 0f);
         enemyShip2.setBrain(new LerpBrain(enemyShip2, player));
+        enemyShip2.setFireRate(0.6f);
 
         this.spaceShips = new LinkedList<>(
                 Arrays.asList(this.player, enemyShip, enemyShip2));
@@ -141,7 +144,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         while (laserIterator.hasNext()) {
             Bullet laser = laserIterator.next();
             laser.update(delta);
-            if (cullSpaceBody(laser)) {// Remove if too distant to player
+            if (cullSpaceBody(laser, 5f)) {// Remove if too distant to player
                 hitDetection.removeCollider(laser);
                 laserPool.free(laser);
                 laserIterator.remove();
@@ -152,7 +155,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         while (asteroidIterator.hasNext()) {
             Asteroid iter = asteroidIterator.next();
             iter.update(delta);
-            if (cullSpaceBody(iter, 3f)) {// Remove if too distant to player
+            if (cullSpaceBody(iter, 5f)) {// Remove if too distant to player
                 hitDetection.removeCollider(iter);
                 randomAsteroidFactory.free(iter);
                 asteroidIterator.remove();
