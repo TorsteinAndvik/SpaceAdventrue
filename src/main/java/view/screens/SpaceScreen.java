@@ -232,7 +232,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
 
         viewport.apply();
         batch.setProjectionMatrix(camera.combined);
-        updateCamera();
+        updateCamera(delta);
 
         batch.begin();
 
@@ -415,33 +415,14 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         }
     }
 
-    /**
-     * perform one-dimensional linear interpolation
-     */
-    private float lerp(float source, float target, float alpha) {
-        float alphaInverse = 1f - alpha;
-        return alpha * target + alphaInverse * source;
+    private void updateCamera(float delta) {
+        cameraLerpToPlayer(delta);
+        cameraZoom(delta);
     }
 
-    private FloatPair lerp(FloatPair source, FloatPair target, float alpha) {
-        float x = lerp(source.x(), target.x(), alpha);
-        float y = lerp(source.y(), target.y(), alpha);
-        return new FloatPair(x, y);
-    }
-
-    private FloatPair lerp(Vector3 source, FloatPair target, float alpha) {
-        FloatPair sourceFloatPair = new FloatPair(source.x, source.y);
-        return lerp(sourceFloatPair, target, alpha);
-    }
-
-    private void updateCamera() {
-        cameraLerpToPlayer();
-        cameraZoom();
-    }
-
-    private void cameraLerpToPlayer() {
-        FloatPair newPosition = lerp(camera.position, model.getPlayerCenterOfMass(),
-                0.1f);
+    private void cameraLerpToPlayer(float delta) {
+        FloatPair newPosition = SpaceCalculator.lerp2D(camera.position, model.getPlayerCenterOfMass(),
+                6f * delta);
         setCameraPosition(newPosition);
     }
 
@@ -455,8 +436,8 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         return zoomMin + velocityRatio * zoomRange;
     }
 
-    private void cameraZoom() {
-        float zoom = lerp(camera.zoom, getZoomLevel(), 0.02f);
+    private void cameraZoom(float delta) {
+        float zoom = SpaceCalculator.lerp1D(camera.zoom, getZoomLevel(), 1.2f * delta);
         camera.zoom = zoom;
     }
 

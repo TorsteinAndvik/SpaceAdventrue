@@ -31,6 +31,11 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
 
     private ShipStructure shipStructure;
 
+    // shooting logic
+    private boolean isShooting = false;
+    protected float fireRate = 1f;
+    protected float timeSinceLastShot = 0f;
+
     public SpaceShip(ShipStructure shipStructure, String name, String description,
             CharacterType characterType, float x,
             float y, int maxHealthPoints, float angle) {
@@ -115,7 +120,8 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
     }
 
     @Override
-    protected void move(float deltaTime) {
+    public void update(float deltaTime) {
+        timeSinceLastShot += deltaTime;
         if (accelerateForward) {
             addVelocityX(deltaTime * PhysicsParameters.accelerationLimitLongitudonal
                     * (float) Math.cos(Math.toRadians(rotation.getAngle() + 90f)) / getMass());
@@ -275,5 +281,22 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
     @Override
     public float getMass() {
         return shipStructure.getMass();
+    }
+
+    public void setFireRate(float fireRate) {
+        this.fireRate = fireRate;
+    }
+
+    public boolean isShooting() {
+        return isShooting && timeSinceLastShot >= fireRate;
+    }
+
+    public void setIsShooting(boolean isShooting) {
+        this.isShooting = isShooting;
+    }
+
+    public void hasShot() {
+        timeSinceLastShot = 0f;
+        isShooting = false;
     }
 }
