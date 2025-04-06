@@ -31,6 +31,8 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
 
     private ShipStructure shipStructure;
 
+    private boolean isShooting = false;
+
     public SpaceShip(ShipStructure shipStructure, String name, String description,
             CharacterType characterType, float x,
             float y, int maxHealthPoints, float angle) {
@@ -275,5 +277,13 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
     @Override
     public float getMass() {
         return shipStructure.getMass();
+    }
+
+    public boolean getIsShooting() {
+        return isShooting;
+    }
+
+    public boolean setIsShooting(boolean isShooting) {
+        return this.isShooting = isShooting;
     }
 }

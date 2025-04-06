@@ -137,7 +137,7 @@ public class SpaceCalculator {
     /**
      * perform one-dimensional linear interpolation
      */
-    public static float lerp(float source, float target, float alpha) {
+    public static float lerp1D(float source, float target, float alpha) {
         float alphaInverse = 1f - alpha;
         return alpha * target + alphaInverse * source;
     }
@@ -145,25 +145,34 @@ public class SpaceCalculator {
     /**
      * perform two-dimensional linear interpolation
      */
-    public static FloatPair lerp(FloatPair source, FloatPair target, float alpha) {
-        float x = lerp(source.x(), target.x(), alpha);
-        float y = lerp(source.y(), target.y(), alpha);
+    public static FloatPair lerp2D(FloatPair source, FloatPair target, float alpha) {
+        float x = lerp1D(source.x(), target.x(), alpha);
+        float y = lerp1D(source.y(), target.y(), alpha);
         return new FloatPair(x, y);
     }
 
     /**
      * perform two-dimensional linear interpolation
      */
-    public static FloatPair lerp(Vector2 source, FloatPair target, float alpha) {
+    public static FloatPair lerp2D(Vector2 source, FloatPair target, float alpha) {
         FloatPair sourceFloatPair = new FloatPair(source.x, source.y);
-        return lerp(sourceFloatPair, target, alpha);
+        return lerp2D(sourceFloatPair, target, alpha);
     }
 
     /**
      * perform two-dimensional linear interpolation
      */
-    public static FloatPair lerp(Vector3 source, FloatPair target, float alpha) {
+    public static FloatPair lerp2D(Vector3 source, FloatPair target, float alpha) {
         FloatPair sourceFloatPair = new FloatPair(source.x, source.y);
-        return lerp(sourceFloatPair, target, alpha);
+        return lerp2D(sourceFloatPair, target, alpha);
+    }
+
+    public static FloatPair getPointAtDistance(FloatPair posA, FloatPair posB, float distance) {
+        float dx = posA.x() - posB.x();
+        float dy = posA.y() - posB.y();
+        float directionVectorLength = distance(dx, dy);
+
+        return new FloatPair(posB.x() + distance * dx / directionVectorLength,
+                posB.y() + distance * dy / directionVectorLength);
     }
 }

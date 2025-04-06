@@ -8,6 +8,7 @@ import model.Globals.Damageable;
 import model.Globals.Rotatable;
 import model.Globals.SpaceThing;
 import model.utils.ArgumentChecker;
+import model.utils.FloatPair;
 import model.utils.Rotation;
 
 import java.util.Objects;
@@ -68,8 +69,8 @@ public abstract class SpaceBody implements SpaceThing, Rotatable, Collidable, Vi
      * @param angle         The angle of rotation (in degrees).
      * @param radius        The radius of the SpaceBody (in meters).
      * @implNote This constructor calls the full constructor with a default mass and
-     *         rotation speed
-     *         of 0.
+     *           rotation speed
+     *           of 0.
      */
     public SpaceBody(String name, String description, CharacterType characterType, float x, float y,
             float angle, float radius) {
@@ -86,7 +87,7 @@ public abstract class SpaceBody implements SpaceThing, Rotatable, Collidable, Vi
      * @param description   A brief description of the SpaceBody.
      * @param characterType The CharacterType representing the type of SpaceBody.
      * @implNote This constructor initializes the SpaceBody at (0,0) with zero mass,
-     *         angle, velocity, and radius.
+     *           angle, velocity, and radius.
      */
     public SpaceBody(String name, String description, CharacterType characterType) {
         this(name, description, characterType, new Vector2(0, 0), new Vector2(0, 0), 0, 0, 0, 0);
@@ -142,6 +143,18 @@ public abstract class SpaceBody implements SpaceThing, Rotatable, Collidable, Vi
     @Override
     public void setY(float y) {
         this.position.y = y;
+    }
+
+    @Override
+    public void setPosition(FloatPair pos) {
+        setX(pos.x());
+        setY(pos.y());
+    }
+
+    @Override
+    public void translate(FloatPair translation) {
+        setX(getX() + translation.x());
+        setY(getY() + translation.y());
     }
 
     @Override

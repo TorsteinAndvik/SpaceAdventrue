@@ -2,6 +2,8 @@ package controller;
 
 import com.badlogic.gdx.math.Vector2;
 
+import model.utils.FloatPair;
+
 /**
  * Represents a controllable SpaceBody that can be moved and updated
  * dynamically. Provides methods
@@ -22,6 +24,22 @@ public interface ControllableSpaceBody {
      * @param y The new y-coordinate.
      */
     void setY(float y);
+
+    /**
+     * Sets the x and y coordinate of the <code>SpaceBody</code>
+     * to the x and y values held by <code>pos</code>.
+     *
+     * @param pos a <code>FloatPair</code> giving the new position.
+     */
+    void setPosition(FloatPair pos);
+
+    /**
+     * Translates the <code>SpaceBody</code> by a given vector,
+     * represented by a <code>FloatPair</code>.
+     * 
+     * @param translation the <code>FloatPair</code> to translate by.
+     */
+    void translate(FloatPair translation);
 
     /**
      * Sets the mass of the SpaceBody.

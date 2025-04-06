@@ -421,7 +421,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     }
 
     private void cameraLerpToPlayer(float delta) {
-        FloatPair newPosition = SpaceCalculator.lerp(camera.position, model.getPlayerCenterOfMass(),
+        FloatPair newPosition = SpaceCalculator.lerp2D(camera.position, model.getPlayerCenterOfMass(),
                 6f * delta);
         setCameraPosition(newPosition);
     }
@@ -437,7 +437,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     }
 
     private void cameraZoom(float delta) {
-        float zoom = SpaceCalculator.lerp(camera.zoom, getZoomLevel(), 1.2f * delta);
+        float zoom = SpaceCalculator.lerp1D(camera.zoom, getZoomLevel(), 1.2f * delta);
         camera.zoom = zoom;
     }
 
