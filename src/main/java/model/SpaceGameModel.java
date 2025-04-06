@@ -95,13 +95,14 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                 "enemy",
                 "an enemy ship",
                 1,
-                1,
+                2,
                 5,
-                0f);
+                -90f);
         enemyShip.setBrain(new LerpBrain(enemyShip, player));
 
         EnemyShip enemyShip2 = new EnemyShip(
                 ShipFactory.createShipFromJson("enemy1.json"), "enemy", "an enemy ship", 7, -3, 3, 0f);
+        enemyShip2.setBrain(new LerpBrain(enemyShip2, player));
 
         this.spaceShips = new LinkedList<>(
                 Arrays.asList(this.player, enemyShip, enemyShip2));

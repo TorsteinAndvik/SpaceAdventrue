@@ -16,7 +16,15 @@ public class LerpBrain extends Brain implements ShooterBrain {
         float angle = SpaceCalculator.angleBetweenPoints(
                 ship.getAbsoluteCenterOfMass(),
                 player.getAbsoluteCenterOfMass());
-        ship.setRotation(angle + 90f);
+
+        float newAngle;
+        if (ship.getRotationAngle() <= angle + 180f) {
+            newAngle = SpaceCalculator.lerp1D(ship.getRotationAngle(), angle + 90f, 1.5f * delta);
+        } else {
+            newAngle = SpaceCalculator.lerp1D(ship.getRotationAngle() - 360f, angle + 90f, 1.5f * delta);
+        }
+
+        ship.setRotation(newAngle);
 
         FloatPair target = SpaceCalculator.getPointAtDistance(ship.getAbsoluteCenterOfMass(),
                 player.getAbsoluteCenterOfMass(), hoverDistance());
