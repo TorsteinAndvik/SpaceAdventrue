@@ -13,17 +13,24 @@ public class StartScreenController extends GenericController {
     private final GameStateModel model;
     private final StartGameScreen view;
     private final SpaceGame game;
+    private MusicManager musicManager;
 
     public StartScreenController(StartGameScreen view, GameStateModel model,
             SpaceGame game) {
         this.model = model;
         this.view = view;
         this.game = game;
+        setupMusic();
     }
 
     @Override
     public void update(float delta) {
+    }
 
+    private void setupMusic() {
+        musicManager = game.getMusicManager();
+        musicManager.init();
+        musicManager.play();
     }
 
     @Override

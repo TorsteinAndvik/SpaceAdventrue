@@ -18,6 +18,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+
 import controller.StartScreenController;
 import java.util.ArrayList;
 import java.util.List;
@@ -123,7 +124,7 @@ public class StartGameScreen implements Screen {
         this.backgroundParallax = new float[background.length];
         this.backgroundDrift = new float[background.length];
 
-        int driftOffset = 2;
+        int driftOffset = 4;
 
         for (int i = 0; i < background.length; i++) {
             background[i].getTexture().setWrap(TextureWrap.Repeat, TextureWrap.Repeat);

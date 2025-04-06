@@ -7,35 +7,37 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+import controller.MusicManager;
+
 public interface SpaceGame {
 
     /**
-     * @return the application's <code>FitViewport</code>
+     * @return the application's <code>FitViewport</code>.
      */
     FitViewport getFitViewport();
 
     /**
-     * @return the application's <code>ScreenViewport</code>
+     * @return the application's <code>ScreenViewport</code>.
      */
     ScreenViewport getScreenViewport();
 
     /**
-     * @return the application's <code>ScreenViewport</code>
+     * @return the application's <code>ScreenViewport</code>.
      */
     ExtendViewport getExtendViewport();
 
     /**
-     * @return the application's <code>SpriteBatch</code>
+     * @return the application's <code>SpriteBatch</code>.
      */
     SpriteBatch getSpriteBatch();
 
     /**
-     * @return the application's <code>ShapeRenderer</code>
+     * @return the application's <code>ShapeRenderer</code>.
      */
     ShapeRenderer getShapeRenderer();
 
     /**
-     * @return the application's <code>AssetManager</code>
+     * @return the application's <code>AssetManager</code>.
      */
     AssetManager getAssetManager();
 
@@ -48,4 +50,9 @@ public interface SpaceGame {
      * Change active screen to UpgradeScreen.
      */
     void setUpgradeScreen();
+
+    /**
+     * @return the application's <code>MusicManager</code>.
+     */
+    MusicManager getMusicManager();
 }
