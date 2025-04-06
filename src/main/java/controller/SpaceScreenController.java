@@ -1,7 +1,8 @@
 package controller;
 
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.math.Vector2;
+
+import model.GameStateModel;
 import model.SpaceGameModel;
 import view.SpaceGame;
 import view.screens.SpaceScreen;
@@ -9,15 +10,10 @@ import view.screens.SpaceScreen;
 public class SpaceScreenController extends GenericController {
 
     private final SpaceGameModel model;
-    private final SpaceScreen view;
-    private final SpaceGame game;
-    private final Vector2 touchPos;
 
-    public SpaceScreenController(SpaceScreen view, SpaceGameModel model, SpaceGame game) {
-        this.model = model;
-        this.view = view;
-        this.game = game;
-        this.touchPos = new Vector2();
+    public SpaceScreenController(SpaceScreen view, GameStateModel gameStateModel, SpaceGame game) {
+        super(view, gameStateModel, game);
+        this.model = gameStateModel.getSpaceGameModel();
     }
 
     public void update(float delta) {

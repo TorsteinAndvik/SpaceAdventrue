@@ -26,6 +26,7 @@ import java.util.Map.Entry;
 import model.ShipComponents.Components.ShipStructure;
 import view.Palette;
 import view.SpaceGame;
+import model.GameStateModel;
 import model.SpaceGameModel;
 import model.UpgradeScreenModel;
 import model.ShipComponents.UpgradeType;
@@ -39,7 +40,6 @@ import java.util.Map;
  */
 public class UpgradeScreen extends InputAdapter implements Screen {
 
-    private final SpaceGame game;
     private final SpriteBatch batch;
     private final ShapeRenderer shape;
     private final ScreenViewport viewportGame;
@@ -88,15 +88,14 @@ public class UpgradeScreen extends InputAdapter implements Screen {
      * @param spaceGame The main game instance providing sprites, and other
      *                  resources.
      */
-    public UpgradeScreen(final SpaceGame spaceGame, final SpaceGameModel spaceModel) {
-        this.game = spaceGame;
+    public UpgradeScreen(final SpaceGame game, final GameStateModel gameStateModel) {
         this.batch = game.getSpriteBatch();
         this.shape = game.getShapeRenderer();
         this.manager = game.getAssetManager();
         this.viewportGame = game.getScreenViewport();
         this.viewportUI = new ScreenViewport();
-        this.model = new UpgradeScreenModel(spaceModel.getPlayer().getShipStructure());
-        this.controller = new UpgradeScreenController(this, model, spaceModel, game);
+        this.model = new UpgradeScreenModel(gameStateModel.getSpaceGameModel().getPlayer().getShipStructure());
+        this.controller = new UpgradeScreenController(this, gameStateModel, game);
         this.touchPos = new Vector2();
 
         viewportUI.setUnitsPerPixel(viewportGame.getUnitsPerPixel());

@@ -33,6 +33,7 @@ import model.SpaceCharacters.Asteroid;
 import model.SpaceCharacters.Bullet;
 import model.SpaceCharacters.SpaceShip;
 import model.constants.PhysicsParameters;
+import model.GameStateModel;
 import model.ScreenBoundsProvider;
 import model.SpaceGameModel;
 import model.Animation.AnimationCallback;
@@ -93,7 +94,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     // hitboxes (testing/debugging)
     private boolean showHitboxes = false;
 
-    public SpaceScreen(final SpaceGame game, final SpaceGameModel model) {
+    public SpaceScreen(final SpaceGame game, final GameStateModel gameStateModel) {
         this.game = game;
         this.batch = this.game.getSpriteBatch();
         this.shape = this.game.getShapeRenderer();
@@ -102,8 +103,8 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         this.bgViewport = game.getExtendViewport();
         this.camera = (OrthographicCamera) viewport.getCamera();
 
-        this.model = model;
-        this.controller = new SpaceScreenController(this, model, game);
+        this.model = gameStateModel.getSpaceGameModel();
+        this.controller = new SpaceScreenController(this, gameStateModel, game);
 
         setupBackground();
         setupSprites();

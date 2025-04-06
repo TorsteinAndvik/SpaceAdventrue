@@ -118,8 +118,7 @@ public class TestSpaceGame extends Game implements SpaceGame {
      */
     public void setUpgradeScreen() {
         gameStateModel.showUpgradeScreen();
-        SpaceGameModel spaceGameModel = gameStateModel.getSpaceGameModel();
-        UpgradeScreen upgradeScreen = new UpgradeScreen(this, spaceGameModel);
+        UpgradeScreen upgradeScreen = new UpgradeScreen(this, gameStateModel);
         setScreen(upgradeScreen);
     }
 
@@ -134,7 +133,7 @@ public class TestSpaceGame extends Game implements SpaceGame {
         }
 
         SpaceGameModel spaceGameModel = gameStateModel.getSpaceGameModel();
-        SpaceScreen spaceScreen = new SpaceScreen(this, spaceGameModel);
+        SpaceScreen spaceScreen = new SpaceScreen(this, gameStateModel);
 
         spaceGameModel.setAnimationCallback(spaceScreen);
         spaceGameModel.setScreenBoundsProvider(spaceScreen);
