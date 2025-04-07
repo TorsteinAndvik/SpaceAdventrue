@@ -43,8 +43,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     private final ShapeRenderer shape;
     private final ScreenViewport viewportGame;
     private final ScreenViewport viewportUI;
-    private final AssetManager manager; // An assetmanager helps with loading assets and disposing them once they are no
-    // longer needed
+    private final AssetManager manager;
     private final UpgradeScreenModel model;
     private final UpgradeScreenController controller;
     private final Vector2 touchPos; // Simplifies converting touch / mouse position in window-coordinates (pixels)
@@ -93,7 +92,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         this.manager = game.getAssetManager();
         this.viewportGame = game.getScreenViewport();
         this.viewportUI = new ScreenViewport();
-        this.model = new UpgradeScreenModel(gameStateModel.getSpaceGameModel().getPlayer().getShipStructure());
+        this.model = gameStateModel.getUpgradeScreenModel();
         this.controller = new UpgradeScreenController(this, gameStateModel, game);
         this.touchPos = new Vector2();
 
@@ -269,8 +268,9 @@ public class UpgradeScreen extends InputAdapter implements Screen {
             // draw a ghost copy of upgrade if hovering a grid cell
             touchPos.set(Gdx.input.getX(), Gdx.input.getY());
             unprojectTouchPos(touchPos);
-            CellPosition cpGrid = convertMouseToGrid(touchPos.x, touchPos.y);
-            if (cellPositionOnGrid(cpGrid) && canPlaceItem(cpGrid)) {
+
+            CellPosition cpGrid = controller.convertMouseToGrid(touchPos.x, touchPos.y);
+            if (controller.cellPositionOnGrid(cpGrid) && canPlaceItem(cpGrid)) {
                 upgradeIcons[model.getGrabbedUpgradeIndex()].setX(
                         model.getGridOffsetX() + cpGrid.col() + 0.5f * (1f - upgradeIconZoom));
                 upgradeIcons[model.getGrabbedUpgradeIndex()].setY(
@@ -457,26 +457,6 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     }
 
     /**
-     * Convert a mouse click to a grid position
-     *
-     * @param x the x-coordinate of the mouse click.
-     * @param y the y-coordinate of the mouse click.
-     * @return a new CellPosition to represent the place in the grid.
-     */
-    public CellPosition convertMouseToGrid(float x, float y) {
-        return new CellPosition(
-                (int) Math.floor(y - model.getGridOffsetY()),
-                (int) Math.floor(x - model.getGridOffsetX()));
-    }
-
-    private boolean cellPositionOnGrid(CellPosition cp) {
-        int gridX = cp.col();
-        int gridY = cp.row();
-        return !(gridX < 0 || gridX > model.getGridWidth() - 1 ||
-                gridY < 0 || gridY > model.getGridHeight() - 1);
-    }
-
-    /**
      * Updates camera zoom level. Used by controller to adjust view magnification
      * based on user
      * input.
@@ -506,6 +486,12 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         viewportGame.getCamera().position.set(touchPos, 0);
     }
 
+    private void resetCameraPositionAfterMinimize() {
+        touchPos.set(viewportGame.getWorldWidth() / 2f, viewportGame.getWorldHeight() / 2f);
+        clampVector(touchPos, 0f, viewportGame.getWorldWidth(), 0f, viewportGame.getWorldHeight());
+        viewportGame.getCamera().position.set(touchPos, 0);
+    }
+
     private void clampVector(Vector2 v, float minX, float maxX, float minY, float maxY) {
         v.x = Math.max(Math.min(v.x, maxX), minX);
         v.y = Math.max(Math.min(v.y, maxY), minY);
@@ -528,8 +514,9 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         viewportGame.update(width, height, false);
 
         if (viewportGame.getScreenWidth() == 0 || viewportGame.getScreenHeight() == 0) {
-            updateCameraPosition(0, 0);
-        } else {
+            // if here, then the window was minimized -> must reset camera
+            resetCameraPositionAfterMinimize();
+        } else { // if here, then the window size was just adjusted by the user
             float screenDeltaX = (width - oldWidth) / 2f;
             float screenDeltaY = (height - oldHeight) / 2f;
             float deltaX = viewportGame.getUnitsPerPixel() * screenDeltaX;
@@ -546,7 +533,6 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         Gdx.input.setInputProcessor(controller);
         viewportGame.apply(true);
         viewportUI.apply(true);
-        model.updateOffsets(viewportGame.getWorldWidth(), viewportGame.getWorldHeight());
     }
 
     @Override
