@@ -250,6 +250,11 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     @Override
     public void render(float delta) {
         model.update(delta);
+        if (model.offsetsMustBeUpdated) {
+            model.updateOffsets(viewportGame.getWorldWidth(), viewportGame.getWorldHeight());
+            model.offsetsMustBeUpdated = false;
+            System.out.println(model.getGridOffsetY());
+        }
         ScreenUtils.clear(Palette.MUTED_GREEN);
         viewportGame.apply(false);
         batch.setProjectionMatrix(viewportGame.getCamera().combined);
@@ -481,7 +486,10 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
         touchPos.set(cameraX, cameraY);
         unprojectTouchPos(touchPos);
-        clampVector(touchPos, 0f, viewportGame.getWorldWidth(), 0f, viewportGame.getWorldHeight());
+        clampVector(touchPos, model.getGridOffsetX(),
+                viewportGame.getWorldWidth() - model.getGridOffsetX(),
+                model.getGridOffsetY(),
+                viewportGame.getWorldHeight() - model.getGridOffsetY());
 
         viewportGame.getCamera().position.set(touchPos, 0);
     }

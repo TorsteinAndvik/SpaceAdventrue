@@ -44,6 +44,8 @@ public class UpgradeScreenModel {
     private final Vector2 lastDragPosition;
     private CellPosition releasedCellPosition;
 
+    public boolean offsetsMustBeUpdated;
+
     private final ShipStructure shipStructure;
 
     /**
@@ -96,7 +98,7 @@ public class UpgradeScreenModel {
 
         if (isReleaseGrabbedUpgrade() && isUpgradeGrabbed()) {
             if (grabbedItemIsFuselage()) {
-                shipStructure.updateWithFuselage(releasedCellPosition);
+                offsetsMustBeUpdated = shipStructure.updateWithFuselage(releasedCellPosition);
             } else {
                 CellPosition actualFuselagePos = releasedCellPosition.offset(
                         -gridExpansion / 2, -gridExpansion / 2);
@@ -122,12 +124,11 @@ public class UpgradeScreenModel {
     }
 
     /**
-     * Upgrade camera zoom level based on scroll input. Clamps zoom level between
-     * minimum and
-     * maximum zoom. Triggers zoom level display UI.
+     * Upgrade camera zoom level based on scroll input.
+     * Clamps zoom level between minimum and maximum zoom.
+     * Triggers zoom level display UI.
      *
-     * @param amount The scroll amount to adjust zoom by (positive values = zoom out
-     *               etc.)
+     * @param amount The scroll amount to adjust zoom by (+ = zoom out, - = zoom in)
      */
     public void updateCameraZoom(float amount) {
         cameraCurrentZoomLevel = Math.min(Math.max(cameraCurrentZoomLevel + (int) amount, 0),

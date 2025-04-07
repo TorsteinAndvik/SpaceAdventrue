@@ -32,7 +32,6 @@ public class UpgradeScreenController extends GenericController {
     @Override
     public void update(float delta) {
         upgradeModel.update(delta);
-
     }
 
     @Override
