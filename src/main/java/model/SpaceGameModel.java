@@ -59,8 +59,8 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
         this.hitDetection = new HitDetection(this);
 
-        createAsteroidFactory(50);
-        createLaserPool(300);
+        createAsteroidFactory(100);
+        createLaserPool(200);
 
         registerColliders();
 
