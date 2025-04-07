@@ -253,7 +253,6 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         if (model.offsetsMustBeUpdated) {
             model.updateOffsets(viewportGame.getWorldWidth(), viewportGame.getWorldHeight());
             model.offsetsMustBeUpdated = false;
-            System.out.println(model.getGridOffsetY());
         }
         ScreenUtils.clear(Palette.MUTED_GREEN);
         viewportGame.apply(false);

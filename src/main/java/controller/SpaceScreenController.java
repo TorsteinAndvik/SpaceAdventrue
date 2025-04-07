@@ -2,18 +2,23 @@ package controller;
 
 import com.badlogic.gdx.Input;
 
+import controller.audio.AudioCallback;
+import controller.audio.SoundEffect;
 import model.GameStateModel;
 import model.SpaceGameModel;
 import view.SpaceGame;
 import view.screens.SpaceScreen;
 
-public class SpaceScreenController extends GenericController {
+public class SpaceScreenController extends GenericController implements AudioCallback {
+    // TODO: Move AudioCallback implementation to pause screen when implemented.
 
     private final SpaceGameModel model;
 
     public SpaceScreenController(SpaceScreen view, GameStateModel gameStateModel, SpaceGame game) {
         super(view, gameStateModel, game);
         this.model = gameStateModel.getSpaceGameModel();
+        soundManager.init();
+        model.setAudioCallback(this);
     }
 
     public void update(float delta) {
@@ -123,5 +128,10 @@ public class SpaceScreenController extends GenericController {
     @Override
     protected void handleScroll(float amountY) {
 
+    }
+
+    @Override
+    public void play(SoundEffect soundEffect) {
+        soundManager.play(soundEffect);
     }
 }

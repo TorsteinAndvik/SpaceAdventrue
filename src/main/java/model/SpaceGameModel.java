@@ -11,6 +11,8 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Pool;
 
 import controller.ControllableSpaceGameModel;
+import controller.audio.AudioCallback;
+import controller.audio.SoundEffect;
 import grid.CellPosition;
 import model.Animation.AnimationCallback;
 import model.Animation.AnimationStateImpl;
@@ -46,6 +48,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     private AnimationCallback animationCallback;
     private ScreenBoundsProvider screenBoundsProvider;
+    private AudioCallback audioCallback;
 
     private RandomAsteroidFactory randomAsteroidFactory;
     private float asteroidTimer = 0;
@@ -59,8 +62,8 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
         this.hitDetection = new HitDetection(this);
 
-        createAsteroidFactory(50);
-        createLaserPool(300);
+        createAsteroidFactory(100);
+        createLaserPool(200);
 
         registerColliders();
 
@@ -181,15 +184,6 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     /**
      * Remove an object if it moves out of range.
      * 
-     * @param body the <code>SpaceBody</code> object to potentially remove.
-     */
-    private boolean cullSpaceBody(SpaceBody body) {
-        return cullSpaceBody(body, 0f);
-    }
-
-    /**
-     * Remove an object if it moves out of range.
-     * 
      * @param body   the <code>SpaceBody</code> object to potentially remove.
      * @param offset an additional distance the object needs to exceed before
      *               deletion
@@ -272,6 +266,11 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                                         ship.getAbsoluteCenterOfMass().y(),
                                         ship.getRadius(), AnimationType.EXPLOSION);
                             }
+                            if (ship.getMass() > 10f) {
+                                playAudio(SoundEffect.SHIP_EXPLOSION_BIG);
+                            } else {
+                                playAudio(SoundEffect.SHIP_EXPLOSION_SMALL);
+                            }
                             spaceShips.remove(c);
                             break;
                         }
@@ -299,6 +298,12 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         animationCallback.addAnimationState(new AnimationStateImpl(x, y, radius, type));
     }
 
+    private void playAudio(SoundEffect soundEffect) {
+        if (audioCallback != null) {
+            audioCallback.play(soundEffect);
+        }
+    }
+
     private void collectResources(Collidable collidable) {
         if (collidable instanceof SpaceBody spaceBody) {
             player.getInventory().addResource(spaceBody.getResourceValue());
@@ -322,6 +327,8 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
             addLaser(point.x(), point.y(), PhysicsParameters.laserVelocity, ship.getRotationAngle() + 90f,
                     0.125f, ship.isPlayerShip()).setSourceID(ship.getID());
+
+            playAudio(SoundEffect.LASER);
         }
         ship.hasShot();
     }
@@ -450,5 +457,10 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     @Override
     public void setScreenBoundsProvider(ScreenBoundsProvider screenBoundsProvider) {
         this.screenBoundsProvider = screenBoundsProvider;
+    }
+
+    @Override
+    public void setAudioCallback(AudioCallback audioCallback) {
+        this.audioCallback = audioCallback;
     }
 }
