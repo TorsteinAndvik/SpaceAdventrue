@@ -17,7 +17,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
@@ -294,7 +293,11 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
                         ThrusterLight light = thrusterLightsIterator.next();
                         light.setPosition(point.x(), point.y());
                         light.setDirection(ship.getRotationAngle() - 90f);
-                        light.setActive(ship.isAccelerating());
+                        if (ship.isPlayerShip()) {
+                            light.setActive(ship.isAccelerating());
+                        } else {
+                            light.setActive(true);
+                        }
                     }
                 }
             }
@@ -456,9 +459,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     @Override
     public void hide() {
         Gdx.input.setInputProcessor(null);
-        for (ThrusterLight light : this.thrusterLights) {
-            thrusterLightPool.free(light);
-        }
+        rayHandler.removeAll();
     }
 
     @Override
@@ -482,6 +483,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     public void show() {
         Gdx.input.setInputProcessor(controller);
         controller.reset();
+        System.out.println("SpaceScreen shown");
     }
 
     @Override

@@ -51,7 +51,7 @@ public class UpgradeScreenController extends GenericController {
                 yield true;
             }
             case Input.Keys.ESCAPE -> {
-                gameStateModel.changeState(GameState.PLAYING);
+                game.setSpaceScreen();
                 yield true;
             }
             default -> false;
