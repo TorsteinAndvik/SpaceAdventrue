@@ -5,8 +5,8 @@ import grid.GridCell;
 import grid.IGrid;
 import model.ShipComponents.ShipConfig;
 import model.ShipComponents.UpgradeType;
-import model.SpaceCharacters.Player;
-import model.SpaceCharacters.SpaceShip;
+import model.SpaceCharacters.Ships.Player;
+import model.SpaceCharacters.Ships.SpaceShip;
 import model.constants.PhysicsParameters;
 import model.utils.FloatPair;
 
@@ -81,7 +81,7 @@ class ShipStructureTest {
         shipStructure.set(cellPosition);
         assertTrue(shipStructure.addUpgrade(cellPosition, new Shield()));
         assertFalse(shipStructure.addUpgrade(new CellPosition(5, 5),
-            new Turret())); // this is an invalid position.
+                new Turret())); // this is an invalid position.
 
         CellPosition otherCellPosition = new CellPosition(2, 2);
         assertFalse(shipStructure.addUpgrade(otherCellPosition, new Shield()));
@@ -149,45 +149,45 @@ class ShipStructureTest {
 
         float startMass = 2f * fuselageMass + upgradeMass;
         FloatPair startCM = new FloatPair(
-            (1 * fuselageMass + 2 * (fuselageMass + upgradeMass)) / startMass,
-            (1 * fuselageMass + 2 * (fuselageMass + upgradeMass)) / startMass);
+                (1 * fuselageMass + 2 * (fuselageMass + upgradeMass)) / startMass,
+                (1 * fuselageMass + 2 * (fuselageMass + upgradeMass)) / startMass);
 
         assertEquals(startCM, shipStructure.getCenterOfMass());
         assertEquals(startCM,
-            ShipStructure.getMassProperties(shipStructure).centerOfMass());
+                ShipStructure.getMassProperties(shipStructure).centerOfMass());
 
         float upgradeAddedMass = startMass + upgradeMass;
         shipStructure.addUpgrade(new CellPosition(1, 1), new Thruster());
         FloatPair upgradeAddedCM = new FloatPair(
-            (1 * (fuselageMass + upgradeMass) + 2 * (fuselageMass + upgradeMass))
-                / upgradeAddedMass,
-            (1 * (fuselageMass + upgradeMass) + 2 * (fuselageMass + upgradeMass))
-                / upgradeAddedMass);
+                (1 * (fuselageMass + upgradeMass) + 2 * (fuselageMass + upgradeMass))
+                        / upgradeAddedMass,
+                (1 * (fuselageMass + upgradeMass) + 2 * (fuselageMass + upgradeMass))
+                        / upgradeAddedMass);
         assertEquals(upgradeAddedCM, shipStructure.getCenterOfMass());
         assertEquals(upgradeAddedCM,
-            ShipStructure.getMassProperties(shipStructure).centerOfMass());
+                ShipStructure.getMassProperties(shipStructure).centerOfMass());
 
         float emptyFuselageAddedMass = upgradeAddedMass + fuselageMass;
         shipStructure.set(new CellPosition(1, 2));
         FloatPair emptyFuselageAddedCM = new FloatPair(
-            (1 * (fuselageMass + upgradeMass) + 2 * (2 * fuselageMass + upgradeMass))
-                / emptyFuselageAddedMass,
-            (1 * (2 * fuselageMass + upgradeMass) + 2 * (fuselageMass + upgradeMass))
-                / emptyFuselageAddedMass);
+                (1 * (fuselageMass + upgradeMass) + 2 * (2 * fuselageMass + upgradeMass))
+                        / emptyFuselageAddedMass,
+                (1 * (2 * fuselageMass + upgradeMass) + 2 * (fuselageMass + upgradeMass))
+                        / emptyFuselageAddedMass);
         assertEquals(emptyFuselageAddedCM, shipStructure.getCenterOfMass());
         assertEquals(emptyFuselageAddedCM,
-            ShipStructure.getMassProperties(shipStructure).centerOfMass());
+                ShipStructure.getMassProperties(shipStructure).centerOfMass());
 
         float fuselageWithUgradeAddedMass = emptyFuselageAddedMass + fuselageMass + upgradeMass;
         shipStructure.set(new CellPosition(2, 1), new Fuselage(new Shield()));
         FloatPair fuselageWithUgradeAddedCM = new FloatPair(
-            (1 * (2 * fuselageMass + 2 * upgradeMass) + 2 * (2 * fuselageMass + upgradeMass))
-                / fuselageWithUgradeAddedMass,
-            (1 * (2 * fuselageMass + upgradeMass) + 2 * (2 * fuselageMass + 2 * upgradeMass))
-                / fuselageWithUgradeAddedMass);
+                (1 * (2 * fuselageMass + 2 * upgradeMass) + 2 * (2 * fuselageMass + upgradeMass))
+                        / fuselageWithUgradeAddedMass,
+                (1 * (2 * fuselageMass + upgradeMass) + 2 * (2 * fuselageMass + 2 * upgradeMass))
+                        / fuselageWithUgradeAddedMass);
         assertEquals(fuselageWithUgradeAddedCM, shipStructure.getCenterOfMass());
         assertEquals(fuselageWithUgradeAddedCM,
-            ShipStructure.getMassProperties(shipStructure).centerOfMass());
+                ShipStructure.getMassProperties(shipStructure).centerOfMass());
 
     }
 

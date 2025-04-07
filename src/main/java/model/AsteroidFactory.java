@@ -8,7 +8,7 @@ import com.badlogic.gdx.utils.Pool;
 
 import model.SpaceCharacters.Asteroid;
 import model.SpaceCharacters.SpaceBody;
-import model.SpaceCharacters.SpaceShip;
+import model.SpaceCharacters.Ships.SpaceShip;
 import model.utils.FloatPair;
 import model.utils.SpaceCalculator;
 
@@ -79,17 +79,16 @@ public abstract class AsteroidFactory {
      * @param y           The y coordinate of the object that is attempting to
      *                    intercept.
      * @param interceptee The <code>SpaceBody</code> object being intercepted.
-     * 
      * @return a <code>Vector2</code> velocity vector.
      */
     private Vector2 interceptFromPosition(float deltaTime, float x, float y, SpaceBody interceptee) {
 
         float targetX, targetY;
-        if (interceptee instanceof SpaceShip) {
-            targetX = ((SpaceShip) interceptee).getAbsoluteCenterOfMass().x()
+        if (interceptee instanceof SpaceShip ship) {
+            targetX = ship.getAbsoluteCenterOfMass().x()
                     + interceptee.getVelocity().x * deltaTime;
 
-            targetY = ((SpaceShip) interceptee).getAbsoluteCenterOfMass().y()
+            targetY = ship.getAbsoluteCenterOfMass().y()
                     + interceptee.getVelocity().y * deltaTime;
         } else {
             targetX = interceptee.getX() + interceptee.getVelocity().x * deltaTime;
@@ -101,8 +100,8 @@ public abstract class AsteroidFactory {
 
         float angle = (float) Math.toDegrees(Math.atan2(targetY - y, targetX - x));
 
-        Vector2 velocity = SpaceCalculator.velocityFromAngleSpeed(angle, speed);
-        return velocity;
+        return SpaceCalculator.velocityFromAngleSpeed(angle, speed);
+
 
     }
 
@@ -110,8 +109,6 @@ public abstract class AsteroidFactory {
      * Calculates a spawn location for an asteroid along a circular buffer around
      * the player.
      *
-     * @param spawnRNG A random value between 0 and 1 used to determine the position
-     *                 on the circle.
      * @return A <code>FloatPair</code> describing the spawn location.
      */
     private FloatPair spawnLocation(float radius) {

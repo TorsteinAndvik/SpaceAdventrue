@@ -2,10 +2,11 @@ package view.bars;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
-import model.SpaceCharacters.SpaceShip;
+import model.SpaceCharacters.Ships.SpaceShip;
 import model.utils.FloatPair;
 
 public class ShipHealthBar extends PercentageBar {
+
     SpaceShip ship;
     FloatPair offset;
 

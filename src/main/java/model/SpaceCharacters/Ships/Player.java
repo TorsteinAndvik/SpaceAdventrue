@@ -1,8 +1,9 @@
-package model.SpaceCharacters;
+package model.SpaceCharacters.Ships;
 
 import model.ShipComponents.Components.ShipStructure;
+import model.SpaceCharacters.CharacterType;
 
-public class Player extends SpaceShip {
+public class Player extends SpaceShip implements ViewablePlayer {
 
     private final PlayerInventory inventory;
 

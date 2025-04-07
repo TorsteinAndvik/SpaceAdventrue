@@ -1,4 +1,4 @@
-package model.SpaceCharacters;
+package model.SpaceCharacters.Ships;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -6,9 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import model.Globals.Collectable;
 import model.World.GameItem;
 
-public class PlayerInventory implements Inventory {
+public class PlayerInventory implements Inventory, ViewableInventory {
 
     private final Map<GameItem, Integer> items;
     private int resources;
@@ -53,6 +54,11 @@ public class PlayerInventory implements Inventory {
     }
 
     @Override
+    public int getResourceCount() {
+        return resources;
+    }
+
+    @Override
     public boolean hasCapacity() {
         return countAllItems() < INVENTORY_ITEM_CAPACITY;
     }
@@ -64,8 +70,13 @@ public class PlayerInventory implements Inventory {
     }
 
     @Override
-    public void addResource(int amount) {
-        resources += amount;
+    public void addResource(Collectable c) {
+        addResource(c.getValue());
+    }
+
+    @Override
+    public void addResource(int value) {
+        resources += value;
     }
 
     @Override

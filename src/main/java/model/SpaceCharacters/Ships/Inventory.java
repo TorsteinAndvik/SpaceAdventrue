@@ -1,11 +1,12 @@
-package model.SpaceCharacters;
+package model.SpaceCharacters.Ships;
 
+import model.Globals.Collectable;
 import model.World.GameItem;
 
 /**
  * Inventory is responsible for tracking character items.
  */
-public interface Inventory {
+public interface Inventory extends ViewableInventory {
 
     int ITEM_CAPACITY = 10;
     int INVENTORY_ITEM_CAPACITY = 100;
@@ -48,27 +49,20 @@ public interface Inventory {
      */
     GameItem getItemByName(String name);
 
-    /**
-     * Check if the inventory can hold more {@code Items}
-     *
-     * @return {@code true} if it can hold more, {@code false} otherwise.
-     */
-    boolean hasCapacity();
 
     /**
-     * Check if the inventory can hold more of a given {@code Item}
+     * Add the value of a collectable resource to the inventory
      *
-     * @param item The item to check
-     * @return {@code true} if it can hold more, {@code false} otherwise.
+     * @param resource The collectable to add;
      */
-    boolean hasItemCapacity(GameItem item);
+    void addResource(Collectable resource);
 
     /**
      * Add an amount of resources to the inventory
      *
-     * @param amount The amount of resources to add
+     * @param value The value to add;
      */
-    void addResource(int amount);
+    void addResource(int value);
 
     /**
      * Spend an amount of resources.
@@ -78,12 +72,5 @@ public interface Inventory {
      */
     boolean spendResources(int amount);
 
-    /**
-     * Checks if the inventory holds at least the specified amount of resources.
-     *
-     * @param amount The amount of resources to check for.
-     * @return {@code true} if the inventory has at least the given amount, {@code false} otherwise.
-     */
-    boolean hasResourceAmount(int amount);
 
 }
