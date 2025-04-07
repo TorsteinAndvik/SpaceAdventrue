@@ -9,7 +9,8 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-import controller.MusicManager;
+import controller.audio.MusicManager;
+import controller.audio.SoundManager;
 import model.GameStateModel;
 import model.SpaceGameModel;
 import view.SpaceGame;
@@ -24,6 +25,7 @@ public class TestSpaceGame extends Game implements SpaceGame {
     private ShapeRenderer shape;
     private AssetManager manager;
     private MusicManager musicManager;
+    private SoundManager soundManager;
     private FitViewport fitViewport;
     private ExtendViewport extendViewport;
     private ScreenViewport screenViewport;
@@ -48,6 +50,8 @@ public class TestSpaceGame extends Game implements SpaceGame {
         manager = new AssetManager();
 
         musicManager = new MusicManager(manager);
+
+        soundManager = new SoundManager(manager);
 
         gameStateModel = new GameStateModel();
 
@@ -114,8 +118,7 @@ public class TestSpaceGame extends Game implements SpaceGame {
      */
     public void setUpgradeScreen() {
         gameStateModel.showUpgradeScreen();
-        SpaceGameModel spaceGameModel = gameStateModel.getSpaceGameModel();
-        UpgradeScreen upgradeScreen = new UpgradeScreen(this, spaceGameModel);
+        UpgradeScreen upgradeScreen = new UpgradeScreen(this, gameStateModel);
         setScreen(upgradeScreen);
     }
 
@@ -130,7 +133,7 @@ public class TestSpaceGame extends Game implements SpaceGame {
         }
 
         SpaceGameModel spaceGameModel = gameStateModel.getSpaceGameModel();
-        SpaceScreen spaceScreen = new SpaceScreen(this, spaceGameModel);
+        SpaceScreen spaceScreen = new SpaceScreen(this, gameStateModel);
 
         spaceGameModel.setAnimationCallback(spaceScreen);
         spaceGameModel.setScreenBoundsProvider(spaceScreen);
@@ -140,5 +143,10 @@ public class TestSpaceGame extends Game implements SpaceGame {
     @Override
     public MusicManager getMusicManager() {
         return this.musicManager;
+    }
+
+    @Override
+    public SoundManager getSoundManager() {
+        return this.soundManager;
     }
 }

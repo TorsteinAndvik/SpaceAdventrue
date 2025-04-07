@@ -1,4 +1,4 @@
-package controller;
+package controller.audio;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;

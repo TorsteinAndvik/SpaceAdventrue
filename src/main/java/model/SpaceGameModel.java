@@ -237,7 +237,6 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     private void remove(Collidable c, boolean drawExplosion) {
         hitDetection.removeCollider(c);
         if (c instanceof SpaceBody) {
-            System.out.println(c + " destroyed");
             switch (((SpaceBody) c).getCharacterType()) {
                 case ASTEROID:
                     if (drawExplosion) {

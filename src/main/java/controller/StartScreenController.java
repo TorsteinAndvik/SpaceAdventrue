@@ -2,6 +2,9 @@ package controller;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector3;
+
+import controller.audio.SoundEffect;
+
 import java.util.List;
 import model.GameStateModel;
 import model.utils.MenuButton;
@@ -10,27 +13,15 @@ import view.screens.StartGameScreen;
 
 public class StartScreenController extends GenericController {
 
-    private final GameStateModel model;
     private final StartGameScreen view;
-    private final SpaceGame game;
-    private MusicManager musicManager;
 
-    public StartScreenController(StartGameScreen view, GameStateModel model,
-            SpaceGame game) {
-        this.model = model;
+    public StartScreenController(StartGameScreen view, GameStateModel model, SpaceGame game) {
+        super(view, model, game);
         this.view = view;
-        this.game = game;
-        setupMusic();
     }
 
     @Override
     public void update(float delta) {
-    }
-
-    private void setupMusic() {
-        musicManager = game.getMusicManager();
-        musicManager.init();
-        musicManager.play();
     }
 
     @Override
@@ -42,18 +33,17 @@ public class StartScreenController extends GenericController {
 
         switch (keycode) {
             case Input.Keys.UP:
-                model.setSelectedButtonIndex(Math.max(0, model.getSelectedButtonIndex() - 1));
-                view.playBlipSound(0.4f);
-                System.out.println("play blip");
+                gameStateModel.setSelectedButtonIndex(Math.max(0, gameStateModel.getSelectedButtonIndex() - 1));
+                soundManager.play(SoundEffect.BLIPP, 0.4f);
                 return true;
             case Input.Keys.DOWN:
-                model.setSelectedButtonIndex(
-                        Math.min(menuButtons.size() - 1, model.getSelectedButtonIndex() + 1));
-                view.playBlipSound(0.4f);
+                gameStateModel.setSelectedButtonIndex(
+                        Math.min(menuButtons.size() - 1, gameStateModel.getSelectedButtonIndex() + 1));
+                soundManager.play(SoundEffect.BLIPP, 0.4f);
                 return true;
             case Input.Keys.ENTER:
             case Input.Keys.SPACE:
-                activateButton(model.getSelectedButtonIndex());
+                activateButton(gameStateModel.getSelectedButtonIndex());
                 return true;
         }
         return false;
@@ -68,7 +58,7 @@ public class StartScreenController extends GenericController {
         List<MenuButton> menuButtons = view.getMenuButtons();
         for (int i = 0; i < menuButtons.size(); i++) {
             if (menuButtons.get(i).getBounds().contains(worldCoords.x, worldCoords.y)) {
-                model.setSelectedButtonIndex(i);
+                gameStateModel.setSelectedButtonIndex(i);
                 activateButton(i);
                 return true;
             }
@@ -77,7 +67,7 @@ public class StartScreenController extends GenericController {
     }
 
     public void activateButton(int index) {
-        view.playBlipSound(0.7f);
+        soundManager.play(SoundEffect.BLIPP, 0.7f);
 
         switch (index) {
             case 0:
@@ -93,7 +83,7 @@ public class StartScreenController extends GenericController {
     }
 
     private void startGame() {
-        model.startNewGame();
+        gameStateModel.startNewGame();
         game.setSpaceScreen();
     }
 
@@ -112,9 +102,9 @@ public class StartScreenController extends GenericController {
         List<MenuButton> menuButtons = view.getMenuButtons();
         for (int i = 0; i < menuButtons.size(); i++) {
             if (menuButtons.get(i).getBounds().contains(worldCoords.x, worldCoords.y)) {
-                if (model.getSelectedButtonIndex() != i) {
-                    model.setSelectedButtonIndex(i);
-                    view.playBlipSound(0.2f);
+                if (gameStateModel.getSelectedButtonIndex() != i) {
+                    gameStateModel.setSelectedButtonIndex(i);
+                    soundManager.play(SoundEffect.BLIPP, 0.2f);
                 }
                 return true;
             }

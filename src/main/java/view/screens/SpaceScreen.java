@@ -17,14 +17,13 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import box2dLight.RayHandler;
-import controller.SpaceGameScreenController;
+import controller.SpaceScreenController;
 import grid.GridCell;
 import model.ShipComponents.Components.Fuselage;
 import model.ShipComponents.Components.Thruster;
@@ -33,6 +32,7 @@ import model.SpaceCharacters.Asteroid;
 import model.SpaceCharacters.Bullet;
 import model.SpaceCharacters.SpaceShip;
 import model.constants.PhysicsParameters;
+import model.GameStateModel;
 import model.ScreenBoundsProvider;
 import model.SpaceGameModel;
 import model.Animation.AnimationCallback;
@@ -53,7 +53,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
 
     final SpaceGame game;
     final SpaceGameModel model;
-    private final SpaceGameScreenController controller;
+    private final SpaceScreenController controller;
     private final SpriteBatch batch;
     private final ShapeRenderer shape;
     private final ScreenViewport viewport;
@@ -93,7 +93,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     // hitboxes (testing/debugging)
     private boolean showHitboxes = false;
 
-    public SpaceScreen(final SpaceGame game, final SpaceGameModel model) {
+    public SpaceScreen(final SpaceGame game, final GameStateModel gameStateModel) {
         this.game = game;
         this.batch = this.game.getSpriteBatch();
         this.shape = this.game.getShapeRenderer();
@@ -102,8 +102,8 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         this.bgViewport = game.getExtendViewport();
         this.camera = (OrthographicCamera) viewport.getCamera();
 
-        this.model = model;
-        this.controller = new SpaceGameScreenController(this, model, game);
+        this.model = gameStateModel.getSpaceGameModel();
+        this.controller = new SpaceScreenController(this, gameStateModel, game);
 
         setupBackground();
         setupSprites();
@@ -115,12 +115,18 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     private void setupBackground() {
         this.background = new TextureRegion[6];
 
-        background[0] = new TextureRegion(manager.get("images/space/background/bkgd_1.png", Texture.class));
-        background[1] = new TextureRegion(manager.get("images/space/background/bkgd_2.png", Texture.class));
-        background[2] = new TextureRegion(manager.get("images/space/background/bkgd_3.png", Texture.class));
-        background[3] = new TextureRegion(manager.get("images/space/background/bkgd_4.png", Texture.class));
-        background[4] = new TextureRegion(manager.get("images/space/background/bkgd_6.png", Texture.class));
-        background[5] = new TextureRegion(manager.get("images/space/background/bkgd_7.png", Texture.class));
+        background[0] = new TextureRegion(
+                manager.get("images/space/background/bkgd_1.png", Texture.class));
+        background[1] = new TextureRegion(
+                manager.get("images/space/background/bkgd_2.png", Texture.class));
+        background[2] = new TextureRegion(
+                manager.get("images/space/background/bkgd_3.png", Texture.class));
+        background[3] = new TextureRegion(
+                manager.get("images/space/background/bkgd_4.png", Texture.class));
+        background[4] = new TextureRegion(
+                manager.get("images/space/background/bkgd_6.png", Texture.class));
+        background[5] = new TextureRegion(
+                manager.get("images/space/background/bkgd_7.png", Texture.class));
 
         this.backgroundParallax = new float[background.length];
         this.backgroundDrift = new float[background.length];
@@ -133,7 +139,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
             if (i < driftOffset) {
                 backgroundDrift[i] = 0f;
             } else {
-                backgroundDrift[i] = backgroundParallax[i - driftOffset] / 2.5f;
+                backgroundDrift[i] = backgroundParallax[i - driftOffset] / 2f;
             }
         }
     }
@@ -287,7 +293,11 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
                         ThrusterLight light = thrusterLightsIterator.next();
                         light.setPosition(point.x(), point.y());
                         light.setDirection(ship.getRotationAngle() - 90f);
-                        light.setActive(ship.isAccelerating());
+                        if (ship.isPlayerShip()) {
+                            light.setActive(ship.isAccelerating());
+                        } else {
+                            light.setActive(true);
+                        }
                     }
                 }
             }
@@ -449,9 +459,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     @Override
     public void hide() {
         Gdx.input.setInputProcessor(null);
-        for (ThrusterLight light : this.thrusterLights) {
-            thrusterLightPool.free(light);
-        }
+        rayHandler.removeAll();
     }
 
     @Override
@@ -475,6 +483,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     public void show() {
         Gdx.input.setInputProcessor(controller);
         controller.reset();
+        System.out.println("SpaceScreen shown");
     }
 
     @Override
