@@ -42,7 +42,7 @@ public interface ViewableSpaceShip extends ViewableSpaceBody, Collidable {
      *
      * @return The ID as a {@code String}
      */
-    public String getID();
+    String getID();
 
 
     /**
