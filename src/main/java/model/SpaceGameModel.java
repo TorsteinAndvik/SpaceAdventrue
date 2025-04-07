@@ -275,6 +275,11 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                                         ship.getAbsoluteCenterOfMass().y(),
                                         ship.getRadius(), AnimationType.EXPLOSION);
                             }
+                            if (ship.getMass() > 10f) {
+                                audioCallback.play(SoundEffect.SHIP_EXPLOSION_BIG);
+                            } else {
+                                audioCallback.play(SoundEffect.SHIP_EXPLOSION_SMALL);
+                            }
                             spaceShips.remove(c);
                             break;
                         }

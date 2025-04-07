@@ -17,6 +17,7 @@ public class SpaceScreenController extends GenericController implements AudioCal
     public SpaceScreenController(SpaceScreen view, GameStateModel gameStateModel, SpaceGame game) {
         super(view, gameStateModel, game);
         this.model = gameStateModel.getSpaceGameModel();
+        soundManager.init();
         model.setAudioCallback(this);
     }
 

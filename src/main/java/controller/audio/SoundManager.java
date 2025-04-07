@@ -29,7 +29,7 @@ public class SoundManager {
     }
 
     public void play(SoundEffect soundEffect) {
-        play(soundEffect, 1f);
+        play(soundEffect, 0.5f);
     }
 
     public void play(SoundEffect soundEffect, float volume) {
