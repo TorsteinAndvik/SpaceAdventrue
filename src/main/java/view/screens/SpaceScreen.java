@@ -483,7 +483,6 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     public void show() {
         Gdx.input.setInputProcessor(controller);
         controller.reset();
-        System.out.println("SpaceScreen shown");
     }
 
     @Override

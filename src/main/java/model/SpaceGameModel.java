@@ -11,6 +11,8 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Pool;
 
 import controller.ControllableSpaceGameModel;
+import controller.audio.AudioCallback;
+import controller.audio.SoundEffect;
 import grid.CellPosition;
 import model.Animation.AnimationCallback;
 import model.Animation.AnimationStateImpl;
@@ -46,6 +48,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     private AnimationCallback animationCallback;
     private ScreenBoundsProvider screenBoundsProvider;
+    private AudioCallback audioCallback;
 
     private RandomAsteroidFactory randomAsteroidFactory;
     private float asteroidTimer = 0;
@@ -322,6 +325,8 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
             addLaser(point.x(), point.y(), PhysicsParameters.laserVelocity, ship.getRotationAngle() + 90f,
                     0.125f, ship.isPlayerShip()).setSourceID(ship.getID());
+
+            audioCallback.play(SoundEffect.LASER);
         }
         ship.hasShot();
     }
@@ -450,5 +455,10 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     @Override
     public void setScreenBoundsProvider(ScreenBoundsProvider screenBoundsProvider) {
         this.screenBoundsProvider = screenBoundsProvider;
+    }
+
+    @Override
+    public void setAudioCallback(AudioCallback audioCallback) {
+        this.audioCallback = audioCallback;
     }
 }

@@ -1,5 +1,7 @@
 package controller;
 
+import controller.audio.AudioCallback;
+
 public interface ControllableSpaceGameModel {
 
     /**
@@ -55,4 +57,11 @@ public interface ControllableSpaceGameModel {
      * Move the spaceship right.
      */
     void setAccelerateClockwise(boolean accelerate);
+
+    /**
+     * Sets the audio callback object.
+     * 
+     * @param audioCallback the <code>AudioCallback</code> object.
+     */
+    void setAudioCallback(AudioCallback audioCallback);
 }
