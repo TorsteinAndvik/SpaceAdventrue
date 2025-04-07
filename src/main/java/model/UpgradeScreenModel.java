@@ -182,8 +182,7 @@ public class UpgradeScreenModel {
 
     /**
      * Updates offset for upgrade grid and upgrade bar elements. Centers these
-     * elements in
-     * available screen space.
+     * elements in available screen space.
      *
      * @param worldWidth  The width of the game world in world units.
      * @param worldHeight The height of the game world in world units.
@@ -307,6 +306,5 @@ public class UpgradeScreenModel {
 
     public void setReleasedCellPosition(CellPosition cellPosition) {
         releasedCellPosition = cellPosition;
-
     }
 }

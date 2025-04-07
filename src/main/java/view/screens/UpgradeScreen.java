@@ -27,7 +27,6 @@ import model.ShipComponents.Components.ShipStructure;
 import view.Palette;
 import view.SpaceGame;
 import model.GameStateModel;
-import model.SpaceGameModel;
 import model.UpgradeScreenModel;
 import model.ShipComponents.UpgradeType;
 import model.ShipComponents.Components.Fuselage;
@@ -253,7 +252,6 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     public void render(float delta) {
         model.update(delta);
         ScreenUtils.clear(Palette.MUTED_GREEN);
-
         viewportGame.apply(false);
         batch.setProjectionMatrix(viewportGame.getCamera().combined);
         batch.begin();
@@ -286,7 +284,6 @@ public class UpgradeScreen extends InputAdapter implements Screen {
             upgradeIcons[model.getGrabbedUpgradeIndex()].setY(pos.y - 0.5f * upgradeIconZoom);
             upgradeIcons[model.getGrabbedUpgradeIndex()].draw(batch);
         }
-        model.updateOffsets(viewportGame.getWorldWidth(), viewportGame.getWorldHeight());
 
         batch.end();
 
@@ -515,9 +512,8 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     }
 
     /**
-     * Convert screen coordinate to world coordinates. Windows have origin at
-     * top-left, game world
-     * at bottom-left.
+     * Convert screen coordinate to world coordinates.
+     * Window has origin at top-left, game world at bottom-left.
      *
      * @param pos The position vector to be converted.
      */
@@ -550,6 +546,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         Gdx.input.setInputProcessor(controller);
         viewportGame.apply(true);
         viewportUI.apply(true);
+        model.updateOffsets(viewportGame.getWorldWidth(), viewportGame.getWorldHeight());
     }
 
     @Override

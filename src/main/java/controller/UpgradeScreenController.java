@@ -9,7 +9,6 @@ import model.GameStateModel;
 import model.SpaceGameModel;
 import model.UpgradeScreenModel;
 import model.ShipComponents.Components.Fuselage;
-import model.constants.GameState;
 import view.SpaceGame;
 import view.screens.UpgradeScreen;
 
@@ -108,6 +107,10 @@ public class UpgradeScreenController extends GenericController {
 
         CellPosition cpGrid = convertMouseToGrid(touchPos.x, touchPos.y);
         CellPosition cpUpgrade = convertMouseToUpgradeBar(touchPos.x, touchPos.y);
+
+        System.out.println();
+        System.out.println(cpGrid);
+        System.out.println(cpUpgrade);
 
         if (cellPositionOnGrid(cpGrid)) {// TODO: Implement actions when clicking the grid.
             System.out.println("x = " + cpGrid.col() + ", y = " + cpGrid.row());

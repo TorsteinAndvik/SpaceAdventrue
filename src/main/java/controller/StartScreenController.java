@@ -3,9 +3,7 @@ package controller;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector3;
 
-import controller.audio.MusicManager;
 import controller.audio.SoundEffect;
-import controller.audio.SoundManager;
 
 import java.util.List;
 import model.GameStateModel;
