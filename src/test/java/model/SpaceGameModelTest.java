@@ -6,12 +6,9 @@ import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
 import model.Animation.AnimationCallback;
 import model.Animation.AnimationState;
-import model.SpaceCharacters.Asteroid;
 import model.SpaceCharacters.Bullet;
-import model.SpaceCharacters.EnemyShip;
-import model.SpaceCharacters.Inventory;
-import model.SpaceCharacters.Player;
-import model.SpaceCharacters.SpaceShip;
+import model.SpaceCharacters.Ships.EnemyShip;
+import model.SpaceCharacters.Ships.SpaceShip;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -135,13 +132,13 @@ class SpaceGameModelTest {
 
     /*
      * // TODO: This must be rewritten
-     * 
+     *
      * @Test
      * void collectResourcesTest() {
      * Inventory inventory = ((Player) gameModel.getPlayer()).getInventory();
      * Asteroid a = gameModel.getAsteroids().get(0);
      * assertFalse(inventory.hasResourceAmount(a.getResourceValue()));
-     * 
+     *
      * while (!a.isDestroyed()) {
      * gameModel.shoot();
      * Bullet laser = gameModel.getLasers().get(0);

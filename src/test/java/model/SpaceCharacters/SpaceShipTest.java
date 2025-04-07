@@ -1,5 +1,7 @@
 package model.SpaceCharacters;
 
+import model.SpaceCharacters.Ships.Player;
+import model.SpaceCharacters.Ships.SpaceShip;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -6,6 +6,7 @@ import grid.IGrid;
 import model.ShipComponents.Components.Fuselage;
 import model.ShipComponents.Components.ShipStructure;
 import model.ShipComponents.Components.ShipUpgrade;
+import model.SpaceCharacters.Ships.ViewablePlayer;
 import view.screens.UpgradeScreen;
 import model.ShipComponents.UpgradeType;
 
@@ -25,8 +26,8 @@ public class UpgradeScreenModel {
     private float upgradeOffsetX;
     private float upgradeOffsetY;
 
-    private final float[] cameraZoomLevels = { 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1f, 1.1f, 1.2f, 1.3f,
-            1.4f, 1.5f };
+    private final float[] cameraZoomLevels = {0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1f, 1.1f, 1.2f, 1.3f,
+            1.4f, 1.5f};
     private int cameraCurrentZoomLevel;
     private float cameraZoomDeltaTime;
     private final float cameraZoomTextFadeCutoffTime = 0.5f;
@@ -45,6 +46,7 @@ public class UpgradeScreenModel {
     private final Vector2 lastDragPosition;
     private CellPosition releasedCellPosition;
 
+    private final ViewablePlayer player;
     private final ShipStructure shipStructure;
 
     /**
@@ -52,8 +54,9 @@ public class UpgradeScreenModel {
      * initializes
      * camera zoom, and sets to middle zoom level.
      */
-    public UpgradeScreenModel(ShipStructure structure) {
-        this.shipStructure = structure;
+    public UpgradeScreenModel(ViewablePlayer player) {
+        this.player = player;
+        this.shipStructure = player.getShipStructure();
         IGrid<Fuselage> grid = getExpandedGrid();
         gridWidth = grid.cols();
         gridHeight = grid.rows();
@@ -97,7 +100,7 @@ public class UpgradeScreenModel {
 
         if (isReleaseGrabbedUpgrade() && isUpgradeGrabbed()) {
             if (grabbedItemIsFuselage()) {
-                shipStructure.updateWithFuselage(releasedCellPosition);
+                player.getShipStructure().updateWithFuselage(releasedCellPosition);
             } else {
                 CellPosition actualFuselagePos = releasedCellPosition.offset(
                         -gridExpansion / 2, -gridExpansion / 2);
@@ -308,5 +311,9 @@ public class UpgradeScreenModel {
     public void setReleasedCellPosition(CellPosition cellPosition) {
         releasedCellPosition = cellPosition;
 
+    }
+
+    public int getPlayerResources() {
+        return player.getInventory().getResourceCount();
     }
 }
