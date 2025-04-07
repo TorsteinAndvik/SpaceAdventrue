@@ -184,15 +184,6 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     /**
      * Remove an object if it moves out of range.
      * 
-     * @param body the <code>SpaceBody</code> object to potentially remove.
-     */
-    private boolean cullSpaceBody(SpaceBody body) {
-        return cullSpaceBody(body, 0f);
-    }
-
-    /**
-     * Remove an object if it moves out of range.
-     * 
      * @param body   the <code>SpaceBody</code> object to potentially remove.
      * @param offset an additional distance the object needs to exceed before
      *               deletion
@@ -276,9 +267,9 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                                         ship.getRadius(), AnimationType.EXPLOSION);
                             }
                             if (ship.getMass() > 10f) {
-                                audioCallback.play(SoundEffect.SHIP_EXPLOSION_BIG);
+                                playAudio(SoundEffect.SHIP_EXPLOSION_BIG);
                             } else {
-                                audioCallback.play(SoundEffect.SHIP_EXPLOSION_SMALL);
+                                playAudio(SoundEffect.SHIP_EXPLOSION_SMALL);
                             }
                             spaceShips.remove(c);
                             break;
@@ -307,6 +298,12 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         animationCallback.addAnimationState(new AnimationStateImpl(x, y, radius, type));
     }
 
+    private void playAudio(SoundEffect soundEffect) {
+        if (audioCallback != null) {
+            audioCallback.play(soundEffect);
+        }
+    }
+
     private void collectResources(Collidable collidable) {
         if (collidable instanceof SpaceBody spaceBody) {
             player.getInventory().addResource(spaceBody.getResourceValue());
@@ -331,7 +328,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
             addLaser(point.x(), point.y(), PhysicsParameters.laserVelocity, ship.getRotationAngle() + 90f,
                     0.125f, ship.isPlayerShip()).setSourceID(ship.getID());
 
-            audioCallback.play(SoundEffect.LASER);
+            playAudio(SoundEffect.LASER);
         }
         ship.hasShot();
     }
