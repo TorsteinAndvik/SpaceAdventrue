@@ -14,13 +14,13 @@ import model.utils.SpaceCalculator;
 
 public abstract class AsteroidFactory {
 
-    private Random rng = new Random();
+    private final Random rng = new Random();
 
     private final int largeSize = 4;
 
     private Rectangle spawnPerimeter;
     private SpaceShip player;
-    private final Pool<Asteroid> asteroidPool = new Pool<Asteroid>() {
+    private final Pool<Asteroid> asteroidPool = new Pool<>() {
         @Override
         protected Asteroid newObject() {
             return new Asteroid();

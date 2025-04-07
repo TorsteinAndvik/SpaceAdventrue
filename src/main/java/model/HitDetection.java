@@ -15,7 +15,7 @@ import model.utils.SpaceCalculator;
 
 public class HitDetection {
 
-    private LinkedList<Collidable> colliders = new LinkedList<>();
+    private final LinkedList<Collidable> colliders = new LinkedList<>();
     private final SpaceGameModel model;
 
     public HitDetection(SpaceGameModel model) {

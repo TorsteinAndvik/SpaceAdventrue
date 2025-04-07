@@ -182,7 +182,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         rayHandler.setAmbientLight(Palette.AMBIENT_LIGHT);
 
         this.laserLights = new LinkedList<>();
-        this.laserLightPool = new Pool<LaserLight>() {
+        this.laserLightPool = new Pool<>() {
             @Override
             protected LaserLight newObject() {
                 return new LaserLight();
@@ -191,7 +191,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         laserLightPool.fill(300);
 
         this.thrusterLights = new LinkedList<>();
-        this.thrusterLightPool = new Pool<ThrusterLight>() {
+        this.thrusterLightPool = new Pool<>() {
             @Override
             protected ThrusterLight newObject() {
                 return new ThrusterLight();

@@ -8,6 +8,7 @@ import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
 import model.ShipComponents.Components.ShipStructure;
 import model.ShipComponents.ShipFactory;
+import model.SpaceCharacters.Ships.Player;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,8 +32,8 @@ class UpgradeScreenModelTest {
     @BeforeEach
     public void setUp() {
         setup();
-        ShipStructure structure = ShipFactory.createShipFromJson("enemy1.json");
-        gameModel = new UpgradeScreenModel(structure);
+        Player player = new Player(ShipFactory.playerShip(), "Player", "Player", 100, 0, 0);
+        gameModel = new UpgradeScreenModel(player);
 
     }
 
