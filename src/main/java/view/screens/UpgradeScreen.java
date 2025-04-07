@@ -96,7 +96,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         this.manager = game.getAssetManager();
         this.viewportGame = game.getScreenViewport();
         this.viewportUI = new ScreenViewport();
-        this.model = new UpgradeScreenModel(spaceModel.getPlayer().getShipStructure());
+        this.model = new UpgradeScreenModel(spaceModel.getPlayer());
         this.controller = new UpgradeScreenController(this, model, spaceModel, game);
         this.touchPos = new Vector2();
 
@@ -325,9 +325,13 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         fontRegular.draw(batch, "Change screen", fontRegular.getData().lineHeight,
                 viewportUI.getWorldHeight() - 0.33f * fontRegular.getData().lineHeight);
 
-        diamond.setY(viewportUI.getWorldHeight() - 2.33f);
+        // Resources
+        diamond.setY(viewportUI.getWorldHeight() - 3f * fontRegular.getData().lineHeight);
+        diamond.setX(diamond.getWidth() * -.15f);
         diamond.draw(batch);
-        
+        fontRegular.draw(batch, String.valueOf(model.getPlayerResources()), diamond.getX() + diamond.getWidth(),
+                diamond.getY() + diamond.getHeight() - .3f);
+
         if (model.isCameraZoomRecently()) {
             float alpha = model.getCameraZoomDeltaTime() < model.getCameraZoomTextFadeCutoffTime() ? 1f
                     : 1f - (float) Math.pow(

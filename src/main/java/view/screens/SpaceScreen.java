@@ -17,7 +17,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
@@ -26,12 +25,14 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import box2dLight.RayHandler;
 import controller.SpaceGameScreenController;
 import grid.GridCell;
+import model.Globals.Collectable;
 import model.ShipComponents.Components.Fuselage;
 import model.ShipComponents.Components.Thruster;
 import model.ShipComponents.UpgradeType;
 import model.SpaceCharacters.Asteroid;
 import model.SpaceCharacters.Bullet;
-import model.SpaceCharacters.SpaceShip;
+import model.SpaceCharacters.Diamond;
+import model.SpaceCharacters.Ships.SpaceShip;
 import model.constants.PhysicsParameters;
 import model.ScreenBoundsProvider;
 import model.SpaceGameModel;
@@ -69,6 +70,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     private Sprite asteroidSmall;
     private Sprite laser;
 
+    private Sprite diamond;
     private Sprite fuselagePlayer;
     private Sprite fuselageEnemy;
 
@@ -149,6 +151,8 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         fuselagePlayer = createSprite("images/upgrades/fuselage_alt_stage_0.png", 1, 1);
 
         fuselageEnemy = createSprite("images/upgrades/fuselage_enemy_stage_0.png", 1, 1);
+
+        diamond = createSprite("images/space/diamond.png", 1, 1);
     }
 
     private void setupAnimationHashMap() {
@@ -325,6 +329,16 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
                 batch.draw(currentFrame, state.getX() - state.getRadius(),
                         state.getY() - state.getRadius(),
                         2f * state.getRadius(), 2f * state.getRadius());
+            }
+        }
+
+        // Draw diamonds
+        for (Collectable collectable : model.getCollectables()) {
+
+            if (collectable instanceof Diamond) {
+                this.diamond.setCenterX(collectable.getX() + collectable.getRadius());
+                this.diamond.setCenterY(collectable.getY() + collectable.getRadius());
+                this.diamond.draw(batch);
             }
         }
 
