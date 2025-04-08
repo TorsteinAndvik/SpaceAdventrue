@@ -21,7 +21,9 @@ public class SoundManager {
         }
 
         soundEffects.put(SoundEffect.BLIPP, manager.get("audio/blipp.ogg"));
-        soundEffects.put(SoundEffect.LASER, manager.get("audio/laser_shot_0.wav"));
+        soundEffects.put(SoundEffect.LASER_0, manager.get("audio/laser_0.mp3"));
+        soundEffects.put(SoundEffect.LASER_1, manager.get("audio/laser_1.mp3"));
+        soundEffects.put(SoundEffect.LASER_2, manager.get("audio/laser_2.mp3"));
         soundEffects.put(SoundEffect.SHIP_EXPLOSION_SMALL, manager.get("audio/ship_explosion_small.wav"));
         soundEffects.put(SoundEffect.SHIP_EXPLOSION_BIG, manager.get("audio/ship_explosion_big.wav"));
 
@@ -30,6 +32,7 @@ public class SoundManager {
 
     public void play(SoundEffect soundEffect) {
         play(soundEffect, 0.5f);
+        soundEffects.get(SoundEffect.BLIPP).play(0f, 0.5f, 1f);
     }
 
     public void play(SoundEffect soundEffect, float volume) {
