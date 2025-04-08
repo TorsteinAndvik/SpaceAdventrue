@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
@@ -52,6 +53,8 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     private RandomAsteroidFactory randomAsteroidFactory;
     private float asteroidTimer = 0;
+
+    private Random rng = new Random();
 
     public SpaceGameModel() {
 
@@ -328,7 +331,15 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
             addLaser(point.x(), point.y(), PhysicsParameters.laserVelocity, ship.getRotationAngle() + 90f,
                     0.125f, ship.isPlayerShip()).setSourceID(ship.getID());
 
-            playAudio(SoundEffect.LASER);
+            // TODO: Refactor using the turret's upgrade stage?
+            int effect = rng.nextInt(3);
+            if (effect == 0) {
+                playAudio(SoundEffect.LASER_0);
+            } else if (effect == 1) {
+                playAudio(SoundEffect.LASER_1);
+            } else if (effect == 2) {
+                playAudio(SoundEffect.LASER_2);
+            }
         }
         ship.hasShot();
     }

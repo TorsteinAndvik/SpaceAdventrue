@@ -101,10 +101,14 @@ public class LoadingScreen implements Screen {
 
         // Sounds and music:
         queueSound("audio/blipp.ogg");
-        queueSound("audio/laser_shot_0.wav");
+        queueSound("audio/laser_0.mp3");
+        queueSound("audio/laser_1.mp3");
+        queueSound("audio/laser_2.mp3");
         queueSound("audio/ship_explosion_small.wav");
         queueSound("audio/ship_explosion_big.wav");
+
         queueMusic("audio/music.mp3");
+        queueMusic("audio/atmosphere.mp3");
 
         // Fonts:
         FileHandleResolver resolver = new InternalFileHandleResolver();
