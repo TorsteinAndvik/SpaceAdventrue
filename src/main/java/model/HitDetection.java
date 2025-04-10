@@ -87,11 +87,7 @@ public class HitDetection {
             return shipCollision(ship2, target1);
         }
 
-        float dx = target1.getX() - target2.getX();
-        float dy = target1.getY() - target2.getY();
-        float distance = SpaceCalculator.distance(dx, dy);
-
-        if (distance < target1.getRadius() + target2.getRadius()) {
+        if (SpaceCalculator.collisionCalculator(target1, target2)) {
             model.handleCollision(target1, target2);
             return true;
         }

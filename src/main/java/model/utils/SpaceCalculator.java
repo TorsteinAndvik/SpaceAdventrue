@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 import grid.CellPosition;
+import model.Globals.Collidable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -259,4 +260,21 @@ public class SpaceCalculator {
         return new FloatPair(posB.x() + distance * dx / directionVectorLength,
                 posB.y() + distance * dy / directionVectorLength);
     }
+
+    /**
+     * Determines whether two objects are colliding.
+     *
+     * @param target1 The first collidable object.
+     * @param target2 The second collidable object.
+     * @return {@code true} if the two objects are colliding
+     *         {@code false} otherwise.
+     */
+    public static boolean collisionCalculator(Collidable target1, Collidable target2) {
+        float dx = target1.getX() - target2.getX();
+        float dy = target1.getY() - target2.getY();
+        float distance = SpaceCalculator.distance(dx, dy);
+
+        return distance < target1.getRadius() + target2.getRadius();
+    }
+
 }
