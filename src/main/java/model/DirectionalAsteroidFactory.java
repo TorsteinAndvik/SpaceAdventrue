@@ -12,8 +12,8 @@ public class DirectionalAsteroidFactory extends AsteroidFactory {
     private Random rng = new Random();
 
     /**
-     * Generates a single asteroid at a psuedo-random position at the spawn
-     * perimeter.
+     * Generates a single asteroid at a random position at a certain angle from the
+     * player
      * 
      * @return A randomly spawned Asteroid object.
      */

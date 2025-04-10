@@ -46,6 +46,12 @@ public abstract class AsteroidFactory {
         return createAsteroid(spawnPos.x(), spawnPos.y(), interceptVelocity, sizeRng, radius, rotationRng);
     }
 
+    /**
+     * Spawns an asteroid at a random position a certain angle from the player.
+     *
+     * @return A new Asteroid object with randomized size, rotation, and velocity
+     *         aimed at the player.
+     */
     public Asteroid spawnDirectionalAsteroid() {
         int sizeRng = rng.nextInt(largeSize) + 1; // [1, largeSize]
         float interceptTimeRng = rng.nextFloat(10, 20); // [10, 20)
@@ -122,11 +128,9 @@ public abstract class AsteroidFactory {
     }
 
     /**
-     * Calculates a spawn location for an asteroid along a circular buffer around
-     * the player.
+     * Calculates a spawn location for an asteroid outside of the screen.
      *
-     * @param spawnRNG A random value between 0 and 1 used to determine the position
-     *                 on the circle.
+     * @param radius radius of the asteroid to spawn.
      * @return A <code>FloatPair</code> describing the spawn location.
      */
     private FloatPair spawnLocation(float radius) {
@@ -154,11 +158,21 @@ public abstract class AsteroidFactory {
         return new FloatPair(spawnX, spawnY);
     }
 
+    /**
+     * Calculates a spawn location for an asteroid at a given angle along a circular
+     * buffer around the player.
+     *
+     * @param radius radius of asteroid to spawn.
+     * @param angle  the angle along the circle where the asteroid will spawn.
+     * @return A <code>FloatPair</code> describing the spawn location.
+     */
     private FloatPair spawnDirectionalLocation(float radius, float angle) {
+        float diagonal = (float) Math
+                .sqrt(((spawnPerimeter.x + spawnPerimeter.width) * (spawnPerimeter.x + spawnPerimeter.width))
+                        + ((spawnPerimeter.y + spawnPerimeter.height) * (spawnPerimeter.x + spawnPerimeter.height)));
 
-        // Compute the random point on the circle
-        float x = (float) (this.player.getX() + radius * Math.cos(angle));
-        float y = (float) (this.player.getY() + radius * Math.sin(angle));
+        float x = (float) (this.player.getX() + (radius + diagonal) * Math.cos(angle));
+        float y = (float) (this.player.getY() + (radius + diagonal) * Math.sin(angle));
         return new FloatPair(x, y);
 
     }
