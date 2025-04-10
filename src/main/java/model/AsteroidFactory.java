@@ -46,6 +46,21 @@ public abstract class AsteroidFactory {
         return createAsteroid(spawnPos.x(), spawnPos.y(), interceptVelocity, sizeRng, radius, rotationRng);
     }
 
+    public Asteroid spawnDirectionalAsteroid() {
+        int sizeRng = rng.nextInt(largeSize) + 1; // [1, largeSize]
+        float interceptTimeRng = rng.nextFloat(10, 20); // [10, 20)
+        float rotationRng = rng.nextFloat(-10, 10); // [-10, 10)
+
+        float radius = getRadius(sizeRng);
+        float angleRng = rng.nextFloat((float) -Math.sqrt(2) / 4, (float) Math.sqrt(2) / 4); // [-sqrt(2)/4, sqrt(2)/4)
+                                                                                             // tilsvarer +-30 graders
+                                                                                             // vinkel
+        FloatPair spawnPos = spawnDirectionalLocation(radius, ((float) Math.PI / 2) + angleRng);
+        Vector2 interceptVelocity = interceptFromPosition(interceptTimeRng, spawnPos.x(), spawnPos.y(), this.player);
+
+        return createAsteroid(spawnPos.x(), spawnPos.y(), interceptVelocity, sizeRng, radius, rotationRng);
+    }
+
     private float getRadius(int size) {
         return size == largeSize ? 1f : 0.5f;
     }
@@ -137,6 +152,15 @@ public abstract class AsteroidFactory {
         }
 
         return new FloatPair(spawnX, spawnY);
+    }
+
+    private FloatPair spawnDirectionalLocation(float radius, float angle) {
+
+        // Compute the random point on the circle
+        float x = (float) (this.player.getX() + radius * Math.cos(angle));
+        float y = (float) (this.player.getY() + radius * Math.sin(angle));
+        return new FloatPair(x, y);
+
     }
 
     public void setSpawnPerimeter(Rectangle spawnPerimeter) {
