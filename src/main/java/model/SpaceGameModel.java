@@ -52,6 +52,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     private AudioCallback audioCallback;
 
     private RandomAsteroidFactory randomAsteroidFactory;
+    private DirectionalAsteroidFactory directionalAsteroidFactory;
     private float asteroidTimer = 0;
 
     private Random rng = new Random();
@@ -78,6 +79,10 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         randomAsteroidFactory = new RandomAsteroidFactory();
         randomAsteroidFactory.setShip(player);
         randomAsteroidFactory.fill(asteroidPreFill);
+        directionalAsteroidFactory = new DirectionalAsteroidFactory();
+        directionalAsteroidFactory.setShip(player);
+        directionalAsteroidFactory.fill(asteroidPreFill);
+
     }
 
     private void createLaserPool(int laserPreFill) {
@@ -119,10 +124,18 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     private void createAsteroids() {
         randomAsteroidFactory.setSpawnPerimeter(this.screenBoundsProvider.getBounds());
+        directionalAsteroidFactory.setSpawnPerimeter(this.screenBoundsProvider.getBounds());
 
-        for (Asteroid asteroid : randomAsteroidFactory.getAsteroidShower()) {
-            asteroids.add(asteroid);
-            hitDetection.addCollider(asteroid);
+        if (player.getSpeed() > PhysicsParameters.accelerationLimitLongitudonal * 0.5) {
+            for (Asteroid asteroid : directionalAsteroidFactory.getAsteroidShower()) {
+                asteroids.add(asteroid);
+                hitDetection.addCollider(asteroid);
+            }
+        } else {
+            for (Asteroid asteroid : randomAsteroidFactory.getAsteroidShower()) {
+                asteroids.add(asteroid);
+                hitDetection.addCollider(asteroid);
+            }
         }
     }
 
