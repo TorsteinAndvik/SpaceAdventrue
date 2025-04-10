@@ -58,12 +58,9 @@ public abstract class AsteroidFactory {
         float rotationRng = rng.nextFloat(-10, 10); // [-10, 10)
 
         float radius = getRadius(sizeRng);
-        float angleRng = rng.nextFloat((float) -Math.sqrt(2) / 4, (float) Math.sqrt(2) / 4); // [-sqrt(2)/4, sqrt(2)/4)
-                                                                                             // tilsvarer +-30 graders
-                                                                                             // vinkel
-        FloatPair spawnPos = spawnDirectionalLocation(radius, ((float) Math.PI / 2) + angleRng);
-        Vector2 interceptVelocity = interceptFromPosition(interceptTimeRng, spawnPos.x(), spawnPos.y(), this.player);
 
+        FloatPair spawnPos = spawnDirectionalLocation(radius, this.player.getRotationAngle());
+        Vector2 interceptVelocity = interceptFromPosition(interceptTimeRng, spawnPos.x(), spawnPos.y(), this.player);
         return createAsteroid(spawnPos.x(), spawnPos.y(), interceptVelocity, sizeRng, radius, rotationRng);
     }
 
@@ -159,21 +156,37 @@ public abstract class AsteroidFactory {
     }
 
     /**
-     * Calculates a spawn location for an asteroid at a given angle along a circular
-     * buffer around the player.
+     * Calculates a spawn location for an asteroid depending on the angle of the
+     * player.
      *
      * @param radius radius of asteroid to spawn.
-     * @param angle  the angle along the circle where the asteroid will spawn.
+     * @param angle  the angle of the player determining where the asteroid will
+     *               spawn.
      * @return A <code>FloatPair</code> describing the spawn location.
      */
-    private FloatPair spawnDirectionalLocation(float radius, float angle) {
-        float diagonal = (float) Math
-                .sqrt(((spawnPerimeter.x + spawnPerimeter.width) * (spawnPerimeter.x + spawnPerimeter.width))
-                        + ((spawnPerimeter.y + spawnPerimeter.height) * (spawnPerimeter.x + spawnPerimeter.height)));
 
-        float x = (float) (this.player.getX() + (radius + diagonal) * Math.cos(angle));
-        float y = (float) (this.player.getY() + (radius + diagonal) * Math.sin(angle));
-        return new FloatPair(x, y);
+    private FloatPair spawnDirectionalLocation(float radius, float angle) {
+        float spawnX, spawnY;
+        int side = Math.round(angle * 1 / 90);
+        try {
+            if (side == 2) { // Bot
+                spawnY = spawnPerimeter.y - radius;
+                spawnX = rng.nextFloat(spawnPerimeter.x, spawnPerimeter.x + spawnPerimeter.width);
+            } else if (side == 3) { // Right
+                spawnX = spawnPerimeter.x + spawnPerimeter.width + radius;
+                spawnY = rng.nextFloat(spawnPerimeter.y, spawnPerimeter.y + spawnPerimeter.height);
+            } else if (side == 0) { // Top
+                spawnY = spawnPerimeter.y + spawnPerimeter.height + radius;
+                spawnX = rng.nextFloat(spawnPerimeter.x, spawnPerimeter.x + spawnPerimeter.width);
+            } else { // Left
+                spawnX = spawnPerimeter.x - radius;
+                spawnY = rng.nextFloat(spawnPerimeter.y, spawnPerimeter.y + spawnPerimeter.height);
+            }
+        } catch (IllegalArgumentException e) {
+            return new FloatPair(0f, 0f);
+        }
+
+        return new FloatPair(spawnX, spawnY);
 
     }
 
