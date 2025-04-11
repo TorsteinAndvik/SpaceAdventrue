@@ -91,7 +91,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     private Pool<ThrusterLight> thrusterLightPool;
 
     // hitboxes (testing/debugging)
-    private boolean showHitboxes = false;
+    private boolean showHitboxes = true;
 
     public SpaceScreen(final SpaceGame game, final GameStateModel gameStateModel) {
         this.game = game;
