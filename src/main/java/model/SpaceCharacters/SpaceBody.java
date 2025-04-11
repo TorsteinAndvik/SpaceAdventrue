@@ -251,6 +251,10 @@ public abstract class SpaceBody implements SpaceThing, Rotatable, Collidable, Vi
         this.velocity.set(velocity.x, velocity.y);
     }
 
+    public void setVelocity(float x, float y) {
+        this.velocity.set(x, y);
+    }
+
     @Override
     public void scaleVelocity(float scale) {
         this.velocity.scl(scale);

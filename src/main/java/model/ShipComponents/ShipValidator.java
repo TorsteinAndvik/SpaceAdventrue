@@ -97,7 +97,7 @@ public class ShipValidator {
         for (JsonValue component : shipData.get("components")) {
 
             componentPositions.add(
-                new CellPosition(component.get("y").asInt(), component.get("x").asInt()));
+                    new CellPosition(component.get("y").asInt(), component.get("x").asInt()));
         }
 
         return componentPositions;
