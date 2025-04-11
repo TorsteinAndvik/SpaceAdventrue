@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import grid.CellPosition;
+import model.SpaceCharacters.Asteroid;
+
 import org.junit.jupiter.api.Test;
 
 import com.badlogic.gdx.math.Vector2;
@@ -201,4 +203,16 @@ public class SpaceCalculatorTest {
         assertTrue(compareFloatPair(targetA, SpaceCalculator.getPointAtDistance(posA, posB, distance)));
         assertTrue(compareFloatPair(targetB, SpaceCalculator.getPointAtDistance(posC, posB, distance)));
     }
+
+    @Test
+    void collisionCalculatorTest() {
+        Asteroid target1 = new Asteroid("null", "null", 1, 1, 1, 1, 1, 1, 1, 1);
+        Asteroid target2 = new Asteroid("null2", "null2", 1, 1, 1, 1, 1, 1, 1, 1);
+        assertTrue(SpaceCalculator.collisionCalculator(target1, target2));
+
+        target1 = new Asteroid("null", "null", 1, 1, 1, 1, 1, 1, 10, 1);
+        target2 = new Asteroid("null2", "null2", 100, 100, 1, 1, 1, 1, 10, 1);
+        assertFalse(SpaceCalculator.collisionCalculator(target1, target2));
+    }
+
 }

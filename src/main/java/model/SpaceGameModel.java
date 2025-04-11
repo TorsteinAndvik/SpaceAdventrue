@@ -52,6 +52,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     private AudioCallback audioCallback;
 
     private RandomAsteroidFactory randomAsteroidFactory;
+    private DirectionalAsteroidFactory directionalAsteroidFactory;
     private float asteroidTimer = 0;
 
     private Random rng = new Random();
@@ -78,6 +79,10 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         randomAsteroidFactory = new RandomAsteroidFactory();
         randomAsteroidFactory.setShip(player);
         randomAsteroidFactory.fill(asteroidPreFill);
+        directionalAsteroidFactory = new DirectionalAsteroidFactory();
+        directionalAsteroidFactory.setShip(player);
+        directionalAsteroidFactory.fill(asteroidPreFill);
+
     }
 
     private void createLaserPool(int laserPreFill) {
@@ -119,11 +124,20 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     private void createAsteroids() {
         randomAsteroidFactory.setSpawnPerimeter(this.screenBoundsProvider.getBounds());
+        directionalAsteroidFactory.setSpawnPerimeter(this.screenBoundsProvider.getBounds());
 
-        for (Asteroid asteroid : randomAsteroidFactory.getAsteroidShower()) {
-            asteroids.add(asteroid);
-            hitDetection.addCollider(asteroid);
+        if (player.getSpeed() > 0.75 * PhysicsParameters.maxVelocityLongitudonal) {
+            for (Asteroid asteroid : directionalAsteroidFactory.getAsteroidShower()) {
+                asteroids.add(asteroid);
+                hitDetection.addCollider(asteroid);
+            }
+        } else {
+            for (Asteroid asteroid : randomAsteroidFactory.getAsteroidShower()) {
+                asteroids.add(asteroid);
+                hitDetection.addCollider(asteroid);
+            }
         }
+
     }
 
     private void registerColliders() {
@@ -164,6 +178,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
             if (cullSpaceBody(iter, 5f)) {// Remove if too distant to player
                 hitDetection.removeCollider(iter);
                 randomAsteroidFactory.free(iter);
+                directionalAsteroidFactory.free(iter);
                 asteroidIterator.remove();
             }
         }
@@ -243,6 +258,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                         if (asteroid == c) {
                             asteroids.remove(asteroid);
                             randomAsteroidFactory.free(asteroid);
+                            directionalAsteroidFactory.free(asteroid);
                             break;
                         }
                     }
