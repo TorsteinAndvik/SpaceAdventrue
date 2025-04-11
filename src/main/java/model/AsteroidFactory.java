@@ -35,7 +35,7 @@ public abstract class AsteroidFactory {
      */
     public Asteroid spawnAsteroid() {
         int sizeRng = rng.nextInt(largeSize) + 1; // [1, largeSize]
-        float interceptTimeRng = rng.nextFloat(10, 20); // [10, 20)
+        float interceptTimeRng = rng.nextFloat(4, 8); // [5, 10)
         float rotationRng = rng.nextFloat(-10, 10); // [-10, 10)
 
         float radius = getRadius(sizeRng);
@@ -54,7 +54,7 @@ public abstract class AsteroidFactory {
      */
     public Asteroid spawnDirectionalAsteroid() {
         int sizeRng = rng.nextInt(largeSize) + 1; // [1, largeSize]
-        float interceptTimeRng = rng.nextFloat(10, 20); // [10, 20)
+        float interceptTimeRng = rng.nextFloat(2, 5); // [2, 5)
         float rotationRng = rng.nextFloat(-10, 10); // [-10, 10)
 
         float radius = getRadius(sizeRng);

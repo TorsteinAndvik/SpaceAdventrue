@@ -30,7 +30,7 @@ public class DirectionalAsteroidFactory extends AsteroidFactory {
 
     public List<Asteroid> getAsteroidShower() {
 
-        int asteroidNumber = rng.nextInt(4) + 1; // [1, 8]
+        int asteroidNumber = rng.nextInt(4, 8);
         List<Asteroid> showerList = new ArrayList<Asteroid>();
         while (showerList.size() < asteroidNumber) {
             Asteroid potential = spawnDirectionalAsteroid();
