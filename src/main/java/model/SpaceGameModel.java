@@ -407,6 +407,23 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         return player.getAbsoluteCenterOfMass();
     }
 
+    public void spawnRandomShip() {
+        EnemyShip enemyShip = new EnemyShip(
+                ShipFactory.generateShipStructure(2, 2),
+                "enemy",
+                "an enemy ship",
+                1,
+                2,
+                5,
+                -90f);
+
+        enemyShip.setBrain(new LerpBrain(enemyShip, player));
+        enemyShip.setFireRate(0.75f);
+
+        spaceShips.addLast(enemyShip);
+        hitDetection.addCollider(enemyShip);
+    }
+
     @Override
     public void gameStateActive() {
     }

@@ -27,7 +27,6 @@ public class ArgumentChecker {
         }
     }
 
-
     /**
      * Ensures that a string is not empty or null.
      *

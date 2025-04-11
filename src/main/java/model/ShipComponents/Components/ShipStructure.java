@@ -23,14 +23,12 @@ public class ShipStructure implements ViewableShipStructure {
 
     public ShipStructure(int width, int height) {
         this(new Grid<>(height, width), 0f, new FloatPair(0f, 0f));
-
     }
 
     public ShipStructure(IGrid<Fuselage> grid, float mass, FloatPair centerOfMass) {
         this.grid = grid;
         this.mass = mass;
         this.centerOfMass = centerOfMass;
-
     }
 
     public ShipStructure(IGrid<Fuselage> grid) {
@@ -91,7 +89,8 @@ public class ShipStructure implements ViewableShipStructure {
      * Expands the grid temporarily to ensure sufficient space for placement.
      *
      * @param pos The position where the fuselage should be placed.
-     * @return {@code true} if the fuselage was successfully placed, {@code false} if placement was
+     * @return {@code true} if the fuselage was successfully placed, {@code false}
+     *         if placement was
      *         not possible.
      */
     public boolean updateWithFuselage(CellPosition pos) {
