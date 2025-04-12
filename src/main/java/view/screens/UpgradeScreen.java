@@ -133,19 +133,19 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     private void setupUISprites() {
         // zoom (mouse wheel)
         msMiddle.setX(0f);
-        msMiddle.setY(0.18f * fontRegular.getData().lineHeight);
+        msMiddle.setY(0.21f * fontRegular.getData().lineHeight);
 
         // move camera (right click)
         msRight.setX(0f);
-        msRight.setY(1.18f * fontRegular.getData().lineHeight);
+        msRight.setY(1.21f * fontRegular.getData().lineHeight);
 
         // grab upgrade (left click)
         msLeft.setX(0f);
-        msLeft.setY(2.18f * fontRegular.getData().lineHeight);
+        msLeft.setY(2.21f * fontRegular.getData().lineHeight);
 
         // inspect upgrade (T key)
         kbT.setX(0f);
-        kbT.setY(3.18f * fontRegular.getData().lineHeight);
+        kbT.setY(3.21f * fontRegular.getData().lineHeight);
 
         // swap to game screen (Esc key)
         kbEsc.setX(0f);

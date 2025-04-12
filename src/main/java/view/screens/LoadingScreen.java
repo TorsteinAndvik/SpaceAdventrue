@@ -36,8 +36,8 @@ public class LoadingScreen implements Screen {
     private PercentageBar loadingProgressBar;
 
     // Constants
-    int boldFontSize = 48;
-    int regularFontSize = 40;
+    int boldFontSize = 72;
+    int regularFontSize = 36;
 
     public LoadingScreen(SpaceGame game, GameStateModel gameStateModel) {
         this.game = game;
