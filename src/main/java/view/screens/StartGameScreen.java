@@ -4,7 +4,6 @@ import app.TestSpaceGame;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -20,7 +19,6 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import controller.StartScreenController;
-import controller.audio.SoundEffect;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,8 +76,8 @@ public class StartGameScreen implements Screen {
         this.backgroundViewport.setUnitsPerPixel(viewport.getUnitsPerPixel());
         this.camera = (OrthographicCamera) viewport.getCamera();
 
-        this.titleFont = assetManager.get("fonts/AGENCYB.ttf", BitmapFont.class);
-        this.regularFont = assetManager.get("fonts/AGENCYR.ttf", BitmapFont.class);
+        this.titleFont = assetManager.get("fonts/PixelOperatorMono-Bold.ttf", BitmapFont.class);
+        this.regularFont = assetManager.get("fonts/PixelOperatorMonoHB.ttf", BitmapFont.class);
         this.glyphLayout = new GlyphLayout();
 
         this.controller = new StartScreenController(this, gameStateModel, game);

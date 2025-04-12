@@ -49,8 +49,8 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     private final Vector2 touchPos; // Simplifies converting touch / mouse position in window-coordinates (pixels)
     // to game-coordinates (meters x meters set in viewport)
 
-    private BitmapFont fontBold; // Agency FB Bold
-    private BitmapFont fontRegular; // Agency FB Regular
+    private BitmapFont fontBold;
+    private BitmapFont fontRegular;
     private GlyphLayout glyphLayout;
 
     private Sprite[] upgradeIcons;
@@ -133,19 +133,19 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     private void setupUISprites() {
         // zoom (mouse wheel)
         msMiddle.setX(0f);
-        msMiddle.setY(0.18f * fontRegular.getData().lineHeight);
+        msMiddle.setY(0.21f * fontRegular.getData().lineHeight);
 
         // move camera (right click)
         msRight.setX(0f);
-        msRight.setY(1.18f * fontRegular.getData().lineHeight);
+        msRight.setY(1.21f * fontRegular.getData().lineHeight);
 
         // grab upgrade (left click)
         msLeft.setX(0f);
-        msLeft.setY(2.18f * fontRegular.getData().lineHeight);
+        msLeft.setY(2.21f * fontRegular.getData().lineHeight);
 
         // inspect upgrade (T key)
         kbT.setX(0f);
-        kbT.setY(3.18f * fontRegular.getData().lineHeight);
+        kbT.setY(3.21f * fontRegular.getData().lineHeight);
 
         // swap to game screen (Esc key)
         kbEsc.setX(0f);
@@ -168,8 +168,8 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     }
 
     private void setupFonts() {
-        fontBold = manager.get("fonts/AGENCYB.ttf", BitmapFont.class);
-        fontRegular = manager.get("fonts/AGENCYR.ttf", BitmapFont.class);
+        fontBold = manager.get("fonts/PixelOperatorMono-Bold.ttf", BitmapFont.class);
+        fontRegular = manager.get("fonts/PixelOperatorMonoHB.ttf", BitmapFont.class);
 
         // font are set as [integer]pt, need to scale them to our viewport by ratio of
         // viewport height to screen height in order to use world-unit sized font
