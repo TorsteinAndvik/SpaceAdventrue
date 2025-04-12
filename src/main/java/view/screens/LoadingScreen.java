@@ -115,13 +115,13 @@ public class LoadingScreen implements Screen {
         manager.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(resolver));
         manager.setLoader(BitmapFont.class, ".ttf", new FreetypeFontLoader(resolver));
 
-        // Set params for bold font (PixelOperatorMono-Bold.ttf)
+        // Set params for bold font (Pixel Operator Mono Bold)
         FreeTypeFontLoaderParameter fontBoldNew = new FreeTypeFontLoaderParameter();
         fontBoldNew.fontFileName = "fonts/PixelOperatorMono-Bold.ttf";
         fontBoldNew.fontParameters.size = boldFontSize;
         manager.load(fontBoldNew.fontFileName, BitmapFont.class, fontBoldNew);
 
-        // Set params for regular font (PixelOperatorMonoHB.ttf)
+        // Set params for regular font (Pixel Operator Mono HB Regular)
         FreeTypeFontLoaderParameter fontRegularNew = new FreeTypeFontLoaderParameter();
         fontRegularNew.fontFileName = "fonts/PixelOperatorMonoHB.ttf";
         fontRegularNew.fontParameters.size = regularFontSize;

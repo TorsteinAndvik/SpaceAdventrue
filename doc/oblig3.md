@@ -244,5 +244,6 @@ We would like to acknowledge the following creators for their work that has been
 - **'Cursor Pack'** by [Kenney](https://www.kenney.nl/) on OpenGameArt.org: [View Asset](https://opengameart.org/content/cursor-pack-1)
 - **'FREE Keyboard and controllers prompts pack'** by [xelu](https://opengameart.org/content/free-keyboard-and-controllers-prompts-pack) on OpenGameArt.org
 - **'Parallax Space Scene (seamlessly scrolls too)'** by [LuminousDragonGames](https://opengameart.org/content/parallax-space-scene-seamlessly-scrolls-too) on OpenGameArt.org
+- **'Pixel Operator'** TrueTypeFont by [Jayvee Enaguas (HarvettFox96)](https://fontlibrary.org/en/font/pixel-operator) at FontLibrary.org
 
 Thank you for your amazing work!

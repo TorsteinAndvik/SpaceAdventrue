@@ -49,8 +49,8 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     private final Vector2 touchPos; // Simplifies converting touch / mouse position in window-coordinates (pixels)
     // to game-coordinates (meters x meters set in viewport)
 
-    private BitmapFont fontBold; // Pixel Operator Mono Bold
-    private BitmapFont fontRegular; // Pixel Operator Mono HB Regular
+    private BitmapFont fontBold;
+    private BitmapFont fontRegular;
     private GlyphLayout glyphLayout;
 
     private Sprite[] upgradeIcons;
