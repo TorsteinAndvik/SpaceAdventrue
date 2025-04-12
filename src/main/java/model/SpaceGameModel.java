@@ -407,9 +407,13 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         return player.getAbsoluteCenterOfMass();
     }
 
+    private int spawnedShipCounter = 0; // TODO: Refactor - move to a timer with spawn logic, similar to asteroid timer
+
     public void spawnRandomShip() {
+        int numFuselage = 2 + spawnedShipCounter;
+        int numUpgrades = rng.nextInt((int) Math.max(2, numFuselage / 2), numFuselage + 1);
         EnemyShip enemyShip = new EnemyShip(
-                ShipFactory.generateShipStructure(2, 2),
+                ShipFactory.generateShipStructure(numFuselage, numUpgrades),
                 "enemy",
                 "an enemy ship",
                 1,
@@ -422,6 +426,8 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
         spaceShips.addLast(enemyShip);
         hitDetection.addCollider(enemyShip);
+
+        spawnedShipCounter++;
     }
 
     @Override

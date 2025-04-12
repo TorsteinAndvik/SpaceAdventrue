@@ -32,7 +32,7 @@ public class ShipStructure implements ViewableShipStructure {
     }
 
     public ShipStructure(IGrid<Fuselage> grid) {
-        this(grid.cols(), grid.rows());
+        this.grid = grid;
         MassProperties massProperties = getMassProperties(grid);
         this.mass = massProperties.mass();
         this.centerOfMass = massProperties.centerOfMass();
