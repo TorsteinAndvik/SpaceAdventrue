@@ -91,7 +91,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     private ShipThrusterLightMap shipThrusterLightMap;
 
     // hitboxes (testing/debugging)
-    private boolean showHitboxes = true;
+    private boolean showHitboxes = false;
 
     public SpaceScreen(final SpaceGame game, final GameStateModel gameStateModel) {
         this.game = game;
@@ -290,22 +290,9 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
                             if (light.isActive() != ship.isAccelerating()) {
                                 light.setActive(ship.isAccelerating());
                             }
-                        } else {
-                            if (!light.isActive()) {
-                                System.out.println("inactive light");
-                                light.setActive(true);
-                                light.update();
-                            }
                         }
                     }
                 }
-            }
-            int remainingLights = 0;
-            while (shipThrusterLightsIterator.hasNext()) {
-                remainingLights += 1;
-            }
-            if (remainingLights > 0) {
-                System.out.println("Remaining thruster lights: " + remainingLights);
             }
         }
 
@@ -343,7 +330,6 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
                         2f * state.getRadius(), 2f * state.getRadius());
             }
         }
-
         batch.end();
 
         // Lighting
@@ -397,10 +383,6 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
                 lightsIterator.remove();
                 lightDiff++;
             }
-        }
-        if (model.getLasers().size() != this.laserLights.size()) {
-            System.out.println("ERROR: model.getLasers().size() [" + model.getLasers().size()
-                    + "] != this.lights.size() [" + this.laserLights.size() + "]");
         }
     }
 
