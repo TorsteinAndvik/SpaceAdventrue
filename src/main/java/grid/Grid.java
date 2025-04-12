@@ -177,4 +177,18 @@ public class Grid<E> implements IGrid<E> {
         return shrunkGrid;
     }
 
+    public String toString() {
+        ArrayList<GridCell<E>> nonNullCells = new ArrayList<>();
+        for (GridCell<E> cell : this) {
+            if (cell.value() != null) {
+                nonNullCells.add(cell);
+            }
+        }
+
+        if (nonNullCells.isEmpty()) {
+            return "Grid is empty.";
+        } else {
+            return nonNullCells.toString();
+        }
+    }
 }

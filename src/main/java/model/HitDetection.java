@@ -8,7 +8,6 @@ import grid.GridCell;
 import model.Globals.Collidable;
 import model.ShipComponents.Components.Fuselage;
 import model.SpaceCharacters.Bullet;
-import model.SpaceCharacters.Player;
 import model.SpaceCharacters.SpaceShip;
 import model.constants.PhysicsParameters;
 import model.utils.FloatPair;
