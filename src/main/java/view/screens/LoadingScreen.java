@@ -36,8 +36,8 @@ public class LoadingScreen implements Screen {
     private PercentageBar loadingProgressBar;
 
     // Constants
-    int boldFontSize = 42;
-    int regularFontSize = 36;
+    int boldFontSize = 48;
+    int regularFontSize = 40;
 
     public LoadingScreen(SpaceGame game, GameStateModel gameStateModel) {
         this.game = game;
@@ -115,17 +115,17 @@ public class LoadingScreen implements Screen {
         manager.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(resolver));
         manager.setLoader(BitmapFont.class, ".ttf", new FreetypeFontLoader(resolver));
 
-        // Set params for bold font
-        FreeTypeFontLoaderParameter fontBold = new FreeTypeFontLoaderParameter();
-        fontBold.fontFileName = "fonts/AGENCYB.ttf";
-        fontBold.fontParameters.size = boldFontSize;
-        manager.load(fontBold.fontFileName, BitmapFont.class, fontBold);
+        // Set params for bold font (PixelOperatorMono-Bold.ttf)
+        FreeTypeFontLoaderParameter fontBoldNew = new FreeTypeFontLoaderParameter();
+        fontBoldNew.fontFileName = "fonts/PixelOperatorMono-Bold.ttf";
+        fontBoldNew.fontParameters.size = boldFontSize;
+        manager.load(fontBoldNew.fontFileName, BitmapFont.class, fontBoldNew);
 
-        // Set params for regular font
-        FreeTypeFontLoaderParameter fontRegular = new FreeTypeFontLoaderParameter();
-        fontRegular.fontFileName = "fonts/AGENCYR.ttf";
-        fontRegular.fontParameters.size = regularFontSize;
-        manager.load(fontRegular.fontFileName, BitmapFont.class, fontRegular);
+        // Set params for regular font (PixelOperatorMonoHB.ttf)
+        FreeTypeFontLoaderParameter fontRegularNew = new FreeTypeFontLoaderParameter();
+        fontRegularNew.fontFileName = "fonts/PixelOperatorMonoHB.ttf";
+        fontRegularNew.fontParameters.size = regularFontSize;
+        manager.load(fontRegularNew.fontFileName, BitmapFont.class, fontRegularNew);
     }
 
     private void queueTexture(String path) {

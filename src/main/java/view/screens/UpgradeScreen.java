@@ -49,8 +49,8 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     private final Vector2 touchPos; // Simplifies converting touch / mouse position in window-coordinates (pixels)
     // to game-coordinates (meters x meters set in viewport)
 
-    private BitmapFont fontBold; // Agency FB Bold
-    private BitmapFont fontRegular; // Agency FB Regular
+    private BitmapFont fontBold; // Pixel Operator Mono Bold
+    private BitmapFont fontRegular; // Pixel Operator Mono HB Regular
     private GlyphLayout glyphLayout;
 
     private Sprite[] upgradeIcons;
@@ -168,8 +168,8 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     }
 
     private void setupFonts() {
-        fontBold = manager.get("fonts/AGENCYB.ttf", BitmapFont.class);
-        fontRegular = manager.get("fonts/AGENCYR.ttf", BitmapFont.class);
+        fontBold = manager.get("fonts/PixelOperatorMono-Bold.ttf", BitmapFont.class);
+        fontRegular = manager.get("fonts/PixelOperatorMonoHB.ttf", BitmapFont.class);
 
         // font are set as [integer]pt, need to scale them to our viewport by ratio of
         // viewport height to screen height in order to use world-unit sized font
