@@ -233,5 +233,16 @@ So far, we have completed the lab exercises, agreed on a game concept, and gaine
 requirements for the course. We use Trello, a project management tool that helps teams organize and keep track of tasks:
 > https://trello.com/b/M1GIZpbu/sprites-inf112-team
 
-## Retro perspective
+## Retrospective
 TODO Write this part
+
+## Credits
+We would like to acknowledge the following creators for their work that has been used in this project. All assets are used under Creative Commons 0 (CC0):
+
+- **'Laser Blast x3'** by [peridactyloptrix](https://freesound.org/people/peridactyloptrix/sounds/214990/) on Freesound.org
+- **'Hostile Planet Atmosphere - loopable (24bit flac)'** by [steaq](https://freesound.org/people/steaq/sounds/593783/) on Freesound.org
+- **'Cursor Pack'** by [Kenney](https://www.kenney.nl/) on OpenGameArt.org: [View Asset](https://opengameart.org/content/cursor-pack-1)
+- **'FREE Keyboard and controllers prompts pack'** by [xelu](https://opengameart.org/content/free-keyboard-and-controllers-prompts-pack) on OpenGameArt.org
+- **'Parallax Space Scene (seamlessly scrolls too)'** by [LuminousDragonGames](https://opengameart.org/content/parallax-space-scene-seamlessly-scrolls-too) on OpenGameArt.org
+
+Thank you for your amazing work!
