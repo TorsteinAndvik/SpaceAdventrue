@@ -384,10 +384,6 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
                 lightDiff++;
             }
         }
-        if (model.getLasers().size() != this.laserLights.size()) {
-            System.out.println("ERROR: model.getLasers().size() [" + model.getLasers().size()
-                    + "] != this.lights.size() [" + this.laserLights.size() + "]");
-        }
     }
 
     private void updateCamera(float delta) {
