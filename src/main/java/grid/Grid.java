@@ -3,6 +3,7 @@ package grid;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import model.ShipComponents.Components.Fuselage;
 
 /**
  * This grid class is highly similar to one I wrote for INF101. There are some improvements, but
@@ -79,6 +80,7 @@ public class Grid<E> implements IGrid<E> {
 
     @Override
     public boolean positionIsOnGrid(CellPosition pos) {
+        if (pos == null) { return false; }
         return (pos.row() >= 0) && (pos.row() < rows()) && (pos.col() >= 0) && (pos.col() < cols());
     }
 
@@ -121,6 +123,16 @@ public class Grid<E> implements IGrid<E> {
         return get(pos) == null;
     }
 
+    @Override
+    public boolean isEmpty() {
+        for (GridCell<E> gc : this) {
+            if (gc.value() != null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * Shrinks a given grid to the minimal bounding box that contains all elements.
      * Removes excess rows and columns around the content while preserving relative
@@ -128,7 +140,7 @@ public class Grid<E> implements IGrid<E> {
      *
      * @param expandedGrid the input grid that may contain excess empty space
      * @return a new grid that fits exactly around the non-null elements, with all positions
-     * adjusted accordingly
+     *         adjusted accordingly
      */
     public static <E> IGrid<E> shrinkGridToFit(IGrid<E> expandedGrid) {
         boolean hasValidCells = false;
@@ -167,6 +179,28 @@ public class Grid<E> implements IGrid<E> {
         }
 
         return shrunkGrid;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (int row = rows - 1; row >= 0; row--) {
+            for (int col = 0; col < columns; col++) {
+
+                GridCell<E> gc = grid.get(row).get(col);
+                if (gc.value() == null) {
+                    sb.append(".");
+                } else if (gc.value() instanceof Fuselage fuselage) {
+                    if (fuselage.hasUpgrade()) {
+                        sb.append("F");
+                    } else {
+                        sb.append("f");
+                    }
+                }
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
     }
 
 

@@ -108,4 +108,13 @@ class GridTest {
         assertEquals(1, grid.cols());
         assertFalse(grid.isEmptyAt(new CellPosition(0, 0)));
     }
+
+    @Test
+    void testIsEmpty() {
+        IGrid<Integer> grid = new Grid<>(2, 2);
+        assertTrue(grid.isEmpty());
+        grid.set(new CellPosition(0, 0), 1);
+        assertFalse(grid.isEmpty());
+
+    }
 }
