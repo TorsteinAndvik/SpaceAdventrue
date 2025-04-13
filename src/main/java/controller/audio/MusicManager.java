@@ -4,10 +4,10 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 
 public class MusicManager {
-    private final AssetManager manager;
-    private Music music;
-    private Music atmosphere;
-    private boolean initialized = false;
+    protected final AssetManager manager;
+    protected Music music;
+    protected Music atmosphere;
+    protected boolean initialized = false;
 
     public MusicManager(AssetManager manager) {
         this.manager = manager;

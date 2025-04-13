@@ -6,10 +6,10 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 
 public class SoundManager {
-    private final AssetManager manager;
-    private boolean initialized = false;
+    protected final AssetManager manager;
+    protected boolean initialized = false;
 
-    private final HashMap<SoundEffect, Sound> soundEffects = new HashMap<>();
+    protected final HashMap<SoundEffect, Sound> soundEffects = new HashMap<>();
 
     public SoundManager(AssetManager manager) {
         this.manager = manager;
@@ -32,7 +32,6 @@ public class SoundManager {
 
     public void play(SoundEffect soundEffect) {
         play(soundEffect, 0.5f);
-        soundEffects.get(SoundEffect.BLIPP).play(0f, 0.5f, 1f);
     }
 
     public void play(SoundEffect soundEffect, float volume) {
