@@ -81,12 +81,12 @@ public class PlayerInventoryTest {
 
     @Test
     void addResourceTest() {
-        assertFalse(inventory.hasResourceAmount(1));
+        assertFalse(inventory.canAfford(1));
 
         inventory.addResource(100);
-        assertTrue(inventory.hasResourceAmount(100));
+        assertTrue(inventory.canAfford(100));
 
-        assertFalse(inventory.hasResourceAmount(101));
+        assertFalse(inventory.canAfford(101));
 
     }
 
@@ -95,8 +95,8 @@ public class PlayerInventoryTest {
         inventory.addResource(100);
         assertFalse(inventory.spendResources(101));
         assertTrue(inventory.spendResources(49));
-        assertFalse(inventory.hasResourceAmount(100));
-        assertTrue(inventory.hasResourceAmount(51));
+        assertFalse(inventory.canAfford(100));
+        assertTrue(inventory.canAfford(51));
         assertTrue(inventory.spendResources(51));
     }
 

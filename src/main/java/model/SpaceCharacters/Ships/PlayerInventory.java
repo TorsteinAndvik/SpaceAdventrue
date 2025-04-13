@@ -14,9 +14,13 @@ public class PlayerInventory implements Inventory, ViewableInventory {
     private final Map<GameItem, Integer> items;
     private int resources;
 
+    public PlayerInventory(Map<GameItem, Integer> items, int resources) {
+        this.items = items;
+        this.resources = resources;
+    }
+
     public PlayerInventory() {
-        items = new HashMap<>();
-        resources = 0;
+        this(new HashMap<>(), 0);
     }
 
     @Override
@@ -81,7 +85,7 @@ public class PlayerInventory implements Inventory, ViewableInventory {
 
     @Override
     public boolean spendResources(int amount) {
-        if (!hasResourceAmount(amount)) {
+        if (!canAfford(amount)) {
             return false;
         }
         resources -= amount;
@@ -89,7 +93,7 @@ public class PlayerInventory implements Inventory, ViewableInventory {
     }
 
     @Override
-    public boolean hasResourceAmount(int amount) {
+    public boolean canAfford(int amount) {
         return resources >= amount;
     }
 
