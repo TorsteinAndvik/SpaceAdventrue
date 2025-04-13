@@ -9,7 +9,9 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import controller.OptionsScreenController;
 import java.util.ArrayList;
@@ -35,6 +37,7 @@ public class OptionsScreen implements Screen {
     private final Color TITLE_COLOR = Palette.TITLE_FONT_COLOR;
     private final Color BUTTON_COLOR = Color.WHITE;
     private final Color BUTTON_HOVER_COLOR = Palette.TITLE_FONT_HIGHLIGHT_COLOR;
+    private final String SCREEN_TITLE = "OPTIONS";
 
     private final List<MenuButton> optionButtons = new ArrayList<>();
     private final float BUTTON_WIDTH = 8f;
@@ -64,7 +67,7 @@ public class OptionsScreen implements Screen {
         float worldHeight = viewport.getWorldHeight();
         float worldCenterX = viewport.getWorldWidth();
 
-        float startY = viewport.getScreenY();
+        float startY = worldHeight * 0.5f;
         float spacing = BUTTON_HEIGHT + BUTTON_PADDING;
 
         optionButtons.clear();
@@ -81,8 +84,66 @@ public class OptionsScreen implements Screen {
     }
 
     @Override
-    public void render(float v) {
+    public void render(float delta) {
+        if (!menuInitialized) {
+            setupMenu();
+        }
+        stateTime += delta;
+        ScreenUtils.clear(Color.BLACK);
 
+        viewport.apply();
+        camera.update();
+        spriteBatch.setProjectionMatrix(camera.combined);
+        spriteBatch.begin();
+
+        titleFont.getData().setScale(viewport.getUnitsPerPixel() * 1.2f);
+
+        glyphLayout.setText(titleFont, SCREEN_TITLE);
+        float titleX = (viewport.getWorldWidth() - glyphLayout.width) / 2;
+        float titleY = (viewport.getWorldHeight() * 0.7f + glyphLayout.height) / 2;
+
+        titleFont.setColor(TITLE_COLOR);
+        titleFont.draw(spriteBatch, SCREEN_TITLE, titleX, titleY);
+
+        titleFont.getData().setScale(viewport.getUnitsPerPixel());
+
+        renderButtons(spriteBatch);
+        spriteBatch.end();
+        controller.update(delta);
+    }
+
+    private void renderButtons(SpriteBatch spriteBatch) {
+        if (!menuInitialized) {
+            return;
+        }
+
+        for (int i = 0; i < optionButtons.size(); i++) {
+            MenuButton button = optionButtons.get(i);
+            if (i == gameStateModel.getSelectedButtonIndex()) {
+                float pulse = 1.0f + 0.1f * (float) Math.sin(stateTime * 5.0f);
+                regularFont.getData().setScale(viewport.getUnitsPerPixel() * pulse);
+                regularFont.setColor(BUTTON_HOVER_COLOR);
+
+            } else {
+                regularFont.getData().setScale(viewport.getUnitsPerPixel());
+                regularFont.setColor(BUTTON_COLOR);
+            }
+
+            String buttonText = button.getText();
+            glyphLayout.setText(regularFont, buttonText);
+
+            float textX = button.getX() - glyphLayout.width / 2f;
+            float textY = button.getY() - glyphLayout.height / 2f;
+
+            button.setBounds(new Rectangle(
+                button.getX() - BUTTON_WIDTH / 2f,
+                button.getY() - BUTTON_HEIGHT / 2f,
+                BUTTON_WIDTH,
+                BUTTON_HEIGHT));
+
+            regularFont.draw(spriteBatch, buttonText, textX, textY);
+        }
+        regularFont.getData().setScale(viewport.getUnitsPerPixel());
     }
 
     @Override
