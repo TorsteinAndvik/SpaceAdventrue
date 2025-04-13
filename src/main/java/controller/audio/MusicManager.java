@@ -73,10 +73,10 @@ public class MusicManager {
             if (enabled) {
                 setVolume(volume);
                 play();
+
+            } else {
+                pause();
             }
-        } else {
-            music.setVolume(0);
-            atmosphere.setVolume(0);
         }
     }
 }

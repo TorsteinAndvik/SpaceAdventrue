@@ -12,6 +12,7 @@ import controller.audio.MusicManager;
 import controller.audio.SoundManager;
 import model.GameStateModel;
 import model.SpaceGameModel;
+import model.constants.GameState;
 import view.SpaceGame;
 import view.screens.LoadingScreen;
 import view.screens.OptionsScreen;
@@ -129,7 +130,7 @@ public class TestSpaceGame extends Game implements SpaceGame {
         if (gameStateModel.getSpaceGameModel() == null) {
             gameStateModel.startNewGame();
         } else {
-            gameStateModel.returnToGame();
+            gameStateModel.changeState(GameState.PLAYING);
         }
 
         SpaceGameModel spaceGameModel = gameStateModel.getSpaceGameModel();
@@ -144,9 +145,11 @@ public class TestSpaceGame extends Game implements SpaceGame {
      * Change active screen to OptionsScreen
      */
     public void setOptionsScreen() {
-        gameStateModel.showOptionsScreen();
-        OptionsScreen optionsScreen = new OptionsScreen(this, gameStateModel);
-        setScreen(optionsScreen);
+
+        if (gameStateModel.getCurrentState() != GameState.OPTIONS) {
+            gameStateModel.changeState(GameState.OPTIONS);
+        }
+        setScreen(new OptionsScreen(this, gameStateModel));
     }
 
 

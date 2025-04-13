@@ -22,6 +22,13 @@ public class GameStateModel {
     }
 
     public void changeState(GameState newState) {
+        if (this.currentState == newState) {
+            return;
+        }
+
+        this.previousState = this.currentState;
+
+        //initialize models if needed
         if (newState == GameState.PLAYING && spaceGameModel == null) {
             spaceGameModel = new SpaceGameModel();
         } else if (newState == GameState.UPGRADE && spaceGameModel != null) {
@@ -31,7 +38,6 @@ public class GameStateModel {
                 upgradeScreenModel = new UpgradeScreenModel(playerShipStructure);
             }
         }
-        this.previousState = this.currentState;
         this.currentState = newState;
     }
 
@@ -49,20 +55,8 @@ public class GameStateModel {
         changeState(GameState.PLAYING);
     }
 
-    public void showStartScreen() {
-        changeState(GameState.START_GAME);
-    }
-
     public void showUpgradeScreen() {
         changeState(GameState.UPGRADE);
-    }
-
-    public void showOptionsScreen() {
-        changeState(GameState.OPTIONS);
-    }
-
-    public void returnToGame() {
-        changeState(GameState.PLAYING);
     }
 
     public GameState getCurrentState() {

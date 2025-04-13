@@ -16,6 +16,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import controller.OptionsScreenController;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import model.GameStateModel;
 import model.constants.GameState;
 import model.utils.MenuButton;
@@ -53,9 +54,10 @@ public class OptionsScreen implements Screen {
     private boolean showingControls = false;
     private int selectedControlCategory = 0;
     private MenuButton controlsBackButton;
-    private List<String> controlCategories = new ArrayList<>();
-    private List<String> controlKeys = new ArrayList<>();
-    private List<String> controlDescriptions = new ArrayList<>();
+    private final List<String> controlCategories = new ArrayList<>();
+    private final List<List<Integer>> categoryControlIndices = new ArrayList<>();
+    private final List<String> controlKeys = new ArrayList<>();
+    private final List<String> controlDescriptions = new ArrayList<>();
     private final List<Rectangle> categoryBounds = new ArrayList<>();
     private Runnable backButtonAction;
 
@@ -81,22 +83,19 @@ public class OptionsScreen implements Screen {
         controlCategories.clear();
         controlKeys.clear();
         controlDescriptions.clear();
+        categoryControlIndices.clear();
     }
 
     public void addControlCategory(String category) {
         controlCategories.add(category);
-    }
-
-    public void addControlDescription(String key, String description) {
-        controlKeys.add(key);
-        controlDescriptions.add(description);
+        categoryControlIndices.add(new ArrayList<>());
     }
 
     public void addControlsBackButton(String text, Runnable action) {
         float worldHeight = viewport.getWorldHeight();
         float worldCenterX = viewport.getWorldWidth() / 2;
 
-        controlsBackButton = new MenuButton(text, worldCenterX, worldHeight * 0.15f);
+        controlsBackButton = new MenuButton(text, worldCenterX, worldHeight * 0.20f);
         backButtonAction = action;
     }
 
@@ -163,7 +162,7 @@ public class OptionsScreen implements Screen {
         String titleText = showingControls ? "CONTROLS" : SCREEN_TITLE;
         glyphLayout.setText(titleFont, titleText);
         float titleX = (viewport.getWorldWidth() - glyphLayout.width) / 2f;
-        float titleY = viewport.getWorldHeight() * 0.7f + glyphLayout.height / 2f;
+        float titleY = viewport.getWorldHeight() * 0.85f + glyphLayout.height / 2f;
 
         titleFont.setColor(TITLE_COLOR);
         titleFont.draw(spriteBatch, titleText, titleX, titleY);
@@ -179,17 +178,13 @@ public class OptionsScreen implements Screen {
     }
 
     private void renderControlsScreen(SpriteBatch spriteBatch) {
-        float startY = viewport.getWorldHeight() * 0.6f;
-        float categoryStartX = viewport.getWorldWidth() * 0.1f;
+        float tabY = viewport.getWorldHeight() * 0.75f;
+        float startY = tabY - regularFont.getLineHeight() * 3f;
         float controlStartX = viewport.getWorldWidth() * 0.2f;
         float lineHeight = regularFont.getLineHeight() * 1.2f;
 
-        // track position for drawing
-        float currentY = startY;
-
         // draw category tabs
-        float tabWidth = viewport.getWorldWidth() / (controlCategories.size() + 1);
-        float tabY = viewport.getWorldHeight() * 0.65f;
+        float tabWidth = viewport.getWorldWidth() / (controlCategories.size());
         float tabHeight = lineHeight * 1.5f;
 
         for (int i = 0; i < controlCategories.size(); i++) {
@@ -207,7 +202,7 @@ public class OptionsScreen implements Screen {
                 //draw indicator
                 float spaceWidth =
                     regularFont.getData().spaceXadvance * viewport.getUnitsPerPixel() * 0.8f;
-                regularFont.draw(spriteBatch, "x", tabX - spaceWidth * 2,
+                regularFont.draw(spriteBatch, "▼", tabX - spaceWidth * 2,
                     tabY + lineHeight / 2);
             } else {
                 regularFont.setColor(BUTTON_COLOR);
@@ -232,33 +227,19 @@ public class OptionsScreen implements Screen {
             }
         }
 
-        int startIndex = 0;
-        int endIndex = 0;
-
-        //calculate start and end indices for selected category
-        for (int i = 0; i < selectedControlCategory; i++) {
-            // count controls in previous categories
-            int controlsCount = getControlCountForCategory(i);
-            startIndex += controlsCount;
-        }
-
-        // get number of controls in selected category
-        int controlsInCategory = getControlCountForCategory(selectedControlCategory);
-        endIndex = startIndex + controlsInCategory;
+        List<Integer> controlIndices = categoryControlIndices.get(selectedControlCategory);
+        float currentY = startY;
+        regularFont.getData().setScale(viewport.getUnitsPerPixel() * 0.8f);
 
         //draw controls for selected category
-        currentY = startY = lineHeight * 2;
-
-        regularFont.getData().setScale(viewport.getUnitsPerPixel() * 0.8f);
-        for (int i = startIndex; i < endIndex; i++) {
-            // draw key name
+        for (int index : controlIndices) {
             regularFont.setColor(Color.YELLOW);
-            regularFont.draw(spriteBatch, controlKeys.get(i), controlStartX, currentY);
+            regularFont.draw(spriteBatch, controlKeys.get(index), controlStartX, currentY);
 
-            // draw description
+            //draw description
             regularFont.setColor(BUTTON_COLOR);
-            regularFont.draw(spriteBatch, controlDescriptions.get(i), controlStartX +
-                viewport.getWorldWidth() * 0.15f, currentY);
+            regularFont.draw(spriteBatch, controlDescriptions.get(index),
+                controlStartX + viewport.getWorldWidth() * 0.2f, currentY);
 
             currentY -= lineHeight;
         }
@@ -269,7 +250,7 @@ public class OptionsScreen implements Screen {
             regularFont.getData().setScale(viewport.getUnitsPerPixel());
             glyphLayout.setText(regularFont, controlsBackButton.getText());
             float buttonX = controlsBackButton.getX() - glyphLayout.width / 2f;
-            float buttonY = controlsBackButton.getY() - glyphLayout.height / 2f;
+            float buttonY = controlsBackButton.getY() + glyphLayout.height / 2f;
 
             controlsBackButton.setBounds(new Rectangle(
                 controlsBackButton.getX() - BUTTON_WIDTH / 2f,
@@ -283,22 +264,30 @@ public class OptionsScreen implements Screen {
         regularFont.getData().setScale(viewport.getUnitsPerPixel());
     }
 
-    private int getControlCountForCategory(int categoryIndex) {
 
-        int totalControls = controlKeys.size();
-        int numCategories = controlCategories.size();
-
-        if (numCategories == 0) {
-            return 0;
+    public void addControlsForCategory(int categoryIndex, Map<String, String> controls) {
+        if (categoryIndex < 0 || categoryIndex >= controlCategories.size()) {
+            return;
         }
-        int baseControlsPerCategory = totalControls / numCategories;
-        int remainder = totalControls % numCategories;
-
-        if (categoryIndex < remainder) {
-            return baseControlsPerCategory + 1;
-        } else {
-            return baseControlsPerCategory;
+        while (categoryControlIndices.size() <= categoryIndex) {
+            categoryControlIndices.add(new ArrayList<>());
         }
+
+        // save current category
+        int oldSelectedCategory = selectedControlCategory;
+
+        //switch temporarily to target
+        selectedControlCategory = categoryIndex;
+
+        //add all controls for this category
+        for (Map.Entry<String, String> entry : controls.entrySet()) {
+            controlKeys.add(entry.getKey());
+            controlDescriptions.add(entry.getValue());
+
+            int newIndex = controlKeys.size() - 1;
+            categoryControlIndices.get(categoryIndex).add(newIndex);
+        }
+        selectedControlCategory = oldSelectedCategory;
     }
 
     public void selectControlCategory(int index) {

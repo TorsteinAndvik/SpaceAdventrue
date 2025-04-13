@@ -1,6 +1,5 @@
 package controller;
 
-import app.TestSpaceGame;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
@@ -35,12 +34,12 @@ public class OptionsScreenController extends GenericController {
             case Input.Keys.UP:
                 gameStateModel.setSelectedButtonIndex(
                     Math.max(0, gameStateModel.getSelectedButtonIndex() - 1));
-                soundManager.play(SoundEffect.MENU_SELECT, 0.4f);
+                soundManager.play(SoundEffect.MENU_SELECT, 0.2f);
                 return true;
             case Input.Keys.DOWN:
                 gameStateModel.setSelectedButtonIndex(
                     Math.min(buttons.size() - 1, gameStateModel.getSelectedButtonIndex() + 1));
-                soundManager.play(SoundEffect.MENU_SELECT, 0.4f);
+                soundManager.play(SoundEffect.MENU_SELECT, 0.2f);
                 return true;
             case Input.Keys.ENTER:
             case Input.Keys.SPACE:
@@ -95,8 +94,7 @@ public class OptionsScreenController extends GenericController {
     }
 
     public void activateButton(int buttonIndex) {
-        soundManager.play(SoundEffect.MENU_SELECT, 0.7f);
-        List<MenuButton> buttons = view.getOptionButtons();
+        soundManager.play(SoundEffect.MENU_SELECT, 0.2f);
 
         switch (buttonIndex) {
             case 0:
@@ -117,19 +115,20 @@ public class OptionsScreenController extends GenericController {
     private void pullUpControls() {
         view.showControlsScreen();
 
-        //add game controls
+        // add categories
+        view.addControlCategory("GAME CONTROLS");
+        view.addControlCategory("MENU CONTROLS");
+        view.addControlCategory("UPGRADE SCREEN");
+
+        //get control maps, one for each tab
         Map<String, String> spaceControls = GameControls.getSpaceScreenControls();
         Map<String, String> menuControls = GameControls.getMenuControls();
         Map<String, String> upgradeControls = GameControls.getUpgradeScreenControls();
 
-        view.addControlCategory("GAME CONTROLS");
-        spaceControls.forEach(view::addControlDescription);
-
-        view.addControlCategory("MENU CONTROLS");
-        menuControls.forEach(view::addControlDescription);
-
-        view.addControlCategory("Upgrade SCREEN");
-        upgradeControls.forEach(view::addControlDescription);
+        //add controls for each category
+        view.addControlsForCategory(0, spaceControls);
+        view.addControlsForCategory(1, menuControls);
+        view.addControlsForCategory(2, upgradeControls);
 
         // add back button
         view.addControlsBackButton("BACK", view::resetToOptionsMenu);
@@ -157,12 +156,10 @@ public class OptionsScreenController extends GenericController {
 
     private void returnToPreviousScreen() {
         GameState prevState = gameStateModel.getPreviousState();
-
-        System.out.println("Previous state: " + prevState);
         if (prevState == GameState.PLAYING) {
             game.setSpaceScreen();
         } else {
-            ((TestSpaceGame) game).setStartScreen();
+            game.setStartScreen();
         }
     }
 

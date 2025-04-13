@@ -1,14 +1,15 @@
 package model.utils;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class GameControls {
 
     // Maps of control keys to descriptions
-    private static final Map<String, String> SPACE_SCREEN_CONTROLS = new HashMap<>();
-    private static final Map<String, String> MENU_CONTROLS = new HashMap<>();
-    private static final Map<String, String> UPGRADE_SCREEN_CONTROLS = new HashMap<>();
+    // LinkedHashMap is a workaround to have list-like behaviour for key-value pairs
+    private static final Map<String, String> SPACE_SCREEN_CONTROLS = new LinkedHashMap<>();
+    private static final Map<String, String> MENU_CONTROLS = new LinkedHashMap<>();
+    private static final Map<String, String> UPGRADE_SCREEN_CONTROLS = new LinkedHashMap<>();
 
     static {
         SPACE_SCREEN_CONTROLS.put("W", "Accelerate forward");
@@ -33,14 +34,14 @@ public class GameControls {
     }
 
     public static Map<String, String> getSpaceScreenControls() {
-        return new HashMap<>(SPACE_SCREEN_CONTROLS);
+        return new LinkedHashMap<>(SPACE_SCREEN_CONTROLS);
     }
 
     public static Map<String, String> getMenuControls() {
-        return new HashMap<>(MENU_CONTROLS);
+        return new LinkedHashMap<>(MENU_CONTROLS);
     }
 
     public static Map<String, String> getUpgradeScreenControls() {
-        return new HashMap<>(UPGRADE_SCREEN_CONTROLS);
+        return new LinkedHashMap<>(UPGRADE_SCREEN_CONTROLS);
     }
 }
