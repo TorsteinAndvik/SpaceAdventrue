@@ -5,8 +5,10 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector3;
 import controller.audio.SoundEffect;
 import java.util.List;
+import java.util.Map;
 import model.GameStateModel;
 import model.constants.GameState;
+import model.utils.GameControls;
 import model.utils.MenuButton;
 import view.SpaceGame;
 import view.screens.OptionsScreen;
@@ -55,6 +57,19 @@ public class OptionsScreenController extends GenericController {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         Vector3 worldCoords = view.unprojectScreenCoords(screenX, screenY);
 
+        //if showing controls screen check if back button is clicked
+        if (view.isShowingControls()) {
+            MenuButton backButton = view.getControlsBackButton();
+            if (backButton != null && backButton.getBounds()
+                .contains(worldCoords.x, worldCoords.y)) {
+                if (view.getBackButtonAction() != null) {
+                    view.getBackButtonAction().run();
+                }
+                return true;
+            }
+            return false;
+        }
+
         //Check for button clicks
         List<MenuButton> buttons = view.getOptionButtons();
         for (int i = 0; i < buttons.size(); i++) {
@@ -85,6 +100,27 @@ public class OptionsScreenController extends GenericController {
                 returnToPreviousScreen();
                 break;
         }
+    }
+
+    private void pullUpControls() {
+        view.showControlsScreen();
+
+        //add game controls
+        Map<String, String> spaceControls = GameControls.getSpaceScreenControls();
+        Map<String, String> menuControls = GameControls.getMenuControls();
+        Map<String, String> upgradeControls = GameControls.getUpgradeScreenControls();
+
+        view.addControlCategory("GAME CONTROLS");
+        spaceControls.forEach(view::addControlDescription);
+
+        view.addControlCategory("MENU CONTROLS");
+        menuControls.forEach(view::addControlDescription);
+
+        view.addControlCategory("Upgrade SCREEN");
+        upgradeControls.forEach(view::addControlDescription);
+
+        // add back button
+        view.addControlsBackButton("BACK", view::resetToOptionsMenu);
     }
 
     private void toggleSound() {
