@@ -1,4 +1,4 @@
-package model.ShipComponents.Components;
+package model.utils;
 
 import model.utils.FloatPair;
 

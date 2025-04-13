@@ -1,6 +1,6 @@
 package model.SpaceCharacters.Ships;
 
-import model.ShipComponents.Components.ShipStructure;
+import model.ShipComponents.ShipStructure;
 import model.SpaceCharacters.CharacterType;
 import model.ai.Brain;
 import model.ai.NullBrain;
