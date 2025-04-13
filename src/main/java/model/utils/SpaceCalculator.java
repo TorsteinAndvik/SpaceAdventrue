@@ -9,6 +9,9 @@ import model.Globals.Collidable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Utility class with only static methods. Instantiation is not intended.
+ */
 public class SpaceCalculator {
 
     /**

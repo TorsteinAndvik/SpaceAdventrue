@@ -17,6 +17,11 @@ import com.badlogic.gdx.math.Vector3;
 public class SpaceCalculatorTest {
 
     @Test
+    public void classInitializationTest() {
+        new SpaceCalculatorTest(); // not intended, though this shouldn't throw any exceptions
+    }
+
+    @Test
     void cellPositionAdjacencyTest() {
         CellPosition a = new CellPosition(0, 0);
         CellPosition b = new CellPosition(1, 0);
