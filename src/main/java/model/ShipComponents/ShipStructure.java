@@ -195,7 +195,7 @@ public class ShipStructure implements ViewableShipStructure {
         Fuselage base = grid.get(pos);
 
         if (base.setUpgrade(upgrade)) {
-            // normalize(); //TODO: Is this needed? We normalize on screen swap anyways.
+            normalize();
             return true;
         }
         return false;

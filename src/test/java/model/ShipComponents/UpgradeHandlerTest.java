@@ -1,6 +1,7 @@
 package model.ShipComponents;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -13,7 +14,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class UpgradeHandlerTest {
-
 
     private UpgradeHandler upgradeHandler;
     private ShipStructure structure;
@@ -32,6 +32,8 @@ public class UpgradeHandlerTest {
     void testCanPlaceItem() {
 
         CellPosition cp = new CellPosition(2, 0).offset(1, 1);
+        assertFalse(upgradeHandler.canPlaceItem(cp, UpgradeType.FUSELAGE));
+        upgradeHandler.expand();
         assertTrue(upgradeHandler.canPlaceItem(cp, UpgradeType.FUSELAGE));
     }
 
@@ -39,7 +41,7 @@ public class UpgradeHandlerTest {
     void testPlaceItem() {
 
         MassProperties mp = structure.getMassProperties();
-
+        upgradeHandler.expand();
         CellPosition cp = new CellPosition(2, 0).offset(1, 1);
         assertTrue(upgradeHandler.placeItem(cp, UpgradeType.FUSELAGE));
 
@@ -48,6 +50,7 @@ public class UpgradeHandlerTest {
 
     @Test
     void testPlaceUpgrade() {
+        upgradeHandler.expand();
         CellPosition cp = new CellPosition(2, 0).offset(1, 1);
         assertTrue(upgradeHandler.placeItem(cp, UpgradeType.FUSELAGE));
         assertTrue(upgradeHandler.placeItem(cp, UpgradeType.THRUSTER));
