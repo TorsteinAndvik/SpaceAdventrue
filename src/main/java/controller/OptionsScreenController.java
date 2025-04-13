@@ -36,7 +36,7 @@ public class OptionsScreenController extends GenericController {
                 return true;
             case Input.Keys.DOWN:
                 gameStateModel.setSelectedButtonIndex(
-                    Math.max(0, gameStateModel.getSelectedButtonIndex() + 1));
+                    Math.min(buttons.size() - 1, gameStateModel.getSelectedButtonIndex() + 1));
                 soundManager.play(SoundEffect.MENU_SELECT, 0.4f);
                 return true;
             case Input.Keys.ENTER:
@@ -44,9 +44,14 @@ public class OptionsScreenController extends GenericController {
                 activateButton(gameStateModel.getSelectedButtonIndex());
                 return true;
             case Input.Keys.ESCAPE:
-            case Input.Keys.P:
                 returnToPreviousScreen();
                 return true;
+            case Input.Keys.P:
+                if (gameStateModel.getPreviousState() == GameState.PLAYING) {
+                    returnToPreviousScreen();
+                    return true;
+                }
+                return false;
         }
         return false;
     }
@@ -100,15 +105,13 @@ public class OptionsScreenController extends GenericController {
 
         //Update button text
         List<MenuButton> buttons = view.getOptionButtons();
-        MenuButton musicButton = buttons.get(0);
+        MenuButton musicButton = buttons.get(1);
         musicButton.setText("MUSIC: " + (musicManager.isMusicEnabled() ? "ON" : "OFF"));
     }
 
     private void returnToPreviousScreen() {
         GameState prevState = gameStateModel.getPreviousState();
-        if (prevState == GameState.START_GAME) {
-            ((TestSpaceGame) game).setStartScreen();
-        } else if (prevState == GameState.PLAYING) {
+        if (prevState == GameState.PLAYING) {
             game.setSpaceScreen();
         } else {
             ((TestSpaceGame) game).setStartScreen();

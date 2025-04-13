@@ -46,6 +46,7 @@ public class OptionsScreen implements Screen {
 
     private boolean menuInitialized = false;
     private float stateTime = 0f;
+    private float pulseTime = 0f;
     private final GlyphLayout glyphLayout;
 
     public OptionsScreen(TestSpaceGame game, GameStateModel gameStateModel) {
@@ -61,19 +62,34 @@ public class OptionsScreen implements Screen {
         this.glyphLayout = new GlyphLayout();
 
         this.controller = new OptionsScreenController(this, gameStateModel, game);
+
+        setupFonts();
     }
 
     private void setupMenu() {
         float worldHeight = viewport.getWorldHeight();
-        float worldCenterX = viewport.getWorldWidth();
+        float worldCenterX = viewport.getWorldWidth() / 2f;
 
         float startY = worldHeight * 0.5f;
         float spacing = BUTTON_HEIGHT + BUTTON_PADDING;
 
         optionButtons.clear();
-        optionButtons.add(new MenuButton("SOUNT: ON", worldCenterX, startY));
-        optionButtons.add(new MenuButton("MUSIC: ON", worldCenterX, startY = spacing));
+        optionButtons.add(
+            new MenuButton("SOUND: " + (game.getSoundManager().isSoundEnabled() ? "ON" : "OFF"),
+                worldCenterX, startY));
+        optionButtons.add(
+            new MenuButton("MUSIC: " + (game.getMusicManager().isMusicEnabled() ? "ON" : " OFF"),
+                worldCenterX, startY - spacing));
         optionButtons.add(new MenuButton("BACK", worldCenterX, startY - 2 * spacing));
+    }
+
+    private void setupFonts() {
+        titleFont.setUseIntegerPositions(false);
+        titleFont.getData().setScale(viewport.getUnitsPerPixel());
+
+        regularFont.setUseIntegerPositions(false);
+        regularFont.getData().setScale(viewport.getUnitsPerPixel());
+
     }
 
     @Override
@@ -81,14 +97,17 @@ public class OptionsScreen implements Screen {
         Gdx.input.setInputProcessor(controller);
         gameStateModel.changeState(GameState.OPTIONS);
         setupMenu();
+        menuInitialized = true;
     }
 
     @Override
     public void render(float delta) {
         if (!menuInitialized) {
             setupMenu();
+            menuInitialized = true;
         }
         stateTime += delta;
+        pulseTime += delta;
         ScreenUtils.clear(Color.BLACK);
 
         viewport.apply();
@@ -96,11 +115,13 @@ public class OptionsScreen implements Screen {
         spriteBatch.setProjectionMatrix(camera.combined);
         spriteBatch.begin();
 
-        titleFont.getData().setScale(viewport.getUnitsPerPixel() * 1.2f);
+        // draw title
+        float titlePulseScale = 1.0f + 0.05f * (float) Math.sin(pulseTime * 2.0f);
+        titleFont.getData().setScale(viewport.getUnitsPerPixel() * titlePulseScale);
 
         glyphLayout.setText(titleFont, SCREEN_TITLE);
-        float titleX = (viewport.getWorldWidth() - glyphLayout.width) / 2;
-        float titleY = (viewport.getWorldHeight() * 0.7f + glyphLayout.height) / 2;
+        float titleX = (viewport.getWorldWidth() - glyphLayout.width) / 2f;
+        float titleY = viewport.getWorldHeight() * 0.7f + glyphLayout.height / 2f;
 
         titleFont.setColor(TITLE_COLOR);
         titleFont.draw(spriteBatch, SCREEN_TITLE, titleX, titleY);
@@ -119,6 +140,7 @@ public class OptionsScreen implements Screen {
 
         for (int i = 0; i < optionButtons.size(); i++) {
             MenuButton button = optionButtons.get(i);
+
             if (i == gameStateModel.getSelectedButtonIndex()) {
                 float pulse = 1.0f + 0.1f * (float) Math.sin(stateTime * 5.0f);
                 regularFont.getData().setScale(viewport.getUnitsPerPixel() * pulse);
@@ -133,7 +155,7 @@ public class OptionsScreen implements Screen {
             glyphLayout.setText(regularFont, buttonText);
 
             float textX = button.getX() - glyphLayout.width / 2f;
-            float textY = button.getY() - glyphLayout.height / 2f;
+            float textY = button.getY() + glyphLayout.height / 2f;
 
             button.setBounds(new Rectangle(
                 button.getX() - BUTTON_WIDTH / 2f,
@@ -149,7 +171,20 @@ public class OptionsScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height, true);
-        setupMenu();
+        setupFonts();
+
+        // recalculate button positions
+        if (menuInitialized) {
+            float worldCenterX = viewport.getWorldWidth() / 2f;
+            float startY = viewport.getWorldHeight() * 0.5f;
+            float spacing = BUTTON_HEIGHT + BUTTON_PADDING;
+
+            for (int i = 0; i < optionButtons.size(); i++) {
+                MenuButton button = optionButtons.get(i);
+                button.setX(worldCenterX);
+                button.setY(startY - i * spacing);
+            }
+        }
     }
 
     @Override
