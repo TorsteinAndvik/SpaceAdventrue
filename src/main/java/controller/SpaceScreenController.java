@@ -56,10 +56,6 @@ public class SpaceScreenController extends GenericController implements AudioCal
                 game.setUpgradeScreen();
                 yield true;
             }
-            case Input.Keys.K -> {
-                model.spawnRandomShip();
-                yield true;
-            }
             default -> false;
         };
     }
