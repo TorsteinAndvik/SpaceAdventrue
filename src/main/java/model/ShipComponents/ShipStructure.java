@@ -1,4 +1,4 @@
-package model.ShipComponents.Components;
+package model.ShipComponents;
 
 import grid.CellPosition;
 import grid.Grid;
@@ -7,36 +7,31 @@ import grid.IGrid;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import model.ShipComponents.ShipConfig;
+import model.ShipComponents.Components.Fuselage;
+import model.ShipComponents.Components.Shield;
+import model.ShipComponents.Components.ShipUpgrade;
+import model.ShipComponents.Components.Thruster;
+import model.ShipComponents.Components.Turret;
 import model.ShipComponents.ShipConfig.ShipComponent;
-import model.ShipComponents.UpgradeType;
 import model.utils.FloatPair;
+import model.utils.MassProperties;
 import model.utils.SpaceCalculator;
 
 public class ShipStructure implements ViewableShipStructure {
 
     private IGrid<Fuselage> grid;
     private float mass;
+    private float radius;
     private FloatPair centerOfMass;
+    private boolean gridExpanded;
 
     public ShipStructure(int width, int height) {
-        this(new Grid<>(height, width), 0f, new FloatPair(0f, 0f));
-
-    }
-
-    public ShipStructure(IGrid<Fuselage> grid, float mass, FloatPair centerOfMass) {
-        this.grid = grid;
-        this.mass = mass;
-        this.centerOfMass = centerOfMass;
-
+        this(new Grid<>(height, width));
     }
 
     public ShipStructure(IGrid<Fuselage> grid) {
-        this(grid.cols(), grid.rows());
-        MassProperties massProperties = getMassProperties(grid);
-        this.mass = massProperties.mass();
-        this.centerOfMass = massProperties.centerOfMass();
+        this.grid = grid;
+        normalize();
     }
 
     public ShipStructure(ShipConfig shipConfig) {
@@ -51,84 +46,18 @@ public class ShipStructure implements ViewableShipStructure {
                     case TURRET -> new Turret();
                     case SHIELD -> new Shield();
                     case THRUSTER -> new Thruster();
+                    case FUSELAGE -> null;
                 };
                 fuselage.setUpgrade(upgradeType);
             }
 
-            set(component.getPosition(), fuselage);
+            setFuselage(component.getPosition(), fuselage);
         }
+        normalize();
     }
 
     /**
-     * Sets the fuselage at the given position if it is empty and the position is on
-     * the grid. Updates ship's mass and center of mass accordingly.
-     *
-     * @param pos      the <code>CellPosition</code> of the fuselage to be added
-     * @param fuselage the <code>Fuselage</code> to be added
-     * @return true if the fuselage was successfully added (i.e. <code>pos</code> is
-     *         valid and the position was empty), false otherwise
-     */
-    public boolean set(CellPosition pos, Fuselage fuselage) {
-        try {
-            if (grid.get(pos) != null) {
-                return false;
-            }
-
-            grid.set(pos, fuselage);
-
-            updateMassAndCenterOfMass(pos, fuselage.getMass());
-
-            return true;
-
-        } catch (IndexOutOfBoundsException e) {
-            return false;
-        }
-    }
-
-    /**
-     * Updates the ship structure by adding a fuselage at the specified position.
-     * Expands the grid temporarily to ensure sufficient space for placement.
-     *
-     * @param pos The position where the fuselage should be placed.
-     * @return {@code true} if the fuselage was successfully placed, {@code false} if placement was
-     *         not possible.
-     */
-    public boolean updateWithFuselage(CellPosition pos) {
-
-        // Local grid must match the grid from the updateScreen, which is expanded by
-        // 2x2
-        grid = getExpandedGrid(grid, 2, 2, true);
-
-        if (!canBuildAt(pos, grid)) {
-            grid = Grid.shrinkGridToFit(grid);
-            return false;
-        }
-
-        grid.set(pos, new Fuselage());
-        grid = Grid.shrinkGridToFit(grid);
-
-        MassProperties massProp = ShipStructure.getMassProperties(grid);
-        mass = massProp.mass();
-        centerOfMass = massProp.centerOfMass();
-
-        return true;
-    }
-
-    private void updateMassAndCenterOfMass(CellPosition pos, float mass) {
-        float oldMass = this.mass;
-        float newMass = oldMass + mass;
-
-        float cmX = (oldMass * this.centerOfMass.x() + mass * pos.col()) / newMass;
-        float cmY = (oldMass * this.centerOfMass.y() + mass * pos.row()) / newMass;
-
-        FloatPair newCM = new FloatPair(cmX, cmY);
-
-        this.mass = newMass;
-        this.centerOfMass = newCM;
-    }
-
-    /**
-     * Computes the total mass and center of mass of a given {@link ShipStructure}.
+     * Computes the total mass and center of mass of the {@link ShipStructure}.
      * <p>
      * The method iterates over all {@link Fuselage} components in the ship
      * structure,
@@ -136,13 +65,11 @@ public class ShipStructure implements ViewableShipStructure {
      * center of mass.
      * </p>
      *
-     * @param shipStructure The {@link ShipStructure} whose mass properties are to
-     *                      be calculated.
      * @return A {@link MassProperties} object containing the total mass and center
      *         of mass.
      */
-    public static MassProperties getMassProperties(ShipStructure shipStructure) {
-        return getMassProperties(shipStructure.grid);
+    public MassProperties getMassProperties() {
+        return getMassProperties(grid);
     }
 
     /**
@@ -159,7 +86,7 @@ public class ShipStructure implements ViewableShipStructure {
      * @return A {@link MassProperties} object containing the total mass and center
      *         of mass.
      */
-    private static MassProperties getMassProperties(IGrid<Fuselage> shipGrid) {
+    public MassProperties getMassProperties(IGrid<Fuselage> shipGrid) {
         float prevMass;
         float newMass = 0;
         FloatPair centerOfMass = new FloatPair(0f, 0f);
@@ -184,20 +111,6 @@ public class ShipStructure implements ViewableShipStructure {
     }
 
     /**
-     * Sets an empty <code>Fuselage</code> at the given position if it is empty and
-     * the position is on the grid.
-     * Updates ship's mass and center of mass accordingly.
-     *
-     * @param pos the <code>CellPosition</code> to add an empty
-     *            <code>Fuselage</code> to
-     * @return true if the fuselage was successfully added (i.e. <code>pos</code> is
-     *         valid and the position was empty), false otherwise
-     */
-    public boolean set(CellPosition pos) {
-        return set(pos, new Fuselage());
-    }
-
-    /**
      * Adds a <code>ShipUpgrade</code> to the <code>Fuselage</code> at the given
      * <code>CellPosition </code>, if the position is valid and holds an empty
      * <code>Fuselage</code>. Updates ship's mass and center of mass accordingly.
@@ -213,49 +126,68 @@ public class ShipStructure implements ViewableShipStructure {
         if (upgrade == null || !grid.positionIsOnGrid(pos)) {
             return false;
         }
+        return setUpgrade(pos, upgrade);
+    }
 
-        Fuselage fuselage = grid.get(pos);
-        if (fuselage == null) {
+
+    private boolean setFuselage(CellPosition pos, Fuselage fuselage) {
+        if (grid.isEmpty() || canBuildAt(pos)) {
+            grid.set(pos, fuselage);
+            normalize();
+            return true;
+        }
+        return false;
+    }
+
+    private boolean setUpgrade(CellPosition pos, ShipUpgrade upgrade) {
+
+        if (upgrade.getType() == UpgradeType.FUSELAGE) {
+            return setFuselage(pos, (Fuselage) upgrade);
+        }
+
+        if (!grid.positionIsOnGrid(pos) || grid.isEmptyAt(pos)) {
             return false;
         }
 
-        if (fuselage.setUpgrade(upgrade)) {
-            updateMassAndCenterOfMass(pos, upgrade.getMass());
+        Fuselage base = grid.get(pos);
+
+        if (base.setUpgrade(upgrade)) {
+            normalize();
             return true;
         }
         return false;
     }
 
     /**
-     * Expands the grid by the given number of rows and columns.
-     * <p>
-     * If the inputs are negative, nothing happens.
-     * <p>
-     * TODO: needs a more detailed javadoc
+     * Expands the given grid by adding rows and columns, either centering the
+     * existing content or shifting it to the bottom-right.
      *
-     * @param addedCols
-     * @param addedRows
-     * @param center
+     * <p>
+     * If {@code addedRows} or {@code addedCols} are negative, or both are zero, the
+     * original grid is returned unchanged.
+     * </p>
+     *
+     * @param addedRows The number of rows to add.
+     * @param addedCols The number of columns to add.
+     * @param center    If {@code true}, shifts the old grid content to keep it
+     *                  centered in the
+     *                  expanded grid. If {@code false}, shifts the content towards
+     *                  the
+     *                  bottom-right.
      */
-    public ShipStructure expandGrid(int addedRows, int addedCols, boolean center) {
-        grid = getExpandedGrid(grid.copy(), addedRows, addedCols, center);
-
-        MassProperties massProperties = getMassProperties(this);
-        this.mass = massProperties.mass();
-        this.centerOfMass = massProperties.centerOfMass();
-
-        return this;
+    public void expandGrid(int addedRows, int addedCols, boolean center) {
+        gridExpanded = true;
+        grid = getExpandedGrid(grid, addedRows, addedCols, center);
+        gridExpanded = true;
     }
 
     /**
      * Expands the given grid by adding rows and columns, either centering the
-     * existing content or
-     * shifting it to the bottom-right.
+     * existing content or shifting it to the bottom-right.
      *
      * <p>
      * If {@code addedRows} or {@code addedCols} are negative, or both are zero, the
-     * original
-     * grid is returned unchanged.
+     * original grid is returned unchanged.
      * </p>
      *
      * @param grid      The original grid to expand.
@@ -269,7 +201,7 @@ public class ShipStructure implements ViewableShipStructure {
      * @return A new {@code IGrid<Fuselage>} instance with the expanded dimensions,
      *         containing the original grid’s elements repositioned accordingly.
      */
-    public static IGrid<Fuselage> getExpandedGrid(IGrid<Fuselage> grid, int addedRows,
+    private IGrid<Fuselage> getExpandedGrid(IGrid<Fuselage> grid, int addedRows,
             int addedCols, boolean center) {
         if (addedRows < 0 || addedCols < 0 || (addedRows == 0 && addedCols == 0)) {
             return grid;
@@ -366,7 +298,7 @@ public class ShipStructure implements ViewableShipStructure {
     }
 
     @Override
-    public IGrid<Fuselage> getGrid() {
+    public IGrid<Fuselage> getGridCopy() {
         return this.grid.copy();
     }
 
@@ -386,9 +318,14 @@ public class ShipStructure implements ViewableShipStructure {
      *         {@code false} otherwise.
      */
     public static boolean isValidFuselagePosition(IGrid<Fuselage> structureGrid, CellPosition pos) {
-        if (structureGrid.positionIsOnGrid(pos) && !structureGrid.isEmptyAt(pos)) {
+        if (!structureGrid.positionIsOnGrid(pos)) {
             return false;
         }
+
+        if (structureGrid.isEmpty()) {
+            return true;
+        }
+
         for (CellPosition cp : SpaceCalculator.getOrthogonalNeighbours(pos)) {
 
             if (!structureGrid.positionIsOnGrid(cp)) {
@@ -419,8 +356,11 @@ public class ShipStructure implements ViewableShipStructure {
     }
 
     @Override
-    public boolean isValidUpgradePosition(CellPosition pos) {
-        return isValidFuselagePosition(grid, pos);
+    public boolean isValidBuildPosition(CellPosition pos, ShipUpgrade upgrade) {
+        if (upgrade.getType() == UpgradeType.FUSELAGE) {
+            return isValidFuselagePosition(pos);
+        }
+        return isValidUpgradePosition(grid, pos);
     }
 
     @Override
@@ -431,7 +371,8 @@ public class ShipStructure implements ViewableShipStructure {
 
     @Override
     public boolean canBuildAt(CellPosition pos) {
-        return canBuildAt(pos, getExpandedGrid(grid, 2, 2, true));
+
+        return canBuildAt(pos, grid);
     }
 
     /**
@@ -450,8 +391,17 @@ public class ShipStructure implements ViewableShipStructure {
         if (hasFuselage(pos, grid)) {
             return false;
         }
-        return isValidFuselagePosition(grid, pos);
+        return isValidFuselagePosition(grid, pos) || grid.isEmpty();
 
+    }
+
+    private void shrinkToFit() {
+        grid = Grid.shrinkGridToFit(grid);
+        gridExpanded = false;
+    }
+
+    public boolean isGridExpanded() {
+        return gridExpanded;
     }
 
     /**
@@ -467,5 +417,38 @@ public class ShipStructure implements ViewableShipStructure {
             }
         }
         return resourceValue;
+    }
+
+    @Override
+    public float getRadius() {
+        return radius;
+    }
+
+
+    /**
+     * Normalizes the structure of the ship grid by performing two key operations:
+     * If the grid is expanded beyond what is necessary, it shrinks the grid to fit the placed components.
+     * Recalculates the radius, total mass and the center of mass of the ship based on current components.
+     * <p>
+     * This method ensures that the structural representation of the ship is both
+     * space-efficient and physically accurate.
+     */
+    public void normalize() {
+        if (isGridExpanded()) {
+            shrinkToFit();
+        }
+
+        recalculateMassAndCenterOfMass();
+        recalculateRadius();
+    }
+
+    private void recalculateRadius() {
+        radius = SpaceCalculator.distance(getWidth() / 2f, getHeight() / 2f);
+    }
+
+    private void recalculateMassAndCenterOfMass() {
+        MassProperties mp = getMassProperties();
+        mass = mp.mass();
+        centerOfMass = mp.centerOfMass();
     }
 }

@@ -4,10 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 import grid.CellPosition;
-import grid.GridCell;
-import model.SpaceGameModel;
 import model.UpgradeScreenModel;
-import model.ShipComponents.Components.Fuselage;
 import view.SpaceGame;
 import view.screens.UpgradeScreen;
 
@@ -15,21 +12,14 @@ public class UpgradeScreenController extends GenericController {
 
     private final UpgradeScreen view;
     private final UpgradeScreenModel upgradeModel;
-    private final SpaceGameModel spaceModel;
+
     private final SpaceGame game;
 
-    public UpgradeScreenController(UpgradeScreen view, UpgradeScreenModel upgradeModel,
-            SpaceGameModel spaceModel,
-            SpaceGame game) {
+    public UpgradeScreenController(UpgradeScreen view, UpgradeScreenModel upgradeModel, SpaceGame game) {
         super(); // GenericController gives us touchpos
         this.view = view;
         this.upgradeModel = upgradeModel;
-        this.spaceModel = spaceModel;
         this.game = game;
-    }
-
-    public Iterable<GridCell<Fuselage>> getPlayerShipParts() {
-        return spaceModel.getPlayer().getShipStructure();
     }
 
     @Override
@@ -53,6 +43,7 @@ public class UpgradeScreenController extends GenericController {
                 yield true;
             }
             case Input.Keys.ESCAPE -> {
+                upgradeModel.exitUpgradeHandler();
                 game.setSpaceScreen();
                 yield true;
             }

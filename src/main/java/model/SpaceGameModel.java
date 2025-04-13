@@ -28,7 +28,6 @@ import model.SpaceCharacters.Ships.EnemyShip;
 import model.SpaceCharacters.Ships.Player;
 import model.SpaceCharacters.SpaceBody;
 import model.SpaceCharacters.Ships.SpaceShip;
-import model.SpaceCharacters.Ships.ViewablePlayer;
 import model.ai.LerpBrain;
 import model.constants.PhysicsParameters;
 import model.utils.FloatPair;
@@ -475,7 +474,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     }
 
     @Override
-    public ViewablePlayer getPlayer() {
+    public Player getPlayer() {
         return player;
     }
 

@@ -2,8 +2,8 @@ package model.ShipComponents.Components;
 
 import grid.CellPosition;
 import grid.GridCell;
-import grid.IGrid;
 import model.ShipComponents.ShipConfig;
+import model.ShipComponents.ShipStructure;
 import model.ShipComponents.UpgradeType;
 import model.SpaceCharacters.Ships.Player;
 import model.SpaceCharacters.Ships.SpaceShip;
@@ -37,7 +37,7 @@ class ShipStructureTest {
         upgrade.level = 1;
 
         ShipConfig.ShipComponent component2 = new ShipConfig.ShipComponent();
-        component2.x = 2;
+        component2.x = 1;
         component2.y = 2;
         component2.upgrade = upgrade;
 
@@ -53,32 +53,13 @@ class ShipStructureTest {
     void testInitializationWithDimensions() {
         ShipStructure structure = new ShipStructure(10, 10);
         CellPosition cellPosition = new CellPosition(0, 0);
-        assertTrue(structure.set(cellPosition));
+        assertTrue(structure.addUpgrade(cellPosition, new Fuselage()));
     }
 
-    @Test
-    void testSetFuselage() {
-        CellPosition cellPosition = new CellPosition(0, 0);
-        assertTrue(shipStructure.set(cellPosition));
-        assertFalse(shipStructure.set(cellPosition)); // we shouldn't be allowed to set twice
-
-        int occupiedX = 1;
-        int occupiedY = 1;
-        CellPosition occupied = new CellPosition(occupiedX, occupiedY);
-        assertFalse(shipStructure.set(occupied));
-    }
-
-    @Test
-    void testSetFuselageWithUpgrade() {
-        CellPosition cellPosition = new CellPosition(0, 1);
-        assertTrue(shipStructure.set(cellPosition, new Fuselage(new Shield())));
-        assertFalse(shipStructure.set(cellPosition, new Fuselage(new Turret())));
-    }
 
     @Test
     void testAddUpgrade() {
         CellPosition cellPosition = new CellPosition(1, 1);
-        shipStructure.set(cellPosition);
         assertTrue(shipStructure.addUpgrade(cellPosition, new Shield()));
         assertFalse(shipStructure.addUpgrade(new CellPosition(5, 5),
                 new Turret())); // this is an invalid position.
@@ -94,7 +75,7 @@ class ShipStructureTest {
             Fuselage fuselage = cell.value();
             if (pos.equals(new CellPosition(1, 1))) {
                 assertNull(fuselage.getUpgrade());
-            } else if (pos.equals(new CellPosition(2, 2))) {
+            } else if (pos.equals(new CellPosition(2, 1))) {
                 assertNotNull(fuselage.getUpgrade());
                 assertEquals(UpgradeType.SHIELD, fuselage.getUpgrade().getType());
             }
@@ -104,14 +85,14 @@ class ShipStructureTest {
     @Test
     void testBoundaryConditions() {
         CellPosition outOfBounds = new CellPosition(11, 11);
-        assertFalse(shipStructure.set(outOfBounds));
+        assertFalse(shipStructure.addUpgrade(outOfBounds, new Fuselage()));
         assertFalse(shipStructure.addUpgrade(outOfBounds, new Shield()));
     }
 
     @Test
     void testDifferentUpgrades() {
-        CellPosition cellPosition = new CellPosition(3, 3);
-        shipStructure.set(cellPosition);
+        CellPosition cellPosition = new CellPosition(3, 1);
+        shipStructure.addUpgrade(cellPosition, new Fuselage());
         assertTrue(shipStructure.addUpgrade(cellPosition, new Thruster()));
     }
 
@@ -130,16 +111,17 @@ class ShipStructureTest {
         assertEquals(startMass, shipStructure.getMass());
 
         float upgradeAddedMass = startMass + upgradeMass;
-        shipStructure.addUpgrade(new CellPosition(1, 1), new Thruster());
+        assertTrue(shipStructure.addUpgrade(new CellPosition(1, 1), new Thruster()));
         assertEquals(upgradeAddedMass, shipStructure.getMass());
 
         float emptyFuselageAddedMass = upgradeAddedMass + fuselageMass;
-        shipStructure.set(new CellPosition(1, 2));
+        System.out.println(shipStructure.getGridCopy());
+        assertTrue(shipStructure.addUpgrade(new CellPosition(0, 1), new Fuselage()));
         assertEquals(emptyFuselageAddedMass, shipStructure.getMass());
 
-        float fuselageWithUgradeAddedMass = emptyFuselageAddedMass + fuselageMass + upgradeMass;
-        shipStructure.set(new CellPosition(2, 1), new Fuselage(new Shield()));
-        assertEquals(fuselageWithUgradeAddedMass, shipStructure.getMass());
+        float fuselageWithUpgradeAddedMass = emptyFuselageAddedMass + fuselageMass + upgradeMass;
+        assertTrue(shipStructure.addUpgrade(new CellPosition(3, 1), new Fuselage(new Shield())));
+        assertEquals(fuselageWithUpgradeAddedMass, shipStructure.getMass());
     }
 
     @Test
@@ -147,47 +129,67 @@ class ShipStructureTest {
         float fuselageMass = PhysicsParameters.fuselageMass;
         float upgradeMass = PhysicsParameters.shipUpgradeMass;
 
-        float startMass = 2f * fuselageMass + upgradeMass;
-        FloatPair startCM = new FloatPair(
-                (1 * fuselageMass + 2 * (fuselageMass + upgradeMass)) / startMass,
-                (1 * fuselageMass + 2 * (fuselageMass + upgradeMass)) / startMass);
+        // Simulate the two first fuselage placements
+        float oldMass = 0;
+        float currentMass = fuselageMass;
+        float newMass = oldMass + currentMass;
+        CellPosition pos = new CellPosition(1, 1);
+
+        FloatPair startCM = new FloatPair(0, 0);
+        startCM = new FloatPair(
+                ((oldMass * startCM.x()) + currentMass * pos.col()) / newMass,
+                ((oldMass * startCM.y()) + currentMass * pos.row()) / newMass);
+
+        oldMass = newMass;
+        currentMass = fuselageMass + upgradeMass;
+        newMass = oldMass + currentMass;
+        pos = new CellPosition(2, 1);
+
+        startCM = new FloatPair(
+                ((oldMass * startCM.x()) + currentMass * pos.col()) / newMass,
+                ((oldMass * startCM.y()) + currentMass * pos.row()) / newMass);
 
         assertEquals(startCM, shipStructure.getCenterOfMass());
         assertEquals(startCM,
-                ShipStructure.getMassProperties(shipStructure).centerOfMass());
+                shipStructure.getMassProperties().centerOfMass());
 
-        float upgradeAddedMass = startMass + upgradeMass;
-        shipStructure.addUpgrade(new CellPosition(1, 1), new Thruster());
+        pos = new CellPosition(1, 1);
+        assertTrue(shipStructure.addUpgrade(pos, new Thruster()));
+
+        oldMass = newMass;
+        currentMass = upgradeMass;
+        newMass = oldMass + currentMass;
         FloatPair upgradeAddedCM = new FloatPair(
-                (1 * (fuselageMass + upgradeMass) + 2 * (fuselageMass + upgradeMass))
-                        / upgradeAddedMass,
-                (1 * (fuselageMass + upgradeMass) + 2 * (fuselageMass + upgradeMass))
-                        / upgradeAddedMass);
+                ((oldMass * startCM.x()) + currentMass * pos.col()) / newMass,
+                ((oldMass * startCM.y()) + currentMass * pos.row()) / newMass);
         assertEquals(upgradeAddedCM, shipStructure.getCenterOfMass());
-        assertEquals(upgradeAddedCM,
-                ShipStructure.getMassProperties(shipStructure).centerOfMass());
+        assertEquals(upgradeAddedCM, shipStructure.getMassProperties().centerOfMass());
 
-        float emptyFuselageAddedMass = upgradeAddedMass + fuselageMass;
-        shipStructure.set(new CellPosition(1, 2));
+        oldMass = newMass;
+        currentMass = fuselageMass;
+        newMass = oldMass + currentMass;
+        pos = new CellPosition(1, 2);
+        assertTrue(shipStructure.addUpgrade(pos, new Fuselage()));
+
         FloatPair emptyFuselageAddedCM = new FloatPair(
-                (1 * (fuselageMass + upgradeMass) + 2 * (2 * fuselageMass + upgradeMass))
-                        / emptyFuselageAddedMass,
-                (1 * (2 * fuselageMass + upgradeMass) + 2 * (fuselageMass + upgradeMass))
-                        / emptyFuselageAddedMass);
-        assertEquals(emptyFuselageAddedCM, shipStructure.getCenterOfMass());
-        assertEquals(emptyFuselageAddedCM,
-                ShipStructure.getMassProperties(shipStructure).centerOfMass());
+                ((oldMass * upgradeAddedCM.x()) + currentMass * pos.col()) / newMass,
+                ((oldMass * upgradeAddedCM.y()) + currentMass * pos.row()) / newMass);
 
-        float fuselageWithUgradeAddedMass = emptyFuselageAddedMass + fuselageMass + upgradeMass;
-        shipStructure.set(new CellPosition(2, 1), new Fuselage(new Shield()));
-        FloatPair fuselageWithUgradeAddedCM = new FloatPair(
-                (1 * (2 * fuselageMass + 2 * upgradeMass) + 2 * (2 * fuselageMass + upgradeMass))
-                        / fuselageWithUgradeAddedMass,
-                (1 * (2 * fuselageMass + upgradeMass) + 2 * (2 * fuselageMass + 2 * upgradeMass))
-                        / fuselageWithUgradeAddedMass);
-        assertEquals(fuselageWithUgradeAddedCM, shipStructure.getCenterOfMass());
-        assertEquals(fuselageWithUgradeAddedCM,
-                ShipStructure.getMassProperties(shipStructure).centerOfMass());
+        assertEquals(emptyFuselageAddedCM, shipStructure.getCenterOfMass());
+        assertEquals(emptyFuselageAddedCM, shipStructure.getMassProperties().centerOfMass());
+
+        oldMass = newMass;
+        currentMass = fuselageMass + upgradeMass;
+        newMass = oldMass + currentMass;
+        pos = new CellPosition(3, 1);
+        System.out.println(shipStructure.getGridCopy());
+        assertTrue(shipStructure.addUpgrade(pos, new Fuselage(new Shield())));
+        FloatPair fuselageWithUpgradeAddedCM = new FloatPair(
+                ((oldMass * emptyFuselageAddedCM.x()) + currentMass * pos.col()) / newMass,
+                ((oldMass * emptyFuselageAddedCM.y()) + currentMass * pos.row()) / newMass);
+
+        assertEquals(fuselageWithUpgradeAddedCM, shipStructure.getCenterOfMass());
+        assertEquals(fuselageWithUpgradeAddedCM, shipStructure.getMassProperties().centerOfMass());
 
     }
 
@@ -195,19 +197,19 @@ class ShipStructureTest {
     void ExpandStructureGridCenteredTest() {
 
         ShipStructure ship = new ShipStructure(1, 2);
-        ship.set(new CellPosition(0, 0), new Fuselage(new Thruster()));
-        ship.set(new CellPosition(1, 0), new Fuselage(new Turret()));
+        ship.addUpgrade(new CellPosition(0, 0), new Fuselage(new Thruster()));
+        ship.addUpgrade(new CellPosition(1, 0), new Fuselage(new Turret()));
 
         assertTrue(ship.hasFuselage(new CellPosition(0, 0)));
         assertTrue(ship.hasFuselage(new CellPosition(1, 0)));
 
         ship.expandGrid(2, 2, true);
-
         assertFalse(ship.hasFuselage(new CellPosition(0, 0)));
         assertFalse(ship.hasFuselage(new CellPosition(1, 0)));
 
         assertTrue(ship.hasFuselage(new CellPosition(1, 1)));
         assertTrue(ship.hasFuselage(new CellPosition(2, 1)));
+        System.out.println(ship.getGridCopy());
 
     }
 
@@ -215,8 +217,8 @@ class ShipStructureTest {
     void ExpandStructureGridTest() {
 
         ShipStructure ship = new ShipStructure(1, 2);
-        ship.set(new CellPosition(0, 0), new Fuselage(new Thruster()));
-        ship.set(new CellPosition(1, 0), new Fuselage(new Turret()));
+        ship.addUpgrade(new CellPosition(0, 0), new Fuselage(new Thruster()));
+        ship.addUpgrade(new CellPosition(1, 0), new Fuselage(new Turret()));
 
         assertTrue(ship.hasFuselage(new CellPosition(0, 0)));
         assertTrue(ship.hasFuselage(new CellPosition(1, 0)));
@@ -233,8 +235,9 @@ class ShipStructureTest {
     @Test
     void canBuildAtTest() {
         ShipStructure structure = new ShipStructure(1, 2);
-        structure.set(new CellPosition(0, 0), new Fuselage(new Thruster()));
-        structure.set(new CellPosition(1, 0), new Fuselage(new Turret()));
+        structure.addUpgrade(new CellPosition(0, 0), new Fuselage(new Thruster()));
+        structure.addUpgrade(new CellPosition(1, 0), new Fuselage(new Turret()));
+        structure.expandGrid(2, 2, true);
 
         CellPosition outsideGridPos = new CellPosition(8, 0);
         CellPosition alreadyTakenPos = new CellPosition(1, 1);
@@ -254,21 +257,17 @@ class ShipStructureTest {
     void expandShipTopTest() {
         SpaceShip ship = new Player(new ShipStructure(1, 2), "name", "description", 100, 0, 0);
         ShipStructure structure = ship.getShipStructure();
-        structure.set(new CellPosition(0, 0), new Fuselage());
-        structure.set(new CellPosition(1, 0), new Fuselage());
+        structure.addUpgrade(new CellPosition(0, 0), new Fuselage());
+        structure.addUpgrade(new CellPosition(1, 0), new Fuselage());
+        structure.expandGrid(2, 2, true);
 
-        IGrid<Fuselage> buildGrid = ShipStructure.getExpandedGrid(structure.getGrid(), 2, 2, true);
+        CellPosition posAbove = new CellPosition(3, 1);
 
-        // Offset position due to expanded grid in updateScreen
-        CellPosition posAbove = new CellPosition(2, 0).offset(1, 1);
+        assertTrue(structure.isOnGrid(posAbove));
+        assertTrue(structure.canBuildAt(posAbove));
+        assertTrue(structure.addUpgrade(posAbove, new Fuselage()));
 
-        assertEquals(1, structure.getWidth());
-        assertEquals(2, structure.getHeight());
-
-        assertTrue(buildGrid.positionIsOnGrid(posAbove));
-        assertTrue(buildGrid.isEmptyAt(posAbove));
-        assertTrue(structure.updateWithFuselage(posAbove));
-
+        structure.normalize();
         assertEquals(1, structure.getWidth());
         assertEquals(3, structure.getHeight());
 
@@ -278,21 +277,17 @@ class ShipStructureTest {
     void expandShipBottomTest() {
         SpaceShip ship = new Player(new ShipStructure(1, 2), "name", "description", 100, 0, 0);
         ShipStructure structure = ship.getShipStructure();
-        structure.set(new CellPosition(0, 0), new Fuselage());
-        structure.set(new CellPosition(1, 0), new Fuselage());
+        structure.addUpgrade(new CellPosition(0, 0), new Fuselage());
+        structure.addUpgrade(new CellPosition(1, 0), new Fuselage());
 
-        IGrid<Fuselage> buildGrid = ShipStructure.getExpandedGrid(structure.getGrid(), 2, 2, true);
+        structure.expandGrid(2, 2, true);
+        CellPosition posBelow = new CellPosition(0, 1);
 
-        // Offset position due to expanded grid in updateScreen
-        CellPosition posBelow = new CellPosition(0, 0).offset(0, 1);
+        assertTrue(structure.isOnGrid(posBelow));
+        assertTrue(structure.canBuildAt(posBelow));
+        assertTrue(structure.addUpgrade(posBelow, new Fuselage()));
 
-        assertEquals(1, structure.getWidth());
-        assertEquals(2, structure.getHeight());
-
-        assertTrue(buildGrid.positionIsOnGrid(posBelow));
-        assertTrue(buildGrid.isEmptyAt(posBelow));
-        assertTrue(structure.updateWithFuselage(posBelow));
-
+        structure.normalize();
         assertEquals(1, structure.getWidth());
         assertEquals(3, structure.getHeight());
     }
@@ -301,20 +296,23 @@ class ShipStructureTest {
     void expandShipLeftTest() {
         SpaceShip ship = new Player(new ShipStructure(1, 2), "name", "description", 100, 0, 0);
         ShipStructure structure = ship.getShipStructure();
-        structure.set(new CellPosition(0, 0), new Fuselage());
-        structure.set(new CellPosition(1, 0), new Fuselage());
 
-        IGrid<Fuselage> buildGrid = ShipStructure.getExpandedGrid(structure.getGrid(), 2, 2, true);
+        structure.addUpgrade(new CellPosition(0, 0), new Fuselage());
+        structure.addUpgrade(new CellPosition(1, 0), new Fuselage());
+        structure.expandGrid(2, 2, true);
+//        IGrid<Fuselage> buildGrid = ShipStructure.getExpandedGrid(structure.getGridCopy(), 2, 2, true);
 
         // Offset position due to expanded grid in updateScreen
         CellPosition posLeft = new CellPosition(1, 0).offset(1, 0);
 
-        assertEquals(1, structure.getWidth());
-        assertEquals(2, structure.getHeight());
+        assertEquals(3, structure.getWidth());
+        assertEquals(4, structure.getHeight());
 
-        assertTrue(buildGrid.positionIsOnGrid(posLeft));
-        assertTrue(buildGrid.isEmptyAt(posLeft));
-        assertTrue(structure.updateWithFuselage(posLeft));
+        assertTrue(structure.getGridCopy().positionIsOnGrid(posLeft));
+        assertTrue(structure.getGridCopy().isEmptyAt(posLeft));
+        assertTrue(structure.addUpgrade(posLeft, new Fuselage()));
+
+        structure.normalize();
 
         assertEquals(2, structure.getWidth());
         assertEquals(2, structure.getHeight());
@@ -324,22 +322,44 @@ class ShipStructureTest {
     void expandShipRightTest() {
         SpaceShip ship = new Player(new ShipStructure(1, 2), "name", "description", 100, 0, 0);
         ShipStructure structure = ship.getShipStructure();
-        structure.set(new CellPosition(0, 0), new Fuselage());
-        structure.set(new CellPosition(1, 0), new Fuselage());
+        structure.addUpgrade(new CellPosition(0, 0), new Fuselage());
+        structure.addUpgrade(new CellPosition(1, 0), new Fuselage());
 
-        IGrid<Fuselage> buildGrid = ShipStructure.getExpandedGrid(structure.getGrid(), 2, 2, true);
+        structure.expandGrid(2, 2, true);
 
         // Offset position due to expanded grid in updateScreen
         CellPosition posRight = new CellPosition(1, 1).offset(1, 1);
 
-        assertEquals(1, structure.getWidth());
-        assertEquals(2, structure.getHeight());
+        assertTrue(structure.getGridCopy().positionIsOnGrid(posRight));
+        assertTrue(structure.getGridCopy().isEmptyAt(posRight));
+        assertTrue(structure.addUpgrade(posRight, new Fuselage()));
 
-        assertTrue(buildGrid.positionIsOnGrid(posRight));
-        assertTrue(buildGrid.isEmptyAt(posRight));
-        assertTrue(structure.updateWithFuselage(posRight));
+        structure.normalize();
 
         assertEquals(2, structure.getWidth());
         assertEquals(2, structure.getHeight());
     }
+
+    @Test
+    void testShrinkToFit() {
+        SpaceShip ship = new Player(new ShipStructure(1, 2), "name", "description", 100, 0, 0);
+        shipStructure = ship.getShipStructure();
+        assertTrue(shipStructure.addUpgrade(new CellPosition(0, 0), new Fuselage()));
+        assertTrue(shipStructure.addUpgrade(new CellPosition(1, 0), new Fuselage()));
+
+        int cols = shipStructure.getWidth();
+        int rows = shipStructure.getHeight();
+        int expNum = 2;
+
+        shipStructure.expandGrid(expNum, expNum, true);
+        assertEquals(cols + expNum, shipStructure.getWidth());
+        assertEquals(rows + expNum, shipStructure.getHeight());
+
+        shipStructure.normalize();
+        assertEquals(cols, shipStructure.getWidth());
+        assertEquals(rows, shipStructure.getHeight());
+
+    }
+
+
 }

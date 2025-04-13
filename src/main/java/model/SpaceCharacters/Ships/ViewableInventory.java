@@ -30,7 +30,7 @@ public interface ViewableInventory {
      * @param amount The amount of resources to check for.
      * @return {@code true} if the inventory has at least the given amount, {@code false} otherwise.
      */
-    boolean hasResourceAmount(int amount);
+    boolean canAfford(int amount);
 
 
 }

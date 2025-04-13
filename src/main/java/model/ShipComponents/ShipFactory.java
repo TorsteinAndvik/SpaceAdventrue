@@ -5,7 +5,6 @@ import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import grid.CellPosition;
 import model.ShipComponents.Components.Fuselage;
-import model.ShipComponents.Components.ShipStructure;
 import model.ShipComponents.Components.Thruster;
 import model.ShipComponents.Components.Turret;
 import model.ShipComponents.ShipConfig.ShipComponent;
@@ -78,8 +77,8 @@ public class ShipFactory {
      */
     public static ShipStructure simpleShip() {
         ShipStructure ship = new ShipStructure(1, 2);
-        ship.set(new CellPosition(1, 0), new Fuselage(new Turret()));
-        ship.set(new CellPosition(0, 0), new Fuselage(new Thruster()));
+        ship.addUpgrade(new CellPosition(1, 0), new Fuselage(new Turret()));
+        ship.addUpgrade(new CellPosition(0, 0), new Fuselage(new Thruster()));
         return ship;
     }
 

@@ -7,13 +7,12 @@ import model.Globals.DamageDealer;
 import model.Globals.Damageable;
 import model.Globals.Repairable;
 import model.ShipComponents.UpgradeType;
-import model.ShipComponents.Components.ShipStructure;
+import model.ShipComponents.ShipStructure;
 import model.SpaceCharacters.CharacterType;
 import model.SpaceCharacters.SpaceBody;
 import model.ViewableSpaceShip;
 import model.constants.PhysicsParameters;
 import model.utils.FloatPair;
-import model.utils.SpaceCalculator;
 import view.Palette;
 import view.bars.ShipHealthBar;
 
@@ -64,11 +63,8 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
         this.hitPoints = hitPoints;
         this.maxHitPoints = maxHitPoints;
         this.shipStructure = shipStructure;
-
-        if (this.shipStructure != null) {
-            this.setRadius(SpaceCalculator.distance(shipStructure.getWidth() / 2f,
-                    shipStructure.getHeight() / 2f));
-        }
+        shipStructure.normalize();
+        radius = shipStructure.getRadius();
 
         id = UUID.randomUUID().toString();
 

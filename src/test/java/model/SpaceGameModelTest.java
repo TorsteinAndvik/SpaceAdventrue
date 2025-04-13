@@ -4,8 +4,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
-import model.Animation.AnimationCallback;
-import model.Animation.AnimationState;
+import model.ShipComponents.ShipFactory;
 import model.SpaceCharacters.Bullet;
 import model.SpaceCharacters.Ships.EnemyShip;
 import model.SpaceCharacters.Ships.SpaceShip;
@@ -40,12 +39,7 @@ class SpaceGameModelTest {
     public void setUp() {
         setup();
         gameModel = new SpaceGameModel();
-        gameModel.setAnimationCallback(new AnimationCallback() {
-            @Override
-            public void addAnimationState(AnimationState state) {
-
-            }
-        });
+        gameModel.setAnimationCallback(state -> { });
         initialPlayerX = gameModel.getPlayer().getX();
         initialPlayerY = gameModel.getPlayer().getY();
     }
@@ -103,13 +97,13 @@ class SpaceGameModelTest {
         Bullet secondLaser = gameModel.getLasers().get(1);
         assertTrue(HitDetection.isFriendlyFire(firstLaser, secondLaser));
 
-        SpaceShip enemy_1 = new EnemyShip(null, "enemy 1", "small", 0, 0, 1, 0);
+        SpaceShip enemy_1 = new EnemyShip(ShipFactory.simpleShip(), "enemy 1", "small", 0, 0, 1, 0);
         Bullet thirdLaser = new Bullet("Interrupting laser", "blue", 0,
                 0, 0, 0, 1, false);
         thirdLaser.setSourceID(enemy_1.getID());
         assertFalse(HitDetection.isFriendlyFire(firstLaser, thirdLaser));
 
-        SpaceShip enemy_2 = new EnemyShip(null, "enemy 2", "small", 0, 0, 1, 0);
+        SpaceShip enemy_2 = new EnemyShip(ShipFactory.simpleShip(), "enemy 2", "small", 0, 0, 1, 0);
         Bullet fourthLaser = new Bullet("Interrupting laser", "red",
                 firstLaser.getX() + firstLaser.getRadius(),
                 firstLaser.getY() + firstLaser.getRadius(), 0, 0, 1, false);
@@ -123,7 +117,7 @@ class SpaceGameModelTest {
         gameModel.shoot(gameModel.getPlayer());
         Bullet laser = gameModel.getLasers().get(0);
 
-        SpaceShip enemy_1 = new EnemyShip(null, "enemy 1", "small", 0, 0, 1, 0);
+        SpaceShip enemy_1 = new EnemyShip(ShipFactory.simpleShip(), "enemy 1", "small", 0, 0, 1, 0);
 
         assertTrue(HitDetection.isFriendlyFire(gameModel.getPlayer(), laser));
         assertFalse(HitDetection.isFriendlyFire(laser, enemy_1));

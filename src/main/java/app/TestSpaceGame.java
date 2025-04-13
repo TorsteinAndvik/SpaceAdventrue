@@ -114,8 +114,7 @@ public class TestSpaceGame extends Game implements SpaceGame {
      */
     public void setUpgradeScreen() {
         gameStateModel.showUpgradeScreen();
-        SpaceGameModel spaceGameModel = gameStateModel.getSpaceGameModel();
-        UpgradeScreen upgradeScreen = new UpgradeScreen(this, spaceGameModel);
+        UpgradeScreen upgradeScreen = new UpgradeScreen(this, gameStateModel.getUpgradeScreenModel());
         setScreen(upgradeScreen);
     }
 

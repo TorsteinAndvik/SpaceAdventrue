@@ -25,7 +25,6 @@ import grid.IGrid;
 import java.util.HashMap;
 import java.util.List;
 import model.ShipComponents.ShipStructure;
-import model.SpaceCharacters.Ships.Player;
 import model.World.StoreItem;
 import view.Palette;
 import view.SpaceGame;
@@ -86,25 +85,22 @@ public class UpgradeScreen extends InputAdapter implements Screen {
      * @param spaceGame The main game instance providing sprites, and other
      *                  resources.
      */
-    public UpgradeScreen(final SpaceGame spaceGame, final SpaceGameModel spaceModel) {
+    public UpgradeScreen(final SpaceGame spaceGame, UpgradeScreenModel model) {
         this.game = spaceGame;
+        this.model = model;
+        this.controller = new UpgradeScreenController(this, model, game);
         this.batch = game.getSpriteBatch();
         this.shape = game.getShapeRenderer();
         this.manager = game.getAssetManager();
         this.viewportGame = game.getScreenViewport();
         this.viewportUI = new ScreenViewport();
-        this.model = new UpgradeScreenModel(spaceModel.getPlayer());
-        this.controller = new UpgradeScreenController(this, model, spaceModel, game);
         this.touchPos = new Vector2();
         this.storeShelf = model.getStoreShelf();
         viewportUI.setUnitsPerPixel(viewportGame.getUnitsPerPixel());
         setupFonts();
         loadSprites();
         setupUISprites();
-
         descriptionRect = new Rectangle(0, 0, 0, 0);
-
-        upgradeStrings = setupUpgradeStrings();
     }
 
     private void loadSprites() {
@@ -231,7 +227,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
                 continue;
             }
             CellPosition pos = cell.pos();
-            drawUpgrade(pos);
+            drawFuselage(pos);
 
             if (cell.value().hasUpgrade()) {
                 UpgradeType type = cell.value().getUpgrade().getType();
@@ -413,13 +409,6 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     public boolean grabbedItemIsFuselage() {
         return storeShelf.get(model.getGrabbedUpgradeIndex()).item() == UpgradeType.FUSELAGE;
     }
-
-    /**
-     * Retrieves the index associated with a given {@code UpgradeType}.
-     *
-     * @param type the {@code UpgradeType} to look up
-     * @return the index of the specified upgrade type, or {@code -1} if not found
-     */
 
     /**
      * Retrieves the {@code UpgradeType} associated with a given index.

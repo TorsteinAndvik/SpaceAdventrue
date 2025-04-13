@@ -1,11 +1,10 @@
 package model.utils;
 
-import model.utils.FloatPair;
 
 /**
- * Represents the mass properties of a ship, including total mass and center of mass.
+ * Represents the mass properties of an object.
  *
- * @param mass         The total mass of the ship.
+ * @param mass         The total mass of the object.
  * @param centerOfMass The center of mass represented as a {@link FloatPair}.
  */
 public record MassProperties(float mass, FloatPair centerOfMass) { }

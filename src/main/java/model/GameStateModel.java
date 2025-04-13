@@ -1,6 +1,5 @@
 package model;
 
-import model.SpaceCharacters.Ships.ViewablePlayer;
 import model.constants.GameState;
 
 public class GameStateModel {
@@ -23,9 +22,8 @@ public class GameStateModel {
         if (newState == GameState.PLAYING && spaceGameModel == null) {
             spaceGameModel = new SpaceGameModel();
         } else if (newState == GameState.UPGRADE && spaceGameModel != null) {
-            ViewablePlayer playerShip = spaceGameModel.getPlayer();
             if (upgradeScreenModel == null) {
-                upgradeScreenModel = new UpgradeScreenModel(playerShip);
+                upgradeScreenModel = new UpgradeScreenModel(spaceGameModel.getPlayer());
             }
         }
         this.currentState = newState;
