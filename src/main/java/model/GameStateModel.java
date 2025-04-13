@@ -7,6 +7,7 @@ import model.constants.GameState;
 public class GameStateModel {
 
     private GameState currentState;
+    private GameState previousState;
     private SpaceGameModel spaceGameModel;
     private UpgradeScreenModel upgradeScreenModel;
 
@@ -30,7 +31,12 @@ public class GameStateModel {
                 upgradeScreenModel = new UpgradeScreenModel(playerShipStructure);
             }
         }
+        this.previousState = this.currentState;
         this.currentState = newState;
+    }
+
+    public GameState getState() {
+        return this.previousState;
     }
 
     public void onAssetsLoaded() {
