@@ -23,9 +23,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-public class ShipFactory {
+public final class ShipFactory {
 
-    public ShipFactory() {
+    private ShipFactory() {
+        // Utility class
     }
 
     public static ShipConfig createShipConfigFromJson(String filename) {
@@ -64,11 +65,6 @@ public class ShipFactory {
             upgrade.level = component.get("upgrade").get("level").asInt();
 
             shipComponent.upgrade = upgrade;
-        }
-
-        if (!ShipValidator.isValid(shipConfig)) {
-            throw new IllegalArgumentException(
-                    "Invalid ship configuration for " + shipData.get("name"));
         }
 
         return shipConfig;
