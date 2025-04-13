@@ -5,10 +5,15 @@ import com.badlogic.gdx.math.Vector3;
 
 import grid.CellPosition;
 import model.Globals.Collidable;
+import model.Globals.DamageDealer;
+import model.Globals.Damageable;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Utility class with only static methods. Instantiation is not intended.
+ */
 public class SpaceCalculator {
 
     /**
@@ -277,4 +282,26 @@ public class SpaceCalculator {
         return distance < target1.getRadius() + target2.getRadius();
     }
 
+    /**
+     * Calculates the damage of a collision and applies it to the target objects.
+     * 
+     * @param A a <code>Collidable</code> crashing into <code>B</code>.
+     * @param B a <code>Collidable</code> crashing into <code>A</code>.
+     */
+    public static void crash(Collidable A, Collidable B) {
+        int damageA = 0;
+        int damageB = 0;
+        if (A instanceof DamageDealer a) {
+            damageA = a.getDamage();
+        }
+        if (B instanceof DamageDealer b) {
+            damageB = b.getDamage();
+        }
+        if (A instanceof DamageDealer a && B instanceof Damageable b) {
+            a.dealDamage(b, damageA);
+        }
+        if (B instanceof DamageDealer b && A instanceof Damageable a) {
+            b.dealDamage(a, damageB);
+        }
+    }
 }

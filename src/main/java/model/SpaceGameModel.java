@@ -221,7 +221,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         }
         boolean destroyA = false;
         boolean destroyB = false;
-        SpaceBody.crash(A, B);
+        SpaceCalculator.crash(A, B);
 
         if (B instanceof Damageable b) {
             destroyB = b.isDestroyed();

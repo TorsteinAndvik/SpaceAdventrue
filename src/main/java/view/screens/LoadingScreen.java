@@ -100,7 +100,7 @@ public class LoadingScreen implements Screen {
         queueTextureAtlas("images/animations/explosion_A.atlas");
 
         // Sounds and music:
-        queueSound("audio/blipp.ogg");
+        queueSound("audio/menu_select.wav");
         queueSound("audio/laser_0.mp3");
         queueSound("audio/laser_1.mp3");
         queueSound("audio/laser_2.mp3");

@@ -1,7 +1,7 @@
 package controller.audio;
 
 public enum SoundEffect {
-    BLIPP,
+    MENU_SELECT,
     LASER_0,
     LASER_1,
     LASER_2,

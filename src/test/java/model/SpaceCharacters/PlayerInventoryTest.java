@@ -2,6 +2,7 @@ package model.SpaceCharacters;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import model.World.GameItem;
@@ -38,8 +39,11 @@ public class PlayerInventoryTest {
 
     @Test
     void getItemByNameTest() {
+        assertNull(inventory.getItemByName("Ray gun"));
+        assertNull(inventory.getItemByName("Nute Gunray"));
         inventory.addItem(item);
         assertEquals(item, inventory.getItemByName("Ray gun"));
+        assertNull(inventory.getItemByName("Nute Gunray"));
     }
 
     @Test
@@ -105,8 +109,8 @@ public class PlayerInventoryTest {
         inventory.addResource(1000);
 
         String inventoryContent = """
-            Inventory:
-            Resources    1000""";
+                Inventory:
+                Resources    1000""";
         assertEquals(inventoryContent, inventory.listInventory());
 
         inventory.addItem(new GameItem("Hammer", "Super heavy"));
@@ -118,12 +122,12 @@ public class PlayerInventoryTest {
         inventory.addItem(new GameItem("Piece of wood", "45.0 inches"));
 
         inventoryContent = """
-            Inventory:
-            Resources                      1000
-            Hammer (Super heavy)           1
-            Nail (Old and rusty)           10
-            Piece of wood (45.0 inches)    1
-            Piece of wood (44.5 inches)    2""";
+                Inventory:
+                Resources                      1000
+                Hammer (Super heavy)           1
+                Nail (Old and rusty)           10
+                Piece of wood (45.0 inches)    1
+                Piece of wood (44.5 inches)    2""";
         assertEquals(inventoryContent, inventory.listInventory());
     }
 }

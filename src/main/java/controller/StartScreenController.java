@@ -34,12 +34,12 @@ public class StartScreenController extends GenericController {
         switch (keycode) {
             case Input.Keys.UP:
                 gameStateModel.setSelectedButtonIndex(Math.max(0, gameStateModel.getSelectedButtonIndex() - 1));
-                soundManager.play(SoundEffect.BLIPP, 0.4f);
+                soundManager.play(SoundEffect.MENU_SELECT, 0.4f);
                 return true;
             case Input.Keys.DOWN:
                 gameStateModel.setSelectedButtonIndex(
                         Math.min(menuButtons.size() - 1, gameStateModel.getSelectedButtonIndex() + 1));
-                soundManager.play(SoundEffect.BLIPP, 0.4f);
+                soundManager.play(SoundEffect.MENU_SELECT, 0.4f);
                 return true;
             case Input.Keys.ENTER:
             case Input.Keys.SPACE:
@@ -67,7 +67,7 @@ public class StartScreenController extends GenericController {
     }
 
     public void activateButton(int index) {
-        soundManager.play(SoundEffect.BLIPP, 0.7f);
+        soundManager.play(SoundEffect.MENU_SELECT, 0.7f);
 
         switch (index) {
             case 0:
@@ -104,7 +104,7 @@ public class StartScreenController extends GenericController {
             if (menuButtons.get(i).getBounds().contains(worldCoords.x, worldCoords.y)) {
                 if (gameStateModel.getSelectedButtonIndex() != i) {
                     gameStateModel.setSelectedButtonIndex(i);
-                    soundManager.play(SoundEffect.BLIPP, 0.2f);
+                    soundManager.play(SoundEffect.MENU_SELECT, 0.2f);
                 }
                 return true;
             }
