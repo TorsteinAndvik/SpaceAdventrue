@@ -35,7 +35,7 @@ public abstract class AsteroidFactory {
      */
     public Asteroid spawnAsteroid() {
         int sizeRng = rng.nextInt(largeSize) + 1; // [1, largeSize]
-        float interceptTimeRng = rng.nextFloat(10, 20); // [10, 20)
+        float interceptTimeRng = rng.nextFloat(4, 8); // [5, 10)
         float rotationRng = rng.nextFloat(-10, 10); // [-10, 10)
 
         float radius = getRadius(sizeRng);
@@ -43,6 +43,24 @@ public abstract class AsteroidFactory {
         FloatPair spawnPos = spawnLocation(radius);
         Vector2 interceptVelocity = interceptFromPosition(interceptTimeRng, spawnPos.x(), spawnPos.y(), this.player);
 
+        return createAsteroid(spawnPos.x(), spawnPos.y(), interceptVelocity, sizeRng, radius, rotationRng);
+    }
+
+    /**
+     * Spawns an asteroid at a random position a certain angle from the player.
+     *
+     * @return A new Asteroid object with randomized size, rotation, and velocity
+     *         aimed at the player.
+     */
+    public Asteroid spawnDirectionalAsteroid() {
+        int sizeRng = rng.nextInt(largeSize) + 1; // [1, largeSize]
+        float interceptTimeRng = rng.nextFloat(2, 5); // [2, 5)
+        float rotationRng = rng.nextFloat(-10, 10); // [-10, 10)
+
+        float radius = getRadius(sizeRng);
+
+        FloatPair spawnPos = spawnDirectionalLocation(radius, this.player.getRotationAngle());
+        Vector2 interceptVelocity = interceptFromPosition(interceptTimeRng, spawnPos.x(), spawnPos.y(), this.player);
         return createAsteroid(spawnPos.x(), spawnPos.y(), interceptVelocity, sizeRng, radius, rotationRng);
     }
 
@@ -106,9 +124,9 @@ public abstract class AsteroidFactory {
     }
 
     /**
-     * Calculates a spawn location for an asteroid along a circular buffer around
-     * the player.
+     * Calculates a spawn location for an asteroid outside of the screen.
      *
+     * @param radius radius of the asteroid to spawn.
      * @return A <code>FloatPair</code> describing the spawn location.
      */
     private FloatPair spawnLocation(float radius) {
@@ -134,6 +152,41 @@ public abstract class AsteroidFactory {
         }
 
         return new FloatPair(spawnX, spawnY);
+    }
+
+    /**
+     * Calculates a spawn location for an asteroid depending on the angle of the
+     * player.
+     *
+     * @param radius radius of asteroid to spawn.
+     * @param angle  the angle of the player determining where the asteroid will
+     *               spawn.
+     * @return A <code>FloatPair</code> describing the spawn location.
+     */
+
+    private FloatPair spawnDirectionalLocation(float radius, float angle) {
+        float spawnX, spawnY;
+        int side = Math.round(angle * 1 / 90);
+        try {
+            if (side == 2) { // Bot
+                spawnY = spawnPerimeter.y - radius;
+                spawnX = rng.nextFloat(spawnPerimeter.x, spawnPerimeter.x + spawnPerimeter.width);
+            } else if (side == 3) { // Right
+                spawnX = spawnPerimeter.x + spawnPerimeter.width + radius;
+                spawnY = rng.nextFloat(spawnPerimeter.y, spawnPerimeter.y + spawnPerimeter.height);
+            } else if (side == 0) { // Top
+                spawnY = spawnPerimeter.y + spawnPerimeter.height + radius;
+                spawnX = rng.nextFloat(spawnPerimeter.x, spawnPerimeter.x + spawnPerimeter.width);
+            } else { // Left
+                spawnX = spawnPerimeter.x - radius;
+                spawnY = rng.nextFloat(spawnPerimeter.y, spawnPerimeter.y + spawnPerimeter.height);
+            }
+        } catch (IllegalArgumentException e) {
+            return new FloatPair(0f, 0f);
+        }
+
+        return new FloatPair(spawnX, spawnY);
+
     }
 
     public void setSpawnPerimeter(Rectangle spawnPerimeter) {

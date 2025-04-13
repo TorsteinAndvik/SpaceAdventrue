@@ -29,6 +29,7 @@ public class ShipStructure implements ViewableShipStructure {
         this(new Grid<>(height, width));
     }
 
+
     public ShipStructure(IGrid<Fuselage> grid) {
         this.grid = grid;
         normalize();
@@ -57,6 +58,50 @@ public class ShipStructure implements ViewableShipStructure {
     }
 
     /**
+     * Updates the ship structure by adding a fuselage at the specified position.
+     * Expands the grid temporarily to ensure sufficient space for placement.
+     *
+     * @param pos The position where the fuselage should be placed.
+     * @return {@code true} if the fuselage was successfully placed, {@code false}
+     *         if placement was
+     *         not possible.
+     */
+    public boolean updateWithFuselage(CellPosition pos) {
+
+        // Local grid must match the grid from the updateScreen, which is expanded by
+        // 2x2
+        grid = getExpandedGrid(grid, 2, 2, true);
+
+        if (!canBuildAt(pos, grid)) {
+            grid = Grid.shrinkGridToFit(grid);
+            return false;
+        }
+
+        grid.set(pos, new Fuselage());
+        grid = Grid.shrinkGridToFit(grid);
+
+        MassProperties massProp = getMassProperties(grid);
+        mass = massProp.mass();
+        centerOfMass = massProp.centerOfMass();
+
+        return true;
+    }
+
+    private void updateMassAndCenterOfMass(CellPosition pos, float mass) {
+        float oldMass = this.mass;
+        float newMass = oldMass + mass;
+
+        float cmX = (oldMass * this.centerOfMass.x() + mass * pos.col()) / newMass;
+        float cmY = (oldMass * this.centerOfMass.y() + mass * pos.row()) / newMass;
+
+        FloatPair newCM = new FloatPair(cmX, cmY);
+
+        this.mass = newMass;
+        this.centerOfMass = newCM;
+    }
+
+    /**
+     * Computes the total mass and center of mass of a given {@link ShipStructure}.
      * Computes the total mass and center of mass of the {@link ShipStructure}.
      * <p>
      * The method iterates over all {@link Fuselage} components in the ship
@@ -371,7 +416,6 @@ public class ShipStructure implements ViewableShipStructure {
 
     @Override
     public boolean canBuildAt(CellPosition pos) {
-
         return canBuildAt(pos, grid);
     }
 
@@ -392,7 +436,6 @@ public class ShipStructure implements ViewableShipStructure {
             return false;
         }
         return isValidFuselagePosition(grid, pos) || grid.isEmpty();
-
     }
 
     private void shrinkToFit() {

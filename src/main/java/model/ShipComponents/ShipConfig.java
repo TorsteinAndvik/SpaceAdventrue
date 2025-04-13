@@ -17,13 +17,13 @@ public class ShipConfig {
             sj.add(component.toString());
         }
         return "ShipConfig{"
-            + "width="
-            + width
-            + ", height="
-            + height
-            + ", components="
-            + sj.toString()
-            + '}';
+                + "width="
+                + width
+                + ", height="
+                + height
+                + ", components="
+                + sj.toString()
+                + '}';
     }
 
     public static class ShipComponent {

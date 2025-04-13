@@ -14,7 +14,11 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 
-public class ShipValidator {
+public final class ShipValidator {
+
+    private ShipValidator() {
+        // Utility class
+    }
 
     public static boolean isValid(JsonValue shipJson) {
 
@@ -28,15 +32,12 @@ public class ShipValidator {
     public static boolean isValid(ShipConfig shipConfig) {
 
         List<CellPosition> cellPositions = extractCellPositions(shipConfig);
-        if (cellPositions == null) {
-            return false;
-        }
 
         return isShipConnected(cellPositions);
 
     }
 
-    private static boolean isShipConnected(List<CellPosition> componentPositions) {
+    public static boolean isShipConnected(List<CellPosition> componentPositions) {
         if (componentPositions.isEmpty()) {
             return false;
         }
@@ -77,9 +78,6 @@ public class ShipValidator {
 
     private static List<CellPosition> extractCellPositions(ShipConfig shipConfig) {
         ArgumentChecker.requireNonNull(shipConfig, "ShipConfig can't be null");
-        if (shipConfig.components == null) {
-            return null;
-        }
         List<CellPosition> componentPositions = new ArrayList<>();
         for (ShipComponent cp : shipConfig.components) {
             componentPositions.add(cp.getPosition());
@@ -97,7 +95,7 @@ public class ShipValidator {
         for (JsonValue component : shipData.get("components")) {
 
             componentPositions.add(
-                new CellPosition(component.get("y").asInt(), component.get("x").asInt()));
+                    new CellPosition(component.get("y").asInt(), component.get("x").asInt()));
         }
 
         return componentPositions;

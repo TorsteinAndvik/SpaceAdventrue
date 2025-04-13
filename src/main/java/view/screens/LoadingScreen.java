@@ -36,7 +36,7 @@ public class LoadingScreen implements Screen {
     private PercentageBar loadingProgressBar;
 
     // Constants
-    int boldFontSize = 42;
+    int boldFontSize = 72;
     int regularFontSize = 36;
 
     public LoadingScreen(SpaceGame game, GameStateModel gameStateModel) {
@@ -101,25 +101,32 @@ public class LoadingScreen implements Screen {
         queueTextureAtlas("images/animations/explosion_A.atlas");
 
         // Sounds and music:
-        queueSound("audio/blipp.ogg");
+        queueSound("audio/menu_select.wav");
+        queueSound("audio/laser_0.mp3");
+        queueSound("audio/laser_1.mp3");
+        queueSound("audio/laser_2.mp3");
+        queueSound("audio/ship_explosion_small.wav");
+        queueSound("audio/ship_explosion_big.wav");
+
         queueMusic("audio/music.mp3");
+        queueMusic("audio/atmosphere.mp3");
 
         // Fonts:
         FileHandleResolver resolver = new InternalFileHandleResolver();
         manager.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(resolver));
         manager.setLoader(BitmapFont.class, ".ttf", new FreetypeFontLoader(resolver));
 
-        // Set params for bold font
-        FreeTypeFontLoaderParameter fontBold = new FreeTypeFontLoaderParameter();
-        fontBold.fontFileName = "fonts/AGENCYB.ttf";
-        fontBold.fontParameters.size = boldFontSize;
-        manager.load(fontBold.fontFileName, BitmapFont.class, fontBold);
+        // Set params for bold font (Pixel Operator Mono Bold)
+        FreeTypeFontLoaderParameter fontBoldNew = new FreeTypeFontLoaderParameter();
+        fontBoldNew.fontFileName = "fonts/PixelOperatorMono-Bold.ttf";
+        fontBoldNew.fontParameters.size = boldFontSize;
+        manager.load(fontBoldNew.fontFileName, BitmapFont.class, fontBoldNew);
 
-        // Set params for regular font
-        FreeTypeFontLoaderParameter fontRegular = new FreeTypeFontLoaderParameter();
-        fontRegular.fontFileName = "fonts/AGENCYR.ttf";
-        fontRegular.fontParameters.size = regularFontSize;
-        manager.load(fontRegular.fontFileName, BitmapFont.class, fontRegular);
+        // Set params for regular font (Pixel Operator Mono HB Regular)
+        FreeTypeFontLoaderParameter fontRegularNew = new FreeTypeFontLoaderParameter();
+        fontRegularNew.fontFileName = "fonts/PixelOperatorMonoHB.ttf";
+        fontRegularNew.fontParameters.size = regularFontSize;
+        manager.load(fontRegularNew.fontFileName, BitmapFont.class, fontRegularNew);
     }
 
     private void queueTexture(String path) {

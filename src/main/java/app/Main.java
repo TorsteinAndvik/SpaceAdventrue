@@ -18,8 +18,10 @@ public class Main {
         Lwjgl3ApplicationConfiguration cfg = new Lwjgl3ApplicationConfiguration();
         DisplayMode dm = Lwjgl3ApplicationConfiguration.getDisplayMode();
 
+        float aspectRatio = (float) dm.width / (float) dm.height;
+
         cfg.setTitle("TestSpaceGame");
-        cfg.setWindowedMode(dm.width / 2, dm.height / 2);
+        cfg.setWindowedMode(dm.width / 2, (int) (aspectRatio * (float) dm.height / 2f));
 
         // cfg.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
         new Lwjgl3Application(new TestSpaceGame(), cfg);

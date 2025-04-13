@@ -4,11 +4,17 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 import grid.CellPosition;
+import model.Globals.Collidable;
+import model.Globals.DamageDealer;
+import model.Globals.Damageable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SpaceCalculator {
+public final class SpaceCalculator {
+    private SpaceCalculator() {
+        // Utility class
+    }
 
     /**
      * Calculates the velocity vector given an angle (in degrees) and speed.
@@ -74,6 +80,17 @@ public class SpaceCalculator {
         return distance(x - pos.x(), y - pos.y());
     }
 
+    /**
+     * Calculates the angle (in degrees) between two points.
+     * The first 2 parameters are the coordinates of the target point, the last 2
+     * are the coordinates of the source point.
+     * 
+     * @param x1
+     * @param y1
+     * @param x2
+     * @param y2
+     * @return
+     */
     public static float angleBetweenPoints(float x1, float y1, float x2, float y2) {
         float x = x1 - x2;
         float y = y1 - y2;
@@ -81,41 +98,61 @@ public class SpaceCalculator {
         return (float) Math.toDegrees(Math.atan2(y, x));
     }
 
-    public static float angleBetweenPoints(float x, float y, FloatPair pos) {
-        return angleBetweenPoints(x, y, pos.x(), pos.y());
-    }
-
-    public static float angleBetweenPoints(FloatPair posA, FloatPair posB) {
-        return angleBetweenPoints(posA.x(), posA.y(), posB.x(), posB.y());
-    }
-
     /**
-     * Rotates a point around a center of rotation by a given angle, and translates
-     * it.
+     * Calculates the angle (in degrees) between two points.
+     * The first 2 parameters are the coordinates of the target point, the
+     * <code>FloatPair</code> holds the coordinates of the source point.
      * 
-     * @param point            the <code>FloatPair</code> to be rotated
-     * @param centerOfRotation the <code>FloatPair</code> at the center of rotation
-     * @param translation      the <code>FloatPair</code> the rotated point will be
-     *                         translated by
-     * @param angle            the angle in degrees to rotate the point by
-     * @return the rotated and translated <code>FloatPair</code>
+     * @param x
+     * @param y
+     * @param source
+     * @return
      */
-    public static FloatPair rotatePoint(FloatPair point, FloatPair centerOfRotation, FloatPair translation,
-            float angle) {
-        return rotatePoint(point.x(), point.y(), centerOfRotation, translation, angle);
+    public static float angleBetweenPoints(float x, float y, FloatPair source) {
+        return angleBetweenPoints(x, y, source.x(), source.y());
     }
 
     /**
-     * Rotates a point's x and y coordinates around a center of rotation by a given
-     * angle, and translates it.
+     * Calculates the angle (in degrees) between two points.
+     * The first <code>FloatPair</code> holds the coordinates of the target point,
+     * the second <code>FloatPair</code> holds the coordinates of the source point.
      * 
-     * @param x                the x coordinate of the point to be rotated
-     * @param y                the y coordinate of the point to be rotated
-     * @param centerOfRotation the <code>FloatPair</code> at the center of rotation
-     * @param translation      the <code>FloatPair</code> the rotated point will be
-     *                         translated by
-     * @param angle            the angle in degrees to rotate the point by
-     * @return the rotated and translated <code>FloatPair</code>
+     * @param target
+     * @param source
+     * @return
+     */
+    public static float angleBetweenPoints(FloatPair target, FloatPair source) {
+        return angleBetweenPoints(target.x(), target.y(), source.x(), source.y());
+    }
+
+    /**
+     * Rotates a point around a center of rotation by a given angle.
+     * 
+     * @param point                    the <code>FloatPair</code> to be rotated.
+     * @param relativeCenterOfRotation the <code>FloatPair</code> for the relative
+     *                                 center of rotation.
+     * @param absoluteCenterOfRotation the <code>FloatPair</code> for the absolute
+     *                                 center of rotation.
+     * @param angle                    the angle in degrees to rotate the point by.
+     * 
+     * @return the rotated and translated <code>FloatPair</code>.
+     */
+    public static FloatPair rotatePoint(FloatPair point, FloatPair relativeCenterOfRotation,
+            FloatPair absoluteCenterOfRotation, float angle) {
+        return rotatePoint(point.x(), point.y(), relativeCenterOfRotation, absoluteCenterOfRotation, angle);
+    }
+
+    /**
+     * Rotates a point around a center of rotation by a given angle.
+     * 
+     * @param x                        the x coordinate of the point to be rotated
+     * @param y                        the y coordinate of the point to be rotated
+     * @param relativeCenterOfRotation the <code>FloatPair</code> for the relative
+     *                                 center of rotation.
+     * @param absoluteCenterOfRotation the <code>FloatPair</code> for the absolute
+     *                                 center of rotation.
+     * @param angle                    the angle in degrees to rotate the point by.
+     * 
      */
     public static FloatPair rotatePoint(float x, float y, FloatPair centerOfRotation, FloatPair translation,
             float angle) {
@@ -125,6 +162,7 @@ public class SpaceCalculator {
         float offsetAngle = angleBetweenPoints(x, y, centerOfRotation);
 
         float x0 = r * (float) Math.cos(Math.toRadians(angle + offsetAngle));
+
         float y0 = r * (float) Math.sin(Math.toRadians(angle + offsetAngle));
 
         float x1 = translation.x() + x0;
@@ -133,9 +171,17 @@ public class SpaceCalculator {
         return new FloatPair(x1, y1);
     }
 
-    // TODO: Write complete javadocs
     /**
-     * perform one-dimensional linear interpolation
+     * Performs one-dimensional linear interpolation.
+     * 
+     * @param source the source or start value
+     * @param target the target value
+     * @param alpha  the interpolation factor,
+     *               should be between 0f and 1f.
+     *               A larger <code>alpha</code> gives a closer result to the target
+     *               value ("fast lerp"), a smaller <code>alpha</code>
+     *               gives a closer result to the source value ("slow lerp").
+     * @return the interpolated value.
      */
     public static float lerp1D(float source, float target, float alpha) {
         float alphaInverse = 1f - alpha;
@@ -143,7 +189,16 @@ public class SpaceCalculator {
     }
 
     /**
-     * perform two-dimensional linear interpolation
+     * Performs two-dimensional linear interpolation.
+     * 
+     * @param source the source or start <code>FloatPair</code>
+     * @param target the target <code>FloatPair</code>
+     * @param alpha  the interpolation factor,
+     *               should be between 0f and 1f.
+     *               A larger <code>alpha</code> gives a closer result to the target
+     *               value ("fast lerp"), a smaller <code>alpha</code>
+     *               gives a closer result to the source value ("slow lerp").
+     * @return the interpolated <code>FloatPair</code>.
      */
     public static FloatPair lerp2D(FloatPair source, FloatPair target, float alpha) {
         float x = lerp1D(source.x(), target.x(), alpha);
@@ -152,7 +207,16 @@ public class SpaceCalculator {
     }
 
     /**
-     * perform two-dimensional linear interpolation
+     * Performs two-dimensional linear interpolation.
+     * 
+     * @param source the source or start <code>Vector2</code>
+     * @param target the target <code>FloatPair</code>
+     * @param alpha  the interpolation factor,
+     *               should be between 0f and 1f.
+     *               A larger <code>alpha</code> gives a closer result to the target
+     *               value ("fast lerp"), a smaller <code>alpha</code>
+     *               gives a closer result to the source value ("slow lerp").
+     * @return the interpolated <code>FloatPair</code>.
      */
     public static FloatPair lerp2D(Vector2 source, FloatPair target, float alpha) {
         FloatPair sourceFloatPair = new FloatPair(source.x, source.y);
@@ -160,13 +224,39 @@ public class SpaceCalculator {
     }
 
     /**
-     * perform two-dimensional linear interpolation
+     * Performs two-dimensional linear interpolation.
+     * 
+     * @param source the source or start <code>Vector3</code>. This only considers
+     *               its x and y values. Useful in conjunction with viewport cameras
+     *               in libGDX, which use a 3D coordinate system.
+     * @param target the target <code>FloatPair</code>
+     * @param alpha  the interpolation factor,
+     *               should be between 0f and 1f.
+     *               A larger <code>alpha</code> gives a closer result to the target
+     *               value ("fast lerp"), a smaller <code>alpha</code>
+     *               gives a closer result to the source value ("slow lerp").
+     * @return the interpolated <code>FloatPair</code>.
      */
     public static FloatPair lerp2D(Vector3 source, FloatPair target, float alpha) {
         FloatPair sourceFloatPair = new FloatPair(source.x, source.y);
         return lerp2D(sourceFloatPair, target, alpha);
     }
 
+    /**
+     * Calculates a point at a certain distance from another point.
+     * 
+     * @param posA     the point away from the target point <code>posB</code> which
+     *                 defines the direction.
+     * @param posB     the point from which the returned <code>FloatPair</code> is
+     *                 at the given <code>distance</code> from, on the straight line
+     *                 between
+     *                 <code>posA</code> and <code>posB</code>.
+     * @param distance the distance from <code>posB</code> the returned
+     *                 <code>FloatPair</code> is at.
+     * @return the <code>FloatPair</code> at the given distance from
+     *         <code>posB</code> on the straight line between <code>posA</code> and
+     *         <code>posB</code>.
+     */
     public static FloatPair getPointAtDistance(FloatPair posA, FloatPair posB, float distance) {
         float dx = posA.x() - posB.x();
         float dy = posA.y() - posB.y();
@@ -174,5 +264,44 @@ public class SpaceCalculator {
 
         return new FloatPair(posB.x() + distance * dx / directionVectorLength,
                 posB.y() + distance * dy / directionVectorLength);
+    }
+
+    /**
+     * Determines whether two objects are colliding.
+     *
+     * @param target1 The first collidable object.
+     * @param target2 The second collidable object.
+     * @return {@code true} if the two objects are colliding
+     *         {@code false} otherwise.
+     */
+    public static boolean collisionCalculator(Collidable target1, Collidable target2) {
+        float dx = target1.getX() - target2.getX();
+        float dy = target1.getY() - target2.getY();
+        float distance = SpaceCalculator.distance(dx, dy);
+
+        return distance < target1.getRadius() + target2.getRadius();
+    }
+
+    /**
+     * Calculates the damage of a collision and applies it to the target objects.
+     * 
+     * @param A a <code>Collidable</code> crashing into <code>B</code>.
+     * @param B a <code>Collidable</code> crashing into <code>A</code>.
+     */
+    public static void crash(Collidable A, Collidable B) {
+        int damageA = 0;
+        int damageB = 0;
+        if (A instanceof DamageDealer a) {
+            damageA = a.getDamage();
+        }
+        if (B instanceof DamageDealer b) {
+            damageB = b.getDamage();
+        }
+        if (A instanceof DamageDealer a && B instanceof Damageable b) {
+            a.dealDamage(b, damageA);
+        }
+        if (B instanceof DamageDealer b && A instanceof Damageable a) {
+            b.dealDamage(a, damageB);
+        }
     }
 }

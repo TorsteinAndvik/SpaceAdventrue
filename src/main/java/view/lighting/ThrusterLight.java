@@ -11,7 +11,6 @@ import view.screens.SpaceScreen;
 public class ThrusterLight extends ConeLight implements Poolable {
 
     public static final int defaultRayNum = 12;
-    // public static final Color defaultColor = Color.YELLOW;
     public static final Color defaultColor = Palette.THRUSTER_LIGHT;
     public static final float defaultDistance = 2.4f;
     public static final float defaultConeDegree = 24f;
@@ -28,9 +27,14 @@ public class ThrusterLight extends ConeLight implements Poolable {
 
     @Override
     public void reset() {
-        this.setPosition(0f, 0f);
-        this.setDirection(0f);
-        this.setConeDegree(0f);
-        this.setActive(false);
+        setPosition(0f, 0f);
+        setDirection(0f);
+        setActive(false);
+        remove(false);
+    }
+
+    public void init() {
+        add(SpaceScreen.rayHandler);
+        setActive(true);
     }
 }

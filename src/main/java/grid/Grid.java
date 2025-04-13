@@ -5,12 +5,16 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * This grid class is highly similar to one I wrote for INF101. There are some improvements, but
- * this class, its interfaces and related objects such as CellPosition are not novel for this
+ * This grid class is highly similar to one I wrote for INF101. There are some
+ * improvements, but
+ * this class, its interfaces and related objects such as CellPosition are not
+ * novel for this
  * project.
  * <p>
- * There are only so many ways to skin a cat, or to implement a simple grid, see <a href=
- * "https://git.app.uib.no/ii/inf101/23v/assignments/Henrik.Dalsto_sem1-tetris">...</a> for
+ * There are only so many ways to skin a cat, or to implement a simple grid, see
+ * <a href=
+ * "https://git.app.uib.no/ii/inf101/23v/assignments/Henrik.Dalsto_sem1-tetris">...</a>
+ * for
  * original.
  *
  * @param <E>
@@ -24,7 +28,8 @@ public class Grid<E> implements IGrid<E> {
     private final int rows;
 
     /**
-     * Construct a grid with {@code rows} rows and {@code columns} columns and null with default
+     * Construct a grid with {@code rows} rows and {@code columns} columns and null
+     * with default
      * value.
      *
      * @param rows    the number of rows in the grid
@@ -35,13 +40,15 @@ public class Grid<E> implements IGrid<E> {
     }
 
     /**
-     * Construct a grid with a given {@code rows} number of rows and {@code columns} columns, and an
+     * Construct a grid with a given {@code rows} number of rows and {@code columns}
+     * columns, and an
      * {@code elem} element stored at each cell position.
      *
      * @param rows    the number of rows
      * @param columns the number of columns
      * @param elem    elements to be stored at each CellPosition
-     * @throws IllegalArgumentException if supplied either number of rows or columns < 1.
+     * @throws IllegalArgumentException if supplied either number of rows or columns
+     *                                  < 1.
      */
     public Grid(int rows, int columns, E elem) throws IllegalArgumentException {
         if (rows < 1 || columns < 1) {
@@ -180,5 +187,18 @@ public class Grid<E> implements IGrid<E> {
         return shrunkGrid;
     }
 
+    public String toString() {
+        ArrayList<GridCell<E>> nonNullCells = new ArrayList<>();
+        for (GridCell<E> cell : this) {
+            if (cell.value() != null) {
+                nonNullCells.add(cell);
+            }
+        }
 
+        if (nonNullCells.isEmpty()) {
+            return "Grid is empty.";
+        } else {
+            return nonNullCells.toString();
+        }
+    }
 }

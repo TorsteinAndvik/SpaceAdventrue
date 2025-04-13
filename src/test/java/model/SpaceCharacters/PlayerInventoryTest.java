@@ -2,6 +2,7 @@ package model.SpaceCharacters;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import model.SpaceCharacters.Ships.Inventory;
@@ -40,8 +41,11 @@ public class PlayerInventoryTest {
 
     @Test
     void getItemByNameTest() {
+        assertNull(inventory.getItemByName("Ray gun"));
+        assertNull(inventory.getItemByName("Nute Gunray"));
         inventory.addItem(item);
         assertEquals(item, inventory.getItemByName("Ray gun"));
+        assertNull(inventory.getItemByName("Nute Gunray"));
     }
 
     @Test

@@ -1,74 +1,34 @@
 # INF112 Project - *Sprite* 
 
 * Team: *Happy sprites* (Group 8_1): *Tor Wollmann, Torstein Andvik, Flemming Bjørdal, Henrik Dalstø*
-* Links 
+* The project repository [is found here](https://git.app.uib.no/inf112/25v/proj/sprites)
 
 ## About the game 
-* "You are an alien explorer"
+* You are an alien explorer in deep space. Your ship is in constant peril from enemy ships and meteors. Where are you going? You don't know. A vast expanse is before you in any direction. Defeat enemy ships, destroy asteroids, and get upgrades. These will all help you survive, but for what purpose?
+
+
+## Controls
+You control the game the usual WASD. 
+- `W`: Go forward 
+- `S`: Go backwards 
+- `A` and `D` rotates the ship.
+- `P`: Pauses the game, and pulls up the options menu. 
+- `Space`: Shoots lasers
+- `Esc`: shows the upgrade menu. You drag and drop upgrades on your ship.
 
 ## How to run 
-While developing, run the program with `mvn compile exec:java`
+Compile and run the program with `mvn compile exec:java`
 
+* On subsequent runs, you only need `mvn exec:java`
 
-* Compile with `mvn package`
-* Run with `TBD`
 * Requires Java 21 or later 
 
 ## Known errors 
-None 
+Some resizing issues.
 
 ## Credits 
-TBD
-
-# INF112 libGDX + Maven template 
-Simple skeleton with [libGDX](https://libgdx.com/). 
-
-**Important:** Replace this README with info about *your* project!
-
-
-# Maven Setup
-This project comes with a working Maven `pom.xml` file. You should be able to import it into Eclipse using *File → Import → Maven → Existing Maven Projects* (or *Check out Maven Projects from SCM* to do Git cloning as well). You can also build the project from the command line with `mvn clean compile` and test it with `mvn clean test`.
-
-Pay attention to these folders:
-* `src/main/java` – Java source files go here (as usual for Maven) – **IMPORTANT!!** only `.java` files, no data files / assets
-* `src/main/resources` – data files go here, for example in an `assets` sub-folder – **IMPORTANT!** put data files here, or they won't get included in the jar file
-* `src/test/java` – JUnit tests
-* `target/classes` – compiled Java class files
-
-**TODO:** You should probably edit the `pom.xml` and fill in details such as the project `name` and `artifactId`:
-
-
-```xml
-
-	< !-- FIXME - set group id -->
-	<groupId>inf112.skeleton.app</groupId>
-	< !-- FIXME - set artifact name -->
-	<artifactId>gdx-app</artifactId>
-	<version>1.0-SNAPSHOT</version>
-	<packaging>jar</packaging>
-
-	< !-- FIXME - set app name -->
-	<name>mvn-app</name>
-	< !-- FIXME change it to the project's website -->
-	<url>http://www.example.com</url>
-```
-
-	
-## Running
-You can run the project with Maven using `mvn exec:java`. Change the main class by modifying the `main.class` setting in `pom.xml`:
-
-```
-		<main.class>inf112.skeleton.app.Main</main.class>
-```
-
-Running the program should open a window with the text “Hello, world!” and an alligator in the lower left corner.  Clicking inside the window should play a *blip* sound. Exit by pressing *Escape* or closing the window.
-
-You may have to compile first, with `mvn compile` – or in a single step, `mvn compile exec:java`.
-
-## Testing
-Run unit tests with `mvn test` – unit test files should have `Test` in the file name, e.g., `ExampleTest.java`. This will also generate a [JaCoCo](https://www.jacoco.org/jacoco) code coverage report, which you can find in [target/site/jacoco/index.html](target/site/jacoco/index.html).
-
-Use `mvn verify` to run integration tests, if you have any. This will do everything up to and including `mvn package`, and then run all the tests with `IT` in the name, e.g., `ExampleIT.java`.
+Flemming - Arts
+Henrik Dalstø - Music
 
 ## Jar Files
 
@@ -81,15 +41,3 @@ Run Jar files with, for example, `java -jar target/NAME-VERSION-fat.jar`.
 
 
 If you have test failures, and *really* need to build a jar anyway, you can skip testing with `mvn -Dmaven.test.skip=true package`.
-
-## Git Setup
-If you look at *Settings → Repository* in GitLab, you can protect branches – for example, forbid pushing to the `main` branch so everyone have to use merge requests.
-
-
-# Credits
-
-### Template example files
-* `src/main/resources/blipp.ogg`– Dr. Richard Boulanger et al (CC-BY-3.0)
-
-(You should probably delete these if you don't need them!)
-

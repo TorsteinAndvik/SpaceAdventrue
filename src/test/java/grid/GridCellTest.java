@@ -3,8 +3,6 @@ package grid;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-import grid.CellPosition;
-import grid.GridCell;
 import org.junit.jupiter.api.Test;
 
 class GridCellTest {

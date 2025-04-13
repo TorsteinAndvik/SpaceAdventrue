@@ -23,7 +23,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import box2dLight.RayHandler;
-import controller.SpaceGameScreenController;
+import controller.SpaceScreenController;
 import grid.GridCell;
 import model.Globals.Collectable;
 import model.ShipComponents.Components.Fuselage;
@@ -34,6 +34,7 @@ import model.SpaceCharacters.Bullet;
 import model.SpaceCharacters.Diamond;
 import model.SpaceCharacters.Ships.SpaceShip;
 import model.constants.PhysicsParameters;
+import model.GameStateModel;
 import model.ScreenBoundsProvider;
 import model.SpaceGameModel;
 import model.Animation.AnimationCallback;
@@ -44,17 +45,19 @@ import model.utils.SpaceCalculator;
 import view.Palette;
 import view.SpaceGame;
 import view.lighting.LaserLight;
+import view.lighting.ShipThrusterLightMap;
 import view.lighting.ThrusterLight;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvider {
 
     final SpaceGame game;
     final SpaceGameModel model;
-    private final SpaceGameScreenController controller;
+    private final SpaceScreenController controller;
     private final SpriteBatch batch;
     private final ShapeRenderer shape;
     private final ScreenViewport viewport;
@@ -89,13 +92,12 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     public static final RayHandler rayHandler = new RayHandler(null);
     private LinkedList<LaserLight> laserLights;
     private Pool<LaserLight> laserLightPool;
-    private LinkedList<ThrusterLight> thrusterLights;
-    private Pool<ThrusterLight> thrusterLightPool;
+    private ShipThrusterLightMap shipThrusterLightMap;
 
     // hitboxes (testing/debugging)
     private boolean showHitboxes = false;
 
-    public SpaceScreen(final SpaceGame game, final SpaceGameModel model) {
+    public SpaceScreen(final SpaceGame game, final GameStateModel gameStateModel) {
         this.game = game;
         this.batch = this.game.getSpriteBatch();
         this.shape = this.game.getShapeRenderer();
@@ -104,8 +106,8 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         this.bgViewport = game.getExtendViewport();
         this.camera = (OrthographicCamera) viewport.getCamera();
 
-        this.model = model;
-        this.controller = new SpaceGameScreenController(this, model, game);
+        this.model = gameStateModel.getSpaceGameModel();
+        this.controller = new SpaceScreenController(this, gameStateModel, game);
 
         setupBackground();
         setupSprites();
@@ -117,12 +119,18 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     private void setupBackground() {
         this.background = new TextureRegion[6];
 
-        background[0] = new TextureRegion(manager.get("images/space/background/bkgd_1.png", Texture.class));
-        background[1] = new TextureRegion(manager.get("images/space/background/bkgd_2.png", Texture.class));
-        background[2] = new TextureRegion(manager.get("images/space/background/bkgd_3.png", Texture.class));
-        background[3] = new TextureRegion(manager.get("images/space/background/bkgd_4.png", Texture.class));
-        background[4] = new TextureRegion(manager.get("images/space/background/bkgd_6.png", Texture.class));
-        background[5] = new TextureRegion(manager.get("images/space/background/bkgd_7.png", Texture.class));
+        background[0] = new TextureRegion(
+                manager.get("images/space/background/bkgd_1.png", Texture.class));
+        background[1] = new TextureRegion(
+                manager.get("images/space/background/bkgd_2.png", Texture.class));
+        background[2] = new TextureRegion(
+                manager.get("images/space/background/bkgd_3.png", Texture.class));
+        background[3] = new TextureRegion(
+                manager.get("images/space/background/bkgd_4.png", Texture.class));
+        background[4] = new TextureRegion(
+                manager.get("images/space/background/bkgd_6.png", Texture.class));
+        background[5] = new TextureRegion(
+                manager.get("images/space/background/bkgd_7.png", Texture.class));
 
         this.backgroundParallax = new float[background.length];
         this.backgroundDrift = new float[background.length];
@@ -135,7 +143,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
             if (i < driftOffset) {
                 backgroundDrift[i] = 0f;
             } else {
-                backgroundDrift[i] = backgroundParallax[i - driftOffset] / 2.5f;
+                backgroundDrift[i] = backgroundParallax[i - driftOffset] / 2f;
             }
         }
     }
@@ -190,14 +198,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         };
         laserLightPool.fill(300);
 
-        this.thrusterLights = new LinkedList<>();
-        this.thrusterLightPool = new Pool<>() {
-            @Override
-            protected ThrusterLight newObject() {
-                return new ThrusterLight();
-            }
-        };
-        thrusterLightPool.fill(50);
+        this.shipThrusterLightMap = new ShipThrusterLightMap(50);
     }
 
     private Sprite createSprite(String path, float width, float height) {
@@ -214,7 +215,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     @Override
     public void render(float delta) {
         controller.update(delta);
-
+        updateCamera(delta);
         updateLightCounts();
 
         ScreenUtils.clear(Color.BLACK);
@@ -236,7 +237,6 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
 
         viewport.apply();
         batch.setProjectionMatrix(camera.combined);
-        updateCamera(delta);
 
         batch.begin();
 
@@ -251,12 +251,12 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         }
 
         // draw ships
-        Iterator<ThrusterLight> thrusterLightsIterator = this.thrusterLights.iterator();
         for (SpaceShip ship : model.getSpaceShips()) {
             // Get transformation matrix from model
             Matrix4 transformMatrix = model.getShipTransformMatrix(ship);
             batch.setTransformMatrix(transformMatrix);
 
+            Iterator<ThrusterLight> shipThrusterLightsIterator = shipThrusterLightMap.get(ship).iterator();
             for (GridCell<Fuselage> cell : ship.getShipStructure()) {
                 if (cell.value() == null) {
                     continue;
@@ -279,8 +279,8 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
                     upgradeIcons.get(cell.value().getUpgrade().getType()).setCenterY(shipY);
                     upgradeIcons.get(cell.value().getUpgrade().getType()).draw(batch);
 
-                    if (cell.value().getUpgrade().getType() == UpgradeType.THRUSTER
-                            && thrusterLightsIterator.hasNext()) {
+                    if (cell.value().getUpgrade().getType() == UpgradeType.THRUSTER) {
+
                         FloatPair point = SpaceCalculator.rotatePoint(
                                 cell.pos().col() + Thruster.thrusterFlameLocation().x(),
                                 cell.pos().row() + Thruster.thrusterFlameLocation().y(),
@@ -288,10 +288,15 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
                                 ship.getAbsoluteCenterOfMass(),
                                 ship.getRotationAngle());
 
-                        ThrusterLight light = thrusterLightsIterator.next();
+                        ThrusterLight light = shipThrusterLightsIterator.next();
+
                         light.setPosition(point.x(), point.y());
                         light.setDirection(ship.getRotationAngle() - 90f);
-                        light.setActive(ship.isAccelerating());
+                        if (ship.isPlayerShip()) {
+                            if (light.isActive() != ship.isAccelerating()) {
+                                light.setActive(ship.isAccelerating());
+                            }
+                        }
                     }
                 }
             }
@@ -374,7 +379,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
 
     private void updateLightCounts() {
         updateLaserLightsCount();
-        updateThrusterLightsCount();
+        shipThrusterLightMap.update(model.getSpaceShips());
     }
 
     private void updateLaserLightsCount() {
@@ -392,37 +397,6 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
             while (lightDiff < 0) {
                 LaserLight light = lightsIterator.next();
                 laserLightPool.free(light);
-                lightsIterator.remove();
-                lightDiff++;
-            }
-        }
-        if (model.getLasers().size() != this.laserLights.size()) {
-            System.out.println("ERROR: model.getLasers().size() [" + model.getLasers().size()
-                    + "] != this.lights.size() [" + this.laserLights.size() + "]");
-        }
-    }
-
-    private void updateThrusterLightsCount() {
-        // add lights if necessary
-        int numThrusters = 0;
-        for (SpaceShip ship : model.getSpaceShips()) {
-            numThrusters += ship.getUpgradeTypePositions(UpgradeType.THRUSTER).size();
-        }
-
-        int lightDiff = numThrusters - this.thrusterLights.size();
-
-        for (int i = 0; i < lightDiff; i++) {
-            ThrusterLight light = thrusterLightPool.obtain();
-            light.setActive(true);
-            this.thrusterLights.addFirst(light);
-        }
-
-        // remove lights if necessary
-        if (lightDiff < 0) {
-            Iterator<ThrusterLight> lightsIterator = this.thrusterLights.iterator();
-            while (lightDiff < 0) {
-                ThrusterLight light = lightsIterator.next();
-                thrusterLightPool.free(light);
                 lightsIterator.remove();
                 lightDiff++;
             }
@@ -457,14 +431,19 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
 
     @Override
     public void dispose() {
-        rayHandler.dispose();
     }
 
     @Override
     public void hide() {
         Gdx.input.setInputProcessor(null);
-        for (ThrusterLight light : this.thrusterLights) {
-            thrusterLightPool.free(light);
+        for (LaserLight light : this.laserLights) {
+            light.setActive(false);
+        }
+
+        for (List<ThrusterLight> lightList : shipThrusterLightMap.thrusterLightMap.values()) {
+            for (ThrusterLight light : lightList) {
+                light.setActive(false);
+            }
         }
     }
 

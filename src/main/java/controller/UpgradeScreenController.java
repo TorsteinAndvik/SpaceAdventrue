@@ -4,6 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 import grid.CellPosition;
+import grid.GridCell;
+import model.GameStateModel;
+import model.SpaceGameModel;
 import model.UpgradeScreenModel;
 import view.SpaceGame;
 import view.screens.UpgradeScreen;
@@ -12,20 +15,18 @@ public class UpgradeScreenController extends GenericController {
 
     private final UpgradeScreen view;
     private final UpgradeScreenModel upgradeModel;
+    private final SpaceGameModel spaceModel;
 
-    private final SpaceGame game;
-
-    public UpgradeScreenController(UpgradeScreen view, UpgradeScreenModel upgradeModel, SpaceGame game) {
-        super(); // GenericController gives us touchpos
+    public UpgradeScreenController(UpgradeScreen view, GameStateModel gameStateModel, SpaceGame game) {
+        super(view, gameStateModel, game); // GenericController gives us touchpos
         this.view = view;
-        this.upgradeModel = upgradeModel;
-        this.game = game;
+        this.upgradeModel = gameStateModel.getUpgradeScreenModel();
+        this.spaceModel = gameStateModel.getSpaceGameModel();
     }
 
     @Override
     public void update(float delta) {
         upgradeModel.update(delta);
-
     }
 
     @Override
@@ -61,7 +62,7 @@ public class UpgradeScreenController extends GenericController {
         view.unprojectTouchPos(touchPos);
 
         CellPosition cpUpgrade = convertMouseToUpgradeBar(touchPos.x, touchPos.y);
-        upgradeModel.setUpgradeInspectionModeIsActive(cellPositionOnUpgradeOptions(cpUpgrade));
+        upgradeModel.setUpgradeInspectionModeIsActive(cellPositionOnUpgradeBar(cpUpgrade));
     }
 
     @Override
@@ -78,7 +79,7 @@ public class UpgradeScreenController extends GenericController {
         touchPos.set(Gdx.input.getX(), Gdx.input.getY());
         view.unprojectTouchPos(touchPos);
         CellPosition cpUpgrade = convertMouseToUpgradeBar(touchPos.x, touchPos.y);
-        if (cellPositionOnUpgradeOptions(cpUpgrade)) {
+        if (cellPositionOnUpgradeBar(cpUpgrade)) {
             upgradeModel.setInspectedUpgradeIndex(cpUpgrade.col());
             upgradeModel.setUpgradeInspectionModeIsActive(true);
         } else {
@@ -106,7 +107,7 @@ public class UpgradeScreenController extends GenericController {
             System.out.println("x = " + cpGrid.col() + ", y = " + cpGrid.row());
         }
 
-        if (cellPositionOnUpgradeOptions(cpUpgrade)) {
+        if (cellPositionOnUpgradeBar(cpUpgrade)) {
             upgradeModel.setGrabbedUpgradeIndex(cpUpgrade.col());
             upgradeModel.setUpgradeGrabbed(true);
         }
@@ -157,7 +158,8 @@ public class UpgradeScreenController extends GenericController {
 
         touchPos.set(Gdx.input.getX(), Gdx.input.getY());
         view.unprojectTouchPos(touchPos);
-        CellPosition cpGrid = view.convertMouseToGrid(touchPos.x, touchPos.y);
+        CellPosition cpGrid = convertMouseToGrid(touchPos.x, touchPos.y);
+
         upgradeModel.setReleasedCellPosition(cpGrid);
 
         return true;
@@ -172,26 +174,56 @@ public class UpgradeScreenController extends GenericController {
         return true;
     }
 
-    private CellPosition convertMouseToGrid(float x, float y) {
+    /**
+     * Converts a mouse click to a grid position.
+     *
+     * @param x the x-coordinate of the mouse click.
+     * @param y the y-coordinate of the mouse click.
+     * @return a CellPosition representing the click in the grid.
+     */
+    public CellPosition convertMouseToGrid(float x, float y) {
         return new CellPosition(
                 (int) Math.floor(y - upgradeModel.getGridOffsetY()),
                 (int) Math.floor(x - upgradeModel.getGridOffsetX()));
     }
 
-    private CellPosition convertMouseToUpgradeBar(float x, float y) {
+    /**
+     * Converts a mouse click to an upgrade bar position.
+     *
+     * @param x the x-coordinate of the mouse click.
+     * @param y the y-coordinate of the mouse click.
+     * @return a CellPosition representing the click on the upgrade bar.
+     */
+    public CellPosition convertMouseToUpgradeBar(float x, float y) {
         return new CellPosition(
                 (int) Math.floor(y - upgradeModel.getUpgradeOffsetY()),
                 (int) Math.floor(x - upgradeModel.getUpgradeOffsetX()));
     }
 
-    private boolean cellPositionOnGrid(CellPosition cp) {
+    /**
+     * Checks if a cell position is on the grid.
+     *
+     * @param cp the <code>CellPosition</code> to check.
+     *
+     * @return <code>true</code> if the cell position is on the grid,
+     *         <code>false</code> otherwise.
+     */
+    public boolean cellPositionOnGrid(CellPosition cp) {
         int gridX = cp.col();
         int gridY = cp.row();
         return !(gridX < 0 || gridX > upgradeModel.getGridWidth() - 1 ||
                 gridY < 0 || gridY > upgradeModel.getGridHeight() - 1);
     }
 
-    private boolean cellPositionOnUpgradeOptions(CellPosition cp) {
+    /**
+     * Checks if a cell position is on the upgrade bar.
+     *
+     * @param cp the <code>CellPosition</code> to check.
+     *
+     * @return <code>true</code> if the cell position is on the upgrade bar,
+     *         <code>false</code> otherwise.
+     */
+    public boolean cellPositionOnUpgradeBar(CellPosition cp) {
         int upgradeX = cp.col();
         int upgradeY = cp.row();
         return !((upgradeY != 0) || (upgradeX < 0) ||

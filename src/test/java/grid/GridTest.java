@@ -68,12 +68,16 @@ class GridTest {
     @Test
     void throwsExceptionWhenGivenInvalidArgs() {
         assertThrows(IllegalArgumentException.class, () -> new Grid<>(-1, 3));
+        assertThrows(IllegalArgumentException.class, () -> new Grid<>(5, 0));
     }
 
     @Test
     void throwsExceptionWhenCoordinatesOutOfBoundsTest() {
         IGrid<String> grid = new Grid<>(3, 3);
         assertThrows(IndexOutOfBoundsException.class, () -> grid.get(new CellPosition(3, 1)));
+        assertThrows(IndexOutOfBoundsException.class, () -> grid.get(new CellPosition(1, 5)));
+        assertThrows(IndexOutOfBoundsException.class, () -> grid.get(new CellPosition(-1, 2)));
+        assertThrows(IndexOutOfBoundsException.class, () -> grid.get(new CellPosition(0, -112)));
     }
 
     @Test
@@ -95,6 +99,10 @@ class GridTest {
 
     @Test
     void shrinkToFitTest() {
+        IGrid<Fuselage> emptyGrid = new Grid<>(3, 4);
+        assertEquals(1, Grid.shrinkGridToFit(emptyGrid).rows());
+        assertEquals(1, Grid.shrinkGridToFit(emptyGrid).cols());
+
         IGrid<Fuselage> grid = new Grid<>(3, 3);
         grid.set(new CellPosition(2, 1), new Fuselage());
 
@@ -107,6 +115,20 @@ class GridTest {
         assertEquals(1, grid.rows());
         assertEquals(1, grid.cols());
         assertFalse(grid.isEmptyAt(new CellPosition(0, 0)));
+    }
+
+    @Test
+    void toStringTest() {
+        IGrid<String> emptyGrid = new Grid<>(1, 1);
+        assertEquals("Grid is empty.", emptyGrid.toString());
+
+        IGrid<String> grid = new Grid<>(2, 2);
+        grid.set(new CellPosition(0, 0), "first element");
+        grid.set(new CellPosition(0, 1), "second");
+
+        assertEquals(
+                "[GridCell[pos=CellPosition[row=0, col=0], value=first element], GridCell[pos=CellPosition[row=0, col=1], value=second]]",
+                grid.toString());
     }
 
     @Test

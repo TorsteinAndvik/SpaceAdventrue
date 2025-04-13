@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import app.TestSpaceGame;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
@@ -48,8 +49,6 @@ class UpgradeScreenModelTest {
         setup();
         player = new Player(ShipFactory.playerShip(), "Player", "Player", 100, 0, 0);
         model = new UpgradeScreenModel(player);
-        controller = new UpgradeScreenController(null, model, null);
-
     }
 
     @Test
