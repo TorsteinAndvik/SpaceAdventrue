@@ -19,7 +19,7 @@ import com.badlogic.gdx.audio.Sound;
 public class SoundManagerTest {
 
     SoundManager soundManager;
-    Sound blippMock;
+    Sound menuSelectMock;
     Sound laser0Mock;
     Sound laser1Mock;
     Sound laser2Mock;
@@ -29,15 +29,14 @@ public class SoundManagerTest {
     @BeforeEach
     public void setup() {
         AssetManager managerMock = mock(AssetManager.class);
-        blippMock = mock(Sound.class);
-        blippMock = mock(Sound.class);
+        menuSelectMock = mock(Sound.class);
         laser0Mock = mock(Sound.class);
         laser1Mock = mock(Sound.class);
         laser2Mock = mock(Sound.class);
         shipExplosionSmallMock = mock(Sound.class);
         shipExplosionBigMock = mock(Sound.class);
 
-        when(managerMock.get("audio/blipp.ogg")).thenReturn(blippMock);
+        when(managerMock.get("audio/menu_select.wav")).thenReturn(menuSelectMock);
         when(managerMock.get("audio/laser_0.mp3")).thenReturn(laser0Mock);
         when(managerMock.get("audio/laser_1.mp3")).thenReturn(laser1Mock);
         when(managerMock.get("audio/laser_2.mp3")).thenReturn(laser2Mock);
@@ -57,7 +56,7 @@ public class SoundManagerTest {
     public void initTest() {
         assertFalse(soundManager.initialized);
 
-        assertNull(soundManager.soundEffects.get(SoundEffect.BLIPP));
+        assertNull(soundManager.soundEffects.get(SoundEffect.MENU_SELECT));
         assertNull(soundManager.soundEffects.get(SoundEffect.LASER_0));
         assertNull(soundManager.soundEffects.get(SoundEffect.LASER_1));
         assertNull(soundManager.soundEffects.get(SoundEffect.LASER_2));
@@ -66,7 +65,7 @@ public class SoundManagerTest {
 
         soundManager.init();
 
-        assertNotNull(soundManager.soundEffects.get(SoundEffect.BLIPP));
+        assertNotNull(soundManager.soundEffects.get(SoundEffect.MENU_SELECT));
         assertNotNull(soundManager.soundEffects.get(SoundEffect.LASER_0));
         assertNotNull(soundManager.soundEffects.get(SoundEffect.LASER_1));
         assertNotNull(soundManager.soundEffects.get(SoundEffect.LASER_2));
@@ -76,7 +75,7 @@ public class SoundManagerTest {
 
         soundManager.init();
 
-        assertNotNull(soundManager.soundEffects.get(SoundEffect.BLIPP));
+        assertNotNull(soundManager.soundEffects.get(SoundEffect.MENU_SELECT));
         assertNotNull(soundManager.soundEffects.get(SoundEffect.LASER_0));
         assertNotNull(soundManager.soundEffects.get(SoundEffect.LASER_1));
         assertNotNull(soundManager.soundEffects.get(SoundEffect.LASER_2));

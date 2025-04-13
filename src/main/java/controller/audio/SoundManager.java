@@ -20,7 +20,7 @@ public class SoundManager {
             return;
         }
 
-        soundEffects.put(SoundEffect.BLIPP, manager.get("audio/blipp.ogg"));
+        soundEffects.put(SoundEffect.MENU_SELECT, manager.get("audio/menu_select.wav"));
         soundEffects.put(SoundEffect.LASER_0, manager.get("audio/laser_0.mp3"));
         soundEffects.put(SoundEffect.LASER_1, manager.get("audio/laser_1.mp3"));
         soundEffects.put(SoundEffect.LASER_2, manager.get("audio/laser_2.mp3"));

@@ -41,6 +41,3 @@ Run Jar files with, for example, `java -jar target/NAME-VERSION-fat.jar`.
 
 
 If you have test failures, and *really* need to build a jar anyway, you can skip testing with `mvn -Dmaven.test.skip=true package`.
-
-### Template example files
-* `src/main/resources/blipp.ogg`– Dr. Richard Boulanger et al (CC-BY-3.0)

@@ -36,9 +36,10 @@ abstract class GenericController extends InputAdapter {
         musicManager = game.getMusicManager();
         musicManager.init();
         musicManager.setVolume(0.5f);
+        musicManager.play();
 
         soundManager = game.getSoundManager();
-        musicManager.play();
+        soundManager.init();
     }
 
     @Override
