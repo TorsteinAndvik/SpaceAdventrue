@@ -420,7 +420,7 @@ public class ShipStructure implements ViewableShipStructure {
 
     @Override
     public boolean isValidUpgradePosition(CellPosition pos) {
-        return isValidFuselagePosition(grid, pos);
+        return isValidUpgradePosition(grid, pos);
     }
 
     @Override
