@@ -44,14 +44,9 @@ public class OptionsScreenController extends GenericController {
                 activateButton(gameStateModel.getSelectedButtonIndex());
                 return true;
             case Input.Keys.ESCAPE:
-                returnToPreviousScreen();
-                return true;
             case Input.Keys.P:
-                if (gameStateModel.getPreviousState() == GameState.PLAYING) {
-                    returnToPreviousScreen();
-                    return true;
-                }
-                return false;
+                game.setSpaceScreen();
+                return true;
         }
         return false;
     }
@@ -84,6 +79,9 @@ public class OptionsScreenController extends GenericController {
                 toggleMusic();
                 break;
             case 2:
+                pullUpControls();
+                break;
+            case 3:
                 returnToPreviousScreen();
                 break;
         }
@@ -111,6 +109,8 @@ public class OptionsScreenController extends GenericController {
 
     private void returnToPreviousScreen() {
         GameState prevState = gameStateModel.getPreviousState();
+
+        System.out.println("Previous state: " + prevState);
         if (prevState == GameState.PLAYING) {
             game.setSpaceScreen();
         } else {

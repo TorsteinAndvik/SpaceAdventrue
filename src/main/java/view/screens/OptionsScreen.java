@@ -80,7 +80,8 @@ public class OptionsScreen implements Screen {
         optionButtons.add(
             new MenuButton("MUSIC: " + (game.getMusicManager().isMusicEnabled() ? "ON" : " OFF"),
                 worldCenterX, startY - spacing));
-        optionButtons.add(new MenuButton("BACK", worldCenterX, startY - 2 * spacing));
+        optionButtons.add(new MenuButton("CONTROLS", worldCenterX, startY - 2 * spacing));
+        optionButtons.add(new MenuButton("BACK", worldCenterX, startY - 3 * spacing));
     }
 
     private void setupFonts() {

@@ -57,6 +57,11 @@ public interface SpaceGame {
     void setOptionsScreen();
 
     /**
+     * Change active screen to StartScreen
+     */
+    void setStartScreen();
+
+    /**
      * @return the application's <code>MusicManager</code>.
      */
     MusicManager getMusicManager();

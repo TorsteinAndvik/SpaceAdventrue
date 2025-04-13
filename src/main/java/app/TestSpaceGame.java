@@ -12,7 +12,6 @@ import controller.audio.MusicManager;
 import controller.audio.SoundManager;
 import model.GameStateModel;
 import model.SpaceGameModel;
-import model.constants.GameState;
 import view.SpaceGame;
 import view.screens.LoadingScreen;
 import view.screens.OptionsScreen;
@@ -145,10 +144,11 @@ public class TestSpaceGame extends Game implements SpaceGame {
      * Change active screen to OptionsScreen
      */
     public void setOptionsScreen() {
-        gameStateModel.changeState(GameState.OPTIONS);
+        gameStateModel.showOptionsScreen();
         OptionsScreen optionsScreen = new OptionsScreen(this, gameStateModel);
         setScreen(optionsScreen);
     }
+
 
     @Override
     public MusicManager getMusicManager() {

@@ -49,8 +49,16 @@ public class GameStateModel {
         changeState(GameState.PLAYING);
     }
 
+    public void showStartScreen() {
+        changeState(GameState.START_GAME);
+    }
+
     public void showUpgradeScreen() {
         changeState(GameState.UPGRADE);
+    }
+
+    public void showOptionsScreen() {
+        changeState(GameState.OPTIONS);
     }
 
     public void returnToGame() {
