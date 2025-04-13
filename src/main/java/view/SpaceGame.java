@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-
 import controller.audio.MusicManager;
 import controller.audio.SoundManager;
 
@@ -51,6 +50,16 @@ public interface SpaceGame {
      * Change active screen to UpgradeScreen.
      */
     void setUpgradeScreen();
+
+    /**
+     * Change active screen to OptionsScreen
+     */
+    void setOptionsScreen();
+
+    /**
+     * Change active screen to StartScreen
+     */
+    void setStartScreen();
 
     /**
      * @return the application's <code>MusicManager</code>.

@@ -2,13 +2,14 @@ package controller;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
 import grid.CellPosition;
 import grid.GridCell;
 import model.GameStateModel;
+import model.ShipComponents.Components.Fuselage;
 import model.SpaceGameModel;
 import model.UpgradeScreenModel;
-import model.ShipComponents.Components.Fuselage;
 import view.SpaceGame;
 import view.screens.UpgradeScreen;
 
@@ -18,7 +19,8 @@ public class UpgradeScreenController extends GenericController {
     private final UpgradeScreenModel upgradeModel;
     private final SpaceGameModel spaceModel;
 
-    public UpgradeScreenController(UpgradeScreen view, GameStateModel gameStateModel, SpaceGame game) {
+    public UpgradeScreenController(UpgradeScreen view, GameStateModel gameStateModel,
+        SpaceGame game) {
         super(view, gameStateModel, game); // GenericController gives us touchpos
         this.view = view;
         this.upgradeModel = gameStateModel.getUpgradeScreenModel();
@@ -48,7 +50,7 @@ public class UpgradeScreenController extends GenericController {
                 updateInspectionMode();
                 yield true;
             }
-            case Input.Keys.ESCAPE -> {
+            case Input.Keys.ESCAPE, Keys.U -> {
                 game.setSpaceScreen();
                 yield true;
             }
@@ -187,8 +189,8 @@ public class UpgradeScreenController extends GenericController {
      */
     public CellPosition convertMouseToGrid(float x, float y) {
         return new CellPosition(
-                (int) Math.floor(y - upgradeModel.getGridOffsetY()),
-                (int) Math.floor(x - upgradeModel.getGridOffsetX()));
+            (int) Math.floor(y - upgradeModel.getGridOffsetY()),
+            (int) Math.floor(x - upgradeModel.getGridOffsetX()));
     }
 
     /**
@@ -200,37 +202,35 @@ public class UpgradeScreenController extends GenericController {
      */
     public CellPosition convertMouseToUpgradeBar(float x, float y) {
         return new CellPosition(
-                (int) Math.floor(y - upgradeModel.getUpgradeOffsetY()),
-                (int) Math.floor(x - upgradeModel.getUpgradeOffsetX()));
+            (int) Math.floor(y - upgradeModel.getUpgradeOffsetY()),
+            (int) Math.floor(x - upgradeModel.getUpgradeOffsetX()));
     }
 
     /**
      * Checks if a cell position is on the grid.
-     * 
+     *
      * @param cp the <code>CellPosition</code> to check.
-     * 
      * @return <code>true</code> if the cell position is on the grid,
-     *         <code>false</code> otherwise.
+     * <code>false</code> otherwise.
      */
     public boolean cellPositionOnGrid(CellPosition cp) {
         int gridX = cp.col();
         int gridY = cp.row();
         return !(gridX < 0 || gridX > upgradeModel.getGridWidth() - 1 ||
-                gridY < 0 || gridY > upgradeModel.getGridHeight() - 1);
+            gridY < 0 || gridY > upgradeModel.getGridHeight() - 1);
     }
 
     /**
      * Checks if a cell position is on the upgrade bar.
-     * 
+     *
      * @param cp the <code>CellPosition</code> to check.
-     * 
      * @return <code>true</code> if the cell position is on the upgrade bar,
-     *         <code>false</code> otherwise.
+     * <code>false</code> otherwise.
      */
     public boolean cellPositionOnUpgradeBar(CellPosition cp) {
         int upgradeX = cp.col();
         int upgradeY = cp.row();
         return !((upgradeY != 0) || (upgradeX < 0) ||
-                (upgradeX > upgradeModel.getNumUpgradeOptions() - 1));
+            (upgradeX > upgradeModel.getNumUpgradeOptions() - 1));
     }
 }
