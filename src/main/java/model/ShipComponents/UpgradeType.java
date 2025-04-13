@@ -1,6 +1,7 @@
 package model.ShipComponents;
 
 public enum UpgradeType {
+    FUSELAGE,
     THRUSTER,
     TURRET,
     SHIELD;
