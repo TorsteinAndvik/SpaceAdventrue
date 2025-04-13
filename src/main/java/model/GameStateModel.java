@@ -12,6 +12,7 @@ public class GameStateModel {
     private UpgradeScreenModel upgradeScreenModel;
 
     private int selectedButtonIndex = 0;
+    private int selectedControlCategoryIndex = 0;
 
     /**
      * Creates a new GameStateModel that will manage game states
@@ -28,7 +29,7 @@ public class GameStateModel {
 
         this.previousState = this.currentState;
 
-        //initialize models if needed
+        // initialize models if needed
         if (newState == GameState.PLAYING && spaceGameModel == null) {
             spaceGameModel = new SpaceGameModel();
         } else if (newState == GameState.UPGRADE && spaceGameModel != null) {
@@ -71,7 +72,6 @@ public class GameStateModel {
         return this.upgradeScreenModel;
     }
 
-
     public int getSelectedButtonIndex() {
         return selectedButtonIndex;
     }
@@ -84,5 +84,11 @@ public class GameStateModel {
         return spaceGameModel != null && spaceGameModel.getPlayer() != null;
     }
 
+    public int getSelectedControlCategoryIndex() {
+        return this.selectedControlCategoryIndex;
+    }
 
+    public void setSelectedControlCategoryIndex(int selectedControlCategoryIndex) {
+        this.selectedControlCategoryIndex = selectedControlCategoryIndex;
+    }
 }

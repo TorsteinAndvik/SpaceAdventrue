@@ -50,7 +50,7 @@ public class OptionsScreen implements Screen {
     private float pulseTime = 0f;
     private final GlyphLayout glyphLayout;
 
-    //controls
+    // controls
     private boolean showingControls = false;
     private int selectedControlCategory = 0;
     private MenuButton controlsBackButton;
@@ -113,11 +113,11 @@ public class OptionsScreen implements Screen {
 
         optionButtons.clear();
         optionButtons.add(
-            new MenuButton("SOUND: " + (game.getSoundManager().isSoundEnabled() ? "ON" : "OFF"),
-                worldCenterX, startY));
+                new MenuButton("SOUND: " + (game.getSoundManager().isSoundEnabled() ? "ON" : "OFF"),
+                        worldCenterX, startY));
         optionButtons.add(
-            new MenuButton("MUSIC: " + (game.getMusicManager().isMusicEnabled() ? "ON" : " OFF"),
-                worldCenterX, startY - spacing));
+                new MenuButton("MUSIC: " + (game.getMusicManager().isMusicEnabled() ? "ON" : " OFF"),
+                        worldCenterX, startY - spacing));
         optionButtons.add(new MenuButton("CONTROLS", worldCenterX, startY - 2 * spacing));
         optionButtons.add(new MenuButton("BACK", worldCenterX, startY - 3 * spacing));
     }
@@ -158,7 +158,7 @@ public class OptionsScreen implements Screen {
         float titlePulseScale = 1.0f + 0.05f * (float) Math.sin(pulseTime * 2.0f);
         titleFont.getData().setScale(viewport.getUnitsPerPixel() * titlePulseScale);
 
-        //change text depending on controls menu showing
+        // change text depending on controls menu showing
         String titleText = showingControls ? "CONTROLS" : SCREEN_TITLE;
         glyphLayout.setText(titleFont, titleText);
         float titleX = (viewport.getWorldWidth() - glyphLayout.width) / 2f;
@@ -190,20 +190,19 @@ public class OptionsScreen implements Screen {
         for (int i = 0; i < controlCategories.size(); i++) {
             String category = controlCategories.get(i);
 
-            //calculate tab position
+            // calculate tab position
             float tabX = tabWidth * (i + 0.5f);
 
-            //draw tab background
+            // draw tab background
             regularFont.getData().setScale(viewport.getUnitsPerPixel() * 0.8f);
             if (i == selectedControlCategory) {
-                //selected tab
+                // selected tab
                 regularFont.setColor(BUTTON_HOVER_COLOR);
 
-                //draw indicator
-                float spaceWidth =
-                    regularFont.getData().spaceXadvance * viewport.getUnitsPerPixel() * 0.8f;
+                // draw indicator
+                float spaceWidth = regularFont.getData().spaceXadvance * viewport.getUnitsPerPixel() * 0.8f;
                 regularFont.draw(spriteBatch, "▼", tabX - spaceWidth * 2,
-                    tabY + lineHeight / 2);
+                        tabY + lineHeight / 2);
             } else {
                 regularFont.setColor(BUTTON_COLOR);
             }
@@ -213,11 +212,11 @@ public class OptionsScreen implements Screen {
             float textX = tabX - glyphLayout.width / 2;
             regularFont.draw(spriteBatch, category, textX, tabY);
 
-            //create tab bounds for click detection
+            // create tab bounds for click detection
             Rectangle tabBounds = new Rectangle(
-                tabX - tabWidth / 2,
-                tabY - tabHeight / 2,
-                tabWidth, tabHeight);
+                    tabX - tabWidth / 2,
+                    tabY - tabHeight / 2,
+                    tabWidth, tabHeight);
 
             // store bounds for click detection later
             if (i >= categoryBounds.size()) {
@@ -231,15 +230,15 @@ public class OptionsScreen implements Screen {
         float currentY = startY;
         regularFont.getData().setScale(viewport.getUnitsPerPixel() * 0.8f);
 
-        //draw controls for selected category
+        // draw controls for selected category
         for (int index : controlIndices) {
             regularFont.setColor(Color.YELLOW);
             regularFont.draw(spriteBatch, controlKeys.get(index), controlStartX, currentY);
 
-            //draw description
+            // draw description
             regularFont.setColor(BUTTON_COLOR);
             regularFont.draw(spriteBatch, controlDescriptions.get(index),
-                controlStartX + viewport.getWorldWidth() * 0.2f, currentY);
+                    controlStartX + viewport.getWorldWidth() * 0.2f, currentY);
 
             currentY -= lineHeight;
         }
@@ -253,17 +252,15 @@ public class OptionsScreen implements Screen {
             float buttonY = controlsBackButton.getY() + glyphLayout.height / 2f;
 
             controlsBackButton.setBounds(new Rectangle(
-                controlsBackButton.getX() - BUTTON_WIDTH / 2f,
-                controlsBackButton.getY() - BUTTON_HEIGHT / 2f,
-                BUTTON_WIDTH,
-                BUTTON_HEIGHT
-            ));
+                    controlsBackButton.getX() - BUTTON_WIDTH / 2f,
+                    controlsBackButton.getY() - BUTTON_HEIGHT / 2f,
+                    BUTTON_WIDTH,
+                    BUTTON_HEIGHT));
 
             regularFont.draw(spriteBatch, controlsBackButton.getText(), buttonX, buttonY);
         }
         regularFont.getData().setScale(viewport.getUnitsPerPixel());
     }
-
 
     public void addControlsForCategory(int categoryIndex, Map<String, String> controls) {
         if (categoryIndex < 0 || categoryIndex >= controlCategories.size()) {
@@ -276,10 +273,10 @@ public class OptionsScreen implements Screen {
         // save current category
         int oldSelectedCategory = selectedControlCategory;
 
-        //switch temporarily to target
+        // switch temporarily to target
         selectedControlCategory = categoryIndex;
 
-        //add all controls for this category
+        // add all controls for this category
         for (Map.Entry<String, String> entry : controls.entrySet()) {
             controlKeys.add(entry.getKey());
             controlDescriptions.add(entry.getValue());
@@ -293,13 +290,13 @@ public class OptionsScreen implements Screen {
     public void selectControlCategory(int index) {
         if (index >= 0 && index < controlCategories.size()) {
             selectedControlCategory = index;
+            gameStateModel.setSelectedControlCategoryIndex(index);
         }
     }
 
     public List<Rectangle> getCategoryBounds() {
         return categoryBounds;
     }
-
 
     private void renderButtons(SpriteBatch spriteBatch) {
         if (!menuInitialized) {
@@ -326,10 +323,10 @@ public class OptionsScreen implements Screen {
             float textY = button.getY() + glyphLayout.height / 2f;
 
             button.setBounds(new Rectangle(
-                button.getX() - BUTTON_WIDTH / 2f,
-                button.getY() - BUTTON_HEIGHT / 2f,
-                BUTTON_WIDTH,
-                BUTTON_HEIGHT));
+                    button.getX() - BUTTON_WIDTH / 2f,
+                    button.getY() - BUTTON_HEIGHT / 2f,
+                    BUTTON_WIDTH,
+                    BUTTON_HEIGHT));
 
             regularFont.draw(spriteBatch, buttonText, textX, textY);
         }
@@ -378,6 +375,10 @@ public class OptionsScreen implements Screen {
 
     public List<MenuButton> getOptionButtons() {
         return optionButtons;
+    }
+
+    public List<String> getControlCategories() {
+        return controlCategories;
     }
 
     public Vector3 unprojectScreenCoords(int screenX, int screenY) {
