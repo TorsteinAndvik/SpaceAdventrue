@@ -42,4 +42,11 @@ public interface IGrid<E> extends IGridDimension, Iterable<GridCell<E>> {
      * @return {@code true} if the position is empty (i.e., contains {@code null}), {@code false} otherwise.
      */
     boolean isEmptyAt(CellPosition pos);
+
+    /**
+     * Checks if the whole grid is empty
+     *
+     * @return {@code true} if the grid is empty, {@code false} otherwise.
+     */
+    boolean isEmpty();
 }

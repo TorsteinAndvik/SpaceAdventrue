@@ -6,8 +6,10 @@ import grid.IGrid;
 import model.ShipComponents.Components.Fuselage;
 import model.ShipComponents.Components.ShipStructure;
 import model.ShipComponents.Components.ShipUpgrade;
-import model.SpaceCharacters.Ships.ViewablePlayer;
-import view.screens.UpgradeScreen;
+import model.ShipComponents.UpgradeHandler;
+import model.SpaceCharacters.Ships.Player;
+import model.World.StoreItem;
+import model.World.UpgradeStore;
 import model.ShipComponents.UpgradeType;
 
 /**
@@ -46,8 +48,9 @@ public class UpgradeScreenModel {
     private final Vector2 lastDragPosition;
     private CellPosition releasedCellPosition;
 
-    private final ViewablePlayer player;
-    private final ShipStructure shipStructure;
+    private UpgradeStore store;
+    private final Player player;
+    private UpgradeHandler upgradeHandler;
 
     /**
      * Initializes an upgrade screen model with vectors for tracking positions. Also
@@ -99,12 +102,17 @@ public class UpgradeScreenModel {
         updateCameraZoomDeltaTime(delta);
 
         if (isReleaseGrabbedUpgrade() && isUpgradeGrabbed()) {
-            if (grabbedItemIsFuselage()) {
-                player.getShipStructure().updateWithFuselage(releasedCellPosition);
-            } else {
-                CellPosition actualFuselagePos = releasedCellPosition.offset(
-                        -gridExpansion / 2, -gridExpansion / 2);
-                shipStructure.addUpgrade(actualFuselagePos, getGrabbedShipUpgrade());
+            int upgradePrice = store.getStoreItem(getGrabbedUpgradeIndex()).price();
+            boolean canAfford = player.getInventory().canAfford(upgradePrice);
+
+            if (canAfford) {
+                boolean upgradeSuccess = upgradeHandler.placeItem(releasedCellPosition,
+                        getGrabbedShipUpgrade().getType());
+                if (upgradeSuccess) {
+                    player.getInventory().spendResources(upgradePrice);
+
+
+                }
             }
 
             releasedCellPosition = null;
@@ -113,15 +121,9 @@ public class UpgradeScreenModel {
         }
     }
 
-    private boolean grabbedItemIsFuselage() {
-        return isUpgradeGrabbed() && getGrabbedUpgradeIndex() == 0;
-    }
 
     private ShipUpgrade getGrabbedShipUpgrade() {
-        UpgradeType upgradeType = UpgradeScreen.getUpgradeTypeFromIndex(getGrabbedUpgradeIndex());
-        if (upgradeType == null) {
-            return null;
-        }
+        UpgradeType upgradeType = store.getStoreItem(getGrabbedUpgradeIndex()).item();
         return ShipUpgrade.getShipUpgrade(upgradeType);
     }
 
@@ -315,5 +317,25 @@ public class UpgradeScreenModel {
 
     public int getPlayerResources() {
         return player.getInventory().getResourceCount();
+    }
+
+    public List<StoreItem> getStoreShelf() {
+        return store.getStock();
+    }
+
+    public void addNewStoreStock(Set<StoreItem> stock) {
+        store = new UpgradeStore(stock);
+    }
+
+    public IGrid<Fuselage> getExpandedGrid() {
+        return upgradeHandler.getGrid();
+    }
+
+    public UpgradeHandler getUpgradeHandler() {
+        return upgradeHandler;
+    }
+
+    public void exitUpgradeHandler() {
+        upgradeHandler.exit();
     }
 }

@@ -98,7 +98,7 @@ public class HitDetection {
     }
 
     private boolean shipCollision(SpaceShip ship, Collidable c) {
-        for (GridCell<Fuselage> gridCell : ship.getShipStructure().getGrid()) {
+        for (GridCell<Fuselage> gridCell : ship.getShipStructure().getGridCopy()) {
             if (gridCell.value() == null) {
                 continue;
             }
@@ -120,7 +120,7 @@ public class HitDetection {
     }
 
     private boolean doubleShipCollision(SpaceShip shipA, SpaceShip shipB) {
-        for (GridCell<Fuselage> gridCellA : shipA.getShipStructure().getGrid()) {
+        for (GridCell<Fuselage> gridCellA : shipA.getShipStructure().getGridCopy()) {
             if (gridCellA.value() == null) {
                 continue;
             }
@@ -130,7 +130,7 @@ public class HitDetection {
             FloatPair pointA = SpaceCalculator.rotatePoint(cellA.col(), cellA.row(), shipA.getRelativeCenterOfMass(),
                     shipA.getAbsoluteCenterOfMass(), shipA.getRotationAngle());
 
-            for (GridCell<Fuselage> gridCellB : shipB.getShipStructure().getGrid()) {
+            for (GridCell<Fuselage> gridCellB : shipB.getShipStructure().getGridCopy()) {
                 if (gridCellB.value() == null) {
                     continue;
                 }
