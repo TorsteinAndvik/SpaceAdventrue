@@ -115,7 +115,6 @@ class ShipStructureTest {
         assertEquals(upgradeAddedMass, shipStructure.getMass());
 
         float emptyFuselageAddedMass = upgradeAddedMass + fuselageMass;
-        System.out.println(shipStructure.getGridCopy());
         assertTrue(shipStructure.addUpgrade(new CellPosition(0, 1), new Fuselage()));
         assertEquals(emptyFuselageAddedMass, shipStructure.getMass());
 
@@ -182,7 +181,6 @@ class ShipStructureTest {
         currentMass = fuselageMass + upgradeMass;
         newMass = oldMass + currentMass;
         pos = new CellPosition(3, 1);
-        System.out.println(shipStructure.getGridCopy());
         assertTrue(shipStructure.addUpgrade(pos, new Fuselage(new Shield())));
         FloatPair fuselageWithUpgradeAddedCM = new FloatPair(
                 ((oldMass * emptyFuselageAddedCM.x()) + currentMass * pos.col()) / newMass,
@@ -209,7 +207,6 @@ class ShipStructureTest {
 
         assertTrue(ship.hasFuselage(new CellPosition(1, 1)));
         assertTrue(ship.hasFuselage(new CellPosition(2, 1)));
-        System.out.println(ship.getGridCopy());
 
     }
 

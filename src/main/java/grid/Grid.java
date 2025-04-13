@@ -3,7 +3,6 @@ package grid;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import model.ShipComponents.Components.Fuselage;
 
 /**
  * This grid class is highly similar to one I wrote for INF101. There are some improvements, but
@@ -179,28 +178,6 @@ public class Grid<E> implements IGrid<E> {
         }
 
         return shrunkGrid;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        for (int row = rows - 1; row >= 0; row--) {
-            for (int col = 0; col < columns; col++) {
-
-                GridCell<E> gc = grid.get(row).get(col);
-                if (gc.value() == null) {
-                    sb.append(".");
-                } else if (gc.value() instanceof Fuselage fuselage) {
-                    if (fuselage.hasUpgrade()) {
-                        sb.append("F");
-                    } else {
-                        sb.append("f");
-                    }
-                }
-            }
-            sb.append("\n");
-        }
-        return sb.toString();
     }
 
 
