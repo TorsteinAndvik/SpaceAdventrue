@@ -10,9 +10,11 @@ public class UpgradeHandler {
     private final int gridExp = 2;
     private final ShipStructure structure;
 
-
     public UpgradeHandler(ShipStructure shipStructure) {
         structure = shipStructure;
+    }
+
+    public void expand() {
         structure.expandGrid(gridExp, gridExp, true);
     }
 
@@ -56,7 +58,6 @@ public class UpgradeHandler {
         }
         return false;
     }
-
 
     public IGrid<Fuselage> getGrid() {
         return structure.getGridCopy();

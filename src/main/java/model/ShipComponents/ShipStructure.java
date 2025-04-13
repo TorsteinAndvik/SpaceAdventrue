@@ -29,7 +29,6 @@ public class ShipStructure implements ViewableShipStructure {
         this(new Grid<>(height, width));
     }
 
-
     public ShipStructure(IGrid<Fuselage> grid) {
         this.grid = grid;
         normalize();
@@ -174,7 +173,6 @@ public class ShipStructure implements ViewableShipStructure {
         return setUpgrade(pos, upgrade);
     }
 
-
     private boolean setFuselage(CellPosition pos, Fuselage fuselage) {
         if (grid.isEmpty() || canBuildAt(pos)) {
             grid.set(pos, fuselage);
@@ -221,9 +219,7 @@ public class ShipStructure implements ViewableShipStructure {
      *                  bottom-right.
      */
     public void expandGrid(int addedRows, int addedCols, boolean center) {
-        gridExpanded = true;
         grid = getExpandedGrid(grid, addedRows, addedCols, center);
-        gridExpanded = true;
     }
 
     /**
@@ -249,6 +245,7 @@ public class ShipStructure implements ViewableShipStructure {
     private IGrid<Fuselage> getExpandedGrid(IGrid<Fuselage> grid, int addedRows,
             int addedCols, boolean center) {
         if (addedRows < 0 || addedCols < 0 || (addedRows == 0 && addedCols == 0)) {
+            gridExpanded = false;
             return grid;
         }
 
@@ -268,6 +265,7 @@ public class ShipStructure implements ViewableShipStructure {
             }
             extGrid.set(cp, cell.value());
         }
+        gridExpanded = true;
         return extGrid;
     }
 
@@ -467,11 +465,12 @@ public class ShipStructure implements ViewableShipStructure {
         return radius;
     }
 
-
     /**
      * Normalizes the structure of the ship grid by performing two key operations:
-     * If the grid is expanded beyond what is necessary, it shrinks the grid to fit the placed components.
-     * Recalculates the radius, total mass and the center of mass of the ship based on current components.
+     * If the grid is expanded beyond what is necessary, it shrinks the grid to fit
+     * the placed components.
+     * Recalculates the radius, total mass and the center of mass of the ship based
+     * on current components.
      * <p>
      * This method ensures that the structural representation of the ship is both
      * space-efficient and physically accurate.

@@ -513,9 +513,14 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         viewportUI.update(width, height, true);
     }
 
+    float oldZoom;
+
     @Override
     public void show() {
+        oldZoom = ((OrthographicCamera) viewportGame.getCamera()).zoom;
         Gdx.input.setInputProcessor(controller);
+        controller.reset();
+        updateCameraZoom(model.getCurrentZoom());
         viewportGame.apply(true);
         viewportUI.apply(true);
     }
@@ -523,6 +528,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     @Override
     public void hide() {
         Gdx.input.setInputProcessor(null);
+        updateCameraZoom(oldZoom);
     }
 
     @Override
