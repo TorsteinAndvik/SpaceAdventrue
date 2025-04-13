@@ -2,7 +2,6 @@ package model.Globals;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import model.Globals.Thing;
 import org.junit.jupiter.api.Test;
 
 class ThingTest {
