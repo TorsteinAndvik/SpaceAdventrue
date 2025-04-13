@@ -1,6 +1,5 @@
 package model;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -53,13 +52,19 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     private RandomAsteroidFactory randomAsteroidFactory;
     private DirectionalAsteroidFactory directionalAsteroidFactory;
-    private float asteroidTimer = 0;
+    private float asteroidTimer = 0f;
+
+    private float enemySpawnTimer = 0f;
+    private int spawnedShipCounter = 0;
 
     private Random rng = new Random();
 
     public SpaceGameModel() {
 
-        createSpaceShips();
+        setupPlayer();
+
+        this.spaceShips = new LinkedList<>();
+        this.spaceShips.add(player);
 
         this.asteroids = new LinkedList<>();
         this.lasers = new LinkedList<>();
@@ -96,35 +101,16 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         laserPool.fill(laserPreFill);
     }
 
-    private void createSpaceShips() {
+    private void setupPlayer() {
         player = new Player(
                 ShipFactory.playerShip(), "player", "the player's spaceship", 20, 8, 1);
         player.setRotationSpeed(0f);
         player.setFireRate(0.4f);
-
-        EnemyShip enemyShip = new EnemyShip(
-                ShipFactory.createShipFromJson("enemy2.json"),
-                "enemy",
-                "an enemy ship",
-                1,
-                2,
-                5,
-                -90f);
-        enemyShip.setBrain(new LerpBrain(enemyShip, player));
-        enemyShip.setFireRate(0.75f);
-
-        EnemyShip enemyShip2 = new EnemyShip(
-                ShipFactory.createShipFromJson("enemy1.json"), "enemy", "an enemy ship", 7, -3, 3, 0f);
-        enemyShip2.setBrain(new LerpBrain(enemyShip2, player));
-        enemyShip2.setFireRate(0.6f);
-
-        this.spaceShips = new LinkedList<>(
-                Arrays.asList(this.player, enemyShip, enemyShip2));
     }
 
     private void createAsteroids() {
-        randomAsteroidFactory.setSpawnPerimeter(this.screenBoundsProvider.getBounds());
-        directionalAsteroidFactory.setSpawnPerimeter(this.screenBoundsProvider.getBounds());
+        randomAsteroidFactory.setSpawnPerimeter(screenBoundsProvider.getBounds());
+        directionalAsteroidFactory.setSpawnPerimeter(screenBoundsProvider.getBounds());
 
         if (player.getSpeed() > 0.75 * PhysicsParameters.maxVelocityLongitudonal) {
             for (Asteroid asteroid : directionalAsteroidFactory.getAsteroidShower()) {
@@ -183,10 +169,17 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
             }
         }
 
-        this.asteroidTimer += delta;
-        if (asteroidTimer > 5) { // 5 for testing
+        asteroidTimer += delta;
+        if (asteroidTimer > 6f) { // 6 for testing
             createAsteroids();
-            asteroidTimer = 0;
+            asteroidTimer = 0f;
+        }
+
+        enemySpawnTimer += delta;
+        if (enemySpawnTimer > 5f + spawnedShipCounter) {
+            spawnRandomShip();
+            spawnedShipCounter++;
+            enemySpawnTimer = 0f;
         }
 
         for (SpaceShip spaceShip : spaceShips) {
@@ -407,27 +400,49 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         return player.getAbsoluteCenterOfMass();
     }
 
-    private int spawnedShipCounter = 0; // TODO: Refactor - move to a timer with spawn logic, similar to asteroid timer
-
     public void spawnRandomShip() {
         int numFuselage = 2 + spawnedShipCounter;
         int numUpgrades = rng.nextInt((int) Math.max(2, numFuselage / 2), numFuselage + 1);
+
+        Rectangle spawnPerimeter = screenBoundsProvider.getBounds();
+
+        float x, y;
+        int side = rng.nextInt(4);
+        if (side == 0) { // Top
+            y = spawnPerimeter.y + spawnPerimeter.height + numFuselage * PhysicsParameters.fuselageRadius;
+            x = rng.nextFloat(spawnPerimeter.x - numFuselage * PhysicsParameters.fuselageRadius,
+                    spawnPerimeter.x + spawnPerimeter.width + numFuselage * PhysicsParameters.fuselageRadius);
+
+        } else if (side == 1) { // Right
+            x = spawnPerimeter.x + spawnPerimeter.width + numFuselage * PhysicsParameters.fuselageRadius;
+            y = rng.nextFloat(spawnPerimeter.y - numFuselage * PhysicsParameters.fuselageRadius,
+                    spawnPerimeter.y + spawnPerimeter.height + numFuselage * PhysicsParameters.fuselageRadius);
+
+        } else if (side == 2) { // Bot
+            y = spawnPerimeter.y - numFuselage * PhysicsParameters.fuselageRadius;
+            x = rng.nextFloat(spawnPerimeter.x - numFuselage * PhysicsParameters.fuselageRadius,
+                    spawnPerimeter.x + spawnPerimeter.width + numFuselage * PhysicsParameters.fuselageRadius);
+
+        } else { // Left
+            x = spawnPerimeter.x - numFuselage * PhysicsParameters.fuselageRadius;
+            y = rng.nextFloat(spawnPerimeter.y - numFuselage * PhysicsParameters.fuselageRadius,
+                    spawnPerimeter.y + spawnPerimeter.height + numFuselage * PhysicsParameters.fuselageRadius);
+        }
+
         EnemyShip enemyShip = new EnemyShip(
                 ShipFactory.generateShipStructure(numFuselage, numUpgrades),
                 "enemy",
                 "an enemy ship",
-                1,
-                2,
-                5,
+                x,
+                y,
+                3 + spawnedShipCounter,
                 -90f);
 
         enemyShip.setBrain(new LerpBrain(enemyShip, player));
-        enemyShip.setFireRate(0.75f);
+        enemyShip.setFireRate(0.6f);
 
         spaceShips.addLast(enemyShip);
         hitDetection.addCollider(enemyShip);
-
-        spawnedShipCounter++;
     }
 
     @Override
