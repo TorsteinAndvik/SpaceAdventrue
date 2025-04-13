@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.List;
 import grid.CellPosition;
 import model.SpaceCharacters.Asteroid;
+import model.SpaceCharacters.CharacterType;
+import model.SpaceCharacters.SpaceBody;
 
 import org.junit.jupiter.api.Test;
 
@@ -220,4 +222,30 @@ public class SpaceCalculatorTest {
         assertFalse(SpaceCalculator.collisionCalculator(target1, target2));
     }
 
+    @Test
+    void crashTest() {
+        Asteroid target1 = new Asteroid();
+        Asteroid target2 = new Asteroid();
+
+        SpaceCalculator.crash(target1, target2);
+        assertTrue(target1.isDestroyed() && target2.isDestroyed());
+
+        Asteroid target3 = new Asteroid("name", "description", 0, 0, 0, 0,
+                5, 0, 0, 0, 0, false);
+        Asteroid target4 = new Asteroid("name", "description", 0, 0, 0, 0,
+                12, 0, 0, 0, 0, false);
+
+        SpaceCalculator.crash(target3, target4);
+        assertTrue(target3.isDestroyed());
+        assertEquals(7, target4.getHitPoints());
+
+        SpaceBody nonDamageable = new SpaceBody("name", "description", CharacterType.BULLET) {
+        };
+
+        SpaceCalculator.crash(target4, nonDamageable);
+        assertEquals(7, target4.getHitPoints());
+
+        SpaceCalculator.crash(nonDamageable, target4);
+        assertEquals(7, target4.getHitPoints());
+    }
 }

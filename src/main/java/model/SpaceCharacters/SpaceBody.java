@@ -3,8 +3,6 @@ package model.SpaceCharacters;
 import com.badlogic.gdx.math.Vector2;
 import controller.ControllableSpaceBody;
 import model.Globals.Collidable;
-import model.Globals.DamageDealer;
-import model.Globals.Damageable;
 import model.Globals.Rotatable;
 import model.Globals.SpaceThing;
 import model.utils.ArgumentChecker;
@@ -207,19 +205,16 @@ public abstract class SpaceBody implements SpaceThing, Rotatable, Collidable, Vi
     @Override
     public void setRotationSpeed(float rotationSpeed) {
         rotation.setRotationSpeed(rotationSpeed);
-
     }
 
     @Override
     public void scaleRotationSpeed(float scale) {
         rotation.setRotationSpeed(scale * getRotationSpeed());
-
     }
 
     @Override
     public void addRotationSpeed(float deltaRotationSpeed) {
         rotation.setRotationSpeed(rotation.getRotationSpeed() + deltaRotationSpeed);
-
     }
 
     @Override
@@ -248,7 +243,7 @@ public abstract class SpaceBody implements SpaceThing, Rotatable, Collidable, Vi
     @Override
     public void setVelocity(Vector2 velocity) {
         Objects.requireNonNull(velocity, "Velocity can't be null.");
-        this.velocity.set(velocity.x, velocity.y);
+        setVelocity(velocity.x, velocity.y);
     }
 
     public void setVelocity(float x, float y) {
@@ -278,22 +273,5 @@ public abstract class SpaceBody implements SpaceThing, Rotatable, Collidable, Vi
     public void update(float deltaTime) {
         position.add(velocity.x * deltaTime, velocity.y * deltaTime);
         rotation.update(deltaTime);
-    }
-
-    public static void crash(Collidable A, Collidable B) {
-        int damageA = 0;
-        int damageB = 0;
-        if (A instanceof DamageDealer a) {
-            damageA = a.getDamage();
-        }
-        if (B instanceof DamageDealer b) {
-            damageB = b.getDamage();
-        }
-        if (A instanceof DamageDealer a && B instanceof Damageable b) {
-            a.dealDamage(b, damageA);
-        }
-        if (B instanceof DamageDealer b && A instanceof Damageable a) {
-            b.dealDamage(a, damageB);
-        }
     }
 }
