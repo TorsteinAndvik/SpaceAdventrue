@@ -49,6 +49,7 @@ import view.lighting.ThrusterLight;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvider {
 
@@ -419,7 +420,15 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     @Override
     public void hide() {
         Gdx.input.setInputProcessor(null);
-        rayHandler.removeAll();
+        for (LaserLight light : this.laserLights) {
+            light.setActive(false);
+        }
+
+        for (List<ThrusterLight> lightList : shipThrusterLightMap.thrusterLightMap.values()) {
+            for (ThrusterLight light : lightList) {
+                light.setActive(false);
+            }
+        }
     }
 
     @Override

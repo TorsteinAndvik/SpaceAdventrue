@@ -36,7 +36,7 @@ public class ShipValidator {
 
     }
 
-    private static boolean isShipConnected(List<CellPosition> componentPositions) {
+    public static boolean isShipConnected(List<CellPosition> componentPositions) {
         if (componentPositions.isEmpty()) {
             return false;
         }

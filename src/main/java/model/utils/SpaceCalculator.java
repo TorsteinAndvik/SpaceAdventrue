@@ -11,10 +11,10 @@ import model.Globals.Damageable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Utility class with only static methods. Instantiation is not intended.
- */
-public class SpaceCalculator {
+public final class SpaceCalculator {
+    private SpaceCalculator() {
+        // Utility class
+    }
 
     /**
      * Calculates the velocity vector given an angle (in degrees) and speed.
