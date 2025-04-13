@@ -51,10 +51,12 @@ public class OptionsScreen implements Screen {
 
     //controls
     private boolean showingControls = false;
+    private int selectedControlCategory = 0;
     private MenuButton controlsBackButton;
     private List<String> controlCategories = new ArrayList<>();
     private List<String> controlKeys = new ArrayList<>();
     private List<String> controlDescriptions = new ArrayList<>();
+    private final List<Rectangle> categoryBounds = new ArrayList<>();
     private Runnable backButtonAction;
 
     public OptionsScreen(TestSpaceGame game, GameStateModel gameStateModel) {
@@ -157,16 +159,15 @@ public class OptionsScreen implements Screen {
         float titlePulseScale = 1.0f + 0.05f * (float) Math.sin(pulseTime * 2.0f);
         titleFont.getData().setScale(viewport.getUnitsPerPixel() * titlePulseScale);
 
-        glyphLayout.setText(titleFont, SCREEN_TITLE);
+        //change text depending on controls menu showing
+        String titleText = showingControls ? "CONTROLS" : SCREEN_TITLE;
+        glyphLayout.setText(titleFont, titleText);
         float titleX = (viewport.getWorldWidth() - glyphLayout.width) / 2f;
         float titleY = viewport.getWorldHeight() * 0.7f + glyphLayout.height / 2f;
 
         titleFont.setColor(TITLE_COLOR);
-        titleFont.draw(spriteBatch, SCREEN_TITLE, titleX, titleY);
-
+        titleFont.draw(spriteBatch, titleText, titleX, titleY);
         titleFont.getData().setScale(viewport.getUnitsPerPixel());
-
-        renderButtons(spriteBatch);
 
         if (showingControls) {
             renderControlsScreen(spriteBatch);
@@ -178,65 +179,97 @@ public class OptionsScreen implements Screen {
     }
 
     private void renderControlsScreen(SpriteBatch spriteBatch) {
-        float startY = viewport.getWorldHeight() * 0.8f;
+        float startY = viewport.getWorldHeight() * 0.6f;
         float categoryStartX = viewport.getWorldWidth() * 0.1f;
         float controlStartX = viewport.getWorldWidth() * 0.2f;
-        float lineHeight = regularFont.getLineHeight() * 1.5f;
-
-        // draw Controls header
-        titleFont.setColor(TITLE_COLOR);
-        glyphLayout.setText(titleFont, "CONTROLS");
-        float titleX = (viewport.getWorldWidth() - glyphLayout.width) / 2f;
-        float titleY = viewport.getWorldHeight() * 0.9f + glyphLayout.height / 2f;
-        titleFont.draw(spriteBatch, "CONTROLS", titleX, titleY);
+        float lineHeight = regularFont.getLineHeight() * 1.2f;
 
         // track position for drawing
         float currentY = startY;
-        int controlIndex = 0;
 
-        // draw category and controls
-        for (String category : controlCategories) {
-            // draw header for each category
-            regularFont.setColor(BUTTON_HOVER_COLOR);
-            regularFont.getData().setScale(viewport.getUnitsPerPixel() * 1.1f);
-            regularFont.draw(spriteBatch, category, categoryStartX, currentY);
-            currentY -= lineHeight;
+        // draw category tabs
+        float tabWidth = viewport.getWorldWidth() / (controlCategories.size() + 1);
+        float tabY = viewport.getWorldHeight() * 0.65f;
+        float tabHeight = lineHeight * 1.5f;
 
-            // count controls to draw for a given category
-            int controlsInCategory = 0;
-            while (controlIndex + controlsInCategory < controlCategories.size() && (
-                controlIndex + controlsInCategory == 0
-                    || controlIndex + controlsInCategory < controlKeys.size())) {
-                controlsInCategory++;
-            }
+        for (int i = 0; i < controlCategories.size(); i++) {
+            String category = controlCategories.get(i);
 
-            //draw controls
-            regularFont.getData().setScale(viewport.getUnitsPerPixel());
-            for (int i = 0; i < controlsInCategory; i++) {
-                //draw key name
-                regularFont.setColor(Color.YELLOW);
-                regularFont.draw(spriteBatch, controlKeys.get(controlIndex), controlStartX,
-                    currentY);
+            //calculate tab position
+            float tabX = tabWidth * (i + 0.5f);
 
-                //draw description
+            //draw tab background
+            regularFont.getData().setScale(viewport.getUnitsPerPixel() * 0.8f);
+            if (i == selectedControlCategory) {
+                //selected tab
+                regularFont.setColor(BUTTON_HOVER_COLOR);
+
+                //draw indicator
+                float spaceWidth =
+                    regularFont.getData().spaceXadvance * viewport.getUnitsPerPixel() * 0.8f;
+                regularFont.draw(spriteBatch, "x", tabX - spaceWidth * 2,
+                    tabY + lineHeight / 2);
+            } else {
                 regularFont.setColor(BUTTON_COLOR);
-                regularFont.draw(spriteBatch, controlDescriptions.get(controlIndex),
-                    controlStartX + viewport.getWorldWidth() * 0.15f, currentY);
-
-                currentY -= lineHeight;
-                controlIndex++;
             }
 
-            //add padding between categories
-            currentY -= lineHeight * 0.5f;
+            // draw centered tab
+            glyphLayout.setText(regularFont, category);
+            float textX = tabX - glyphLayout.width / 2;
+            regularFont.draw(spriteBatch, category, textX, tabY);
+
+            //create tab bounds for click detection
+            Rectangle tabBounds = new Rectangle(
+                tabX - tabWidth / 2,
+                tabY - tabHeight / 2,
+                tabWidth, tabHeight);
+
+            // store bounds for click detection later
+            if (i >= categoryBounds.size()) {
+                categoryBounds.add(tabBounds);
+            } else {
+                categoryBounds.set(i, tabBounds);
+            }
         }
+
+        int startIndex = 0;
+        int endIndex = 0;
+
+        //calculate start and end indices for selected category
+        for (int i = 0; i < selectedControlCategory; i++) {
+            // count controls in previous categories
+            int controlsCount = getControlCountForCategory(i);
+            startIndex += controlsCount;
+        }
+
+        // get number of controls in selected category
+        int controlsInCategory = getControlCountForCategory(selectedControlCategory);
+        endIndex = startIndex + controlsInCategory;
+
+        //draw controls for selected category
+        currentY = startY = lineHeight * 2;
+
+        regularFont.getData().setScale(viewport.getUnitsPerPixel() * 0.8f);
+        for (int i = startIndex; i < endIndex; i++) {
+            // draw key name
+            regularFont.setColor(Color.YELLOW);
+            regularFont.draw(spriteBatch, controlKeys.get(i), controlStartX, currentY);
+
+            // draw description
+            regularFont.setColor(BUTTON_COLOR);
+            regularFont.draw(spriteBatch, controlDescriptions.get(i), controlStartX +
+                viewport.getWorldWidth() * 0.15f, currentY);
+
+            currentY -= lineHeight;
+        }
+
         // draw back button
         if (controlsBackButton != null) {
             regularFont.setColor(BUTTON_HOVER_COLOR);
+            regularFont.getData().setScale(viewport.getUnitsPerPixel());
             glyphLayout.setText(regularFont, controlsBackButton.getText());
             float buttonX = controlsBackButton.getX() - glyphLayout.width / 2f;
             float buttonY = controlsBackButton.getY() - glyphLayout.height / 2f;
-            regularFont.draw(spriteBatch, controlsBackButton.getText(), buttonX, buttonY);
 
             controlsBackButton.setBounds(new Rectangle(
                 controlsBackButton.getX() - BUTTON_WIDTH / 2f,
@@ -244,8 +277,40 @@ public class OptionsScreen implements Screen {
                 BUTTON_WIDTH,
                 BUTTON_HEIGHT
             ));
+
+            regularFont.draw(spriteBatch, controlsBackButton.getText(), buttonX, buttonY);
+        }
+        regularFont.getData().setScale(viewport.getUnitsPerPixel());
+    }
+
+    private int getControlCountForCategory(int categoryIndex) {
+
+        int totalControls = controlKeys.size();
+        int numCategories = controlCategories.size();
+
+        if (numCategories == 0) {
+            return 0;
+        }
+        int baseControlsPerCategory = totalControls / numCategories;
+        int remainder = totalControls % numCategories;
+
+        if (categoryIndex < remainder) {
+            return baseControlsPerCategory + 1;
+        } else {
+            return baseControlsPerCategory;
         }
     }
+
+    public void selectControlCategory(int index) {
+        if (index >= 0 && index < controlCategories.size()) {
+            selectedControlCategory = index;
+        }
+    }
+
+    public List<Rectangle> getCategoryBounds() {
+        return categoryBounds;
+    }
+
 
     private void renderButtons(SpriteBatch spriteBatch) {
         if (!menuInitialized) {

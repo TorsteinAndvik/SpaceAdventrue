@@ -2,6 +2,7 @@ package controller;
 
 import app.TestSpaceGame;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import controller.audio.SoundEffect;
 import java.util.List;
@@ -59,6 +60,17 @@ public class OptionsScreenController extends GenericController {
 
         //if showing controls screen check if back button is clicked
         if (view.isShowingControls()) {
+
+            //check if category tab clicked
+            List<Rectangle> categoryBounds = view.getCategoryBounds();
+            for (int i = 0; i < categoryBounds.size(); i++) {
+                if (categoryBounds.get(i).contains(worldCoords.x, worldCoords.y)) {
+                    view.selectControlCategory(i);
+                    soundManager.play(SoundEffect.MENU_SELECT, 0.2f);
+                    return true;
+                }
+            }
+
             MenuButton backButton = view.getControlsBackButton();
             if (backButton != null && backButton.getBounds()
                 .contains(worldCoords.x, worldCoords.y)) {
