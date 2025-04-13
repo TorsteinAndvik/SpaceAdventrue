@@ -282,4 +282,9 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
         timeSinceLastShot = 0f;
         isShooting = false;
     }
+
+    @Override
+    public float getRadius() {
+        return shipStructure.getRadius();
+    }
 }

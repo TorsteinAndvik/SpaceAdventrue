@@ -26,7 +26,7 @@ public class UpgradeScreenModel {
     private float upgradeOffsetX;
     private float upgradeOffsetY;
 
-    private final float[] cameraZoomLevels = { 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1f, 1.1f, 1.2f, 1.3f, 1.4f, 1.5f };
+    private final float[] cameraZoomLevels = {0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1f, 1.1f, 1.2f, 1.3f, 1.4f, 1.5f};
     private int cameraCurrentZoomLevel;
     private float cameraZoomDeltaTime;
     private final float cameraZoomTextFadeCutoffTime = 0.5f;
@@ -100,7 +100,14 @@ public class UpgradeScreenModel {
         updateCameraZoomDeltaTime(delta);
 
         if (isReleaseGrabbedUpgrade() && isUpgradeGrabbed()) {
-            int upgradePrice = store.getStoreItem(getGrabbedUpgradeIndex()).price();
+
+            StoreItem item = store.getStoreItem(getGrabbedUpgradeIndex());
+
+            int upgradePrice = item.price();
+
+            if (item.item() == UpgradeType.FUSELAGE) {
+                offsetsMustBeUpdated = true;
+            }
             boolean canAfford = player.getInventory().canAfford(upgradePrice);
 
             if (canAfford) {
@@ -118,7 +125,6 @@ public class UpgradeScreenModel {
             setUpgradeGrabbed(false);
         }
     }
-
 
     private ShipUpgrade getGrabbedShipUpgrade() {
         UpgradeType upgradeType = store.getStoreItem(getGrabbedUpgradeIndex()).item();
