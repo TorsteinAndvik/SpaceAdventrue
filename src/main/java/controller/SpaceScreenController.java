@@ -1,7 +1,7 @@
 package controller;
 
 import com.badlogic.gdx.Input;
-
+import com.badlogic.gdx.Input.Keys;
 import controller.audio.AudioCallback;
 import controller.audio.SoundEffect;
 import model.GameStateModel;
@@ -52,8 +52,17 @@ public class SpaceScreenController extends GenericController implements AudioCal
                 model.playerShoot();
                 yield true;
             }
-            case Input.Keys.ESCAPE -> {
+            case Input.Keys.U -> {
                 game.setUpgradeScreen();
+                yield true;
+            }
+            case Keys.ESCAPE -> {
+                //TODO: Do we keep this?
+                game.setStartScreen();
+                yield true;
+            }
+            case Input.Keys.P -> {
+                game.setOptionsScreen();
                 yield true;
             }
             default -> false;
