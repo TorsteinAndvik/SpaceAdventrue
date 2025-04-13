@@ -174,15 +174,4 @@ public class SpaceBodyTest {
 
         assertEquals(0, body.getResourceValue());
     }
-
-    @Test
-    void crashTest() {
-        SpaceBody asteroidA = new Asteroid(
-                "Ceres", "Ceres is a dwarf planet",
-                100, 68, 100, 600, 10_000, 45, 100, 1);
-
-        SpaceBody asteroidB = new Asteroid(
-                "Ceres", "Ceres is a dwarf planet",
-                100, 68, 100, 600, 10_000, 45, 100, 1);
-    }
 }
