@@ -1,7 +1,5 @@
 package model;
 
-import model.ShipComponents.Components.ShipStructure;
-import model.SpaceCharacters.SpaceShip;
 import model.constants.GameState;
 
 public class GameStateModel {
@@ -33,10 +31,8 @@ public class GameStateModel {
         if (newState == GameState.PLAYING && spaceGameModel == null) {
             spaceGameModel = new SpaceGameModel();
         } else if (newState == GameState.UPGRADE && spaceGameModel != null) {
-            SpaceShip playerShip = spaceGameModel.getPlayer();
-            ShipStructure playerShipStructure = playerShip.getShipStructure();
             if (upgradeScreenModel == null) {
-                upgradeScreenModel = new UpgradeScreenModel(playerShipStructure);
+                upgradeScreenModel = new UpgradeScreenModel(spaceGameModel.getPlayer());
             }
         }
         this.currentState = newState;

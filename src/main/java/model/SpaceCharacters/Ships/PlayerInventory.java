@@ -1,4 +1,4 @@
-package model.SpaceCharacters;
+package model.SpaceCharacters.Ships;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -6,16 +6,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import model.Globals.Collectable;
 import model.World.GameItem;
 
-public class PlayerInventory implements Inventory {
+public class PlayerInventory implements Inventory, ViewableInventory {
 
     private final Map<GameItem, Integer> items;
     private int resources;
 
+    public PlayerInventory(Map<GameItem, Integer> items, int resources) {
+        this.items = items;
+        this.resources = resources;
+    }
+
     public PlayerInventory() {
-        items = new HashMap<>();
-        resources = 0;
+        this(new HashMap<>(), 0);
     }
 
     @Override
@@ -53,6 +58,11 @@ public class PlayerInventory implements Inventory {
     }
 
     @Override
+    public int getResourceCount() {
+        return resources;
+    }
+
+    @Override
     public boolean hasCapacity() {
         return countAllItems() < INVENTORY_ITEM_CAPACITY;
     }
@@ -64,13 +74,18 @@ public class PlayerInventory implements Inventory {
     }
 
     @Override
-    public void addResource(int amount) {
-        resources += amount;
+    public void addResource(Collectable c) {
+        addResource(c.getValue());
+    }
+
+    @Override
+    public void addResource(int value) {
+        resources += value;
     }
 
     @Override
     public boolean spendResources(int amount) {
-        if (!hasResourceAmount(amount)) {
+        if (!canAfford(amount)) {
             return false;
         }
         resources -= amount;
@@ -78,7 +93,7 @@ public class PlayerInventory implements Inventory {
     }
 
     @Override
-    public boolean hasResourceAmount(int amount) {
+    public boolean canAfford(int amount) {
         return resources >= amount;
     }
 

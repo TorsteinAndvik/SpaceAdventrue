@@ -17,6 +17,7 @@ import grid.CellPosition;
 import model.Animation.AnimationCallback;
 import model.Animation.AnimationStateImpl;
 import model.Animation.AnimationType;
+import model.Globals.Collectable;
 import model.Globals.Collidable;
 import model.Globals.Damageable;
 import model.ShipComponents.ShipFactory;
@@ -24,10 +25,11 @@ import model.ShipComponents.UpgradeType;
 import model.ShipComponents.Components.Turret;
 import model.SpaceCharacters.Asteroid;
 import model.SpaceCharacters.Bullet;
-import model.SpaceCharacters.EnemyShip;
-import model.SpaceCharacters.Player;
+import model.SpaceCharacters.Diamond;
+import model.SpaceCharacters.Ships.EnemyShip;
+import model.SpaceCharacters.Ships.Player;
 import model.SpaceCharacters.SpaceBody;
-import model.SpaceCharacters.SpaceShip;
+import model.SpaceCharacters.Ships.SpaceShip;
 import model.ai.LerpBrain;
 import model.constants.PhysicsParameters;
 import model.utils.FloatPair;
@@ -39,8 +41,9 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     private Player player;
     private LinkedList<SpaceShip> spaceShips;
     private final HitDetection hitDetection;
-    private LinkedList<Asteroid> asteroids;
-    private LinkedList<Bullet> lasers;
+    private final LinkedList<Asteroid> asteroids;
+    private final LinkedList<Bullet> lasers;
+    private final LinkedList<Collectable> collectables;
     private Pool<Bullet> laserPool;
 
     private final Matrix3 rotationMatrix;
@@ -58,6 +61,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     private int spawnedShipCounter = 0;
 
     private Random rng = new Random();
+    private DiamondFactory diamondFactory;
 
     public SpaceGameModel() {
 
@@ -68,9 +72,13 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
         this.asteroids = new LinkedList<>();
         this.lasers = new LinkedList<>();
+        this.collectables = new LinkedList<>();
 
         this.hitDetection = new HitDetection(this);
 
+        createDiamondFactory(50);
+        createAsteroidFactory(50);
+        createLaserPool(300);
         createAsteroidFactory(100);
         createLaserPool(200);
 
@@ -78,6 +86,11 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
         this.rotationMatrix = new Matrix3();
         this.transformMatrix = new Matrix4();
+    }
+
+    private void createDiamondFactory(int diamondPreFill) {
+        diamondFactory = new DiamondFactory();
+        diamondFactory.fill(diamondPreFill);
     }
 
     private void createAsteroidFactory(int asteroidPreFill) {
@@ -212,6 +225,11 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         if (HitDetection.isFriendlyFire(A, B)) {
             return;
         }
+
+        if (handleCollection(A, B)) {
+            return;
+        }
+
         boolean destroyA = false;
         boolean destroyB = false;
         SpaceCalculator.crash(A, B);
@@ -226,23 +244,51 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
         if (destroyA) {
             if (B instanceof Bullet bullet && bullet.isPlayerBullet()) {
-                collectResources(A);
+                if (A instanceof SpaceBody && !(A instanceof Bullet)) {
+
+                    Collectable diamond = diamondFactory.spawn((SpaceBody) A);
+                    collectables.add(diamond);
+                    hitDetection.addCollider(diamond);
+                    System.out.println("Add diamond");
+                }
             }
             remove(A, true);
         }
 
         if (destroyB) {
             if (A instanceof Bullet bullet && bullet.isPlayerBullet()) {
-                collectResources(B);
+                if (B instanceof SpaceBody && !(B instanceof Bullet)) {
+                    Diamond diamond = diamondFactory.spawn((SpaceBody) B);
+                    collectables.add(diamond);
+                    hitDetection.addCollider(diamond);
+                }
             }
             remove(B, true);
         }
     }
 
+    private boolean handleCollection(Collidable A, Collidable B) {
+        if (A instanceof Collectable c && B instanceof SpaceShip p) {
+            if (p instanceof Player) {
+                player.getInventory().addResource(c);
+            }
+            remove(c, false);
+            return true;
+        }
+        if (B instanceof Collectable c && A instanceof SpaceShip p) {
+            if (p instanceof Player) {
+                player.getInventory().addResource(c);
+            }
+            remove(c, false);
+            return true;
+        }
+        return false;
+    }
+
     private void remove(Collidable c, boolean drawExplosion) {
         hitDetection.removeCollider(c);
-        if (c instanceof SpaceBody) {
-            switch (((SpaceBody) c).getCharacterType()) {
+        if (c instanceof SpaceBody sb) {
+            switch (sb.getCharacterType()) {
                 case ASTEROID:
                     if (drawExplosion) {
                         addAnimationState(c, AnimationType.EXPLOSION);
@@ -268,7 +314,17 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                             break;
                         }
                     }
-                    break;
+
+
+            case DIAMOND :
+                    for (Collectable collectable : this.collectables) {
+                        if (collectable == c) {
+                            collectables.remove(c);
+                            diamondFactory.free((Diamond) c);
+                            break;
+
+                    }
+                }
 
                 case ENEMY_SHIP:
                     for (SpaceShip ship : this.spaceShips) {
@@ -329,7 +385,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         player.setIsShooting(true);
     }
 
-    public void shoot(SpaceShip ship) {
+    public void shoot(ViewableSpaceShip ship) {
         for (CellPosition cell : ship.getUpgradeTypePositions(UpgradeType.TURRET)) {
 
             float x = (float) cell.col() + Turret.turretBarrelLocation().x();
@@ -500,8 +556,9 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         return this.spaceShips;
     }
 
-    public SpaceShip getPlayer() {
-        return this.spaceShips.get(0);
+    @Override
+    public Player getPlayer() {
+        return player;
     }
 
     @Override
@@ -512,6 +569,11 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     @Override
     public List<Bullet> getLasers() {
         return this.lasers;
+    }
+
+    @Override
+    public List<Collectable> getCollectables() {
+        return this.collectables;
     }
 
     @Override

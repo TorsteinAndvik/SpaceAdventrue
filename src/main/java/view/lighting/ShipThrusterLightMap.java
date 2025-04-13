@@ -9,7 +9,8 @@ import com.badlogic.gdx.utils.Pool;
 
 import grid.CellPosition;
 import model.ShipComponents.UpgradeType;
-import model.SpaceCharacters.SpaceShip;
+import model.SpaceCharacters.Ships.SpaceShip;
+
 
 public class ShipThrusterLightMap {
 

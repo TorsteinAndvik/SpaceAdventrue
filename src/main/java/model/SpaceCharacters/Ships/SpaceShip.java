@@ -1,4 +1,4 @@
-package model.SpaceCharacters;
+package model.SpaceCharacters.Ships;
 
 import java.util.List;
 
@@ -7,16 +7,18 @@ import model.Globals.DamageDealer;
 import model.Globals.Damageable;
 import model.Globals.Repairable;
 import model.ShipComponents.UpgradeType;
-import model.ShipComponents.Components.ShipStructure;
+import model.ShipComponents.ShipStructure;
+import model.SpaceCharacters.CharacterType;
+import model.SpaceCharacters.SpaceBody;
+import model.ViewableSpaceShip;
 import model.constants.PhysicsParameters;
 import model.utils.FloatPair;
-import model.utils.SpaceCalculator;
 import view.Palette;
 import view.bars.ShipHealthBar;
 
 import java.util.UUID;
 
-public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damageable, Repairable {
+public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damageable, Repairable, ViewableSpaceShip {
 
     private final String id;
     private int maxHitPoints;
@@ -29,7 +31,7 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
 
     private ShipHealthBar healthBar;
 
-    private ShipStructure shipStructure;
+    private final ShipStructure shipStructure;
 
     // shooting logic
     private boolean isShooting = false;
@@ -61,11 +63,8 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
         this.hitPoints = hitPoints;
         this.maxHitPoints = maxHitPoints;
         this.shipStructure = shipStructure;
-
-        if (this.shipStructure != null) {
-            this.setRadius(SpaceCalculator.distance(shipStructure.getWidth() / 2f,
-                    shipStructure.getHeight() / 2f));
-        }
+        shipStructure.normalize();
+        radius = shipStructure.getRadius();
 
         id = UUID.randomUUID().toString();
 
@@ -185,36 +184,24 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
         }
     }
 
-    /**
-     * @return absolute center point of the ship grid.
-     *         Shifts the relative center by the ship's global X and Y coordinates.
-     */
+    @Override
     public FloatPair getAbsoluteCenter() {
         return new FloatPair(getX() + shipStructure.getWidth() / 2f - PhysicsParameters.fuselageRadius,
                 getY() + shipStructure.getHeight() / 2f - PhysicsParameters.fuselageRadius);
     }
 
-    /**
-     * @return center point of the ship grid relative to its bottom left corner.
-     */
+    @Override
     public FloatPair getRelativeCenter() {
         return new FloatPair(shipStructure.getWidth() / 2f, shipStructure.getHeight() / 2f);
     }
 
-    /**
-     * @return absolute center of mass of the ship structure.
-     *         Shifts the relative center of mass by the ship's global X and Y
-     *         coordinates.
-     */
+    @Override
     public FloatPair getAbsoluteCenterOfMass() {
         return new FloatPair(getX() + shipStructure.getCenterOfMass().x(),
                 getY() + shipStructure.getCenterOfMass().y());
     }
 
-    /**
-     * @return center of mass of the ship structure relative to its bottom left
-     *         corner.
-     */
+    @Override
     public FloatPair getRelativeCenterOfMass() {
         return shipStructure.getCenterOfMass();
     }
@@ -255,11 +242,7 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
         this.hitPoints = Math.min(maxHitPoints, this.hitPoints + hitPoints);
     }
 
-    /**
-     * Get the unique ID for this {@code SpaceBody}
-     *
-     * @return The ID as a {@code String}
-     */
+    @Override
     public String getID() {
         return this.id;
     }
@@ -298,5 +281,10 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
     public void hasShot() {
         timeSinceLastShot = 0f;
         isShooting = false;
+    }
+
+    @Override
+    public float getRadius() {
+        return shipStructure.getRadius();
     }
 }

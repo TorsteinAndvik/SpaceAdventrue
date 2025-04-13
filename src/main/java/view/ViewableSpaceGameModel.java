@@ -1,12 +1,15 @@
 package view;
 
+import java.io.InvalidClassException;
 import java.util.List;
 
+import model.Globals.Collectable;
 import model.ScreenBoundsProvider;
 import model.Animation.AnimationCallback;
 import model.SpaceCharacters.Asteroid;
 import model.SpaceCharacters.Bullet;
-import model.SpaceCharacters.SpaceShip;
+import model.SpaceCharacters.Ships.SpaceShip;
+import model.SpaceCharacters.Ships.ViewablePlayer;
 
 public interface ViewableSpaceGameModel {
 
@@ -35,7 +38,7 @@ public interface ViewableSpaceGameModel {
     /**
      * @return the player's <code>SpaceShip</code> object.
      */
-    SpaceShip getPlayer();
+    ViewablePlayer getPlayer() throws InvalidClassException;
 
     /**
      * Returns all <code>Asteroid</code> in the model
@@ -52,6 +55,13 @@ public interface ViewableSpaceGameModel {
     List<Bullet> getLasers();
 
     /**
+     * Return all <code>Collectable</code> objects in the model.
+     *
+     * @return a <code>List</code> of <code>Collectable</code> objects
+     */
+    List<Collectable> getCollectables();
+
+    /**
      * Sets the <code>AnimationCallback</code> for the model.
      *
      * @param animationCallback an AnimationCallback object.
@@ -64,4 +74,6 @@ public interface ViewableSpaceGameModel {
      * @param screenBoundsProvider a ScreenBoundsProvider object.
      */
     void setScreenBoundsProvider(ScreenBoundsProvider screenBoundsProvider);
+
+
 }

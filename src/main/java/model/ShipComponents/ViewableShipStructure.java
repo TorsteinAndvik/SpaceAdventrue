@@ -1,9 +1,10 @@
-package model.ShipComponents.Components;
+package model.ShipComponents;
 
 import grid.CellPosition;
 import grid.GridCell;
 import grid.IGrid;
-import model.ShipComponents.UpgradeType;
+import model.ShipComponents.Components.Fuselage;
+import model.ShipComponents.Components.ShipUpgrade;
 import model.utils.FloatPair;
 
 public interface ViewableShipStructure extends Iterable<GridCell<Fuselage>> {
@@ -56,7 +57,7 @@ public interface ViewableShipStructure extends Iterable<GridCell<Fuselage>> {
     /**
      * @return the underlying grid containing the ship structure.
      */
-    IGrid<Fuselage> getGrid();
+    IGrid<Fuselage> getGridCopy();
 
     boolean isOnGrid(CellPosition cp);
 
@@ -71,12 +72,11 @@ public interface ViewableShipStructure extends Iterable<GridCell<Fuselage>> {
 
     /**
      * Checks if an upgrade can be placed at the specified position.
-     * A valid position must contain a fuselage and must not already have an upgrade.
      *
      * @param pos The position to check for upgrade placement.
      * @return {@code true} if an upgrade can be placed, {@code false} otherwise.
      */
-    boolean isValidUpgradePosition(CellPosition pos);
+    boolean isValidBuildPosition(CellPosition pos, ShipUpgrade upgrade);
 
     /**
      * Determines if a fuselage can be built at the specified position.
@@ -87,4 +87,8 @@ public interface ViewableShipStructure extends Iterable<GridCell<Fuselage>> {
      */
     boolean canBuildAt(CellPosition pos);
 
+    /**
+     * @return the radius of the shipStructure.
+     */
+    float getRadius();
 }

@@ -25,7 +25,7 @@ import model.ShipComponents.ShipFactory;
 import model.ShipComponents.ShipValidator;
 import model.ShipComponents.UpgradeType;
 import model.ShipComponents.Components.Fuselage;
-import model.ShipComponents.Components.ShipStructure;
+import model.ShipComponents.ShipStructure;
 
 import org.junit.jupiter.api.Test;
 
@@ -148,8 +148,8 @@ public class ShipFactoryTest {
         assertTrue(player.getWidth() == 1);
         assertTrue(player.hasFuselage(new CellPosition(0, 0)));
         assertTrue(player.hasFuselage(new CellPosition(1, 0)));
-        assertTrue(player.getGrid().get(new CellPosition(0, 0)).getUpgrade().getType() == UpgradeType.THRUSTER);
-        assertTrue(player.getGrid().get(new CellPosition(1, 0)).getUpgrade().getType() == UpgradeType.TURRET);
+        assertTrue(player.getGridCopy().get(new CellPosition(0, 0)).getUpgrade().getType() == UpgradeType.THRUSTER);
+        assertTrue(player.getGridCopy().get(new CellPosition(1, 0)).getUpgrade().getType() == UpgradeType.TURRET);
     }
 
     @Test

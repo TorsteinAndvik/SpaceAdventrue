@@ -86,6 +86,7 @@ public class Grid<E> implements IGrid<E> {
 
     @Override
     public boolean positionIsOnGrid(CellPosition pos) {
+        if (pos == null) { return false; }
         return (pos.row() >= 0) && (pos.row() < rows()) && (pos.col() >= 0) && (pos.col() < cols());
     }
 
@@ -128,14 +129,23 @@ public class Grid<E> implements IGrid<E> {
         return get(pos) == null;
     }
 
+    @Override
+    public boolean isEmpty() {
+        for (GridCell<E> gc : this) {
+            if (gc.value() != null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * Shrinks a given grid to the minimal bounding box that contains all elements.
      * Removes excess rows and columns around the content while preserving relative
      * positions.
      *
      * @param expandedGrid the input grid that may contain excess empty space
-     * @return a new grid that fits exactly around the non-null elements, with all
-     *         positions
+     * @return a new grid that fits exactly around the non-null elements, with all positions
      *         adjusted accordingly
      */
     public static <E> IGrid<E> shrinkGridToFit(IGrid<E> expandedGrid) {
