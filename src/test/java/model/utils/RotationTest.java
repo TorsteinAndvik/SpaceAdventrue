@@ -1,6 +1,5 @@
 package model.utils;
 
-import model.utils.Rotation;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,6 +24,17 @@ public class RotationTest {
         assertEquals(180, r.getAngle());
         r.rotate(-3 * 360 - 180);
         assertEquals(0, r.getAngle());
+    }
+
+    @Test
+    void updateTest() {
+        Rotation r = new Rotation(30f);
+        r.setRotationSpeed(10f);
+        r.update(2f);
+        assertEquals(50f, r.getAngle());
+
+        r.update(40f);
+        assertEquals(90f, r.getAngle());
     }
 
     @Test
