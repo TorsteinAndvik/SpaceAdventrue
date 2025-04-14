@@ -108,7 +108,9 @@ public class UpgradeScreenController extends GenericController {
         if (cellPositionOnGrid(cpGrid)) {// TODO: Implement actions when clicking the grid.
             System.out.println("x = " + cpGrid.col() + ", y = " + cpGrid.row());
         }
-
+        if (upgradeModel.getStoreShelf().get(cpUpgrade.col()).price() > upgradeModel.getPlayerResources()) {
+            return true;
+        }
         if (cellPositionOnUpgradeBar(cpUpgrade)) {
             upgradeModel.setGrabbedUpgradeIndex(cpUpgrade.col());
             upgradeModel.setUpgradeGrabbed(true);

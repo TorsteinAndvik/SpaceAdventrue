@@ -249,6 +249,8 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         // Draw upgrade options at top of screen
         for (int x = 0; x < model.getNumUpgradeOptions(); x++) {
             drawUpgradeSquare(x);
+            drawUpgradePrice(x);
+            drawUpgradeShade(x);
         }
 
         drawShipGrid();
@@ -284,7 +286,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         batch.setProjectionMatrix(viewportUI.getCamera().combined);
         batch.begin();
 
-        fontRegular.setColor(Color.WHITE);
+        fontRegular.setColor(Palette.WHITE);
 
         // zoom (mouse wheel)
         msMiddle.draw(batch);
@@ -369,15 +371,50 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     }
 
     private void drawUpgradeSquare(int x) {
-        squareGray.setX(model.getUpgradeOffsetX() + x);
-        squareGray.setY(model.getUpgradeOffsetY());
+        float xPos = model.getUpgradeOffsetX() + x;
+        float yPos = model.getUpgradeOffsetY();
+
+        squareGray.setX(xPos);
+        squareGray.setY(yPos);
         squareGray.draw(batch);
 
         Sprite upgrade = getSpriteFromIndex(x);
-        upgrade.setX(model.getUpgradeOffsetX() + x + (1f - upgradeIconZoom) / 2f);
-        upgrade.setY(model.getUpgradeOffsetY() + (1f - upgradeIconZoom) / 2f);
+        upgrade.setX(xPos + (1f - upgradeIconZoom) / 2f);
+        upgrade.setY(yPos + (1f - upgradeIconZoom) / 2f);
         upgrade.draw(batch);
     }
+
+    private void drawUpgradePrice(int x) {
+
+        float xPos = model.getUpgradeOffsetX() + x;
+        float yPos = model.getUpgradeOffsetY();
+
+        int price = storeShelf.get(x).price();
+
+        fontRegular.setColor(Palette.WHITE);
+        if (model.getPlayerResources() < price) {
+            fontRegular.setColor(Palette.MUTED_RED_LIGHT);
+        }
+
+        glyphLayout.setText(fontRegular, String.valueOf(price));
+        float fontOffsetX = (squareGray.getWidth() - glyphLayout.width) / 2f;
+        float fontOffsetY = squareGray.getHeight() + fontRegular.getLineHeight();
+
+        fontRegular.draw(batch, String.valueOf(price),
+                xPos + fontOffsetX,
+                yPos + fontOffsetY);
+
+    }
+
+    private void drawUpgradeShade(int x) {
+        boolean canAfford = storeShelf.get(x).price() <= model.getPlayerResources();
+        if (!canAfford) {
+            squareRed.setX(model.getUpgradeOffsetX() + x);
+            squareRed.setY(model.getUpgradeOffsetY());
+            squareRed.draw(batch, 0.5f);
+        }
+    }
+
 
     private void drawGridSquare(Sprite squareSprite, int x, int y) {
         squareSprite.setX(model.getGridOffsetX() + x);
