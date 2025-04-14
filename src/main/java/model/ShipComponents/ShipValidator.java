@@ -5,6 +5,9 @@ import static model.utils.SpaceCalculator.orthogonallyAdjacent;
 import com.badlogic.gdx.utils.JsonValue;
 import grid.CellPosition;
 
+import grid.GridCell;
+import grid.IGrid;
+import model.ShipComponents.Components.Fuselage;
 import model.ShipComponents.ShipConfig.ShipComponent;
 import model.utils.ArgumentChecker;
 import java.util.ArrayList;
@@ -36,6 +39,15 @@ public final class ShipValidator {
         return isShipConnected(cellPositions);
 
     }
+
+    public static boolean isValid(IGrid<Fuselage> shipGrid) {
+        List<CellPosition> cellPositions = extractCellPositions(shipGrid);
+        if (cellPositions.isEmpty()) {
+            return true;
+        }
+        return isShipConnected(cellPositions);
+    }
+
 
     public static boolean isShipConnected(List<CellPosition> componentPositions) {
         if (componentPositions.isEmpty()) {
@@ -100,4 +112,16 @@ public final class ShipValidator {
 
         return componentPositions;
     }
+
+    private static List<CellPosition> extractCellPositions(IGrid<Fuselage> shipGrid) {
+        ArgumentChecker.requireNonNull(shipGrid, "ShipGrid can't be null");
+        List<CellPosition> componentPositions = new ArrayList<>();
+        for (GridCell<Fuselage> cp : shipGrid) {
+            if (cp.value() != null) {
+                componentPositions.add(cp.pos());
+            }
+        }
+        return componentPositions;
+    }
+
 }

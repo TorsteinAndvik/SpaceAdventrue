@@ -6,7 +6,7 @@ public enum UpgradeType {
     TURRET,
     SHIELD;
 
-    public static UpgradeType getUpgradeType(String name) {
+    public static UpgradeType getUpgradeType(String name) throws IllegalArgumentException {
         try {
             return UpgradeType.valueOf(name.toUpperCase());
         } catch (IllegalArgumentException e) {

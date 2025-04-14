@@ -94,8 +94,8 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     private Pool<LaserLight> laserLightPool;
     private ShipThrusterLightMap shipThrusterLightMap;
 
-    // hitboxes (testing/debugging)
-    private boolean showHitboxes = false;
+    // Hitboxes (for testing/debugging)
+    private boolean showHitboxes = true;
 
     public SpaceScreen(final SpaceGame game, final GameStateModel gameStateModel) {
         this.game = game;
@@ -463,8 +463,6 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     @Override
     public void resume() {
     }
-
-    boolean firstTime = true;
 
     @Override
     public void show() {

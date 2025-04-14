@@ -23,7 +23,6 @@ public class Fuselage extends ShipUpgrade {
         this.heldUpgrade = upgrade;
     }
 
-
     /**
      * Sets the upgrade held by the fuselage. If there is already an upgrade held,
      * nothing happens.
@@ -34,7 +33,7 @@ public class Fuselage extends ShipUpgrade {
      *         otherwise.
      */
     public boolean setUpgrade(ShipUpgrade upgrade) {
-        if (heldUpgrade != null || upgrade.getType() == getType()) {
+        if (upgrade == null || heldUpgrade != null || upgrade.getType() == getType()) {
             return false;
         }
         heldUpgrade = upgrade;
