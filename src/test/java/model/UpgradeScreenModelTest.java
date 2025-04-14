@@ -73,16 +73,16 @@ class UpgradeScreenModelTest {
 
     @Test
     void testInvalidFuselagePlacement() {
-        ShipStructure structure = player.getShipStructure();
         UpgradeHandler uh = model.getUpgradeHandler();
+        uh.expand();
+        ShipStructure structure = model.getPlayer().getShipStructure();
+
         CellPosition cp = new CellPosition(0, 0);
-
-        // TODO: this part seems broken, cp should have a neighbouring fuselage, so we
-        // shouldn't assert false for all neighbouring cells
-
-        // for (CellPosition pos : SpaceCalculator.getOrthogonalNeighbours(cp)) {
-        // assertFalse(structure.hasFuselage(pos));
-        // }
+        
+        //Check that no neighbouring cells has fuselage
+        for (CellPosition pos : SpaceCalculator.getOrthogonalNeighbours(cp)) {
+            assertFalse(structure.hasFuselage(pos));
+        }
         assertFalse(uh.canPlaceItem(new CellPosition(0, 0), UpgradeType.FUSELAGE));
     }
 }
