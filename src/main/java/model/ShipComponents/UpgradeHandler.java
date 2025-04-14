@@ -7,7 +7,6 @@ import model.ShipComponents.Components.ShipUpgrade;
 
 public class UpgradeHandler {
 
-    private final int gridExp = 2;
     private final ShipStructure structure;
 
     public UpgradeHandler(ShipStructure shipStructure) {
@@ -15,6 +14,7 @@ public class UpgradeHandler {
     }
 
     public void expand() {
+        int gridExp = 2;
         structure.expandGrid(gridExp, gridExp, true);
     }
 
@@ -38,7 +38,7 @@ public class UpgradeHandler {
 
         if (placedItem) {
             structure.normalize();
-            structure.expandGrid(2, 2, true);
+            expand();
         }
 
         return placedItem;
