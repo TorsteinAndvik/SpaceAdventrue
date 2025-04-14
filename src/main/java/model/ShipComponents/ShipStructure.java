@@ -20,14 +20,15 @@ public class ShipStructure implements ViewableShipStructure {
     private float mass;
     private float radius;
     private FloatPair centerOfMass;
-    private boolean gridExpanded;
 
     public ShipStructure(int width, int height) {
         this(new Grid<>(height, width));
     }
 
     public ShipStructure(IGrid<Fuselage> grid) {
-        // TODO: since building has to be valid, we should also validate the grid
+        if (!ShipValidator.isValid(grid)) {
+            throw new IllegalArgumentException("Invalid ship grid: does not meet requirements.");
+        }
         this.grid = grid;
         updateFields();
     }
@@ -227,7 +228,6 @@ public class ShipStructure implements ViewableShipStructure {
     protected IGrid<Fuselage> getExpandedGrid(IGrid<Fuselage> grid, int addedRows,
             int addedCols, boolean center) {
         if (addedRows < 0 || addedCols < 0 || (addedRows == 0 && addedCols == 0)) {
-            gridExpanded = false;
             return grid;
         }
 
@@ -247,7 +247,6 @@ public class ShipStructure implements ViewableShipStructure {
             }
             extGrid.set(cp, cell.value());
         }
-        gridExpanded = true;
         return extGrid;
     }
 
@@ -382,7 +381,6 @@ public class ShipStructure implements ViewableShipStructure {
             return false;
         }
 
-        System.out.println("here");
         return !grid.get(pos).hasUpgrade();
     }
 
@@ -443,12 +441,7 @@ public class ShipStructure implements ViewableShipStructure {
 
     protected void shrinkToFit() {
         grid = Grid.shrinkGridToFit(grid);
-        gridExpanded = false;
         updateFields();
-    }
-
-    public boolean isGridExpanded() {
-        return gridExpanded;
     }
 
     /**
@@ -476,15 +469,13 @@ public class ShipStructure implements ViewableShipStructure {
      * If the grid is expanded beyond what is necessary, it shrinks the grid to fit
      * the placed components.
      * Recalculates the radius, total mass and the center of mass of the ship based
-     * on current components.
+     * on current components. If the ship grid is empty, nothing is done.
      * <p>
      * This method ensures that the structural representation of the ship is both
      * space-efficient and physically accurate.
      */
     public void normalize() {
-        // TODO: fine to just call shrinkToFit without a check, nothing bad happens.
-        // TODO: remove this? shrinkToFit has to recalculate fields anyways
-        if (isGridExpanded()) {
+        if (!grid.isEmpty()) {
             shrinkToFit();
         }
     }

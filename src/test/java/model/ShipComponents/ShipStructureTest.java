@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ShipStructureTest {
@@ -405,8 +406,8 @@ class ShipStructureTest {
         SpaceShip ship = new Player(new ShipStructure(1, 2), "name", "description", 100, 0, 0);
         ShipStructure structure = ship.getShipStructure();
 
-        structure.addUpgrade(new CellPosition(0, 0), new Fuselage());
-        structure.addUpgrade(new CellPosition(1, 0), new Fuselage());
+        assertTrue(structure.addUpgrade(new CellPosition(0, 0), new Fuselage()));
+        assertTrue(structure.addUpgrade(new CellPosition(1, 0), new Fuselage()));
         structure.expandGrid(2, 2, true);
 
         // Offset position due to expanded grid in updateScreen
@@ -588,5 +589,14 @@ class ShipStructureTest {
         shipStructure.shrinkToFit();
         assertEquals(1, shipStructure.getWidth());
         assertEquals(2, shipStructure.getHeight());
+    }
+
+    @Test
+    void testInvalidGrid() {
+        IGrid<Fuselage> grid = new Grid<>(5, 5);
+        grid.set(new CellPosition(0, 0), new Fuselage());
+        grid.set(new CellPosition(4, 4), new Fuselage());
+
+        assertThrows(IllegalArgumentException.class, () -> new ShipStructure(grid));
     }
 }
