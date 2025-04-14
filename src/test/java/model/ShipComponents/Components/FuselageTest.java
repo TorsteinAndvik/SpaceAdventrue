@@ -1,8 +1,5 @@
 package model.ShipComponents.Components;
 
-import model.ShipComponents.Components.Fuselage;
-import model.ShipComponents.Components.ShipUpgrade;
-import model.ShipComponents.Components.Turret;
 import model.ShipComponents.UpgradeType;
 import model.constants.PhysicsParameters;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,7 +37,7 @@ class FuselageTest {
     void correctMassTest() {
         assertEquals(PhysicsParameters.fuselageMass, fuselageWithoutUpgrade.getMass());
         assertEquals(PhysicsParameters.fuselageMass + PhysicsParameters.shipUpgradeMass,
-            fuselageWithUpgrade.getMass());
+                fuselageWithUpgrade.getMass());
     }
 
     @Test
@@ -54,4 +51,9 @@ class FuselageTest {
         assertEquals("fuselage: empty", fuselageWithUpgrade.toString());
     }
 
+    @Test
+    void resourceValueTest() {
+        assertEquals(Fuselage.RESOURCE_VALUE, fuselageWithoutUpgrade.getResourceValue());
+        assertEquals(Fuselage.RESOURCE_VALUE + Turret.RESOURCE_BASE_VALUE, fuselageWithUpgrade.getResourceValue());
+    }
 }

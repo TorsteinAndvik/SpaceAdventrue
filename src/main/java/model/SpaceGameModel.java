@@ -207,7 +207,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     /**
      * Remove an object if it moves out of range.
-     * 
+     *
      * @param body   the <code>SpaceBody</code> object to potentially remove.
      * @param offset an additional distance the object needs to exceed before
      *               deletion
@@ -249,7 +249,6 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                     Collectable diamond = diamondFactory.spawn((SpaceBody) A);
                     collectables.add(diamond);
                     hitDetection.addCollider(diamond);
-                    System.out.println("Add diamond");
                 }
             }
             remove(A, true);
@@ -315,16 +314,15 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                         }
                     }
 
-
-            case DIAMOND :
+                case DIAMOND:
                     for (Collectable collectable : this.collectables) {
                         if (collectable == c) {
                             collectables.remove(c);
                             diamondFactory.free((Diamond) c);
                             break;
 
+                        }
                     }
-                }
 
                 case ENEMY_SHIP:
                     for (SpaceShip ship : this.spaceShips) {
