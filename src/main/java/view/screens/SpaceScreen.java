@@ -95,7 +95,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     private ShipThrusterLightMap shipThrusterLightMap;
 
     // hitboxes (testing/debugging)
-    private boolean showHitboxes = false;
+    private boolean showHitboxes = true;
 
     public SpaceScreen(final SpaceGame game, final GameStateModel gameStateModel) {
         this.game = game;
@@ -371,7 +371,9 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
             }
             shape.setColor(Color.MAGENTA);
             for (SpaceShip ship : model.getSpaceShips()) {
-                shape.circle(ship.getAbsoluteCenter().x(), ship.getAbsoluteCenter().y(), ship.getRadius(), 100);
+                shape.circle(
+                        ship.getAbsoluteCenterOfMass().x(), ship.getAbsoluteCenterOfMass().y(),
+                        ship.getProximityRadius(), 100);
             }
             shape.end();
         }
