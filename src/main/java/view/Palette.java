@@ -3,6 +3,7 @@ package view;
 import com.badlogic.gdx.graphics.Color;
 
 public class Palette {
+
     public static final Color MUTED_GREEN = new Color(0f, 64f / 255f, 64f / 255f, 1f);
 
     public static final Color MUTED_GREEN_DARK = new Color(0f, 48f / 255f, 48f / 255f, 1f);
@@ -28,4 +29,6 @@ public class Palette {
     public static final Color LASER_LIGHT_ENEMY = Color.MAGENTA;
 
     public static final Color THRUSTER_LIGHT = new Color(1f, 0.9f, 0f, 1f);
+
+    public static final Color WHITE = new Color(1, 1, 1, 1);
 }

@@ -106,10 +106,15 @@ public class UpgradeScreenController extends GenericController {
         CellPosition cpUpgrade = convertMouseToUpgradeBar(touchPos.x, touchPos.y);
 
         if (cellPositionOnGrid(cpGrid)) {// TODO: Implement actions when clicking the grid.
-            System.out.println("x = " + cpGrid.col() + ", y = " + cpGrid.row());
+            // TODO: add option for selling an upgrade?
+            // TODO: add option for selling a fuselage, as long as ship stays connected?
+            // System.out.println("x = " + cpGrid.col() + ", y = " + cpGrid.row());
         }
 
         if (cellPositionOnUpgradeBar(cpUpgrade)) {
+            if (upgradeModel.getStoreShelf().get(cpUpgrade.col()).price() > upgradeModel.getPlayerResources()) {
+                return true;
+            }
             upgradeModel.setGrabbedUpgradeIndex(cpUpgrade.col());
             upgradeModel.setUpgradeGrabbed(true);
         }
