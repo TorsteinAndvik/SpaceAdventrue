@@ -11,4 +11,5 @@ public enum GameState {
     UPGRADE,
     PAUSED,
     GAME_OVER,
+    OPTIONS,
 }

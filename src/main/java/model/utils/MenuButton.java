@@ -4,13 +4,17 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class MenuButton {
 
-    private final String text;
+    private String text;
     private float x;
     private float y;
     Rectangle bounds = new Rectangle();
 
     public String getText() {
         return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 
     public void setX(float x) {

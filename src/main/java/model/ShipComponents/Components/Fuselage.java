@@ -1,19 +1,25 @@
 package model.ShipComponents.Components;
 
+import model.ShipComponents.UpgradeStage;
 import model.ShipComponents.UpgradeType;
 import model.constants.PhysicsParameters;
 
-public class Fuselage {
+public class Fuselage extends ShipUpgrade {
 
     public static int RESOURCE_VALUE = 10;
     private ShipUpgrade heldUpgrade;
 
-    private float mass = PhysicsParameters.fuselageMass;
+    private final float mass = PhysicsParameters.fuselageMass;
 
     public Fuselage() {
+        this(null);
     }
 
     public Fuselage(ShipUpgrade upgrade) {
+        super("Fuselage", "The base building block of a ship", UpgradeType.FUSELAGE, UpgradeStage.ZERO);
+        if (upgrade == null || upgrade.getType() == UpgradeType.FUSELAGE) {
+            return;
+        }
         this.heldUpgrade = upgrade;
     }
 
@@ -27,7 +33,7 @@ public class Fuselage {
      *         otherwise.
      */
     public boolean setUpgrade(ShipUpgrade upgrade) {
-        if (heldUpgrade != null) {
+        if (upgrade == null || heldUpgrade != null || upgrade.getType() == getType()) {
             return false;
         }
         heldUpgrade = upgrade;
@@ -82,11 +88,17 @@ public class Fuselage {
         }
     }
 
+    @Override
     public int getResourceValue() {
         if (hasUpgrade()) {
             return getUpgrade().getResourceValue() + RESOURCE_VALUE;
         }
         return RESOURCE_VALUE;
 
+    }
+
+    @Override
+    public UpgradeType getType() {
+        return UpgradeType.FUSELAGE;
     }
 }

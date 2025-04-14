@@ -8,11 +8,9 @@ public abstract class ShipUpgrade {
 
     private final String name;
     private final String description;
-
     private final UpgradeType type;
     private UpgradeStage stage;
 
-    private float mass = PhysicsParameters.shipUpgradeMass;
 
     public ShipUpgrade(String name, String description, UpgradeType type, UpgradeStage stage) {
         this.name = name;
@@ -38,7 +36,7 @@ public abstract class ShipUpgrade {
     }
 
     public float getMass() {
-        return mass;
+        return PhysicsParameters.shipUpgradeMass;
     }
 
     /**
@@ -60,6 +58,7 @@ public abstract class ShipUpgrade {
             case THRUSTER -> new Thruster();
             case TURRET -> new Turret();
             case SHIELD -> new Shield();
+            case FUSELAGE -> new Fuselage();
         };
     }
 
@@ -70,6 +69,7 @@ public abstract class ShipUpgrade {
      */
     public int getResourceValue() {
         int value = switch (type) {
+            case FUSELAGE -> Fuselage.RESOURCE_VALUE;
             case THRUSTER -> Thruster.RESOURCE_BASE_VALUE;
             case TURRET -> Turret.RESOURCE_BASE_VALUE;
             case SHIELD -> Shield.RESOURCE_BASE_VALUE;

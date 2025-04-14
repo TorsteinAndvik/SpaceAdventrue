@@ -234,7 +234,14 @@ requirements for the course. We use Trello, a project management tool that helps
 > https://trello.com/b/M1GIZpbu/sprites-inf112-team
 
 ## Retrospective
-TODO Write this part
+Noen av de første møtene var dedikert til å finne et spillprosjekt som alle kunne være interessert i. Vi diskuterte ulike 2D-spillsjangre og ‘settinger’, og landet ganske så fort på et konsept med et Bullet Hell / Bullet Heaven spill satt i verdensrommet. Vi fikk så laget en strukturert plan for utvikling tidlig og fordelte roller over hvilke deler av spillet hver på gruppen ville jobbe med, og fikk notert ned ganske konkret hva vi ville lage. Det har gjort at utviklingen har gått relativt fort etter de første par møtene. Gruppen er veldig samstemt i ønsker og mål for prosjektet.
+
+Siden alle i gruppen har dagjobber, er det vanskelig å møtes oftere. Det har ikke alltid passet for alle å møte, men gruppen stiller vanligvis samlet på gruppetimen hver fredag (14-16). Vi savner å kunne sitte mer sammen, tenke ut idéer og lure måter å løse problemer. Vi får likevel diskutert, delt og oppklart litt saker på discord. Da er vi generelt samstemte når vi møter på de fysiske fredagsmøtene hvor vi viser frem hva vi har jobbet med, problemer vi har møtt på, bugs vi har oppdaget, etc. I tillegg diskuteres hva vi skal fokusere på den kommende uken, og eventuelt hva som skal være på plass til neste møte. Planene deles opp i mindre features, som legges inn i Trellobrettet vårt, samt gamle kort som er i utvikling / ferdig flyttes i riktig statusbøtte. 
+
+Vi har hatt lite konflikter underveis. Det har vært tilfeller hvor noen føler de har sagt noe dumt eller oppført seg dårlig, men da har vi bedt om unnskylding og ordnet opp. Et eksempel på en annen uheldig situasjon var når to personer jobbet med å ordne noen bugs på samme feature. Der ble den ene ferdig og pushet + merget en fiks, uten å gi beskjed videre til den andre som jobbet på det samme, som måtte fortsette å jobbe med å fikse et problem som allerede var fikset. Det viser igjen behovet for god kommunikasjon, og å holde teamet oppdatert på hva en jobber med - særlig dem som jobber med de samme klassene og/eller features. 
+
+Totalt sett er vi vel egentlig godt fornøyd med den løsningen vi har landet på. God planlegging i starten ga oss et solid fundament som det gikk raskt å utvikle. Bare siden oblig 2 til oblig 3 har vi gjort et gigantisk sprang i utviklingen av spillet - fra å bare tegne og bevege noen enkle objekter på skjermen til å ha full kollisjonsberegning, lyd og egenprodusert musikk, bygging og oppgradering av spillerens skip, fiendtlige skip som følger etter og skyter på spilleren, asteroidefabrikker som sender asteroide-regn etter spilleren, osv. 
+
 
 ## Credits
 We would like to acknowledge the following creators for their work that has been used in this project. All assets are used under Creative Commons 0 (CC0):

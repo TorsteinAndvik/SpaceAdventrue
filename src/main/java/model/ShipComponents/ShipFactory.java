@@ -3,25 +3,22 @@ package model.ShipComponents;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
-
 import grid.CellPosition;
 import grid.Grid;
 import grid.GridCell;
 import grid.IGrid;
-import model.ShipComponents.Components.Fuselage;
-import model.ShipComponents.Components.Shield;
-import model.ShipComponents.Components.ShipStructure;
-import model.ShipComponents.Components.Thruster;
-import model.ShipComponents.Components.Turret;
-import model.ShipComponents.ShipConfig.ShipComponent;
-import model.ShipComponents.ShipConfig.Upgrade;
-import model.utils.SpaceCalculator;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import model.ShipComponents.Components.Fuselage;
+import model.ShipComponents.Components.Shield;
+import model.ShipComponents.Components.Thruster;
+import model.ShipComponents.Components.Turret;
+import model.ShipComponents.ShipConfig.ShipComponent;
+import model.ShipComponents.ShipConfig.Upgrade;
+import model.utils.SpaceCalculator;
 
 public final class ShipFactory {
 
@@ -86,8 +83,8 @@ public final class ShipFactory {
      */
     public static ShipStructure simpleShip() {
         ShipStructure ship = new ShipStructure(1, 2);
-        ship.set(new CellPosition(1, 0), new Fuselage(new Turret()));
-        ship.set(new CellPosition(0, 0), new Fuselage(new Thruster()));
+        ship.addUpgrade(new CellPosition(1, 0), new Fuselage(new Turret()));
+        ship.addUpgrade(new CellPosition(0, 0), new Fuselage(new Thruster()));
         return ship;
     }
 
@@ -100,15 +97,15 @@ public final class ShipFactory {
 
     /**
      * Generates an enemy ship with the specified number of fuselages and upgrades.
-     * 
+     *
      * @param numFuselage number of <code>Fuselages</code> in
      *                    <code>ShipStructure</code>.
      * @param numUpgrades number of <code>ShipUpgrade</code> held by in
      *                    <code>ShipStructure</code>.
-     * 
+     *
      * @return a randomly generated and valid <code>ShipStructure</code> with the
      *         specified number of fuselages and upgrades.
-     * 
+     *
      * @throws IllegalArgumentException if either <code>numFuselage</code> or
      *                                  <code>numUpgrades</code> is less
      *                                  than 2, or <code>numUpgrades</code> is

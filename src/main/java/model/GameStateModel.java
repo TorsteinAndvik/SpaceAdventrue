@@ -1,16 +1,16 @@
 package model;
 
-import model.ShipComponents.Components.ShipStructure;
-import model.SpaceCharacters.SpaceShip;
 import model.constants.GameState;
 
 public class GameStateModel {
 
     private GameState currentState;
+    private GameState previousState;
     private SpaceGameModel spaceGameModel;
     private UpgradeScreenModel upgradeScreenModel;
 
     private int selectedButtonIndex = 0;
+    private int selectedControlCategoryIndex = 0;
 
     /**
      * Creates a new GameStateModel that will manage game states
@@ -21,16 +21,25 @@ public class GameStateModel {
     }
 
     public void changeState(GameState newState) {
+        if (this.currentState == newState) {
+            return;
+        }
+
+        this.previousState = this.currentState;
+
+        // initialize models if needed
         if (newState == GameState.PLAYING && spaceGameModel == null) {
             spaceGameModel = new SpaceGameModel();
         } else if (newState == GameState.UPGRADE && spaceGameModel != null) {
-            SpaceShip playerShip = spaceGameModel.getPlayer();
-            ShipStructure playerShipStructure = playerShip.getShipStructure();
             if (upgradeScreenModel == null) {
-                upgradeScreenModel = new UpgradeScreenModel(playerShipStructure);
+                upgradeScreenModel = new UpgradeScreenModel(spaceGameModel.getPlayer());
             }
         }
         this.currentState = newState;
+    }
+
+    public GameState getPreviousState() {
+        return this.previousState;
     }
 
     public void onAssetsLoaded() {
@@ -47,10 +56,6 @@ public class GameStateModel {
         changeState(GameState.UPGRADE);
     }
 
-    public void returnToGame() {
-        changeState(GameState.PLAYING);
-    }
-
     public GameState getCurrentState() {
         return this.currentState;
     }
@@ -62,7 +67,6 @@ public class GameStateModel {
     public UpgradeScreenModel getUpgradeScreenModel() {
         return this.upgradeScreenModel;
     }
-
 
     public int getSelectedButtonIndex() {
         return selectedButtonIndex;
@@ -76,5 +80,11 @@ public class GameStateModel {
         return spaceGameModel != null && spaceGameModel.getPlayer() != null;
     }
 
+    public int getSelectedControlCategoryIndex() {
+        return this.selectedControlCategoryIndex;
+    }
 
+    public void setSelectedControlCategoryIndex(int selectedControlCategoryIndex) {
+        this.selectedControlCategoryIndex = selectedControlCategoryIndex;
+    }
 }

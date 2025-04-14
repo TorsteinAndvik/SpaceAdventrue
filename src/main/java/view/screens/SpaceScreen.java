@@ -25,12 +25,14 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import box2dLight.RayHandler;
 import controller.SpaceScreenController;
 import grid.GridCell;
+import model.Globals.Collectable;
 import model.ShipComponents.Components.Fuselage;
 import model.ShipComponents.Components.Thruster;
 import model.ShipComponents.UpgradeType;
 import model.SpaceCharacters.Asteroid;
 import model.SpaceCharacters.Bullet;
-import model.SpaceCharacters.SpaceShip;
+import model.SpaceCharacters.Diamond;
+import model.SpaceCharacters.Ships.SpaceShip;
 import model.constants.PhysicsParameters;
 import model.GameStateModel;
 import model.ScreenBoundsProvider;
@@ -71,6 +73,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     private Sprite asteroidSmall;
     private Sprite laser;
 
+    private Sprite diamond;
     private Sprite fuselagePlayer;
     private Sprite fuselageEnemy;
 
@@ -91,8 +94,8 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     private Pool<LaserLight> laserLightPool;
     private ShipThrusterLightMap shipThrusterLightMap;
 
-    // hitboxes (testing/debugging)
-    private boolean showHitboxes = false;
+    // Hitboxes (for testing/debugging)
+    private boolean showHitboxes = true;
 
     public SpaceScreen(final SpaceGame game, final GameStateModel gameStateModel) {
         this.game = game;
@@ -156,6 +159,8 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         fuselagePlayer = createSprite("images/upgrades/fuselage_alt_stage_0.png", 1, 1);
 
         fuselageEnemy = createSprite("images/upgrades/fuselage_enemy_stage_0.png", 1, 1);
+
+        diamond = createSprite("images/space/diamond.png", 1, 1);
     }
 
     private void setupAnimationHashMap() {
@@ -185,7 +190,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         rayHandler.setAmbientLight(Palette.AMBIENT_LIGHT);
 
         this.laserLights = new LinkedList<>();
-        this.laserLightPool = new Pool<LaserLight>() {
+        this.laserLightPool = new Pool<>() {
             @Override
             protected LaserLight newObject() {
                 return new LaserLight();
@@ -331,6 +336,17 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
                         2f * state.getRadius(), 2f * state.getRadius());
             }
         }
+
+        // Draw diamonds
+        for (Collectable collectable : model.getCollectables()) {
+
+            if (collectable instanceof Diamond) {
+                this.diamond.setCenterX(collectable.getX() + collectable.getRadius());
+                this.diamond.setCenterY(collectable.getY() + collectable.getRadius());
+                this.diamond.draw(batch);
+            }
+        }
+
         batch.end();
 
         // Lighting
@@ -355,7 +371,8 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
             }
             shape.setColor(Color.MAGENTA);
             for (SpaceShip ship : model.getSpaceShips()) {
-                shape.circle(ship.getAbsoluteCenter().x(), ship.getAbsoluteCenter().y(), ship.getRadius(), 100);
+                shape.circle(ship.getAbsoluteCenterOfMass().x(), ship.getAbsoluteCenterOfMass().y(), ship.getRadius(),
+                        100);
             }
             shape.end();
         }
@@ -445,8 +462,6 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     @Override
     public void resume() {
     }
-
-    boolean firstTime = true;
 
     @Override
     public void show() {

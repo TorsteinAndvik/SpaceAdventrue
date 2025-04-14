@@ -8,14 +8,14 @@ import grid.GridCell;
 import model.Globals.Collidable;
 import model.ShipComponents.Components.Fuselage;
 import model.SpaceCharacters.Bullet;
-import model.SpaceCharacters.SpaceShip;
+import model.SpaceCharacters.Ships.SpaceShip;
 import model.constants.PhysicsParameters;
 import model.utils.FloatPair;
 import model.utils.SpaceCalculator;
 
 public class HitDetection {
 
-    private LinkedList<Collidable> colliders = new LinkedList<>();
+    private final LinkedList<Collidable> colliders = new LinkedList<>();
     private final SpaceGameModel model;
 
     public HitDetection(SpaceGameModel model) {
@@ -94,7 +94,7 @@ public class HitDetection {
     }
 
     private boolean shipCollision(SpaceShip ship, Collidable c) {
-        for (GridCell<Fuselage> gridCell : ship.getShipStructure().getGrid()) {
+        for (GridCell<Fuselage> gridCell : ship.getShipStructure().getGridCopy()) {
             if (gridCell.value() == null) {
                 continue;
             }
@@ -116,7 +116,7 @@ public class HitDetection {
     }
 
     private boolean doubleShipCollision(SpaceShip shipA, SpaceShip shipB) {
-        for (GridCell<Fuselage> gridCellA : shipA.getShipStructure().getGrid()) {
+        for (GridCell<Fuselage> gridCellA : shipA.getShipStructure().getGridCopy()) {
             if (gridCellA.value() == null) {
                 continue;
             }
@@ -126,7 +126,7 @@ public class HitDetection {
             FloatPair pointA = SpaceCalculator.rotatePoint(cellA.col(), cellA.row(), shipA.getRelativeCenterOfMass(),
                     shipA.getAbsoluteCenterOfMass(), shipA.getRotationAngle());
 
-            for (GridCell<Fuselage> gridCellB : shipB.getShipStructure().getGrid()) {
+            for (GridCell<Fuselage> gridCellB : shipB.getShipStructure().getGridCopy()) {
                 if (gridCellB.value() == null) {
                     continue;
                 }

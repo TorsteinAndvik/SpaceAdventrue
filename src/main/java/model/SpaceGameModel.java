@@ -1,6 +1,5 @@
 package model;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,6 +17,7 @@ import grid.CellPosition;
 import model.Animation.AnimationCallback;
 import model.Animation.AnimationStateImpl;
 import model.Animation.AnimationType;
+import model.Globals.Collectable;
 import model.Globals.Collidable;
 import model.Globals.Damageable;
 import model.ShipComponents.ShipFactory;
@@ -25,10 +25,11 @@ import model.ShipComponents.UpgradeType;
 import model.ShipComponents.Components.Turret;
 import model.SpaceCharacters.Asteroid;
 import model.SpaceCharacters.Bullet;
-import model.SpaceCharacters.EnemyShip;
-import model.SpaceCharacters.Player;
+import model.SpaceCharacters.Diamond;
+import model.SpaceCharacters.Ships.EnemyShip;
+import model.SpaceCharacters.Ships.Player;
 import model.SpaceCharacters.SpaceBody;
-import model.SpaceCharacters.SpaceShip;
+import model.SpaceCharacters.Ships.SpaceShip;
 import model.ai.LerpBrain;
 import model.constants.PhysicsParameters;
 import model.utils.FloatPair;
@@ -40,8 +41,9 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     private Player player;
     private LinkedList<SpaceShip> spaceShips;
     private final HitDetection hitDetection;
-    private LinkedList<Asteroid> asteroids;
-    private LinkedList<Bullet> lasers;
+    private final LinkedList<Asteroid> asteroids;
+    private final LinkedList<Bullet> lasers;
+    private final LinkedList<Collectable> collectables;
     private Pool<Bullet> laserPool;
 
     private final Matrix3 rotationMatrix;
@@ -53,19 +55,30 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     private RandomAsteroidFactory randomAsteroidFactory;
     private DirectionalAsteroidFactory directionalAsteroidFactory;
-    private float asteroidTimer = 0;
+    private float asteroidTimer = 0f;
+
+    private float enemySpawnTimer = 0f;
+    private int spawnedShipCounter = 0;
 
     private Random rng = new Random();
+    private DiamondFactory diamondFactory;
 
     public SpaceGameModel() {
 
-        createSpaceShips();
+        setupPlayer();
+
+        this.spaceShips = new LinkedList<>();
+        this.spaceShips.add(player);
 
         this.asteroids = new LinkedList<>();
         this.lasers = new LinkedList<>();
+        this.collectables = new LinkedList<>();
 
         this.hitDetection = new HitDetection(this);
 
+        createDiamondFactory(50);
+        createAsteroidFactory(50);
+        createLaserPool(300);
         createAsteroidFactory(100);
         createLaserPool(200);
 
@@ -73,6 +86,11 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
         this.rotationMatrix = new Matrix3();
         this.transformMatrix = new Matrix4();
+    }
+
+    private void createDiamondFactory(int diamondPreFill) {
+        diamondFactory = new DiamondFactory();
+        diamondFactory.fill(diamondPreFill);
     }
 
     private void createAsteroidFactory(int asteroidPreFill) {
@@ -96,35 +114,16 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         laserPool.fill(laserPreFill);
     }
 
-    private void createSpaceShips() {
+    private void setupPlayer() {
         player = new Player(
                 ShipFactory.playerShip(), "player", "the player's spaceship", 20, 8, 1);
         player.setRotationSpeed(0f);
         player.setFireRate(0.4f);
-
-        EnemyShip enemyShip = new EnemyShip(
-                ShipFactory.createShipFromJson("enemy2.json"),
-                "enemy",
-                "an enemy ship",
-                1,
-                2,
-                5,
-                -90f);
-        enemyShip.setBrain(new LerpBrain(enemyShip, player));
-        enemyShip.setFireRate(0.75f);
-
-        EnemyShip enemyShip2 = new EnemyShip(
-                ShipFactory.createShipFromJson("enemy1.json"), "enemy", "an enemy ship", 7, -3, 3, 0f);
-        enemyShip2.setBrain(new LerpBrain(enemyShip2, player));
-        enemyShip2.setFireRate(0.6f);
-
-        this.spaceShips = new LinkedList<>(
-                Arrays.asList(this.player, enemyShip, enemyShip2));
     }
 
     private void createAsteroids() {
-        randomAsteroidFactory.setSpawnPerimeter(this.screenBoundsProvider.getBounds());
-        directionalAsteroidFactory.setSpawnPerimeter(this.screenBoundsProvider.getBounds());
+        randomAsteroidFactory.setSpawnPerimeter(screenBoundsProvider.getBounds());
+        directionalAsteroidFactory.setSpawnPerimeter(screenBoundsProvider.getBounds());
 
         if (player.getSpeed() > 0.75 * PhysicsParameters.maxVelocityLongitudonal) {
             for (Asteroid asteroid : directionalAsteroidFactory.getAsteroidShower()) {
@@ -183,10 +182,17 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
             }
         }
 
-        this.asteroidTimer += delta;
-        if (asteroidTimer > 5) { // 5 for testing
+        asteroidTimer += delta;
+        if (asteroidTimer > 6f) { // 6 for testing
             createAsteroids();
-            asteroidTimer = 0;
+            asteroidTimer = 0f;
+        }
+
+        enemySpawnTimer += delta;
+        if (enemySpawnTimer > 5f + spawnedShipCounter) {
+            spawnRandomShip();
+            spawnedShipCounter++;
+            enemySpawnTimer = 0f;
         }
 
         for (SpaceShip spaceShip : spaceShips) {
@@ -219,6 +225,11 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         if (HitDetection.isFriendlyFire(A, B)) {
             return;
         }
+
+        if (handleCollection(A, B)) {
+            return;
+        }
+
         boolean destroyA = false;
         boolean destroyB = false;
         SpaceCalculator.crash(A, B);
@@ -233,23 +244,51 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
         if (destroyA) {
             if (B instanceof Bullet bullet && bullet.isPlayerBullet()) {
-                collectResources(A);
+                if (A instanceof SpaceBody && !(A instanceof Bullet)) {
+
+                    Collectable diamond = diamondFactory.spawn((SpaceBody) A);
+                    collectables.add(diamond);
+                    hitDetection.addCollider(diamond);
+                    System.out.println("Add diamond");
+                }
             }
             remove(A, true);
         }
 
         if (destroyB) {
             if (A instanceof Bullet bullet && bullet.isPlayerBullet()) {
-                collectResources(B);
+                if (B instanceof SpaceBody && !(B instanceof Bullet)) {
+                    Diamond diamond = diamondFactory.spawn((SpaceBody) B);
+                    collectables.add(diamond);
+                    hitDetection.addCollider(diamond);
+                }
             }
             remove(B, true);
         }
     }
 
+    private boolean handleCollection(Collidable A, Collidable B) {
+        if (A instanceof Collectable c && B instanceof SpaceShip p) {
+            if (p instanceof Player) {
+                player.getInventory().addResource(c);
+            }
+            remove(c, false);
+            return true;
+        }
+        if (B instanceof Collectable c && A instanceof SpaceShip p) {
+            if (p instanceof Player) {
+                player.getInventory().addResource(c);
+            }
+            remove(c, false);
+            return true;
+        }
+        return false;
+    }
+
     private void remove(Collidable c, boolean drawExplosion) {
         hitDetection.removeCollider(c);
-        if (c instanceof SpaceBody) {
-            switch (((SpaceBody) c).getCharacterType()) {
+        if (c instanceof SpaceBody sb) {
+            switch (sb.getCharacterType()) {
                 case ASTEROID:
                     if (drawExplosion) {
                         addAnimationState(c, AnimationType.EXPLOSION);
@@ -275,7 +314,17 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                             break;
                         }
                     }
-                    break;
+
+
+            case DIAMOND :
+                    for (Collectable collectable : this.collectables) {
+                        if (collectable == c) {
+                            collectables.remove(c);
+                            diamondFactory.free((Diamond) c);
+                            break;
+
+                    }
+                }
 
                 case ENEMY_SHIP:
                     for (SpaceShip ship : this.spaceShips) {
@@ -336,7 +385,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         player.setIsShooting(true);
     }
 
-    public void shoot(SpaceShip ship) {
+    public void shoot(ViewableSpaceShip ship) {
         for (CellPosition cell : ship.getUpgradeTypePositions(UpgradeType.TURRET)) {
 
             float x = (float) cell.col() + Turret.turretBarrelLocation().x();
@@ -407,27 +456,49 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         return player.getAbsoluteCenterOfMass();
     }
 
-    private int spawnedShipCounter = 0; // TODO: Refactor - move to a timer with spawn logic, similar to asteroid timer
-
     public void spawnRandomShip() {
         int numFuselage = 2 + spawnedShipCounter;
         int numUpgrades = rng.nextInt((int) Math.max(2, numFuselage / 2), numFuselage + 1);
+
+        Rectangle spawnPerimeter = screenBoundsProvider.getBounds();
+
+        float x, y;
+        int side = rng.nextInt(4);
+        if (side == 0) { // Top
+            y = spawnPerimeter.y + spawnPerimeter.height + numFuselage * PhysicsParameters.fuselageRadius;
+            x = rng.nextFloat(spawnPerimeter.x - numFuselage * PhysicsParameters.fuselageRadius,
+                    spawnPerimeter.x + spawnPerimeter.width + numFuselage * PhysicsParameters.fuselageRadius);
+
+        } else if (side == 1) { // Right
+            x = spawnPerimeter.x + spawnPerimeter.width + numFuselage * PhysicsParameters.fuselageRadius;
+            y = rng.nextFloat(spawnPerimeter.y - numFuselage * PhysicsParameters.fuselageRadius,
+                    spawnPerimeter.y + spawnPerimeter.height + numFuselage * PhysicsParameters.fuselageRadius);
+
+        } else if (side == 2) { // Bot
+            y = spawnPerimeter.y - numFuselage * PhysicsParameters.fuselageRadius;
+            x = rng.nextFloat(spawnPerimeter.x - numFuselage * PhysicsParameters.fuselageRadius,
+                    spawnPerimeter.x + spawnPerimeter.width + numFuselage * PhysicsParameters.fuselageRadius);
+
+        } else { // Left
+            x = spawnPerimeter.x - numFuselage * PhysicsParameters.fuselageRadius;
+            y = rng.nextFloat(spawnPerimeter.y - numFuselage * PhysicsParameters.fuselageRadius,
+                    spawnPerimeter.y + spawnPerimeter.height + numFuselage * PhysicsParameters.fuselageRadius);
+        }
+
         EnemyShip enemyShip = new EnemyShip(
                 ShipFactory.generateShipStructure(numFuselage, numUpgrades),
                 "enemy",
                 "an enemy ship",
-                1,
-                2,
-                5,
+                x,
+                y,
+                3 + spawnedShipCounter,
                 -90f);
 
         enemyShip.setBrain(new LerpBrain(enemyShip, player));
-        enemyShip.setFireRate(0.75f);
+        enemyShip.setFireRate(0.6f);
 
         spaceShips.addLast(enemyShip);
         hitDetection.addCollider(enemyShip);
-
-        spawnedShipCounter++;
     }
 
     @Override
@@ -485,8 +556,9 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         return this.spaceShips;
     }
 
-    public SpaceShip getPlayer() {
-        return this.spaceShips.get(0);
+    @Override
+    public Player getPlayer() {
+        return player;
     }
 
     @Override
@@ -497,6 +569,11 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     @Override
     public List<Bullet> getLasers() {
         return this.lasers;
+    }
+
+    @Override
+    public List<Collectable> getCollectables() {
+        return this.collectables;
     }
 
     @Override

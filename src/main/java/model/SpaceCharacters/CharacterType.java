@@ -4,5 +4,6 @@ public enum CharacterType {
     ASTEROID,
     PLAYER,
     ENEMY_SHIP,
-    BULLET
+    BULLET,
+    DIAMOND
 }

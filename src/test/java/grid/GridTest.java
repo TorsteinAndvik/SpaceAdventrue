@@ -100,8 +100,8 @@ class GridTest {
     @Test
     void shrinkToFitTest() {
         IGrid<Fuselage> emptyGrid = new Grid<>(3, 4);
-        assertTrue(Grid.shrinkGridToFit(emptyGrid).rows() == 1);
-        assertTrue(Grid.shrinkGridToFit(emptyGrid).cols() == 1);
+        assertEquals(1, Grid.shrinkGridToFit(emptyGrid).rows());
+        assertEquals(1, Grid.shrinkGridToFit(emptyGrid).cols());
 
         IGrid<Fuselage> grid = new Grid<>(3, 3);
         grid.set(new CellPosition(2, 1), new Fuselage());
@@ -129,5 +129,14 @@ class GridTest {
         assertEquals(
                 "[GridCell[pos=CellPosition[row=0, col=0], value=first element], GridCell[pos=CellPosition[row=0, col=1], value=second]]",
                 grid.toString());
+    }
+
+    @Test
+    void testIsEmpty() {
+        IGrid<Integer> grid = new Grid<>(2, 2);
+        assertTrue(grid.isEmpty());
+        grid.set(new CellPosition(0, 0), 1);
+        assertFalse(grid.isEmpty());
+
     }
 }

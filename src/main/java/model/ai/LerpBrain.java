@@ -1,7 +1,7 @@
 package model.ai;
 
-import model.SpaceCharacters.EnemyShip;
-import model.SpaceCharacters.Player;
+import model.SpaceCharacters.Ships.EnemyShip;
+import model.SpaceCharacters.Ships.Player;
 import model.utils.FloatPair;
 import model.utils.SpaceCalculator;
 

@@ -3,10 +3,14 @@ package model;
 import com.badlogic.gdx.math.Vector2;
 import grid.CellPosition;
 import grid.IGrid;
+import java.util.List;
+import java.util.Set;
 import model.ShipComponents.Components.Fuselage;
-import model.ShipComponents.Components.ShipStructure;
 import model.ShipComponents.Components.ShipUpgrade;
-import view.screens.UpgradeScreen;
+import model.ShipComponents.UpgradeHandler;
+import model.SpaceCharacters.Ships.Player;
+import model.World.StoreItem;
+import model.World.UpgradeStore;
 import model.ShipComponents.UpgradeType;
 
 /**
@@ -16,10 +20,7 @@ import model.ShipComponents.UpgradeType;
  */
 public class UpgradeScreenModel {
 
-    private final int gridWidth;
-    private final int gridHeight;
     private final int numUpgradeOptions = 4;
-    private final int gridExpansion = 2;
     private float gridOffsetX;
     private float gridOffsetY;
     private float upgradeOffsetX;
@@ -44,20 +45,21 @@ public class UpgradeScreenModel {
     private final Vector2 lastDragPosition;
     private CellPosition releasedCellPosition;
 
+    private UpgradeStore store;
+    private final Player player;
+    private final UpgradeHandler upgradeHandler;
     public boolean offsetsMustBeUpdated;
-
-    private final ShipStructure shipStructure;
 
     /**
      * Initializes an upgrade screen model with vectors for tracking positions. Also
      * initializes
      * camera zoom, and sets to middle zoom level.
      */
-    public UpgradeScreenModel(ShipStructure structure) {
-        this.shipStructure = structure;
-        IGrid<Fuselage> grid = getExpandedGrid();
-        gridWidth = grid.cols();
-        gridHeight = grid.rows();
+    public UpgradeScreenModel(Player player) {
+        this.player = player;
+        upgradeHandler = new UpgradeHandler(player.getShipStructure());
+        store = new UpgradeStore();
+
         cameraPosition = new Vector2();
         mousePosition = new Vector2();
         dragPosition = new Vector2();
@@ -97,12 +99,23 @@ public class UpgradeScreenModel {
         updateCameraZoomDeltaTime(delta);
 
         if (isReleaseGrabbedUpgrade() && isUpgradeGrabbed()) {
-            if (grabbedItemIsFuselage()) {
-                offsetsMustBeUpdated = shipStructure.updateWithFuselage(releasedCellPosition);
-            } else {
-                CellPosition actualFuselagePos = releasedCellPosition.offset(
-                        -gridExpansion / 2, -gridExpansion / 2);
-                shipStructure.addUpgrade(actualFuselagePos, getGrabbedShipUpgrade());
+
+            StoreItem item = store.getStoreItem(getGrabbedUpgradeIndex());
+
+            int upgradePrice = item.price();
+
+            if (item.item() == UpgradeType.FUSELAGE) {
+                offsetsMustBeUpdated = true;
+            }
+            boolean canAfford = player.getInventory().canAfford(upgradePrice);
+
+            if (canAfford) {
+                boolean upgradeSuccess = upgradeHandler.placeItem(releasedCellPosition,
+                        getGrabbedShipUpgrade().getType());
+                if (upgradeSuccess) {
+                    player.getInventory().spendResources(upgradePrice);
+
+                }
             }
 
             releasedCellPosition = null;
@@ -111,15 +124,8 @@ public class UpgradeScreenModel {
         }
     }
 
-    private boolean grabbedItemIsFuselage() {
-        return isUpgradeGrabbed() && getGrabbedUpgradeIndex() == 0;
-    }
-
     private ShipUpgrade getGrabbedShipUpgrade() {
-        UpgradeType upgradeType = UpgradeScreen.getUpgradeTypeFromIndex(getGrabbedUpgradeIndex());
-        if (upgradeType == null) {
-            return null;
-        }
+        UpgradeType upgradeType = store.getStoreItem(getGrabbedUpgradeIndex()).item();
         return ShipUpgrade.getShipUpgrade(upgradeType);
     }
 
@@ -189,10 +195,10 @@ public class UpgradeScreenModel {
      */
     public void updateOffsets(float worldWidth, float worldHeight) {
         float upgradeToGridDelta = 2f;
-        gridOffsetX = (worldWidth - (shipStructure.getWidth() + gridExpansion)) / 2f;
-        gridOffsetY = (worldHeight - (shipStructure.getHeight() + gridExpansion) - upgradeToGridDelta) / 2f;
+        gridOffsetX = (worldWidth - getGridWidth()) / 2f;
+        gridOffsetY = (worldHeight - getGridHeight() - upgradeToGridDelta) / 2f;
         upgradeOffsetX = (worldWidth - numUpgradeOptions) / 2f;
-        upgradeOffsetY = gridOffsetY + (shipStructure.getHeight() + gridExpansion) + upgradeToGridDelta / 2f;
+        upgradeOffsetY = gridOffsetY + getGridHeight() + upgradeToGridDelta / 2f;
     }
 
     public float getCurrentZoom() {
@@ -212,11 +218,11 @@ public class UpgradeScreenModel {
     }
 
     public int getGridWidth() {
-        return gridWidth;
+        return upgradeHandler.getGrid().cols();
     }
 
     public int getGridHeight() {
-        return gridHeight;
+        return upgradeHandler.getGrid().rows();
     }
 
     public int getNumUpgradeOptions() {
@@ -299,12 +305,36 @@ public class UpgradeScreenModel {
         this.upgradeInspectionModeIsActive = value;
     }
 
-    public IGrid<Fuselage> getExpandedGrid() {
-        return ShipStructure.getExpandedGrid(shipStructure.getGrid(), gridExpansion, gridExpansion,
-                true);
-    }
-
     public void setReleasedCellPosition(CellPosition cellPosition) {
         releasedCellPosition = cellPosition;
+
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public int getPlayerResources() {
+        return player.getInventory().getResourceCount();
+    }
+
+    public List<StoreItem> getStoreShelf() {
+        return store.getStock();
+    }
+
+    public void addNewStoreStock(Set<StoreItem> stock) {
+        store = new UpgradeStore(stock);
+    }
+
+    public IGrid<Fuselage> getExpandedGrid() {
+        return upgradeHandler.getGrid();
+    }
+
+    public UpgradeHandler getUpgradeHandler() {
+        return upgradeHandler;
+    }
+
+    public void exitUpgradeHandler() {
+        upgradeHandler.exit();
     }
 }
