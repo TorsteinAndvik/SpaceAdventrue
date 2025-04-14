@@ -37,27 +37,27 @@ public class HitDetection {
     public boolean objectProximity(Collidable c1, Collidable c2) {
         if (c1 instanceof SpaceShip ship1) {
             if (c2 instanceof SpaceShip ship2) {
-                float dx = ship1.getAbsoluteCenter().x() - ship2.getAbsoluteCenter().x();
-                float dy = ship1.getAbsoluteCenter().y() - ship2.getAbsoluteCenter().y();
+                float dx = ship1.getAbsoluteCenterOfMass().x() - ship2.getAbsoluteCenterOfMass().x();
+                float dy = ship1.getAbsoluteCenterOfMass().y() - ship2.getAbsoluteCenterOfMass().y();
                 float distance = SpaceCalculator.distance(dx, dy);
 
-                return distance < ship1.getRadius() + ship2.getRadius();
+                return distance < ship1.getProximityRadius() + ship2.getProximityRadius();
 
             } else {
-                float dx = ship1.getAbsoluteCenter().x() - c2.getX();
-                float dy = ship1.getAbsoluteCenter().y() - c2.getY();
+                float dx = ship1.getAbsoluteCenterOfMass().x() - c2.getX();
+                float dy = ship1.getAbsoluteCenterOfMass().y() - c2.getY();
                 float distance = SpaceCalculator.distance(dx, dy);
 
-                return distance < ship1.getRadius() + c2.getRadius();
+                return distance < ship1.getProximityRadius() + c2.getRadius();
             }
         }
 
         if (c2 instanceof SpaceShip ship2) {
-            float dx = c1.getX() - ship2.getAbsoluteCenter().x();
-            float dy = c1.getY() - ship2.getAbsoluteCenter().y();
+            float dx = c1.getX() - ship2.getAbsoluteCenterOfMass().x();
+            float dy = c1.getY() - ship2.getAbsoluteCenterOfMass().y();
             float distance = SpaceCalculator.distance(dx, dy);
 
-            return distance < c1.getRadius() + ship2.getRadius();
+            return distance < c1.getRadius() + ship2.getProximityRadius();
         }
 
         return SpaceCalculator.distance(c1.getX() - c2.getX(), c1.getY() - c2.getY()) < c1.getRadius() + c2.getRadius();

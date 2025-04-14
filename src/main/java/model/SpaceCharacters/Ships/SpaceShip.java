@@ -13,6 +13,7 @@ import model.SpaceCharacters.SpaceBody;
 import model.ViewableSpaceShip;
 import model.constants.PhysicsParameters;
 import model.utils.FloatPair;
+import model.utils.SpaceCalculator;
 import view.Palette;
 import view.bars.ShipHealthBar;
 
@@ -286,5 +287,25 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
     @Override
     public float getRadius() {
         return shipStructure.getRadius();
+    }
+
+    /**
+     * Get the radius of the ship for proximity detection.
+     * This radius takes into consideration the fact that
+     * the ship rotates about its center of mass, not the
+     * center of its <code>ShipStructure</code>.
+     * 
+     * <p>
+     * This provides a radius for which it is safe to define
+     * the minimal proximity / hit-detection radius of a ship.
+     * It defines the radius of the circle centered at the ship's
+     * center of mass which is guaranteed to contain the ship
+     * no matter what its angle of rotation about the center of mass is.
+     * 
+     * @return a proximity radius of the circle centred at the ship's center of mass
+     */
+    public float getProximityRadius() {
+        return SpaceCalculator.distance(getRelativeCenter(), getRelativeCenterOfMass()) + getRadius()
+                + PhysicsParameters.fuselageRadius / 2f;
     }
 }

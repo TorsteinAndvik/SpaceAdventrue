@@ -371,8 +371,9 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
             }
             shape.setColor(Color.MAGENTA);
             for (SpaceShip ship : model.getSpaceShips()) {
-                shape.circle(ship.getAbsoluteCenterOfMass().x(), ship.getAbsoluteCenterOfMass().y(), ship.getRadius(),
-                        100);
+                shape.circle(
+                        ship.getAbsoluteCenterOfMass().x(), ship.getAbsoluteCenterOfMass().y(),
+                        ship.getProximityRadius(), 100);
             }
             shape.end();
         }
