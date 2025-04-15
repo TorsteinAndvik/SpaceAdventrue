@@ -124,14 +124,11 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
             dampVelocity(deltaTime);
         }
 
-        float rotationForce = force * PhysicsParameters.accelerationForceLimitRotational
-                / PhysicsParameters.accelerationForceLimitLongitudonal;
-
         if (accelerateClockwise) {
-            addRotationSpeed(-deltaTime * rotationForce / getMass());
+            addRotationSpeed(-deltaTime * torque() / getMass());
             applyRotationalSpeedLimit();
         } else if (accelerateCounterClockwise) {
-            addRotationSpeed(deltaTime * rotationForce / getMass());
+            addRotationSpeed(deltaTime * torque() / getMass());
             applyRotationalSpeedLimit();
         } else {
             dampRotation(deltaTime);
@@ -147,21 +144,30 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
                 PhysicsParameters.accelerationForceLimitLongitudonal);
     }
 
-    private void applySpeedLimit() {
-        float maxSpeed = Math.min(
+    private float torque() {
+        return force() * PhysicsParameters.accelerationForceLimitRotational
+                / PhysicsParameters.accelerationForceLimitLongitudonal;
+    }
+
+    private float maxSpeed() {
+        return Math.min(
                 shipStructure.getCombinedStatModifier().getModifiers().get(Stat.MAX_SPEED).floatValue(),
                 PhysicsParameters.maxVelocityLongitudonal);
+    }
+
+    private float maxRotVel() {
+        return maxSpeed() * PhysicsParameters.maxVelocityRotational / PhysicsParameters.maxVelocityLongitudonal;
+    }
+
+    private void applySpeedLimit() {
+        float maxSpeed = maxSpeed();
         if (getSpeed() > maxSpeed) {
             velocity.scl(maxSpeed / getSpeed());
         }
     }
 
     private void applyRotationalSpeedLimit() {
-        float maxSpeed = Math.min(
-                shipStructure.getCombinedStatModifier().getModifiers().get(Stat.MAX_SPEED).floatValue(),
-                PhysicsParameters.maxVelocityRotational);
-        float maxRotSpeed = maxSpeed * PhysicsParameters.maxVelocityRotational
-                / PhysicsParameters.maxVelocityLongitudonal;
+        float maxRotSpeed = maxRotVel();
 
         if (getRotationSpeed() < -maxRotSpeed) {
             rotation.setRotationSpeed(-maxRotSpeed);
@@ -171,7 +177,7 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
     }
 
     private void dampVelocity(float deltaTime) {
-        float deltaVelocity = deltaTime * PhysicsParameters.dampingLongitudonal / getMass();
+        float deltaVelocity = deltaTime * force() / getMass();
         if (getSpeed() < deltaVelocity) {
             setVelocityX(0f);
             setVelocityY(0f);
@@ -181,7 +187,7 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
     }
 
     private void dampRotation(float deltaTime) {
-        float deltaRotVel = deltaTime * PhysicsParameters.dampingRotational / getMass();
+        float deltaRotVel = deltaTime * torque() / getMass();
         if (Math.abs(getRotationSpeed()) < deltaRotVel) {
             setRotationSpeed(0f);
         } else {

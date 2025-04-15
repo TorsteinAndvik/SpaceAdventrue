@@ -21,8 +21,4 @@ public class PhysicsParameters {
     // if equal to maxVelocityRotational, max speed is reached in 1s from 0rpm
     // if mass is equals to 1.
     public static final float accelerationForceLimitRotational = 480f;
-
-    public static final float dampingLongitudonal = 12f;
-
-    public static final float dampingRotational = 360f;
 }
