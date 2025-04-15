@@ -1,10 +1,8 @@
-package model.SpaceCharacters;
+package model.SpaceCharacters.Ships;
 
 import grid.CellPosition;
 import model.ShipComponents.Components.Fuselage;
 import model.ShipComponents.ShipFactory;
-import model.SpaceCharacters.Ships.Player;
-import model.SpaceCharacters.Ships.SpaceShip;
 import model.utils.FloatPair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -73,7 +71,6 @@ public class SpaceShipTest {
 
         assertTrue(structure.addUpgrade(new CellPosition(2, 0), new Fuselage()));
         assertEquals(new FloatPair(0, 1f), ship.getAbsoluteCenterOfMass());
-
 
     }
 

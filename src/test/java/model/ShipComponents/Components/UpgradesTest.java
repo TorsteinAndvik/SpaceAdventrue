@@ -1,8 +1,5 @@
 package model.ShipComponents.Components;
 
-import model.ShipComponents.Components.Shield;
-import model.ShipComponents.Components.Thruster;
-import model.ShipComponents.Components.Turret;
 import model.ShipComponents.UpgradeStage;
 import model.ShipComponents.UpgradeType;
 import model.constants.PhysicsParameters;
@@ -109,10 +106,10 @@ class UpgradesTest {
         // Note: Super upgrades may have a different mass in future
         String message = "mass does not match value specified in PhysicsParameters (did you implement or change an upgrade such that the mass changed without updating PhysicsParameters accordingly?)";
         assertEquals(PhysicsParameters.shipUpgradeMass, superShield.getMass(),
-            "superShield: " + message);
+                "superShield: " + message);
         assertEquals(PhysicsParameters.shipUpgradeMass, superThruster.getMass(),
-            "superThruster: " + message);
+                "superThruster: " + message);
         assertEquals(PhysicsParameters.shipUpgradeMass, superTurret.getMass(),
-            "superTurret: " + message);
+                "superTurret: " + message);
     }
 }
