@@ -23,8 +23,7 @@ import java.util.UUID;
 public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damageable, Repairable, ViewableSpaceShip {
 
     private final String id;
-    private int maxHitPoints;
-    private int hitPoints;
+    private int damageTaken = 0;
 
     private boolean accelerateForward;
     private boolean accelerateBackward;
@@ -46,8 +45,6 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
         super(name, description, characterType, x, y, angle, 0f);
 
         this.shipStructure = shipStructure;
-        this.maxHitPoints = shipStructure.getCombinedStatModifier().getModifiers().get(Stat.HEALTH_VALUE).intValue();
-        this.hitPoints = maxHitPoints;
 
         this.shipStructure.normalize();
         radius = this.shipStructure.getRadius();
@@ -216,7 +213,7 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
 
     @Override
     public int getMaxHitPoints() {
-        return maxHitPoints;
+        return shipStructure.getCombinedStatModifier().getModifiers().get(Stat.HEALTH_VALUE).intValue();
     }
 
     @Override
@@ -229,17 +226,17 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
         if (hitPoints < 0) {
             throw new IllegalArgumentException("Damage can't be negative");
         }
-        this.hitPoints = Math.max(0, this.hitPoints - hitPoints);
+        damageTaken = Math.min(getMaxHitPoints(), damageTaken + hitPoints);
     }
 
     @Override
     public int getHitPoints() {
-        return hitPoints;
+        return getMaxHitPoints() - damageTaken;
     }
 
     @Override
     public boolean isDestroyed() {
-        return hitPoints <= 0;
+        return damageTaken >= getMaxHitPoints();
     }
 
     @Override
@@ -247,7 +244,7 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
         if (isDestroyed()) {
             return;
         }
-        this.hitPoints = Math.min(maxHitPoints, this.hitPoints + hitPoints);
+        damageTaken = Math.max(0, damageTaken - hitPoints);
     }
 
     @Override
@@ -262,7 +259,7 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
 
     @Override
     public int getDamage() {
-        return hitPoints;
+        return getHitPoints();
     }
 
     public boolean isAccelerating() {
