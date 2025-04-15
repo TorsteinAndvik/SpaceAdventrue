@@ -240,33 +240,36 @@ class UpgradeScreenModelTest {
 
         model.getUpgradeHandler().expand();
         ShipStructure structure = model.getPlayer().getShipStructure();
-        for (int x = 0; x < 2; x++) {
-            CellPosition pos = new CellPosition(1, 0);
+        System.out.println(structure.getGridCopy());
+        assertTrue(structure.hasFuselage(new CellPosition(2, 1)));
+        assertTrue(structure.hasFuselage(new CellPosition(1, 1)));
+        assertTrue(structure.hasUpgrade(new CellPosition(2, 1)));
+        assertTrue(structure.hasUpgrade(new CellPosition(1, 1)));
 
-            assertFalse(structure.hasFuselage(pos));
-            assertTrue(structure.isValidFuselagePosition(pos));
+        CellPosition pos = new CellPosition(1, 0);
+        for (int x = 0; x < 2; x++) {
+
+            assertFalse(structure.hasFuselage(pos.offset(x, x)));
+            assertTrue(structure.isValidFuselagePosition(pos.offset(x, x)));
 
             // Simulate releasing the upgrade
             model.setUpgradeGrabbed(true);
             model.setGrabbedUpgradeIndex(x); // First fuselage then shield
             model.setReleaseGrabbedUpgrade(true);
-            model.setReleasedCellPosition(pos);
+            model.setReleasedCellPosition(pos.offset(0, x));
 
             model.update(0);
 
-            CellPosition posAfterFit = new CellPosition(0, 0);
+            assertTrue(structure.hasFuselage(pos.offset(0, 1)));
             if (x == 1) {
-                assertTrue(structure.hasUpgrade(posAfterFit.offset(1, 1)));
+                System.out.println(structure.getGridCopy());
+                assertTrue(structure.hasUpgrade(new CellPosition(1, 1)));
             }
-            assertTrue(structure.hasFuselage(new CellPosition(0, 1).offset(1, 1)));
-            assertTrue(structure.hasFuselage(new CellPosition(1, 1).offset(1, 1)));
-            assertTrue(structure.hasFuselage(posAfterFit.offset(1, 1)));
-            assertTrue(structure.hasUpgrade(new CellPosition(0, 1).offset(1, 1)));
-            assertTrue(structure.hasUpgrade(new CellPosition(1, 1).offset(1, 1)));
 
         }
         model.getUpgradeHandler().exit();
         assertEquals(shipWidth + 1, structure.getWidth());
+
     }
 
     @Test
