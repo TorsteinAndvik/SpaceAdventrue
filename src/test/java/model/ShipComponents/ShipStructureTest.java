@@ -8,6 +8,7 @@ import model.ShipComponents.Components.Fuselage;
 import model.ShipComponents.Components.Shield;
 import model.ShipComponents.Components.Thruster;
 import model.ShipComponents.Components.Turret;
+import model.ShipComponents.Components.stats.Stat;
 import model.SpaceCharacters.Ships.Player;
 import model.SpaceCharacters.Ships.SpaceShip;
 import model.constants.PhysicsParameters;
@@ -599,5 +600,29 @@ class ShipStructureTest {
         grid.set(new CellPosition(4, 4), new Fuselage());
 
         assertThrows(IllegalArgumentException.class, () -> new ShipStructure(grid));
+    }
+
+    @Test
+    void getCombinedStatsTest() {
+        ShipStructure shipStructure = new ShipStructure(1, 2);
+        shipStructure.setFuselage(new CellPosition(0, 0), new Fuselage(new Thruster()));
+        shipStructure.setFuselage(new CellPosition(1, 0), new Fuselage(new Turret()));
+
+        Fuselage fuselage = new Fuselage();
+        Turret turret = new Turret();
+        Thruster thruster = new Thruster();
+        for (Stat stat : Stat.values()) {
+            if (stat.intBased) {
+                int value = 2 * fuselage.getModifiers().get(stat).intValue();
+                value += turret.getModifiers().get(stat).intValue();
+                value += thruster.getModifiers().get(stat).intValue();
+                assertEquals(value, shipStructure.getCombinedStats().get(stat).intValue());
+            } else {
+                float value = 2f * fuselage.getModifiers().get(stat).floatValue();
+                value += turret.getModifiers().get(stat).floatValue();
+                value += thruster.getModifiers().get(stat).floatValue();
+                assertEquals(value, shipStructure.getCombinedStats().get(stat).floatValue(), "issue with stat " + stat);
+            }
+        }
     }
 }

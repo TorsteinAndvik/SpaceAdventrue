@@ -26,9 +26,6 @@ public class UpgradeHandler {
     }
 
     public boolean placeItem(CellPosition pos, UpgradeType type) {
-        if (!canPlaceItem(pos, type)) {
-            return false;
-        }
 
         boolean placedItem = structure.addUpgrade(pos, ShipUpgrade.getShipUpgrade(type));
 

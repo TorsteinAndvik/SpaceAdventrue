@@ -135,8 +135,7 @@ public class UpgradeScreenController extends GenericController {
 
     @Override
     protected boolean middleClick() {
-        upgradeModel.setCameraZoomRecently(true);
-        upgradeModel.updateCameraZoomDeltaTime(0f);
+        upgradeModel.updateCameraZoom(0f);
         return true;
     }
 

@@ -415,7 +415,6 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         }
     }
 
-
     private void drawGridSquare(Sprite squareSprite, int x, int y) {
         squareSprite.setX(model.getGridOffsetX() + x);
         squareSprite.setY(model.getGridOffsetY() + y);

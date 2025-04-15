@@ -1,6 +1,7 @@
 package model.ShipComponents.Components;
 
 import model.ShipComponents.UpgradeType;
+import model.ShipComponents.Components.stats.Stat;
 import model.constants.PhysicsParameters;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -68,5 +69,17 @@ class FuselageTest {
         assertTrue(fuselageWithoutUpgrade.getResourceValue() > 0);
         assertEquals(fuselageWithoutUpgrade.getResourceValue() + (new Turret()).getResourceValue(),
                 fuselageWithUpgrade.getResourceValue());
+    }
+
+    @Test
+    void getStatModifierTest() {
+        assertEquals(PhysicsParameters.fuselageMass, fuselageWithoutUpgrade.getModifiers().get(Stat.MASS).floatValue());
+        assertEquals(PhysicsParameters.fuselageMass + PhysicsParameters.shipUpgradeMass,
+                fuselageWithUpgrade.getModifiers().get(Stat.MASS).floatValue());
+
+        assertEquals(PhysicsParameters.fuselageMass,
+                fuselageWithoutUpgrade.getStatModifier().getModifiers().get(Stat.MASS).floatValue());
+        assertEquals(PhysicsParameters.fuselageMass + PhysicsParameters.shipUpgradeMass,
+                fuselageWithUpgrade.getStatModifier().getModifiers().get(Stat.MASS).floatValue());
     }
 }
