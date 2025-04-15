@@ -27,7 +27,6 @@ public class Turret extends ShipUpgrade {
     @Override
     protected void setupStatModifier() {
         statModifier.setModifier(Stat.MASS, PhysicsParameters.shipUpgradeMass);
-        statModifier.setModifier(Stat.FIRE_RATE, 0.75f);
         statModifier.setModifier(Stat.RESOURCE_VALUE, 5);
     }
 }
