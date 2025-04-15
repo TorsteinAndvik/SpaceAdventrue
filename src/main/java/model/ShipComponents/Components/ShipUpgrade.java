@@ -1,23 +1,30 @@
 package model.ShipComponents.Components;
 
+import java.util.HashMap;
+
 import model.ShipComponents.UpgradeStage;
 import model.ShipComponents.UpgradeType;
-import model.constants.PhysicsParameters;
+import model.ShipComponents.Components.stats.Stat;
+import model.ShipComponents.Components.stats.StatModifier;
 
 public abstract class ShipUpgrade {
 
-    private final String name;
-    private final String description;
-    private final UpgradeType type;
-    private UpgradeStage stage;
-
+    protected final String name;
+    protected final String description;
+    protected final UpgradeType type;
+    protected UpgradeStage stage;
+    protected final StatModifier statModifier;
 
     public ShipUpgrade(String name, String description, UpgradeType type, UpgradeStage stage) {
         this.name = name;
         this.description = description;
         this.type = type;
         this.stage = stage;
+        this.statModifier = new StatModifier();
+        setupStatModifier();
     }
+
+    protected abstract void setupStatModifier();
 
     public String getDescription() {
         return description;
@@ -36,7 +43,15 @@ public abstract class ShipUpgrade {
     }
 
     public float getMass() {
-        return PhysicsParameters.shipUpgradeMass;
+        return getModifiers().get(Stat.MASS).floatValue();
+    }
+
+    public StatModifier getStatModifier() {
+        return statModifier;
+    }
+
+    public HashMap<Stat, Number> getModifiers() {
+        return statModifier.getModifiers();
     }
 
     /**
@@ -68,12 +83,7 @@ public abstract class ShipUpgrade {
      * @return the amount of resources to loot.
      */
     public int getResourceValue() {
-        int value = switch (type) {
-            case FUSELAGE -> Fuselage.RESOURCE_VALUE;
-            case THRUSTER -> Thruster.RESOURCE_BASE_VALUE;
-            case TURRET -> Turret.RESOURCE_BASE_VALUE;
-            case SHIELD -> Shield.RESOURCE_BASE_VALUE;
-        };
+        int value = getModifiers().get(Stat.RESOURCE_VALUE).intValue();
 
         return value * (stage.ordinal() + 1);
     }

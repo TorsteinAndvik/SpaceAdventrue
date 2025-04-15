@@ -2,11 +2,11 @@ package model.ShipComponents.Components;
 
 import model.ShipComponents.UpgradeStage;
 import model.ShipComponents.UpgradeType;
+import model.ShipComponents.Components.stats.Stat;
+import model.constants.PhysicsParameters;
 import model.utils.FloatPair;
 
 public class Thruster extends ShipUpgrade {
-
-    public static int RESOURCE_BASE_VALUE = 3;
 
     public Thruster() {
         this(UpgradeStage.ZERO);
@@ -22,5 +22,12 @@ public class Thruster extends ShipUpgrade {
      */
     public static FloatPair thrusterFlameLocation() {
         return new FloatPair(0f, -0.15f);
+    }
+
+    @Override
+    protected void setupStatModifier() {
+        statModifier.setModifier(Stat.MASS, PhysicsParameters.shipUpgradeMass);
+        statModifier.setModifier(Stat.ACCELERATION_FORCE, 3f);
+        statModifier.setModifier(Stat.RESOURCE_VALUE, 3);
     }
 }

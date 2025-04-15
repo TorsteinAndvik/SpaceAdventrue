@@ -553,7 +553,8 @@ class ShipStructureTest {
     @Test
     void resourceValueTest() {
         assertEquals(0, new ShipStructure(1, 1).getResourceValue());
-        assertEquals(2 * Fuselage.RESOURCE_VALUE + Shield.RESOURCE_BASE_VALUE, shipStructure.getResourceValue());
+        assertEquals(2 * (new Fuselage().getResourceValue()) + (new Shield().getResourceValue()),
+                shipStructure.getResourceValue());
     }
 
     @Test

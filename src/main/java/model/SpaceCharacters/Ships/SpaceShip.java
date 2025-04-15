@@ -123,15 +123,15 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
     public void update(float deltaTime) {
         timeSinceLastShot += deltaTime;
         if (accelerateForward) {
-            addVelocityX(deltaTime * PhysicsParameters.accelerationLimitLongitudonal
+            addVelocityX(deltaTime * PhysicsParameters.accelerationForceLimitLongitudonal
                     * (float) Math.cos(Math.toRadians(rotation.getAngle() + 90f)) / getMass());
-            addVelocityY(deltaTime * PhysicsParameters.accelerationLimitLongitudonal
+            addVelocityY(deltaTime * PhysicsParameters.accelerationForceLimitLongitudonal
                     * (float) Math.sin(Math.toRadians(rotation.getAngle() + 90f)) / getMass());
             applySpeedLimit();
         } else if (accelerateBackward) {
-            addVelocityX(-deltaTime * PhysicsParameters.accelerationLimitLongitudonal
+            addVelocityX(-deltaTime * PhysicsParameters.accelerationForceLimitLongitudonal
                     * (float) Math.cos(Math.toRadians(rotation.getAngle() + 90f)) / getMass());
-            addVelocityY(-deltaTime * PhysicsParameters.accelerationLimitLongitudonal
+            addVelocityY(-deltaTime * PhysicsParameters.accelerationForceLimitLongitudonal
                     * (float) Math.sin(Math.toRadians(rotation.getAngle() + 90f)) / getMass());
             applySpeedLimit();
         } else {
@@ -139,10 +139,10 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
         }
 
         if (accelerateClockwise) {
-            addRotationSpeed(-deltaTime * PhysicsParameters.accelerationLimitRotational / getMass());
+            addRotationSpeed(-deltaTime * PhysicsParameters.accelerationForceLimitRotational / getMass());
             applyRotationalSpeedLimit();
         } else if (accelerateCounterClockwise) {
-            addRotationSpeed(deltaTime * PhysicsParameters.accelerationLimitRotational / getMass());
+            addRotationSpeed(deltaTime * PhysicsParameters.accelerationForceLimitRotational / getMass());
             applyRotationalSpeedLimit();
         } else {
             dampRotation(deltaTime);

@@ -6,7 +6,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FuselageTest {
 
@@ -20,10 +22,20 @@ class FuselageTest {
     }
 
     @Test
+    void constructorTest() {
+        assertFalse((new Fuselage(new Fuselage())).hasUpgrade());
+    }
+
+    @Test
     void setUpgradeTest() {
         ShipUpgrade upgrade = new Turret();
-        fuselageWithoutUpgrade.setUpgrade(upgrade);
+        assertTrue(fuselageWithoutUpgrade.setUpgrade(upgrade));
+        assertFalse(fuselageWithoutUpgrade.setUpgrade(upgrade)); // already has upgrade
         assertEquals(upgrade, fuselageWithoutUpgrade.getUpgrade());
+
+        Fuselage emptyFuselage = new Fuselage();
+        assertFalse(emptyFuselage.setUpgrade(null));
+        assertFalse(emptyFuselage.setUpgrade(new Fuselage()));
     }
 
     @Test
@@ -53,7 +65,8 @@ class FuselageTest {
 
     @Test
     void resourceValueTest() {
-        assertEquals(Fuselage.RESOURCE_VALUE, fuselageWithoutUpgrade.getResourceValue());
-        assertEquals(Fuselage.RESOURCE_VALUE + Turret.RESOURCE_BASE_VALUE, fuselageWithUpgrade.getResourceValue());
+        assertTrue(fuselageWithoutUpgrade.getResourceValue() > 0);
+        assertEquals(fuselageWithoutUpgrade.getResourceValue() + (new Turret()).getResourceValue(),
+                fuselageWithUpgrade.getResourceValue());
     }
 }
