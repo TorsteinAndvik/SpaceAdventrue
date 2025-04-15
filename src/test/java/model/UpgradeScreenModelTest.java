@@ -234,6 +234,7 @@ class UpgradeScreenModelTest {
         assertEquals(playerResources - upgradePrice, model.getPlayerResources());
     }
 
+    @Test
     void testSuccessfulBuildShipFuselageWithUpgrade() {
         int shipWidth = model.getPlayer().getShipStructure().getWidth();
 
@@ -254,12 +255,14 @@ class UpgradeScreenModelTest {
             model.update(0);
 
             CellPosition posAfterFit = new CellPosition(0, 0);
+            if (x == 1) {
+                assertTrue(structure.hasUpgrade(posAfterFit.offset(1, 1)));
+            }
             assertTrue(structure.hasFuselage(new CellPosition(0, 1).offset(1, 1)));
             assertTrue(structure.hasFuselage(new CellPosition(1, 1).offset(1, 1)));
             assertTrue(structure.hasFuselage(posAfterFit.offset(1, 1)));
             assertTrue(structure.hasUpgrade(new CellPosition(0, 1).offset(1, 1)));
             assertTrue(structure.hasUpgrade(new CellPosition(1, 1).offset(1, 1)));
-            assertTrue(structure.hasUpgrade(posAfterFit.offset(1, 1)));
 
         }
         model.getUpgradeHandler().exit();
