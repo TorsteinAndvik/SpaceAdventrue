@@ -24,6 +24,8 @@ public class ThrusterTest {
                 assertTrue(thruster.getModifiers().get(stat).floatValue() > 0f);
             } else if (stat == Stat.RESOURCE_VALUE) {
                 assertTrue(thruster.getModifiers().get(stat).intValue() > 0);
+            } else if (stat == Stat.MAX_SPEED) {
+                assertTrue(thruster.getModifiers().get(stat).floatValue() > 0f);
             } else {
                 assertTrue(thruster.getModifiers().get(stat).floatValue() == 0f);
             }

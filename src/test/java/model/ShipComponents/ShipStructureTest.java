@@ -341,7 +341,7 @@ class ShipStructureTest {
 
     @Test
     void expandShipTopTest() {
-        SpaceShip ship = new Player(new ShipStructure(1, 2), "name", "description", 100, 0, 0);
+        SpaceShip ship = new Player(new ShipStructure(1, 2), "name", "description", 0f, 0f);
         ShipStructure structure = ship.getShipStructure();
         structure.addUpgrade(new CellPosition(0, 0), new Fuselage());
         structure.addUpgrade(new CellPosition(1, 0), new Fuselage());
@@ -384,7 +384,7 @@ class ShipStructureTest {
 
     @Test
     void expandShipBottomTest() {
-        SpaceShip ship = new Player(new ShipStructure(1, 2), "name", "description", 100, 0, 0);
+        SpaceShip ship = new Player(new ShipStructure(1, 2), "name", "description", 0f, 0f);
         ShipStructure structure = ship.getShipStructure();
         structure.addUpgrade(new CellPosition(0, 0), new Fuselage());
         structure.addUpgrade(new CellPosition(1, 0), new Fuselage());
@@ -403,7 +403,7 @@ class ShipStructureTest {
 
     @Test
     void expandShipLeftTest() {
-        SpaceShip ship = new Player(new ShipStructure(1, 2), "name", "description", 100, 0, 0);
+        SpaceShip ship = new Player(new ShipStructure(1, 2), "name", "description", 0f, 0f);
         ShipStructure structure = ship.getShipStructure();
 
         assertTrue(structure.addUpgrade(new CellPosition(0, 0), new Fuselage()));
@@ -428,7 +428,7 @@ class ShipStructureTest {
 
     @Test
     void expandShipRightTest() {
-        SpaceShip ship = new Player(new ShipStructure(1, 2), "name", "description", 100, 0, 0);
+        SpaceShip ship = new Player(new ShipStructure(1, 2), "name", "description", 0f, 0f);
         ShipStructure structure = ship.getShipStructure();
         structure.addUpgrade(new CellPosition(0, 0), new Fuselage());
         structure.addUpgrade(new CellPosition(1, 0), new Fuselage());
@@ -559,7 +559,7 @@ class ShipStructureTest {
 
     @Test
     void testShrinkToFit() {
-        SpaceShip ship = new Player(new ShipStructure(1, 2), "name", "description", 100, 0, 0);
+        SpaceShip ship = new Player(new ShipStructure(1, 2), "name", "description", 0f, 0f);
         shipStructure = ship.getShipStructure();
         assertTrue(shipStructure.addUpgrade(new CellPosition(0, 0), new Fuselage()));
         assertTrue(shipStructure.addUpgrade(new CellPosition(1, 0), new Fuselage()));
@@ -582,7 +582,7 @@ class ShipStructureTest {
 
     @Test
     void testShrinkToFitWhenAlreadyShrunkTest() {
-        SpaceShip ship = new Player(new ShipStructure(1, 2), "name", "description", 100, 0, 0);
+        SpaceShip ship = new Player(new ShipStructure(1, 2), "name", "description", 0f, 0f);
         shipStructure = ship.getShipStructure();
         assertTrue(shipStructure.addUpgrade(new CellPosition(0, 0), new Fuselage()));
         assertTrue(shipStructure.addUpgrade(new CellPosition(1, 0), new Fuselage()));

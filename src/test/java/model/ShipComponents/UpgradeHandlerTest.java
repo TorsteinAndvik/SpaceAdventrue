@@ -21,7 +21,7 @@ public class UpgradeHandlerTest {
 
     @BeforeEach
     void setup() {
-        player = new Player(ShipFactory.simpleShip(), "name", "description", 100, 0, 0);
+        player = new Player(ShipFactory.simpleShip(), "name", "description", 0f, 0f);
         structure = player.getShipStructure();
         assertTrue(structure.hasFuselage(new CellPosition(0, 0)));
         assertTrue(structure.hasFuselage(new CellPosition(1, 0)));
@@ -58,7 +58,7 @@ public class UpgradeHandlerTest {
 
     @Test
     void testAbsoluteCenterOfMass() {
-        SpaceShip player = new Player(new ShipStructure(3, 3), "name", "desc", 100, 0, 0);
+        SpaceShip player = new Player(new ShipStructure(3, 3), "name", "desc", 0f, 0f);
         UpgradeHandler upgradeHandler = new UpgradeHandler(player.getShipStructure());
 
         CellPosition cp = new CellPosition(1, 1);

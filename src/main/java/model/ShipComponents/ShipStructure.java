@@ -5,10 +5,13 @@ import grid.Grid;
 import grid.GridCell;
 import grid.IGrid;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import model.ShipComponents.Components.Fuselage;
 import model.ShipComponents.Components.ShipUpgrade;
+import model.ShipComponents.Components.stats.Stat;
+import model.ShipComponents.Components.stats.StatModifier;
 import model.ShipComponents.ShipConfig.ShipComponent;
 import model.utils.FloatPair;
 import model.utils.MassProperties;
@@ -98,6 +101,25 @@ public class ShipStructure implements ViewableShipStructure {
      */
     public MassProperties getMassProperties() {
         return getMassProperties(grid);
+    }
+
+    // TODO: Refactor to calculate and store once, update when needed
+    public StatModifier getCombinedStatModifier() {
+        StatModifier combinedModifier = new StatModifier();
+
+        for (GridCell<Fuselage> cell : grid) {
+            if (cell.value() == null) {
+                continue;
+            }
+
+            combinedModifier.addModifier(cell.value().getStatModifier());
+        }
+
+        return combinedModifier;
+    }
+
+    public HashMap<Stat, Number> getCombinedStats() {
+        return getCombinedStatModifier().getModifiers();
     }
 
     /**

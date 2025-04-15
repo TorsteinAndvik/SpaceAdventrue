@@ -7,6 +7,7 @@ import model.Globals.DamageDealer;
 import model.Globals.Damageable;
 import model.Globals.Repairable;
 import model.ShipComponents.UpgradeType;
+import model.ShipComponents.Components.stats.Stat;
 import model.ShipComponents.ShipStructure;
 import model.SpaceCharacters.CharacterType;
 import model.SpaceCharacters.SpaceBody;
@@ -40,32 +41,16 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
     protected float timeSinceLastShot = 0f;
 
     public SpaceShip(ShipStructure shipStructure, String name, String description,
-            CharacterType characterType, float x,
-            float y, int maxHealthPoints, float angle) {
-
-        this(shipStructure, name, description, characterType, x, y, maxHealthPoints,
-                maxHealthPoints, angle);
-    }
-
-    public SpaceShip(ShipStructure shipStructure, String name, String description,
-            CharacterType characterType, float x,
-            float y, int maxHitPoints, int hitPoints, float angle) {
+            CharacterType characterType, float x, float y, float angle) {
 
         super(name, description, characterType, x, y, angle, 0f);
 
-        if (hitPoints <= 0 || maxHitPoints <= 0) {
-            throw new IllegalArgumentException("Hit points must be positive on ship creation");
-        }
-
-        if (maxHitPoints < hitPoints) {
-            throw new IllegalArgumentException("Hit points can't be higher than max hit points");
-        }
-
-        this.hitPoints = hitPoints;
-        this.maxHitPoints = maxHitPoints;
         this.shipStructure = shipStructure;
-        shipStructure.normalize();
-        radius = shipStructure.getRadius();
+        this.maxHitPoints = shipStructure.getCombinedStatModifier().getModifiers().get(Stat.HEALTH_VALUE).intValue();
+        this.hitPoints = maxHitPoints;
+
+        this.shipStructure.normalize();
+        radius = this.shipStructure.getRadius();
 
         id = UUID.randomUUID().toString();
 
@@ -122,27 +107,34 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
     @Override
     public void update(float deltaTime) {
         timeSinceLastShot += deltaTime;
+        float force = force();
+
         if (accelerateForward) {
-            addVelocityX(deltaTime * PhysicsParameters.accelerationForceLimitLongitudonal
+            addVelocityX(deltaTime * force
                     * (float) Math.cos(Math.toRadians(rotation.getAngle() + 90f)) / getMass());
-            addVelocityY(deltaTime * PhysicsParameters.accelerationForceLimitLongitudonal
+            addVelocityY(deltaTime * force
                     * (float) Math.sin(Math.toRadians(rotation.getAngle() + 90f)) / getMass());
             applySpeedLimit();
+
         } else if (accelerateBackward) {
-            addVelocityX(-deltaTime * PhysicsParameters.accelerationForceLimitLongitudonal
+            addVelocityX(-deltaTime * force
                     * (float) Math.cos(Math.toRadians(rotation.getAngle() + 90f)) / getMass());
-            addVelocityY(-deltaTime * PhysicsParameters.accelerationForceLimitLongitudonal
+            addVelocityY(-deltaTime * force
                     * (float) Math.sin(Math.toRadians(rotation.getAngle() + 90f)) / getMass());
             applySpeedLimit();
+
         } else {
             dampVelocity(deltaTime);
         }
 
+        float rotationForce = force * PhysicsParameters.accelerationForceLimitRotational
+                / PhysicsParameters.accelerationForceLimitLongitudonal;
+
         if (accelerateClockwise) {
-            addRotationSpeed(-deltaTime * PhysicsParameters.accelerationForceLimitRotational / getMass());
+            addRotationSpeed(-deltaTime * rotationForce / getMass());
             applyRotationalSpeedLimit();
         } else if (accelerateCounterClockwise) {
-            addRotationSpeed(deltaTime * PhysicsParameters.accelerationForceLimitRotational / getMass());
+            addRotationSpeed(deltaTime * rotationForce / getMass());
             applyRotationalSpeedLimit();
         } else {
             dampRotation(deltaTime);
@@ -152,17 +144,32 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
         position.add(velocity.x * deltaTime, velocity.y * deltaTime);
     }
 
+    private float force() {
+        return Math.min(
+                shipStructure.getCombinedStatModifier().getModifiers().get(Stat.ACCELERATION_FORCE).floatValue(),
+                PhysicsParameters.accelerationForceLimitLongitudonal);
+    }
+
     private void applySpeedLimit() {
-        if (getSpeed() > PhysicsParameters.maxVelocityLongitudonal) {
-            velocity.scl(PhysicsParameters.maxVelocityLongitudonal / getSpeed());
+        float maxSpeed = Math.min(
+                shipStructure.getCombinedStatModifier().getModifiers().get(Stat.MAX_SPEED).floatValue(),
+                PhysicsParameters.maxVelocityLongitudonal);
+        if (getSpeed() > maxSpeed) {
+            velocity.scl(maxSpeed / getSpeed());
         }
     }
 
     private void applyRotationalSpeedLimit() {
-        if (getRotationSpeed() < -PhysicsParameters.maxVelocityRotational) {
-            rotation.setRotationSpeed(-PhysicsParameters.maxVelocityRotational);
-        } else if (getRotationSpeed() > PhysicsParameters.maxVelocityRotational) {
-            rotation.setRotationSpeed(PhysicsParameters.maxVelocityRotational);
+        float maxSpeed = Math.min(
+                shipStructure.getCombinedStatModifier().getModifiers().get(Stat.MAX_SPEED).floatValue(),
+                PhysicsParameters.maxVelocityRotational);
+        float maxRotSpeed = maxSpeed * PhysicsParameters.maxVelocityRotational
+                / PhysicsParameters.maxVelocityLongitudonal;
+
+        if (getRotationSpeed() < -maxRotSpeed) {
+            rotation.setRotationSpeed(-maxRotSpeed);
+        } else if (getRotationSpeed() > maxRotSpeed) {
+            rotation.setRotationSpeed(maxRotSpeed);
         }
     }
 

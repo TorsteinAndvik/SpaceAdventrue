@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import app.TestSpaceGame;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
@@ -20,7 +19,6 @@ import model.ShipComponents.UpgradeHandler;
 import model.ShipComponents.UpgradeType;
 import model.SpaceCharacters.Ships.Player;
 import model.World.StoreItem;
-import model.utils.SpaceCalculator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,7 +45,7 @@ class UpgradeScreenModelTest {
     @BeforeEach
     void setUp() {
         setup();
-        player = new Player(ShipFactory.playerShip(), "Player", "Player", 100, 0, 0);
+        player = new Player(ShipFactory.playerShip(), "Player", "Player", 0f, 0f);
         model = new UpgradeScreenModel(player);
     }
 

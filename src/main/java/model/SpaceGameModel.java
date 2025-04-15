@@ -116,7 +116,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     private void setupPlayer() {
         player = new Player(
-                ShipFactory.playerShip(), "player", "the player's spaceship", 20, 8, 1);
+                ShipFactory.playerShip(), "player", "the player's spaceship", 8f, 1f);
         player.setRotationSpeed(0f);
         player.setFireRate(0.4f);
     }
@@ -136,7 +136,6 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                 hitDetection.addCollider(asteroid);
             }
         }
-
     }
 
     private void registerColliders() {
@@ -348,6 +347,11 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                         addAnimationState(getPlayerCenterOfMass().x(), getPlayerCenterOfMass().y(), player.getRadius(),
                                 AnimationType.EXPLOSION);
                     }
+                    if (player.getMass() > 10f) {
+                        playAudio(SoundEffect.SHIP_EXPLOSION_BIG);
+                    } else {
+                        playAudio(SoundEffect.SHIP_EXPLOSION_SMALL);
+                    }
                     break;
 
                 default:
@@ -489,8 +493,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                 "an enemy ship",
                 x,
                 y,
-                3 + spawnedShipCounter,
-                -90f);
+                0f);
 
         enemyShip.setBrain(new LerpBrain(enemyShip, player));
         enemyShip.setFireRate(0.6f);
