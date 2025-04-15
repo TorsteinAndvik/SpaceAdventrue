@@ -167,7 +167,7 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
     }
 
     private void dampVelocity(float deltaTime) {
-        float deltaVelocity = deltaTime * PhysicsParameters.dampingLongitudonal;
+        float deltaVelocity = deltaTime * PhysicsParameters.dampingLongitudonal / getMass();
         if (getSpeed() < deltaVelocity) {
             setVelocityX(0f);
             setVelocityY(0f);
@@ -177,7 +177,7 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
     }
 
     private void dampRotation(float deltaTime) {
-        float deltaRotVel = deltaTime * PhysicsParameters.dampingRotational;
+        float deltaRotVel = deltaTime * PhysicsParameters.dampingRotational / getMass();
         if (Math.abs(getRotationSpeed()) < deltaRotVel) {
             setRotationSpeed(0f);
         } else {
