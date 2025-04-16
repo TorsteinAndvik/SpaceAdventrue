@@ -20,7 +20,6 @@ import model.ShipComponents.UpgradeType;
  */
 public class UpgradeScreenModel {
 
-    private final int numUpgradeOptions = 4;
     private float gridOffsetX;
     private float gridOffsetY;
     private float upgradeOffsetX;
@@ -100,7 +99,7 @@ public class UpgradeScreenModel {
 
         if (isReleaseGrabbedUpgrade() && isUpgradeGrabbed()) {
 
-            StoreItem item = store.getStoreItem(getGrabbedUpgradeIndex());
+            StoreItem<UpgradeType> item = store.getStoreItem(getGrabbedUpgradeIndex());
 
             int upgradePrice = item.price();
 
@@ -149,13 +148,14 @@ public class UpgradeScreenModel {
      * @param delta Time elapsed since last update in seconds.
      */
     public void updateCameraZoomDeltaTime(float delta) {
-        if (cameraZoomRecently) {
-            cameraZoomDeltaTime += delta;
-            if (cameraZoomDeltaTime > cameraZoomTextFadeCutoffTime) {
-                float fadeAmount = 1f - (float) Math.pow((cameraZoomDeltaTime - cameraZoomTextFadeCutoffTime), 2);
-                if (fadeAmount < 0) {
-                    cameraZoomRecently = false;
-                }
+        if (!cameraZoomRecently) {
+            return;
+        }
+        cameraZoomDeltaTime += delta;
+        if (cameraZoomDeltaTime > cameraZoomTextFadeCutoffTime) {
+            float fadeAmount = 1f - (float) Math.pow((cameraZoomDeltaTime - cameraZoomTextFadeCutoffTime), 2);
+            if (fadeAmount < 0) {
+                cameraZoomRecently = false;
             }
         }
     }
@@ -197,7 +197,7 @@ public class UpgradeScreenModel {
         float upgradeToGridDelta = 2f;
         gridOffsetX = (worldWidth - getGridWidth()) / 2f;
         gridOffsetY = (worldHeight - getGridHeight() - upgradeToGridDelta) / 2f;
-        upgradeOffsetX = (worldWidth - numUpgradeOptions) / 2f;
+        upgradeOffsetX = (worldWidth - getNumUpgradeOptions()) / 2f;
         upgradeOffsetY = gridOffsetY + getGridHeight() + upgradeToGridDelta / 2f;
     }
 
@@ -226,7 +226,7 @@ public class UpgradeScreenModel {
     }
 
     public int getNumUpgradeOptions() {
-        return numUpgradeOptions;
+        return getStoreShelf().size();
     }
 
     public float getGridOffsetX() {
@@ -318,11 +318,11 @@ public class UpgradeScreenModel {
         return player.getInventory().getResourceCount();
     }
 
-    public List<StoreItem> getStoreShelf() {
+    public List<StoreItem<UpgradeType>> getStoreShelf() {
         return store.getStock();
     }
 
-    public void addNewStoreStock(Set<StoreItem> stock) {
+    public void addNewStoreStock(Set<StoreItem<UpgradeType>> stock) {
         store = new UpgradeStore(stock);
     }
 
