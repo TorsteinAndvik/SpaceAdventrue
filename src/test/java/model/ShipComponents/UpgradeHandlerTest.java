@@ -3,7 +3,6 @@ package model.ShipComponents;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import grid.CellPosition;
@@ -86,7 +85,7 @@ public class UpgradeHandlerTest {
 
     @Test
     void testCantPlaceItem() {
-        SpaceShip player = new Player(new ShipStructure(3, 3), "name", "desc", 100, 0, 0);
+        SpaceShip player = new Player(new ShipStructure(3, 3), "name", "desc", 0f, 0f);
         UpgradeHandler upgradeHandler = new UpgradeHandler(player.getShipStructure());
 
         CellPosition cp = new CellPosition(1, 1);
@@ -97,7 +96,7 @@ public class UpgradeHandlerTest {
     @Test
     void testGetGridCopy() {
 
-        SpaceShip player = new Player(ShipFactory.playerShip(), "name", "desc", 100, 0, 0);
+        SpaceShip player = new Player(ShipFactory.playerShip(), "name", "desc", 0f, 0f);
         IGrid<Fuselage> originalGrid = player.getShipStructure().getGridCopy();
         UpgradeHandler upgradeHandler = new UpgradeHandler(player.getShipStructure());
         IGrid<Fuselage> gridCopy = upgradeHandler.getGrid();
@@ -105,7 +104,6 @@ public class UpgradeHandlerTest {
         for (GridCell<Fuselage> cp : originalGrid) {
             assertTrue(gridCopy.get(cp.pos()).equals(cp.value()));
         }
-
 
     }
 }
