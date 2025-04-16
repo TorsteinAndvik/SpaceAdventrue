@@ -1,4 +1,4 @@
-package model.SpaceCharacters;
+package model.ShipComponents;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -21,11 +21,7 @@ import com.badlogic.gdx.utils.JsonValue;
 
 import grid.CellPosition;
 import grid.GridCell;
-import model.ShipComponents.ShipFactory;
-import model.ShipComponents.ShipValidator;
-import model.ShipComponents.UpgradeType;
 import model.ShipComponents.Components.Fuselage;
-import model.ShipComponents.ShipStructure;
 
 import org.junit.jupiter.api.Test;
 

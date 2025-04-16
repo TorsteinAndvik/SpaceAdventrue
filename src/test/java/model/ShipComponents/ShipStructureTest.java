@@ -8,6 +8,7 @@ import model.ShipComponents.Components.Fuselage;
 import model.ShipComponents.Components.Shield;
 import model.ShipComponents.Components.Thruster;
 import model.ShipComponents.Components.Turret;
+import model.ShipComponents.Components.stats.Stat;
 import model.SpaceCharacters.Ships.Player;
 import model.SpaceCharacters.Ships.SpaceShip;
 import model.constants.PhysicsParameters;
@@ -341,7 +342,7 @@ class ShipStructureTest {
 
     @Test
     void expandShipTopTest() {
-        SpaceShip ship = new Player(new ShipStructure(1, 2), "name", "description", 100, 0, 0);
+        SpaceShip ship = new Player(new ShipStructure(1, 2), "name", "description", 0f, 0f);
         ShipStructure structure = ship.getShipStructure();
         structure.addUpgrade(new CellPosition(0, 0), new Fuselage());
         structure.addUpgrade(new CellPosition(1, 0), new Fuselage());
@@ -384,7 +385,7 @@ class ShipStructureTest {
 
     @Test
     void expandShipBottomTest() {
-        SpaceShip ship = new Player(new ShipStructure(1, 2), "name", "description", 100, 0, 0);
+        SpaceShip ship = new Player(new ShipStructure(1, 2), "name", "description", 0f, 0f);
         ShipStructure structure = ship.getShipStructure();
         structure.addUpgrade(new CellPosition(0, 0), new Fuselage());
         structure.addUpgrade(new CellPosition(1, 0), new Fuselage());
@@ -403,7 +404,7 @@ class ShipStructureTest {
 
     @Test
     void expandShipLeftTest() {
-        SpaceShip ship = new Player(new ShipStructure(1, 2), "name", "description", 100, 0, 0);
+        SpaceShip ship = new Player(new ShipStructure(1, 2), "name", "description", 0f, 0f);
         ShipStructure structure = ship.getShipStructure();
 
         assertTrue(structure.addUpgrade(new CellPosition(0, 0), new Fuselage()));
@@ -428,7 +429,7 @@ class ShipStructureTest {
 
     @Test
     void expandShipRightTest() {
-        SpaceShip ship = new Player(new ShipStructure(1, 2), "name", "description", 100, 0, 0);
+        SpaceShip ship = new Player(new ShipStructure(1, 2), "name", "description", 0f, 0f);
         ShipStructure structure = ship.getShipStructure();
         structure.addUpgrade(new CellPosition(0, 0), new Fuselage());
         structure.addUpgrade(new CellPosition(1, 0), new Fuselage());
@@ -553,12 +554,13 @@ class ShipStructureTest {
     @Test
     void resourceValueTest() {
         assertEquals(0, new ShipStructure(1, 1).getResourceValue());
-        assertEquals(2 * Fuselage.RESOURCE_VALUE + Shield.RESOURCE_BASE_VALUE, shipStructure.getResourceValue());
+        assertEquals(2 * (new Fuselage().getResourceValue()) + (new Shield().getResourceValue()),
+                shipStructure.getResourceValue());
     }
 
     @Test
     void testShrinkToFit() {
-        SpaceShip ship = new Player(new ShipStructure(1, 2), "name", "description", 100, 0, 0);
+        SpaceShip ship = new Player(new ShipStructure(1, 2), "name", "description", 0f, 0f);
         shipStructure = ship.getShipStructure();
         assertTrue(shipStructure.addUpgrade(new CellPosition(0, 0), new Fuselage()));
         assertTrue(shipStructure.addUpgrade(new CellPosition(1, 0), new Fuselage()));
@@ -581,7 +583,7 @@ class ShipStructureTest {
 
     @Test
     void testShrinkToFitWhenAlreadyShrunkTest() {
-        SpaceShip ship = new Player(new ShipStructure(1, 2), "name", "description", 100, 0, 0);
+        SpaceShip ship = new Player(new ShipStructure(1, 2), "name", "description", 0f, 0f);
         shipStructure = ship.getShipStructure();
         assertTrue(shipStructure.addUpgrade(new CellPosition(0, 0), new Fuselage()));
         assertTrue(shipStructure.addUpgrade(new CellPosition(1, 0), new Fuselage()));
@@ -598,5 +600,29 @@ class ShipStructureTest {
         grid.set(new CellPosition(4, 4), new Fuselage());
 
         assertThrows(IllegalArgumentException.class, () -> new ShipStructure(grid));
+    }
+
+    @Test
+    void getCombinedStatsTest() {
+        ShipStructure shipStructure = new ShipStructure(1, 2);
+        shipStructure.setFuselage(new CellPosition(0, 0), new Fuselage(new Thruster()));
+        shipStructure.setFuselage(new CellPosition(1, 0), new Fuselage(new Turret()));
+
+        Fuselage fuselage = new Fuselage();
+        Turret turret = new Turret();
+        Thruster thruster = new Thruster();
+        for (Stat stat : Stat.values()) {
+            if (stat.intBased) {
+                int value = 2 * fuselage.getModifiers().get(stat).intValue();
+                value += turret.getModifiers().get(stat).intValue();
+                value += thruster.getModifiers().get(stat).intValue();
+                assertEquals(value, shipStructure.getCombinedStats().get(stat).intValue());
+            } else {
+                float value = 2f * fuselage.getModifiers().get(stat).floatValue();
+                value += turret.getModifiers().get(stat).floatValue();
+                value += thruster.getModifiers().get(stat).floatValue();
+                assertEquals(value, shipStructure.getCombinedStats().get(stat).floatValue(), "issue with stat " + stat);
+            }
+        }
     }
 }

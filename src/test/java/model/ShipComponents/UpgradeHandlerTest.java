@@ -24,24 +24,37 @@ public class UpgradeHandlerTest {
 
     @BeforeEach
     void setup() {
-        player = new Player(ShipFactory.simpleShip(), "name", "description", 100, 0, 0);
+        player = new Player(ShipFactory.simpleShip(), "name", "description", 0f, 0f);
         structure = player.getShipStructure();
-        assertTrue(structure.hasFuselage(new CellPosition(0, 0)));
-        assertTrue(structure.hasFuselage(new CellPosition(1, 0)));
         upgradeHandler = new UpgradeHandler(structure);
     }
 
     @Test
-    void testCanPlaceItem() {
-
-        CellPosition cp = new CellPosition(2, 0).offset(1, 1);
-        assertFalse(upgradeHandler.canPlaceItem(cp, UpgradeType.FUSELAGE));
-        upgradeHandler.expand();
-        assertTrue(upgradeHandler.canPlaceItem(cp, UpgradeType.FUSELAGE));
+    void setupTest() {
+        assertTrue(structure.hasFuselage(new CellPosition(0, 0)));
+        assertTrue(structure.hasFuselage(new CellPosition(1, 0)));
     }
 
     @Test
-    void testPlaceItem() {
+    void canPlaceItemTest() {
+
+        CellPosition cp = new CellPosition(2, 0).offset(1, 1);
+        assertFalse(upgradeHandler.canPlaceItem(cp, UpgradeType.FUSELAGE));
+        assertFalse(upgradeHandler.placeItem(cp, UpgradeType.FUSELAGE));
+
+        upgradeHandler.expand();
+
+        assertTrue(upgradeHandler.canPlaceItem(cp, UpgradeType.FUSELAGE));
+        assertTrue(upgradeHandler.placeItem(cp, UpgradeType.FUSELAGE));
+
+        assertTrue(upgradeHandler.canPlaceItem(cp, UpgradeType.SHIELD));
+        assertTrue(upgradeHandler.placeItem(cp, UpgradeType.SHIELD));
+        assertFalse(upgradeHandler.canPlaceItem(cp, UpgradeType.SHIELD)); // cp taken
+        assertFalse(upgradeHandler.placeItem(cp, UpgradeType.SHIELD)); // cp taken
+    }
+
+    @Test
+    void placeItemUpdatesMassTest() {
 
         MassProperties mp = structure.getMassProperties();
         upgradeHandler.expand();
@@ -52,7 +65,7 @@ public class UpgradeHandlerTest {
     }
 
     @Test
-    void testPlaceUpgrade() {
+    void placeUpgradeTest() {
         upgradeHandler.expand();
         CellPosition cp = new CellPosition(2, 0).offset(1, 1);
         assertTrue(upgradeHandler.placeItem(cp, UpgradeType.FUSELAGE));
@@ -60,8 +73,8 @@ public class UpgradeHandlerTest {
     }
 
     @Test
-    void testAbsoluteCenterOfMass() {
-        SpaceShip player = new Player(new ShipStructure(3, 3), "name", "desc", 100, 0, 0);
+    void absoluteCenterOfMassTest() {
+        SpaceShip player = new Player(new ShipStructure(3, 3), "name", "desc", 0f, 0f);
         UpgradeHandler upgradeHandler = new UpgradeHandler(player.getShipStructure());
 
         CellPosition cp = new CellPosition(1, 1);
@@ -72,7 +85,7 @@ public class UpgradeHandlerTest {
 
     @Test
     void testCantPlaceItem() {
-        SpaceShip player = new Player(new ShipStructure(3, 3), "name", "desc", 100, 0, 0);
+        SpaceShip player = new Player(new ShipStructure(3, 3), "name", "desc", 0f, 0f);
         UpgradeHandler upgradeHandler = new UpgradeHandler(player.getShipStructure());
 
         CellPosition cp = new CellPosition(1, 1);
@@ -83,7 +96,7 @@ public class UpgradeHandlerTest {
     @Test
     void testGetGridCopy() {
 
-        SpaceShip player = new Player(ShipFactory.playerShip(), "name", "desc", 100, 0, 0);
+        SpaceShip player = new Player(ShipFactory.playerShip(), "name", "desc", 0f, 0f);
         IGrid<Fuselage> originalGrid = player.getShipStructure().getGridCopy();
         UpgradeHandler upgradeHandler = new UpgradeHandler(player.getShipStructure());
         IGrid<Fuselage> gridCopy = upgradeHandler.getGrid();
@@ -91,7 +104,6 @@ public class UpgradeHandlerTest {
         for (GridCell<Fuselage> cp : originalGrid) {
             assertTrue(gridCopy.get(cp.pos()).equals(cp.value()));
         }
-
 
     }
 }

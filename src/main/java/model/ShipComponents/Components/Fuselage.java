@@ -1,15 +1,16 @@
 package model.ShipComponents.Components;
 
+import java.util.HashMap;
+
 import model.ShipComponents.UpgradeStage;
 import model.ShipComponents.UpgradeType;
+import model.ShipComponents.Components.stats.Stat;
+import model.ShipComponents.Components.stats.StatModifier;
 import model.constants.PhysicsParameters;
 
 public class Fuselage extends ShipUpgrade {
 
-    public static int RESOURCE_VALUE = 10;
     private ShipUpgrade heldUpgrade;
-
-    private final float mass = PhysicsParameters.fuselageMass;
 
     public Fuselage() {
         this(null);
@@ -81,24 +82,39 @@ public class Fuselage extends ShipUpgrade {
      *         <code>ShipUpgrade</code>.
      */
     public float getMass() {
-        if (hasUpgrade()) {
-            return mass + heldUpgrade.getMass();
-        } else {
-            return mass;
-        }
+        return getModifiers().get(Stat.MASS).floatValue();
     }
 
     @Override
     public int getResourceValue() {
-        if (hasUpgrade()) {
-            return getUpgrade().getResourceValue() + RESOURCE_VALUE;
-        }
-        return RESOURCE_VALUE;
+        return getModifiers().get(Stat.RESOURCE_VALUE).intValue();
+    }
 
+    @Override
+    public StatModifier getStatModifier() {
+        if (hasUpgrade()) {
+            return statModifier.copy().addModifier(heldUpgrade.getStatModifier());
+        }
+        return statModifier;
+    }
+
+    @Override
+    public HashMap<Stat, Number> getModifiers() {
+        if (hasUpgrade()) {
+            return statModifier.copy().addModifier(heldUpgrade.getStatModifier()).getModifiers();
+        }
+        return statModifier.getModifiers();
     }
 
     @Override
     public UpgradeType getType() {
         return UpgradeType.FUSELAGE;
+    }
+
+    @Override
+    protected void setupStatModifier() {
+        statModifier.setModifier(Stat.MASS, PhysicsParameters.fuselageMass);
+        statModifier.setModifier(Stat.HEALTH_VALUE, 5);
+        statModifier.setModifier(Stat.RESOURCE_VALUE, 10);
     }
 }

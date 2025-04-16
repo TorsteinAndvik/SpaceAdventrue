@@ -1,10 +1,8 @@
-package model.SpaceCharacters;
+package model.SpaceCharacters.Ships;
 
 import grid.CellPosition;
 import model.ShipComponents.Components.Fuselage;
 import model.ShipComponents.ShipFactory;
-import model.SpaceCharacters.Ships.Player;
-import model.SpaceCharacters.Ships.SpaceShip;
 import model.utils.FloatPair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,29 +17,28 @@ public class SpaceShipTest {
 
     @BeforeEach()
     void setup() {
-        spaceShip = new Player(ShipFactory.simpleShip(), "The Black Swan", "A beautiful pirate ship.",
-                100, 0, 100);
+        spaceShip = new Player(ShipFactory.simpleShip(), "The Black Swan", "A beautiful pirate ship.", 0f, 100f);
     }
 
     @Test
     void takeDamageTest() {
-        assertEquals(100, spaceShip.getHitPoints());
-        assertEquals(100, spaceShip.getMaxHitPoints());
-        spaceShip.takeDamage(50);
-        assertEquals(50, spaceShip.getHitPoints());
-        assertEquals(100, spaceShip.getMaxHitPoints());
+        assertEquals(10, spaceShip.getHitPoints());
+        assertEquals(10, spaceShip.getMaxHitPoints());
+        spaceShip.takeDamage(5);
+        assertEquals(5, spaceShip.getHitPoints());
+        assertEquals(10, spaceShip.getMaxHitPoints());
 
     }
 
     @Test
     void repairTest() {
-        assertEquals(100, spaceShip.getHitPoints());
-        spaceShip.takeDamage(99);
+        assertEquals(10, spaceShip.getHitPoints());
+        spaceShip.takeDamage(9);
         assertEquals(1, spaceShip.getHitPoints());
         spaceShip.repair(1);
         assertEquals(2, spaceShip.getHitPoints());
         spaceShip.repair(2000);
-        assertEquals(100, spaceShip.getHitPoints());
+        assertEquals(10, spaceShip.getHitPoints());
     }
 
     @Test
@@ -53,16 +50,15 @@ public class SpaceShipTest {
 
     @Test
     void dealDamageTest() {
-        SpaceShip enemyShip = new Player(ShipFactory.simpleShip(), "The White Swan", "A boring ship.",
-                49, 0, 49);
-        assertEquals(49, enemyShip.getHitPoints());
+        SpaceShip enemyShip = new Player(ShipFactory.simpleShip(), "The White Swan", "A boring ship.", 0f, 49f);
+        assertEquals(10, enemyShip.getHitPoints());
         spaceShip.dealDamage(enemyShip, spaceShip.getDamage());
         assertEquals(0, enemyShip.getHitPoints());
     }
 
     @Test
     void testAbsoluteCenterOfMass() {
-        SpaceShip ship = new Player(new ShipStructure(3, 3), "name", "description", 100, 0, 0);
+        SpaceShip ship = new Player(new ShipStructure(3, 3), "name", "description", 0f, 0f);
         ShipStructure structure = ship.getShipStructure();
 
         assertTrue(structure.addUpgrade(new CellPosition(0, 0), new Fuselage()));
@@ -73,8 +69,5 @@ public class SpaceShipTest {
 
         assertTrue(structure.addUpgrade(new CellPosition(2, 0), new Fuselage()));
         assertEquals(new FloatPair(0, 1f), ship.getAbsoluteCenterOfMass());
-
-
     }
-
 }

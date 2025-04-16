@@ -9,7 +9,7 @@ import java.util.Map.Entry;
 import model.Globals.Collectable;
 import model.World.GameItem;
 
-public class PlayerInventory implements Inventory, ViewableInventory {
+public class PlayerInventory implements Inventory {
 
     private final Map<GameItem, Integer> items;
     private int resources;
@@ -66,7 +66,6 @@ public class PlayerInventory implements Inventory, ViewableInventory {
     public boolean hasCapacity() {
         return countAllItems() < INVENTORY_ITEM_CAPACITY;
     }
-
 
     @Override
     public boolean hasItemCapacity(GameItem item) {

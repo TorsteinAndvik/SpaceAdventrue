@@ -8,9 +8,8 @@ public class Player extends SpaceShip implements ViewablePlayer {
 
     private final PlayerInventory inventory;
 
-    public Player(ShipStructure shipStructure, String name, String description, int hitPoints,
-            float x, float y) {
-        super(shipStructure, name, description, CharacterType.PLAYER, x, y, hitPoints, 0);
+    public Player(ShipStructure shipStructure, String name, String description, float x, float y) {
+        super(shipStructure, name, description, CharacterType.PLAYER, x, y, 0);
         inventory = new PlayerInventory(new HashMap<>(), 300);
     }
 

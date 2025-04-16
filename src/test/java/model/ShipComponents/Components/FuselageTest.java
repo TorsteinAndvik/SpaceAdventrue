@@ -1,12 +1,15 @@
 package model.ShipComponents.Components;
 
 import model.ShipComponents.UpgradeType;
+import model.ShipComponents.Components.stats.Stat;
 import model.constants.PhysicsParameters;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FuselageTest {
 
@@ -20,10 +23,20 @@ class FuselageTest {
     }
 
     @Test
+    void constructorTest() {
+        assertFalse((new Fuselage(new Fuselage())).hasUpgrade());
+    }
+
+    @Test
     void setUpgradeTest() {
         ShipUpgrade upgrade = new Turret();
-        fuselageWithoutUpgrade.setUpgrade(upgrade);
+        assertTrue(fuselageWithoutUpgrade.setUpgrade(upgrade));
+        assertFalse(fuselageWithoutUpgrade.setUpgrade(upgrade)); // already has upgrade
         assertEquals(upgrade, fuselageWithoutUpgrade.getUpgrade());
+
+        Fuselage emptyFuselage = new Fuselage();
+        assertFalse(emptyFuselage.setUpgrade(null));
+        assertFalse(emptyFuselage.setUpgrade(new Fuselage()));
     }
 
     @Test
@@ -53,7 +66,20 @@ class FuselageTest {
 
     @Test
     void resourceValueTest() {
-        assertEquals(Fuselage.RESOURCE_VALUE, fuselageWithoutUpgrade.getResourceValue());
-        assertEquals(Fuselage.RESOURCE_VALUE + Turret.RESOURCE_BASE_VALUE, fuselageWithUpgrade.getResourceValue());
+        assertTrue(fuselageWithoutUpgrade.getResourceValue() > 0);
+        assertEquals(fuselageWithoutUpgrade.getResourceValue() + (new Turret()).getResourceValue(),
+                fuselageWithUpgrade.getResourceValue());
+    }
+
+    @Test
+    void getStatModifierTest() {
+        assertEquals(PhysicsParameters.fuselageMass, fuselageWithoutUpgrade.getModifiers().get(Stat.MASS).floatValue());
+        assertEquals(PhysicsParameters.fuselageMass + PhysicsParameters.shipUpgradeMass,
+                fuselageWithUpgrade.getModifiers().get(Stat.MASS).floatValue());
+
+        assertEquals(PhysicsParameters.fuselageMass,
+                fuselageWithoutUpgrade.getStatModifier().getModifiers().get(Stat.MASS).floatValue());
+        assertEquals(PhysicsParameters.fuselageMass + PhysicsParameters.shipUpgradeMass,
+                fuselageWithUpgrade.getStatModifier().getModifiers().get(Stat.MASS).floatValue());
     }
 }

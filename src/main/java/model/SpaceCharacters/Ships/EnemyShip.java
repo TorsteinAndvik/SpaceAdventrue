@@ -10,8 +10,8 @@ public class EnemyShip extends SpaceShip {
     private Brain brain = new NullBrain();
 
     public EnemyShip(ShipStructure shipStructure, String name, String description,
-            float x, float y, int hitPoints, float angle) {
-        super(shipStructure, name, description, CharacterType.ENEMY_SHIP, x, y, hitPoints, angle);
+            float x, float y, float angle) {
+        super(shipStructure, name, description, CharacterType.ENEMY_SHIP, x, y, angle);
     }
 
     @Override

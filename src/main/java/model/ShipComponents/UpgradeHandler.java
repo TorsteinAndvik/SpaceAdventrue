@@ -25,16 +25,9 @@ public class UpgradeHandler {
         return !structure.hasUpgrade(cp);
     }
 
-    public boolean placeItem(CellPosition cp, UpgradeType type) {
-        if (!canPlaceItem(cp, type)) {
-            return false;
-        }
-        boolean placedItem;
-        if (type == UpgradeType.FUSELAGE) {
-            placedItem = set(cp, new Fuselage());
-        } else {
-            placedItem = set(cp, ShipUpgrade.getShipUpgrade(type));
-        }
+    public boolean placeItem(CellPosition pos, UpgradeType type) {
+
+        boolean placedItem = structure.addUpgrade(pos, ShipUpgrade.getShipUpgrade(type));
 
         if (placedItem) {
             structure.normalize();
@@ -42,21 +35,6 @@ public class UpgradeHandler {
         }
 
         return placedItem;
-    }
-
-    /**
-     * Sets the fuselage at the given position if it is empty and the position is on
-     * the grid. Updates ship's mass and center of mass accordingly.
-     *
-     * @param pos     the <code>CellPosition</code> of the fuselage to be added
-     * @param upgrade the <code>ShipUpgrade</code> to be added
-     * @return true if the ship upgrade was successfully added, false otherwise
-     */
-    private boolean set(CellPosition pos, ShipUpgrade upgrade) {
-        if (structure.isValidBuildPosition(pos, upgrade)) {
-            return structure.addUpgrade(pos, upgrade);
-        }
-        return false;
     }
 
     public IGrid<Fuselage> getGrid() {
