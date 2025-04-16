@@ -39,6 +39,9 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
     protected float fireRate = 1f;
     protected float timeSinceLastShot = 0f;
 
+    // health regeneration logic
+    private float healthRegeneration = 0f;
+
     public SpaceShip(ShipStructure shipStructure, String name, String description,
             CharacterType characterType, float x, float y, float angle) {
 
@@ -104,8 +107,9 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
     @Override
     public void update(float deltaTime) {
         timeSinceLastShot += deltaTime;
-        float force = force();
+        updateHealth(deltaTime);
 
+        float force = force();
         if (accelerateForward) {
             addVelocityX(deltaTime * force
                     * (float) Math.cos(Math.toRadians(rotation.getAngle() + 90f)) / getMass());
@@ -136,6 +140,15 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
 
         rotate(deltaTime * getRotationSpeed());
         position.add(velocity.x * deltaTime, velocity.y * deltaTime);
+    }
+
+    private void updateHealth(float deltaTime) {
+        healthRegeneration += deltaTime * shipStructure.getCombinedStatModifier().getModifiers()
+                .get(Stat.HEALTH_REGENERATION_RATE).floatValue();
+
+        int healthToRestore = (int) Math.floor(healthRegeneration);
+        healthRegeneration -= healthToRestore;
+        repair(healthToRestore);
     }
 
     private float force() {
