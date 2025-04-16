@@ -15,9 +15,10 @@ public class EnemyShip extends SpaceShip {
     }
 
     @Override
-    public void update(float delta) {
-        timeSinceLastShot += delta;
-        brain.update(delta);
+    public void update(float deltaTime) {
+        timeSinceLastShot += deltaTime;
+        updateHealth(deltaTime);
+        brain.update(deltaTime);
     }
 
     public void setBrain(Brain brain) {

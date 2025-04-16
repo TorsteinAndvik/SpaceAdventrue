@@ -142,7 +142,7 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
         position.add(velocity.x * deltaTime, velocity.y * deltaTime);
     }
 
-    private void updateHealth(float deltaTime) {
+    protected void updateHealth(float deltaTime) {
         healthRegeneration += deltaTime * shipStructure.getCombinedStatModifier().getModifiers()
                 .get(Stat.HEALTH_REGENERATION_RATE).floatValue();
 
