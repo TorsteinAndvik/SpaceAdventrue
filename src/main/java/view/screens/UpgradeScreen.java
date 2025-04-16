@@ -71,7 +71,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     private float uiIconZoom;
 
     private final Map<UpgradeType, Sprite> upgradeSprites = new HashMap<>();
-    private final List<StoreItem> storeShelf;
+    private final List<StoreItem<UpgradeType>> storeShelf;
 
     int cursorWidth = 64;
     int cursorHeight = 64;

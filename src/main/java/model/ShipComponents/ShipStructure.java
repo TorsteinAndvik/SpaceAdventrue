@@ -73,7 +73,7 @@ public class ShipStructure implements ViewableShipStructure {
         // 2x2
         grid = getExpandedGrid(grid, 2, 2, true);
 
-        if (!canBuildAt(pos, grid)) {
+        if (!canBuildAt(pos)) {
             grid = Grid.shrinkGridToFit(grid);
             return false;
         }
@@ -432,10 +432,6 @@ public class ShipStructure implements ViewableShipStructure {
                 && cp.col() < getWidth();
     }
 
-    @Override
-    public boolean canBuildAt(CellPosition pos) {
-        return canBuildAt(pos, grid);
-    }
 
     /**
      * Checks if a fuselage can be placed at the given position within the specified
@@ -443,12 +439,12 @@ public class ShipStructure implements ViewableShipStructure {
      * A fuselage cannot be placed if there is already one at the position.
      * The position must also be adjacent to at least one existing fuselage.
      *
-     * @param pos  The position to check.
-     * @param grid The grid in which to check the position.
+     * @param pos The position to check.
      * @return {@code true} if a fuselage can be built at the position,
      *         {@code false} otherwise.
      */
-    public static boolean canBuildAt(CellPosition pos, IGrid<Fuselage> grid) {
+    @Override
+    public boolean canBuildAt(CellPosition pos) {
 
         if (!grid.positionIsOnGrid(pos)) {
             return false;
