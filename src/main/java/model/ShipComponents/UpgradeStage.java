@@ -1,12 +1,12 @@
 package model.ShipComponents;
 
 public enum UpgradeStage {
-    // TODO: Add more stages (ONE, TWO, ...) as more are implemented in the game
-    // TODO: Consider if there should be a unique UpgradeStage-esque enum for each
-    // type of upgrade, in case different upgrade types have a different number of
-    // total stages
 
     ZERO, // base stage
+    ONE,
+    TWO,
+    THREE,
+    FOUR,
     MAX; // final upgrade stage
 
     public UpgradeStage nextStage() {
@@ -15,7 +15,11 @@ public enum UpgradeStage {
 
     public UpgradeStage nextStage(UpgradeStage stage) {
         return switch (stage) {
-            case ZERO -> UpgradeStage.MAX;
+            case ZERO -> UpgradeStage.ONE;
+            case ONE -> UpgradeStage.TWO;
+            case TWO -> UpgradeStage.THREE;
+            case THREE -> UpgradeStage.FOUR;
+            case FOUR -> UpgradeStage.MAX;
             case MAX -> UpgradeStage.MAX;
         };
     }

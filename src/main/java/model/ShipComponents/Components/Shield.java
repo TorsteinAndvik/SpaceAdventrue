@@ -17,12 +17,17 @@ public class Shield extends ShipUpgrade {
     }
 
     @Override
-    protected void setupStatModifier() {
+    protected void setupStatModifiers() {
         statModifier.setModifier(Stat.MASS, PhysicsParameters.shipUpgradeMass);
         statModifier.setModifier(Stat.HEALTH_VALUE, 5);
         statModifier.setModifier(Stat.RESOURCE_VALUE, 7);
 
         // 1/x -> 1 hitpoint restored every x seconds.
-        statModifier.setModifier(Stat.HEALTH_REGENERATION_RATE, 1f / 5f);
+        statModifier.setModifier(Stat.HEALTH_REGENERATION_RATE, 1f / 8f);
+
+        // Upgrades:
+        upgradeModifier.setModifier(Stat.HEALTH_VALUE, 2);
+        upgradeModifier.setModifier(Stat.RESOURCE_VALUE, 4);
+        upgradeModifier.setModifier(Stat.HEALTH_REGENERATION_RATE, 1f / 12f);
     }
 }
