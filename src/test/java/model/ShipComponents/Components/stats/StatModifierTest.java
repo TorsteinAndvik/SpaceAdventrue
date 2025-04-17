@@ -1,6 +1,7 @@
 package model.ShipComponents.Components.stats;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -67,5 +68,18 @@ public class StatModifierTest {
         assertEquals(0.5f, modifier.getModifiers().get(Stat.HEALTH_REGENERATION_RATE));
         assertEquals(6f, modifier.getModifiers().get(Stat.ACCELERATION_FORCE));
         assertEquals(15, modifier.getModifiers().get(Stat.RESOURCE_VALUE));
+    }
+
+    @Test
+    void toStringTest() {
+        for (Stat stat : Stat.values()) {
+            String expected;
+            if (stat.intBased) {
+                expected = stat + "=0";
+            } else {
+                expected = stat + "=0.0";
+            }
+            assertTrue(modifier.toString().contains(expected));
+        }
     }
 }

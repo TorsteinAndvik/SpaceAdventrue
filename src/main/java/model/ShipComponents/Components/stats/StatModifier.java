@@ -2,6 +2,7 @@ package model.ShipComponents.Components.stats;
 
 import java.util.HashMap;
 
+// TODO: Add javadocs to StatModifier.java
 public class StatModifier {
 
     protected final HashMap<Stat, Number> modifiers;

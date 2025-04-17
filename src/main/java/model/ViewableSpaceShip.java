@@ -44,19 +44,6 @@ public interface ViewableSpaceShip extends ViewableSpaceBody, Collidable {
      */
     String getID();
 
-
-    /**
-     * Returns whether the entity is currently attempting to shoot.
-     *
-     * @return {@code true} if the entity is actively shooting; {@code false} otherwise
-     */
-    boolean isShooting();
-
-    /**
-     * Signals that the entity has performed a shooting action.
-     */
-    void hasShot();
-
     /**
      * Returns whether the entity is currently accelerating.
      *

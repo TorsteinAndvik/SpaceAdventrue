@@ -112,9 +112,14 @@ public class Fuselage extends ShipUpgrade {
     }
 
     @Override
-    protected void setupStatModifier() {
+    protected void setupStatModifiers() {
         statModifier.setModifier(Stat.MASS, PhysicsParameters.fuselageMass);
-        statModifier.setModifier(Stat.HEALTH_VALUE, 5);
+        statModifier.setModifier(Stat.HEALTH_VALUE, 4);
         statModifier.setModifier(Stat.RESOURCE_VALUE, 10);
+
+        // Upgrades:
+        // TODO: require upgrading fuselage before held upgrade can be upgraded?
+        upgradeModifier.setModifier(Stat.HEALTH_VALUE, 1);
+        upgradeModifier.setModifier(Stat.RESOURCE_VALUE, 2);
     }
 }

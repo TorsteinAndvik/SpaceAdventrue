@@ -14,6 +14,7 @@ public abstract class ShipUpgrade {
     protected final UpgradeType type;
     protected UpgradeStage stage;
     protected final StatModifier statModifier;
+    protected final StatModifier upgradeModifier;
 
     public ShipUpgrade(String name, String description, UpgradeType type, UpgradeStage stage) {
         this.name = name;
@@ -21,10 +22,11 @@ public abstract class ShipUpgrade {
         this.type = type;
         this.stage = stage;
         this.statModifier = new StatModifier();
-        setupStatModifier();
+        this.upgradeModifier = new StatModifier();
+        setupStatModifiers();
     }
 
-    protected abstract void setupStatModifier();
+    protected abstract void setupStatModifiers();
 
     public String getDescription() {
         return description;
@@ -54,6 +56,14 @@ public abstract class ShipUpgrade {
         return statModifier.getModifiers();
     }
 
+    public StatModifier getUpgradeStatModifier() {
+        return upgradeModifier;
+    }
+
+    public HashMap<Stat, Number> getUpgradeModifiers() {
+        return upgradeModifier.getModifiers();
+    }
+
     /**
      * Upgrade <code>this</code> to the next stage if possible
      *
@@ -62,6 +72,7 @@ public abstract class ShipUpgrade {
     public boolean upgrade() {
         if (stage.isUpgradeable()) {
             stage = stage.nextStage(stage);
+            statModifier.addModifier(upgradeModifier);
             return true;
         } else {
             return false;
