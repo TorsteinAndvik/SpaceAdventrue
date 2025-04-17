@@ -7,7 +7,8 @@ public enum Stat {
     HEALTH_VALUE(true),
     HEALTH_REGENERATION_RATE(false),
     MAX_SPEED(false),
-    ACCELERATION_FORCE(false);
+    ACCELERATION_FORCE(false),
+    FIRE_RATE(false);
 
     public final boolean intBased;
 

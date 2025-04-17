@@ -8,8 +8,7 @@ import model.utils.FloatPair;
 
 public class Turret extends UpdateableShipUpgrade {
 
-    private float fireRate = 1f;
-    private float timeSinceLastShot = fireRate; // able to fire immediately
+    private float timeSinceLastShot; // able to fire immediately
     private boolean isSetToShoot;
 
     public Turret() {
@@ -18,6 +17,9 @@ public class Turret extends UpdateableShipUpgrade {
 
     public Turret(UpgradeStage stage) {
         super("Turret", "Fires lasers at enemies and asteroids", UpgradeType.TURRET, stage);
+
+        // simple workaround to able to fire immediately
+        timeSinceLastShot = statModifier.getModifiers().get(Stat.FIRE_RATE).floatValue();
     }
 
     /**
@@ -31,6 +33,7 @@ public class Turret extends UpdateableShipUpgrade {
     @Override
     protected void setupStatModifier() {
         statModifier.setModifier(Stat.MASS, PhysicsParameters.shipUpgradeMass);
+        statModifier.setModifier(Stat.FIRE_RATE, 1f);
         statModifier.setModifier(Stat.RESOURCE_VALUE, 5);
     }
 
@@ -39,8 +42,8 @@ public class Turret extends UpdateableShipUpgrade {
         timeSinceLastShot += deltaTime;
     }
 
-    public boolean canShoot() {
-        return timeSinceLastShot >= fireRate;
+    public boolean canShoot() { // 1/x means it fires 1 shot every x seconds
+        return timeSinceLastShot >= 1f / statModifier.getModifiers().get(Stat.FIRE_RATE).floatValue();
     }
 
     public boolean shoot() {

@@ -54,7 +54,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     private RandomAsteroidFactory randomAsteroidFactory;
     private DirectionalAsteroidFactory directionalAsteroidFactory;
-    private float asteroidTimer = 0f;
+    private float asteroidTimer = 5f; // >0 to make first wave spawn earlier
 
     private float enemySpawnTimer = 0f;
     private int spawnedShipCounter = 0;
@@ -205,7 +205,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     }
 
     private float enemySpawnTimer() {
-        return 7.5f + 1.5f * spawnedShipCounter;
+        return 8f + 3f * spawnedShipCounter;
     }
 
     /**
