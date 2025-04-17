@@ -16,12 +16,17 @@ public class EnemyShip extends SpaceShip {
 
     @Override
     public void update(float deltaTime) {
-        timeSinceLastShot += deltaTime;
-        updateHealth(deltaTime);
+        super.update(deltaTime);
         brain.update(deltaTime);
     }
 
     public void setBrain(Brain brain) {
         this.brain = brain;
+    }
+
+    @Override
+    public boolean isAccelerating() {
+        // set permanently on for rendering in SpaceScreen
+        return true;
     }
 }

@@ -114,7 +114,7 @@ public class Fuselage extends ShipUpgrade {
     @Override
     protected void setupStatModifier() {
         statModifier.setModifier(Stat.MASS, PhysicsParameters.fuselageMass);
-        statModifier.setModifier(Stat.HEALTH_VALUE, 5);
+        statModifier.setModifier(Stat.HEALTH_VALUE, 4);
         statModifier.setModifier(Stat.RESOURCE_VALUE, 10);
     }
 }

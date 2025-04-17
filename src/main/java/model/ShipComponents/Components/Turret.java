@@ -6,7 +6,11 @@ import model.ShipComponents.Components.stats.Stat;
 import model.constants.PhysicsParameters;
 import model.utils.FloatPair;
 
-public class Turret extends ShipUpgrade {
+public class Turret extends UpdateableShipUpgrade {
+
+    private float fireRate = 1f;
+    private float timeSinceLastShot = fireRate; // able to fire immediately
+    private boolean isSetToShoot;
 
     public Turret() {
         this(UpgradeStage.ZERO);
@@ -28,5 +32,35 @@ public class Turret extends ShipUpgrade {
     protected void setupStatModifier() {
         statModifier.setModifier(Stat.MASS, PhysicsParameters.shipUpgradeMass);
         statModifier.setModifier(Stat.RESOURCE_VALUE, 5);
+    }
+
+    @Override
+    public void update(float deltaTime) {
+        timeSinceLastShot += deltaTime;
+    }
+
+    public boolean canShoot() {
+        return timeSinceLastShot >= fireRate;
+    }
+
+    public boolean shoot() {
+        if (isShooting()) {
+            hasShot();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isShooting() {
+        return isSetToShoot && canShoot();
+    }
+
+    public void setToShoot(boolean setToShoot) {
+        isSetToShoot = setToShoot;
+    }
+
+    public void hasShot() {
+        timeSinceLastShot = 0f;
+        setToShoot(false);
     }
 }

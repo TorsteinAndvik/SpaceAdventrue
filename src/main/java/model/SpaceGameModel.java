@@ -13,7 +13,7 @@ import com.badlogic.gdx.utils.Pool;
 import controller.ControllableSpaceGameModel;
 import controller.audio.AudioCallback;
 import controller.audio.SoundEffect;
-import grid.CellPosition;
+import grid.GridCell;
 import model.Animation.AnimationCallback;
 import model.Animation.AnimationStateImpl;
 import model.Animation.AnimationType;
@@ -21,7 +21,6 @@ import model.Globals.Collectable;
 import model.Globals.Collidable;
 import model.Globals.Damageable;
 import model.ShipComponents.ShipFactory;
-import model.ShipComponents.UpgradeType;
 import model.ShipComponents.Components.Turret;
 import model.SpaceCharacters.Asteroid;
 import model.SpaceCharacters.Bullet;
@@ -118,7 +117,6 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         player = new Player(
                 ShipFactory.playerShip(), "player", "the player's spaceship", 8f, 1f);
         player.setRotationSpeed(0f);
-        player.setFireRate(0.4f);
     }
 
     private void createAsteroids() {
@@ -182,13 +180,13 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         }
 
         asteroidTimer += delta;
-        if (asteroidTimer > 6f) { // 6 for testing
+        if (asteroidTimer > asteroidSpawnTimer()) {
             createAsteroids();
             asteroidTimer = 0f;
         }
 
         enemySpawnTimer += delta;
-        if (enemySpawnTimer > 5f + spawnedShipCounter) {
+        if (enemySpawnTimer > enemySpawnTimer()) {
             spawnRandomShip();
             spawnedShipCounter++;
             enemySpawnTimer = 0f;
@@ -196,12 +194,18 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
         for (SpaceShip spaceShip : spaceShips) {
             spaceShip.update(delta);
-            if (spaceShip.isShooting()) {
-                shoot(spaceShip);
-            }
+            shoot(spaceShip);
         }
 
         hitDetection.checkCollisions();
+    }
+
+    private float asteroidSpawnTimer() {
+        return 10f;
+    }
+
+    private float enemySpawnTimer() {
+        return 7.5f + 1.5f * spawnedShipCounter;
     }
 
     /**
@@ -384,14 +388,18 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     }
 
     public void playerShoot() {
-        player.setIsShooting(true);
+        player.setToShoot(true);
     }
 
-    public void shoot(ViewableSpaceShip ship) {
-        for (CellPosition cell : ship.getUpgradeTypePositions(UpgradeType.TURRET)) {
+    public void shoot(SpaceShip ship) {
+        for (GridCell<Turret> turretCell : ship.getTurretGridCells()) {
 
-            float x = (float) cell.col() + Turret.turretBarrelLocation().x();
-            float y = (float) cell.row() + Turret.turretBarrelLocation().y();
+            if (!turretCell.value().shoot()) {
+                continue;
+            }
+
+            float x = (float) turretCell.pos().col() + Turret.turretBarrelLocation().x();
+            float y = (float) turretCell.pos().row() + Turret.turretBarrelLocation().y();
             FloatPair point = SpaceCalculator.rotatePoint(x, y, ship.getRelativeCenterOfMass(),
                     ship.getAbsoluteCenterOfMass(), ship.getRotationAngle());
 
@@ -408,7 +416,6 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                 playAudio(SoundEffect.LASER_2);
             }
         }
-        ship.hasShot();
     }
 
     /**
@@ -496,7 +503,6 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                 0f);
 
         enemyShip.setBrain(new LerpBrain(enemyShip, player));
-        enemyShip.setFireRate(0.6f);
 
         spaceShips.addLast(enemyShip);
         hitDetection.addCollider(enemyShip);

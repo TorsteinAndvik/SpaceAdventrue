@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import model.ShipComponents.Components.Fuselage;
 import model.ShipComponents.Components.ShipUpgrade;
+import model.ShipComponents.Components.Turret;
 import model.ShipComponents.Components.stats.Stat;
 import model.ShipComponents.Components.stats.StatModifier;
 import model.ShipComponents.ShipConfig.ShipComponent;
@@ -297,6 +298,20 @@ public class ShipStructure implements ViewableShipStructure {
         return upgradeTypePositions;
     }
 
+    public List<Turret> getTurrets() {
+        List<Turret> turrets = new ArrayList<>();
+        for (GridCell<Fuselage> cell : grid) {
+            if (cell.value() == null) {
+                continue;
+            }
+
+            if (cell.value().hasUpgrade() && cell.value().getUpgrade() instanceof Turret turret) {
+                turrets.add(turret);
+            }
+        }
+        return turrets;
+    }
+
     @Override
     public int getWidth() {
         return grid.cols();
@@ -432,7 +447,6 @@ public class ShipStructure implements ViewableShipStructure {
                 && cp.col() < getWidth();
     }
 
-
     /**
      * Checks if a fuselage can be placed at the given position within the specified
      * grid.
@@ -506,5 +520,20 @@ public class ShipStructure implements ViewableShipStructure {
         MassProperties mp = getMassProperties();
         mass = mp.mass();
         centerOfMass = mp.centerOfMass();
+    }
+
+    // TODO: Add javadoc + write tests
+    public List<GridCell<Turret>> getTurretGridCells() {
+        List<GridCell<Turret>> turretGridCells = new ArrayList<>();
+        for (GridCell<Fuselage> gridCell : grid) {
+            if (gridCell.value() == null) {
+                continue;
+            }
+
+            if (gridCell.value().hasUpgrade() && gridCell.value().getUpgrade().getType() == UpgradeType.TURRET) {
+                turretGridCells.add(new GridCell<Turret>(gridCell.pos(), (Turret) gridCell.value().getUpgrade()));
+            }
+        }
+        return turretGridCells;
     }
 }

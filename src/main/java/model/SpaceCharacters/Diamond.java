@@ -33,17 +33,15 @@ public class Diamond extends SpaceBody implements Poolable, Collectable {
         return value;
     }
 
-
     @Override
     public float getRadius() {
-        return 0.1f;
+        return 0.25f;
     }
 
     @Override
     public void setValue(int value) {
         this.value = value;
     }
-
 
     @Override
     public void reset() {

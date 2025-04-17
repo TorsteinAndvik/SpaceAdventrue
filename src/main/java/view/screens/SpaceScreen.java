@@ -150,7 +150,6 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
 
     private void setupSprites() {
         asteroidLarge = createSprite("images/space/asteroid_0.png", 2, 2);
-        // asteroidLarge.setOrigin(1f, 1f);
 
         asteroidSmall = createSprite("images/space/asteroid_1.png", 1, 1);
 
@@ -341,8 +340,8 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         for (Collectable collectable : model.getCollectables()) {
 
             if (collectable instanceof Diamond) {
-                this.diamond.setCenterX(collectable.getX() + collectable.getRadius());
-                this.diamond.setCenterY(collectable.getY() + collectable.getRadius());
+                this.diamond.setCenterX(collectable.getX());
+                this.diamond.setCenterY(collectable.getY());
                 this.diamond.draw(batch);
             }
         }
