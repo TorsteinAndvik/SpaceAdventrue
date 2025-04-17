@@ -194,7 +194,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
         for (SpaceShip spaceShip : spaceShips) {
             spaceShip.update(delta);
-            shoot(spaceShip);
+            handleShootingLogic(spaceShip);
         }
 
         hitDetection.checkCollisions();
@@ -388,10 +388,14 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     }
 
     public void playerShoot() {
-        player.setToShoot(true);
+        setShipToShoot(player);
     }
 
-    public void shoot(SpaceShip ship) {
+    protected void setShipToShoot(SpaceShip ship) {
+        ship.setToShoot(true);
+    }
+
+    protected void handleShootingLogic(SpaceShip ship) {
         for (GridCell<Turret> turretCell : ship.getTurretGridCells()) {
 
             if (!turretCell.value().shoot()) {

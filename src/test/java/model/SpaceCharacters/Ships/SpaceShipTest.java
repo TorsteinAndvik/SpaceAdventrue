@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SpaceShipTest {
 
     private SpaceShip spaceShip;
+    private final int startHealth = 8;
 
     @BeforeEach()
     void setup() {
@@ -22,23 +23,23 @@ public class SpaceShipTest {
 
     @Test
     void takeDamageTest() {
-        assertEquals(10, spaceShip.getHitPoints());
-        assertEquals(10, spaceShip.getMaxHitPoints());
+        assertEquals(startHealth, spaceShip.getHitPoints());
+        assertEquals(startHealth, spaceShip.getMaxHitPoints());
         spaceShip.takeDamage(5);
-        assertEquals(5, spaceShip.getHitPoints());
-        assertEquals(10, spaceShip.getMaxHitPoints());
+        assertEquals(startHealth - 5, spaceShip.getHitPoints());
+        assertEquals(startHealth, spaceShip.getMaxHitPoints());
 
     }
 
     @Test
     void repairTest() {
-        assertEquals(10, spaceShip.getHitPoints());
-        spaceShip.takeDamage(9);
+        assertEquals(startHealth, spaceShip.getHitPoints());
+        spaceShip.takeDamage(startHealth - 1);
         assertEquals(1, spaceShip.getHitPoints());
         spaceShip.repair(1);
         assertEquals(2, spaceShip.getHitPoints());
         spaceShip.repair(2000);
-        assertEquals(10, spaceShip.getHitPoints());
+        assertEquals(startHealth, spaceShip.getHitPoints());
     }
 
     @Test
@@ -50,8 +51,8 @@ public class SpaceShipTest {
 
     @Test
     void dealDamageTest() {
-        SpaceShip enemyShip = new Player(ShipFactory.simpleShip(), "The White Swan", "A boring ship.", 0f, 49f);
-        assertEquals(10, enemyShip.getHitPoints());
+        SpaceShip enemyShip = new EnemyShip(ShipFactory.simpleShip(), "The White Swan", "A boring ship.", 0f, 49f, 0f);
+        assertEquals(startHealth, enemyShip.getHitPoints());
         spaceShip.dealDamage(enemyShip, spaceShip.getDamage());
         assertEquals(0, enemyShip.getHitPoints());
     }

@@ -4,6 +4,8 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
+import com.badlogic.gdx.math.Rectangle;
+
 import model.ShipComponents.ShipFactory;
 import model.SpaceCharacters.Bullet;
 import model.SpaceCharacters.Ships.EnemyShip;
@@ -39,10 +41,11 @@ class SpaceGameModelTest {
     public void setUp() {
         setup();
         gameModel = new SpaceGameModel();
-        gameModel.setAnimationCallback(state -> {
-        });
         initialPlayerX = gameModel.getPlayer().getX();
         initialPlayerY = gameModel.getPlayer().getY();
+        gameModel.setAnimationCallback(state -> {
+        });
+        gameModel.setScreenBoundsProvider(() -> new Rectangle(initialPlayerX, initialPlayerY, 10000f, 10000f));
     }
 
     @Test
@@ -89,8 +92,11 @@ class SpaceGameModelTest {
 
     @Test
     void friendlyFireBulletBulletTest() {
-        gameModel.shoot(gameModel.getPlayer());
-        gameModel.shoot(gameModel.getPlayer());
+        gameModel.setShipToShoot(gameModel.getPlayer());
+        gameModel.handleShootingLogic(gameModel.getPlayer());
+        gameModel.update(2f);
+        gameModel.setShipToShoot(gameModel.getPlayer());
+        gameModel.handleShootingLogic(gameModel.getPlayer());
 
         assertEquals(2, gameModel.getLasers().size());
 
@@ -115,7 +121,8 @@ class SpaceGameModelTest {
 
     @Test
     void friendlyFireBulletShipTest() {
-        gameModel.shoot(gameModel.getPlayer());
+        gameModel.playerShoot();
+        gameModel.handleShootingLogic(gameModel.getPlayer());
         Bullet laser = gameModel.getLasers().get(0);
 
         SpaceShip enemy_1 = new EnemyShip(ShipFactory.simpleShip(), "enemy 1", "small", 0f, 0f, 0f);
