@@ -106,12 +106,12 @@ class UpgradesTest {
             assertEquals(basicTurret.getModifiers(), turret.getModifiers());
         }
 
-        // A maxed turret should not increase its stats if upgrade is called again:
+        // A maxed turret should not increase its stats if .upgrade() is called again:
         basicTurret.getStatModifier().addModifier(basicTurret.getUpgradeStatModifier());
         assertFalse(turret.upgrade());
         assertNotEquals(basicTurret.getModifiers(), turret.getModifiers());
 
-        // Upgrade modifiers should not change, also tests different getters
+        // Upgrade modifiers should not change - also tests different getters
         assertEquals(basicTurret.getUpgradeStatModifier().getModifiers(), turret.getUpgradeModifiers());
     }
 
