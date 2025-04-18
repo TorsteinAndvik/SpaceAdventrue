@@ -6,7 +6,6 @@ public enum UpgradeStage {
     ONE,
     TWO,
     THREE,
-    FOUR,
     MAX; // final upgrade stage
 
     public UpgradeStage nextStage() {
@@ -18,8 +17,7 @@ public enum UpgradeStage {
             case ZERO -> UpgradeStage.ONE;
             case ONE -> UpgradeStage.TWO;
             case TWO -> UpgradeStage.THREE;
-            case THREE -> UpgradeStage.FOUR;
-            case FOUR -> UpgradeStage.MAX;
+            case THREE -> UpgradeStage.MAX;
             case MAX -> UpgradeStage.MAX;
         };
     }

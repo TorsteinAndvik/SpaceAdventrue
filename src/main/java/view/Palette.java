@@ -30,5 +30,7 @@ public class Palette {
 
     public static final Color THRUSTER_LIGHT = new Color(1f, 0.9f, 0f, 1f);
 
-    public static final Color WHITE = new Color(1, 1, 1, 1);
+    public static final Color WHITE = Color.WHITE;
+
+    public static final Color BLACK = Color.BLACK;
 }

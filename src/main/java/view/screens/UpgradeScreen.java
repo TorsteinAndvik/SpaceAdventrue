@@ -28,6 +28,8 @@ import model.ShipComponents.ShipStructure;
 import model.World.StoreItem;
 import view.Palette;
 import view.SpaceGame;
+import view.bars.DiffBar;
+import view.bars.PercentageBar;
 import model.GameStateModel;
 import model.UpgradeScreenModel;
 import model.ShipComponents.UpgradeType;
@@ -76,6 +78,12 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     int cursorWidth = 64;
     int cursorHeight = 64;
 
+    // DiffBar testing
+    DiffBar diffBar;
+    PercentageBar percentageBarNoOutline;
+    PercentageBar percentageBarWithOutline;
+    float timePassed;
+
     /**
      * Creates a new upgrade screen with necessary components for rendering and
      * input handling.
@@ -98,6 +106,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         setupFonts();
         loadSprites();
         setupUISprites();
+        setupDiffBar();
         descriptionRect = new Rectangle(0, 0, 0, 0);
     }
 
@@ -167,6 +176,27 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         fontRegular.getData().setScale(viewportGame.getUnitsPerPixel());
 
         glyphLayout = new GlyphLayout();
+    }
+
+    private void setupDiffBar() {
+        this.diffBar = new DiffBar();
+        diffBar.setCenter(3, 2);
+        diffBar.setScale(4f, 0.25f);
+        diffBar.setMaxValue(10f);
+        diffBar.setCurrentValue(5f);
+
+        this.percentageBarNoOutline = new PercentageBar();
+        percentageBarNoOutline.setCenter(3, 3);
+        percentageBarNoOutline.setScale(4f, 0.25f);
+        percentageBarNoOutline.setMaxValue(10f);
+        percentageBarNoOutline.setCurrentValue(5f);
+
+        this.percentageBarWithOutline = new PercentageBar();
+        percentageBarWithOutline.setCenter(3, 4);
+        percentageBarWithOutline.setScale(4f, 0.25f);
+        percentageBarWithOutline.setMaxValue(10f);
+        percentageBarWithOutline.setCurrentValue(5f);
+        percentageBarWithOutline.setDrawOutline(true);
     }
 
     private void drawValidFuselagePlacements() {
@@ -361,6 +391,22 @@ public class UpgradeScreen extends InputAdapter implements Screen {
                     touchPos.y - rectanglePadding - descriptionRect.height,
                     descriptionRect.width + 2f * rectanglePadding,
                     descriptionRect.height + 2f * rectanglePadding);
+
+            // TODO: Remove after testing diffBar and percentage bar:
+            // start of remove
+            timePassed += delta;
+            float sin = (float) Math.sin(timePassed);
+
+            diffBar.setCurrentValue(5f + 5f * sin);
+            diffBar.updateDiff(Math.signum(sin), Math.signum(sin) > 0);
+            diffBar.draw(shape);
+
+            percentageBarNoOutline.setCurrentValue(5f + 5f * sin);
+            percentageBarNoOutline.draw(shape);
+
+            percentageBarWithOutline.setCurrentValue(5f + 5f * sin);
+            percentageBarWithOutline.draw(shape);
+            // end of remove
             shape.end();
 
             batch.begin();
