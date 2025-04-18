@@ -25,6 +25,7 @@ import grid.IGrid;
 import java.util.HashMap;
 import java.util.List;
 import model.ShipComponents.ShipStructure;
+import model.ShipComponents.UpgradeStage;
 import model.World.StoreItem;
 import view.Palette;
 import view.SpaceGame;
@@ -72,7 +73,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     private final float upgradeIconZoom = 0.8f;
     private float uiIconZoom;
 
-    private final Map<UpgradeType, Sprite> upgradeSprites = new HashMap<>();
+    private final Map<UpgradeType, Map<UpgradeStage, Sprite>> upgradeSprites = new HashMap<>();
     private final List<StoreItem<UpgradeType>> storeShelf;
 
     int cursorWidth = 64;
@@ -115,17 +116,21 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         squareGreen = createSprite("images/upgrade_grid_tile_green.png", 1, 1);
         squareGray = createSprite("images/upgrade_grid_tile_gray.png", 1, 1);
 
-        Sprite fuselage = createSprite("images/upgrades/fuselage_alt_stage_0.png", upgradeIconZoom, upgradeIconZoom);
-        Sprite turret = createSprite("images/upgrades/turret_laser_stage_0.png", upgradeIconZoom, upgradeIconZoom);
-        Sprite thruster = createSprite("images/upgrades/rocket_stage_0.png", upgradeIconZoom, upgradeIconZoom);
-        Sprite shield = createSprite("images/upgrades/shield_stage_0.png", upgradeIconZoom, upgradeIconZoom);
+        for (UpgradeType type : UpgradeType.values()) {
+            Map<UpgradeStage, Sprite> stageSprites = new HashMap<>();
+            String basePath = "images/upgrades/" + type.name().toLowerCase() + "_stage_";
+            for (UpgradeStage stage : UpgradeStage.values()) {
 
-        upgradeSprites.put(UpgradeType.FUSELAGE, fuselage);
-        upgradeSprites.put(UpgradeType.TURRET, turret);
-        upgradeSprites.put(UpgradeType.THRUSTER, thruster);
-        upgradeSprites.put(UpgradeType.SHIELD, shield);
+                String path = basePath + stage.ordinal() + ".png";
 
-        diamond = createSprite("images/space/diamond.png", 1, 1);
+                Sprite sprite = createSprite(path, upgradeIconZoom, upgradeIconZoom);
+
+                stageSprites.put(stage, sprite);
+            }
+            upgradeSprites.put(type, stageSprites);
+        }
+
+        diamond = createSprite("images/space/diamond.png", 1f, 1f);
         uiIconZoom = fontRegular.getData().lineHeight;
 
         msLeft = createSprite("images/ui/Mouse_Left_Key_Light.png", uiIconZoom, uiIconZoom);
@@ -255,11 +260,11 @@ public class UpgradeScreen extends InputAdapter implements Screen {
                 continue;
             }
             CellPosition pos = cell.pos();
-            drawFuselage(pos);
+            drawFuselage(pos, cell.value().getStage());
 
             if (cell.value().hasUpgrade()) {
                 UpgradeType type = cell.value().getUpgrade().getType();
-                drawUpgrade(pos, type);
+                drawUpgrade(pos, type, cell.value().getUpgrade().getStage());
             }
         }
     }
@@ -471,12 +476,12 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         drawGridSquare(squareSprite, cell.pos().col(), cell.pos().row());
     }
 
-    private void drawFuselage(CellPosition cp) {
-        drawUpgrade(cp, UpgradeType.FUSELAGE);
+    private void drawFuselage(CellPosition cp, UpgradeStage stage) {
+        drawUpgrade(cp, UpgradeType.FUSELAGE, stage);
     }
 
-    private void drawUpgrade(CellPosition cp, UpgradeType type) {
-        Sprite upgrade = upgradeSprites.get(type);
+    private void drawUpgrade(CellPosition cp, UpgradeType type, UpgradeStage stage) {
+        Sprite upgrade = upgradeSprites.get(type).get(stage);
         upgrade.setX(model.getGridOffsetX() + cp.col() + 0.5f * (1f - upgradeIconZoom));
         upgrade.setY(model.getGridOffsetY() + cp.row() + 0.5f * (1f - upgradeIconZoom));
         upgrade.draw(batch);
@@ -504,7 +509,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     }
 
     public Sprite getSpriteFromIndex(int index) {
-        return upgradeSprites.get(getUpgradeTypeFromIndex(index));
+        return upgradeSprites.get(getUpgradeTypeFromIndex(index)).get(UpgradeStage.ZERO);
     }
 
     private boolean canPlaceItem(CellPosition cp) {

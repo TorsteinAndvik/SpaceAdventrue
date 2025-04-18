@@ -155,7 +155,8 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
 
         laser = createSprite("images/space/laser_shot_0.png", 0.25f, 0.25f);
 
-        fuselagePlayer = createSprite("images/upgrades/fuselage_alt_stage_0.png", 1, 1);
+        // TODO: rewrite with all stages, put in a hashmap<UpgradeStage, Sprite>
+        fuselagePlayer = createSprite("images/upgrades/fuselage_stage_0.png", 1, 1);
 
         fuselageEnemy = createSprite("images/upgrades/fuselage_enemy_stage_0.png", 1, 1);
 
@@ -178,9 +179,9 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     private void setupUpgradeHashMap() {
         upgradeIcons = new HashMap<>();
         upgradeIcons.put(UpgradeType.TURRET,
-                createSprite("images/upgrades/turret_laser_stage_0.png", 1, 1));
+                createSprite("images/upgrades/turret_stage_0.png", 1, 1));
         upgradeIcons.put(UpgradeType.THRUSTER,
-                createSprite("images/upgrades/rocket_stage_0.png", 1, 1));
+                createSprite("images/upgrades/thruster_stage_0.png", 1, 1));
         upgradeIcons.put(UpgradeType.SHIELD,
                 createSprite("images/upgrades/shield_stage_0.png", 1, 1));
     }
