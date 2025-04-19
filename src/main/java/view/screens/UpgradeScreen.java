@@ -27,14 +27,18 @@ import java.util.List;
 import model.ShipComponents.ShipStructure;
 import model.ShipComponents.UpgradeStage;
 import model.World.StoreItem;
+import model.utils.FloatPair;
 import view.Palette;
 import view.SpaceGame;
-import view.bars.DiffBar;
-import view.bars.PercentageBar;
+import view.bars.UpgradeStageDisplay;
 import model.GameStateModel;
 import model.UpgradeScreenModel;
 import model.ShipComponents.UpgradeType;
 import model.ShipComponents.Components.Fuselage;
+import model.ShipComponents.Components.Turret;
+import model.ShipComponents.Components.stats.Stat;
+import model.ShipComponents.Components.stats.StatModifier;
+
 import java.util.Map;
 
 /**
@@ -79,11 +83,8 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     int cursorWidth = 64;
     int cursorHeight = 64;
 
-    // DiffBar testing
-    DiffBar diffBar;
-    PercentageBar percentageBarNoOutline;
-    PercentageBar percentageBarWithOutline;
-    float timePassed;
+    // UpgradeStageDisplay
+    private UpgradeStageDisplay upgradeStageDisplay;
 
     /**
      * Creates a new upgrade screen with necessary components for rendering and
@@ -107,7 +108,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         setupFonts();
         loadSprites();
         setupUISprites();
-        setupDiffBar();
+        setupUpgradeStageDisplay();
         descriptionRect = new Rectangle(0, 0, 0, 0);
     }
 
@@ -183,25 +184,16 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         glyphLayout = new GlyphLayout();
     }
 
-    private void setupDiffBar() {
-        this.diffBar = new DiffBar();
-        diffBar.setCenter(3, 2);
-        diffBar.setScale(4f, 0.25f);
-        diffBar.setMaxValue(10f);
-        diffBar.setCurrentValue(5f);
+    private void setupUpgradeStageDisplay() {
+        StatModifier max = new StatModifier();
+        for (Stat stat : Stat.values()) {
+            max.setModifier(stat, 42f);
+        }
 
-        this.percentageBarNoOutline = new PercentageBar();
-        percentageBarNoOutline.setCenter(3, 3);
-        percentageBarNoOutline.setScale(4f, 0.25f);
-        percentageBarNoOutline.setMaxValue(10f);
-        percentageBarNoOutline.setCurrentValue(5f);
-
-        this.percentageBarWithOutline = new PercentageBar();
-        percentageBarWithOutline.setCenter(3, 4);
-        percentageBarWithOutline.setScale(4f, 0.25f);
-        percentageBarWithOutline.setMaxValue(10f);
-        percentageBarWithOutline.setCurrentValue(5f);
-        percentageBarWithOutline.setDrawOutline(true);
+        upgradeStageDisplay = new UpgradeStageDisplay(max, upgradeSprites, fontRegular, upgradeIconZoom / 2f);
+        upgradeStageDisplay.setComponents(new Fuselage(), new Turret());
+        upgradeStageDisplay.setPosition(new FloatPair(3f, 1f));
+        upgradeStageDisplay.setCurrentStats(model.getPlayer().getShipStructure().getCombinedStatModifier());
     }
 
     private void drawValidFuselagePlacements() {
@@ -314,6 +306,11 @@ public class UpgradeScreen extends InputAdapter implements Screen {
             upgrade.draw(batch);
         }
 
+        // TODO: Remove after testing UpgradeStageDisplay:
+        batch.end();
+
+        shape.setProjectionMatrix(viewportGame.getCamera().combined);
+        upgradeStageDisplay.render(batch, shape);
         batch.end();
 
         // draw UI elements
@@ -380,7 +377,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
             float width = 3f;
             float rectanglePadding = 0.1f;
-            glyphLayout.setText(fontRegular, upgradeDescription, Color.WHITE, width, Align.left,
+            glyphLayout.setText(fontRegular, upgradeDescription, Palette.WHITE, width, Align.left,
                     true);
 
             touchPos.set(Gdx.input.getX(), Gdx.input.getY() + cursorHeight);
@@ -397,26 +394,10 @@ public class UpgradeScreen extends InputAdapter implements Screen {
                     descriptionRect.width + 2f * rectanglePadding,
                     descriptionRect.height + 2f * rectanglePadding);
 
-            // TODO: Remove after testing diffBar and percentage bar:
-            // start of remove
-            timePassed += delta;
-            float sin = (float) Math.sin(timePassed);
-
-            diffBar.setCurrentValue(5f + 5f * sin);
-            diffBar.updateDiff(Math.signum(sin), Math.signum(sin) > 0);
-            diffBar.draw(shape);
-
-            percentageBarNoOutline.setCurrentValue(5f + 5f * sin);
-            percentageBarNoOutline.draw(shape);
-
-            percentageBarWithOutline.setCurrentValue(5f + 5f * sin);
-            percentageBarWithOutline.draw(shape);
-            // end of remove
-            shape.end();
-
             batch.begin();
             fontRegular.draw(batch, glyphLayout,
                     touchPos.x, touchPos.y);
+
             batch.end();
         }
     }

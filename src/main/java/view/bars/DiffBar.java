@@ -33,11 +33,11 @@ public class DiffBar extends PercentageBar {
      * <code>0f</code> and <code>maxValue</code>.
      * 
      * @param diffValue
-     * @param diffIsBeneficial
+     * @param positiveIsBeneficial
      */
-    public void updateDiff(float diffValue, boolean diffIsBeneficial) {
+    public void updateDiff(float diffValue, boolean positiveIsBeneficial) {
         this.diffValue = Math.max(-currentValue, Math.min(diffValue, maxValue - currentValue));
-        this.diffIsBeneficial = diffIsBeneficial;
+        this.diffIsBeneficial = positiveIsBeneficial == (diffValue > 0f);
     }
 
     @Override
