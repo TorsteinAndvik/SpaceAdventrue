@@ -35,7 +35,6 @@ import model.GameStateModel;
 import model.UpgradeScreenModel;
 import model.ShipComponents.UpgradeType;
 import model.ShipComponents.Components.Fuselage;
-import model.ShipComponents.Components.Turret;
 import model.ShipComponents.Components.stats.Stat;
 import model.ShipComponents.Components.stats.StatModifier;
 
@@ -191,7 +190,6 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         }
 
         upgradeStageDisplay = new UpgradeStageDisplay(max, upgradeSprites, fontRegular, upgradeIconZoom / 2f);
-        upgradeStageDisplay.setComponents(new Fuselage(), new Turret());
         upgradeStageDisplay.setPosition(new FloatPair(3f, 1f));
         upgradeStageDisplay.setCurrentStats(model.getPlayerStats());
         upgradeStageDisplay.setVisibility(false);
@@ -443,6 +441,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
     }
 
+    // TODO: Move this to model?
     private void drawUpgradeShade(int x) {
         boolean canAfford = storeShelf.get(x).price() <= model.getPlayerResources();
         if (!canAfford) {

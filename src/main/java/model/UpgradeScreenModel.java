@@ -382,20 +382,19 @@ public class UpgradeScreenModel {
         return highlightedCellPosition;
     }
 
-    public boolean attemptUpgradeStagePurchase(CellPosition cpGrid, ShipUpgrade upgrade) {
-
+    public boolean canAfford(ShipUpgrade upgrade) {
         int price = store.getUpgradeStageShelf().get(upgrade.getType());
+        return player.getInventory().canAfford(price);
+    }
 
-        boolean canAfford = player.getInventory().canAfford(price);
-
-        if (canAfford) {
-            boolean upgradeSuccess = upgradeHandler.upgradeStage(cpGrid, upgrade.getType());
+    public boolean attemptUpgradeStagePurchase(CellPosition cpGrid, ShipUpgrade upgrade) {
+        if (canAfford(upgrade)) {
+            boolean upgradeSuccess = upgradeHandler.upgradeStage(cpGrid, upgrade.getType() == UpgradeType.FUSELAGE);
             if (upgradeSuccess) {
-                player.getInventory().spendResources(price);
+                player.getInventory().spendResources(store.getUpgradeStageShelf().get(upgrade.getType()));
                 return true;
             }
         }
-
         return false;
     }
 }

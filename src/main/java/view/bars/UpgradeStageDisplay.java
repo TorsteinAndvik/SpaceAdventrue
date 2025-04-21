@@ -3,7 +3,9 @@ package view.bars;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -24,7 +26,6 @@ import view.Palette;
 public class UpgradeStageDisplay {
 
     private Fuselage fuselage;
-    private ShipUpgrade upgrade;
     private Map<UpgradeType, Map<UpgradeStage, Sprite>> upgradeSprites;
     private FloatPair position;
     private FloatPair diffBarScales;
@@ -39,7 +40,13 @@ public class UpgradeStageDisplay {
     private Rectangle fuselageHitbox;
     private Rectangle upgradeHitbox;
 
+    private GlyphLayout priceGlyphLayout = new GlyphLayout();
+    private int fuselagePrice = 25;
+    private int upgradePrice = 50;
+
     private boolean fuselageMode;
+    private boolean fuselageUpgradeEligible;
+    private boolean upgradeUpgradeEligible;
 
     private boolean visible = true;
 
@@ -114,18 +121,17 @@ public class UpgradeStageDisplay {
     }
 
     public void setComponents(Fuselage fuselage) {
-        setComponents(fuselage, fuselage.getUpgrade());
-    }
-
-    public void setComponents(Fuselage fuselage, ShipUpgrade upgrade) {
         this.fuselage = fuselage;
-        this.upgrade = upgrade;
 
-        if (fuselageMode || upgrade == null) {
+        if (fuselageMode || fuselage.getUpgrade() == null) {
             setStatDiffs(fuselage);
         } else {
-            setStatDiffs(upgrade);
+            setStatDiffs(fuselage.getUpgrade());
         }
+    }
+
+    public Fuselage getFuselage() {
+        return fuselage;
     }
 
     public void setFuselageMode(boolean fuselageMode) {
@@ -133,7 +139,7 @@ public class UpgradeStageDisplay {
         if (fuselageMode) {
             setStatDiffs(fuselage);
         } else {
-            setStatDiffs(upgrade);
+            setStatDiffs(fuselage.getUpgrade());
         }
     }
 
@@ -189,6 +195,7 @@ public class UpgradeStageDisplay {
         float width = displayDimensions.x();
         float height = displayDimensions.y();
 
+        Gdx.gl.glEnable(GL20.GL_BLEND); // enables alpha blending for ShapeRenderer
         shape.begin(ShapeType.Filled);
         renderShapes(shape, x, y, width, height);
         shape.end();
@@ -203,19 +210,63 @@ public class UpgradeStageDisplay {
     private void renderShapes(ShapeRenderer shape, float x, float y, float width, float height) {
         Color oldColor = shape.getColor();
 
-        shape.setColor(outlineColor);
+        shape.setColor(outlineColor); // outline
         shape.rect(x, y, width, height);
 
-        shape.setColor(displayColor);
+        shape.setColor(displayColor); // display background
         shape.rect(x + padding, y + padding, width - 2f * padding, height - 2f * padding);
 
-        float barX = x + 4f * (padding + spriteRadius);
+        float barX = x + 4f * (padding + spriteRadius); // diffbars
         renderBars(shape, barX, y, width, height);
 
-        shape.setColor(Palette.MUTED_GREEN_HIGHLIGHT);
+        shape.setColor(Palette.ORANGE); // draw selected upgrade comparison
         if (fuselageMode) {
+            // draw orange highlights in corners
+            shape.rect(fuselageHitbox.x - padding, fuselageHitbox.y - padding,
+                    2f * padding, 2f * padding);
+
+            shape.rect(fuselageHitbox.x + fuselageHitbox.width - padding, fuselageHitbox.y - padding,
+                    2f * padding, 2f * padding);
+
+            shape.rect(fuselageHitbox.x - padding, fuselageHitbox.y + fuselageHitbox.height - padding,
+                    2f * padding, 2f * padding);
+
+            shape.rect(fuselageHitbox.x + fuselageHitbox.width - padding,
+                    fuselageHitbox.y + fuselageHitbox.height - padding,
+                    2f * padding, 2f * padding);
+
+            // highlight selection
+            shape.setColor(Palette.MUTED_GREEN_LIGHT_HIGHLIGHT);
             shape.rect(fuselageHitbox.x, fuselageHitbox.y, fuselageHitbox.width, fuselageHitbox.height);
+
         } else {
+            // draw orange highlights in corners
+            shape.rect(upgradeHitbox.x - padding, upgradeHitbox.y - padding,
+                    2f * padding, 2f * padding);
+
+            shape.rect(upgradeHitbox.x + upgradeHitbox.width - padding, upgradeHitbox.y - padding,
+                    2f * padding, 2f * padding);
+
+            shape.rect(upgradeHitbox.x - padding, upgradeHitbox.y + upgradeHitbox.height - padding,
+                    2f * padding, 2f * padding);
+
+            shape.rect(upgradeHitbox.x + upgradeHitbox.width - padding,
+                    upgradeHitbox.y + upgradeHitbox.height - padding,
+                    2f * padding, 2f * padding);
+
+            // highlight selection
+
+            shape.setColor(Palette.MUTED_GREEN_LIGHT_HIGHLIGHT);
+            shape.rect(upgradeHitbox.x, upgradeHitbox.y, upgradeHitbox.width, upgradeHitbox.height);
+        }
+
+        if (!fuselageUpgradeEligible) {
+            shape.setColor(Palette.MUTED_RED_HIGHLIGHT);
+            shape.rect(fuselageHitbox.x, fuselageHitbox.y, fuselageHitbox.width, fuselageHitbox.height);
+        }
+
+        if (!upgradeUpgradeEligible) {
+            shape.setColor(Palette.MUTED_RED_HIGHLIGHT);
             shape.rect(upgradeHitbox.x, upgradeHitbox.y, upgradeHitbox.width, upgradeHitbox.height);
         }
 
@@ -240,7 +291,7 @@ public class UpgradeStageDisplay {
         fuselageNextStageSprite.setCenterY(y + fuselageNextStageOffsetY);
         fuselageNextStageSprite.draw(batch);
 
-        if (upgrade != null) {
+        if (fuselage.hasUpgrade()) {
 
             float upgradeNextStageOffsetX = fuselageNextStageOffsetX + spriteRadius + padding + spriteRadius;
             float upgradeNextStageOffsetY = fuselageNextStageOffsetY;
@@ -248,20 +299,25 @@ public class UpgradeStageDisplay {
             float upgradeOffsetX = upgradeNextStageOffsetX;
             float upgradeOffsetY = fuselageOffsetY;
 
-            Sprite upgradeSprite = upgradeSprites.get(upgrade.getType()).get(upgrade.getStage());
+            Sprite upgradeSprite = upgradeSprites.get(fuselage.getUpgrade().getType())
+                    .get(fuselage.getUpgrade().getStage());
             upgradeSprite.setCenterX(x + upgradeOffsetX);
             upgradeSprite.setCenterY(y + upgradeOffsetY);
             upgradeSprite.draw(batch);
 
-            Sprite upgradeNextStageSprite = upgradeSprites.get(upgrade.getType()).get(upgrade.getStage().nextStage());
+            Sprite upgradeNextStageSprite = upgradeSprites.get(fuselage.getUpgrade().getType())
+                    .get(fuselage.getUpgrade().getStage().nextStage());
             upgradeNextStageSprite.setCenterX(x + upgradeNextStageOffsetX);
             upgradeNextStageSprite.setCenterY(y + upgradeNextStageOffsetY);
             upgradeNextStageSprite.draw(batch);
         }
 
+        // Render price text
+        renderPriceText(batch, x, y, width, height);
+
         // Render stat-bar text
         float barX = x + fuselageNextStageOffsetX + 3f * spriteRadius + 2f * padding;
-        renderText(batch, barX, y, width, height);
+        renderBarText(batch, barX, y, width, height);
     }
 
     private void renderBars(ShapeRenderer shape, float barX, float y, float width, float height) {
@@ -280,7 +336,32 @@ public class UpgradeStageDisplay {
         }
     }
 
-    private void renderText(SpriteBatch batch, float barX, float y, float width, float height) {
+    private void renderPriceText(SpriteBatch batch, float x, float y, float width, float height) {
+        // Draw fuselage price
+        if (fuselageUpgradeEligible) {
+            font.setColor(Palette.WHITE);
+        } else {
+            font.setColor(Palette.MUTED_RED_LIGHT);
+        }
+        priceGlyphLayout.setText(font, Integer.toString(fuselagePrice));
+
+        float fuselagePriceX = x + 2f * padding + spriteRadius - 0.5f * priceGlyphLayout.width;
+        float priceY = y + height - 2f * padding - 3f * spriteRadius;
+        font.draw(batch, priceGlyphLayout, fuselagePriceX, priceY);
+
+        // Draw upgrade price
+        if (upgradeUpgradeEligible) {
+            font.setColor(Palette.WHITE);
+        } else {
+            font.setColor(Palette.MUTED_RED_LIGHT);
+        }
+        priceGlyphLayout.setText(font, Integer.toString(upgradePrice));
+
+        float upgradePriceX = fuselagePriceX + 2f * spriteRadius + padding;
+        font.draw(batch, priceGlyphLayout, upgradePriceX, priceY);
+    }
+
+    private void renderBarText(SpriteBatch batch, float barX, float y, float width, float height) {
         float barY = y + height - 2f * padding;
         for (Stat stat : Stat.values()) {
             GlyphLayout glyphLayout = glyphLayouts.get(stat);
@@ -346,10 +427,16 @@ public class UpgradeStageDisplay {
                 setFuselageMode(false);
                 return null;
             }
-            return upgrade;
+            return fuselage.getUpgrade();
 
         } else {
             return null;
         }
+    }
+
+    // TODO: Use these in render to communicate eligibility to the player.
+    public void setUpgradeEligibility(boolean fuselageUpgradeEligible, boolean upgradeUpgradeEligible) {
+        this.fuselageUpgradeEligible = fuselageUpgradeEligible;
+        this.upgradeUpgradeEligible = upgradeUpgradeEligible;
     }
 }

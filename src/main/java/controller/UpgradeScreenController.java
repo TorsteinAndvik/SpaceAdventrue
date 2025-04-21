@@ -143,21 +143,39 @@ public class UpgradeScreenController extends GenericController {
         if (upgrade != null) { // didn't click on empty space, or clicked on already selected upgrade
             if (upgradeModel.attemptUpgradeStagePurchase(cpGrid, upgrade)) {// stage upgrade successful
                 view.getUpgradeStageDisplay().setCurrentStats(upgradeModel.getPlayerStats());
+                view.getUpgradeStageDisplay().setUpgradeEligibility(
+                        fuselageUpgradeableAndAffordable(view.getUpgradeStageDisplay().getFuselage()),
+                        upgradeUpgradeableAndAffordable(view.getUpgradeStageDisplay().getFuselage()));
             }
         }
     }
 
     private void updateAndShowUpgradeStageDisplay(CellPosition cpGrid) {
         Fuselage fuselage = upgradeModel.getUpgradeHandler().getFuselage(cpGrid);
-        if (fuselage != null) { // cpGrid was on the grid but not a fuselage
+        if (fuselage != null) { // ==null would mean cpGrid is on the grid but not a fuselage
             view.getUpgradeStageDisplay().setPosition(
                     new FloatPair(
                             upgradeModel.getGridOffsetX() + (float) cpGrid.col() + 1.5f,
                             upgradeModel.getGridOffsetY() + (float) cpGrid.row() - 1.5f));
 
+            view.getUpgradeStageDisplay().setUpgradeEligibility(
+                    fuselageUpgradeableAndAffordable(fuselage),
+                    upgradeUpgradeableAndAffordable(fuselage));
+
             view.getUpgradeStageDisplay().setComponents(upgradeModel.getUpgradeHandler().getFuselage(cpGrid));
             view.getUpgradeStageDisplay().setVisibility(true);
         }
+    }
+
+    private boolean fuselageUpgradeableAndAffordable(Fuselage fuselage) {
+        return fuselage.getStage().isUpgradeable() && upgradeModel.canAfford(fuselage);
+    }
+
+    private boolean upgradeUpgradeableAndAffordable(Fuselage fuselage) {
+        return fuselage.hasUpgrade()
+                && fuselage.getUpgrade().getStage().isUpgradeable()
+                && upgradeModel.canAfford(fuselage.getUpgrade())
+                && upgradeModel.getUpgradeHandler().upgradeStageIncreaseIsAllowed(fuselage);
     }
 
     public boolean clickedOnUpgradeStageDisplay(float x, float y) {

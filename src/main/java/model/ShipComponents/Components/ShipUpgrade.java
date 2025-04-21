@@ -65,9 +65,9 @@ public abstract class ShipUpgrade {
     }
 
     /**
-     * Upgrade <code>this</code> to the next stage if possible
+     * Upgrade <code>this</code> to the next stage if possible.
      *
-     * @return true if <code>this</code> was upgraded, false otherwise
+     * @return true if <code>this</code> was upgraded, false otherwise.
      */
     public boolean upgrade() {
         if (stage.isUpgradeable()) {

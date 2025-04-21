@@ -53,12 +53,56 @@ public class UpgradeHandler {
         structure.normalize();
     }
 
-    public boolean upgradeStage(CellPosition cpGrid, UpgradeType type) {
+    /**
+     * Upgrade the stage of the upgrade at the specified position.
+     * If <code>upgradeFuselage</code> is <code>true</code>, this upgrades the
+     * the fuselage, otherwise it upgrades the held upgrade.
+     * <p>
+     * The held upgrade will only be upgraded if the upgrade stage of the fuselage
+     * is greater than the upgrade stage of the held upgrade.
+     * 
+     * @param cpGrid          the <code>CellPosition</code> of the upgrade.
+     * @param upgradeFuselage whether it's the <code>Fuselage</code> at
+     *                        <code>cpGrid</code> or its held
+     *                        upgrade that should be upgraded.
+     * @return <code>true</code> if the component was upgraded,
+     *         <code>false</code> otherwise.
+     */
+    public boolean upgradeStage(CellPosition cpGrid, boolean upgradeFuselage) {
         Fuselage fuselage = structure.getFuselage(cpGrid);
-        if (type == UpgradeType.FUSELAGE) {
+        if (upgradeFuselage) {
             return fuselage.upgrade();
         } else {
-            return fuselage.getUpgrade().upgrade();
+            if (upgradeStageIncreaseIsAllowed(fuselage)) {
+                return fuselage.getUpgrade().upgrade();
+            }
+            return false;
         }
+    }
+
+    // TODO: Should this be moved to UpgradeScreenModel?
+    /**
+     * Checks if the upgrade stage of the <code>fuselage</code>'s
+     * held upgrade can be increased.
+     * <p>
+     * The held upgrade may only be upgraded if the upgrade stage of the
+     * fuselage is greater than the upgrade stage of the held upgrade.
+     * <p>
+     * Note that this does not consider whether the upgrade stage of
+     * <code>fuselage</code> or the held upgrade are themselves increasable.
+     * This only compares the fuselage's upgrade stage to the held upgrade's
+     * upgrade stage.
+     * 
+     * @param fuselage the <code>Fuselage</code> to check eligibility for
+     * @return <code>true</code> if the upgrade stage of the held upgrade is
+     *         allowed to be increased according to the rules specified,
+     *         <code>false</code> otherwise.
+     */
+    public boolean upgradeStageIncreaseIsAllowed(Fuselage fuselage) {
+        if (!fuselage.hasUpgrade()) {
+            return false;
+        }
+
+        return fuselage.getStage().ordinal() > fuselage.getUpgrade().getStage().ordinal();
     }
 }
