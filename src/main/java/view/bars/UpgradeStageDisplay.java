@@ -89,7 +89,7 @@ public class UpgradeStageDisplay {
                 displayDimensions.y() - 4f * padding);
 
         upgradeHitbox = new Rectangle(
-                position.x() + 2f * padding + 2f * spriteRadius,
+                position.x() + 3f * padding + 2f * spriteRadius,
                 position.y() + 2f * padding,
                 2f * spriteRadius,
                 displayDimensions.y() - 4f * padding);
@@ -212,7 +212,7 @@ public class UpgradeStageDisplay {
         float barX = x + 4f * (padding + spriteRadius);
         renderBars(shape, barX, y, width, height);
 
-        shape.setColor(Palette.WHITE);
+        shape.setColor(Palette.MUTED_GREEN_HIGHLIGHT);
         if (fuselageMode) {
             shape.rect(fuselageHitbox.x, fuselageHitbox.y, fuselageHitbox.width, fuselageHitbox.height);
         } else {

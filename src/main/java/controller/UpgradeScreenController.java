@@ -139,7 +139,7 @@ public class UpgradeScreenController extends GenericController {
 
     private void handleUpgradeDisplayClick(CellPosition cpGrid, float x, float y) {
         ShipUpgrade upgrade = view.getUpgradeStageDisplay().getClickedUpgrade(x, y, true);
-        if (upgrade != null) { // didn't click on empty space
+        if (upgrade != null) { // didn't click on empty space, or clicked on already selected upgrade
             if (upgradeModel.attemptUpgradeStagePurchase(cpGrid, upgrade)) {// stage upgrade successful
                 view.getUpgradeStageDisplay().setCurrentStats(upgradeModel.getPlayerStats());
             }
