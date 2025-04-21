@@ -28,6 +28,7 @@ import grid.GridCell;
 import model.Globals.Collectable;
 import model.ShipComponents.Components.Fuselage;
 import model.ShipComponents.Components.Thruster;
+import model.ShipComponents.UpgradeStage;
 import model.ShipComponents.UpgradeType;
 import model.SpaceCharacters.Asteroid;
 import model.SpaceCharacters.Bullet;
@@ -52,6 +53,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvider {
 
@@ -74,10 +76,9 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     private Sprite laser;
 
     private Sprite diamond;
-    private Sprite fuselagePlayer;
-    private Sprite fuselageEnemy;
 
-    private HashMap<UpgradeType, Sprite> upgradeIcons;
+    private Map<UpgradeStage, Sprite> enemyShipSprites = new HashMap<>();
+    private Map<UpgradeType, Map<UpgradeStage, Sprite>> shipSprites = new HashMap<>();
 
     // Background
     private TextureRegion[] background;
@@ -86,7 +87,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
 
     // Animations
     private LinkedList<AnimationState> animationStates;
-    private HashMap<AnimationType, Animation<TextureRegion>> animationMap;
+    private Map<AnimationType, Animation<TextureRegion>> animationMap;
 
     // Lighting
     public static final RayHandler rayHandler = new RayHandler(null);
@@ -112,7 +113,6 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         setupBackground();
         setupSprites();
         setupAnimationHashMap();
-        setupUpgradeHashMap();
         setupLighting();
     }
 
@@ -149,18 +149,35 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     }
 
     private void setupSprites() {
-        asteroidLarge = createSprite("images/space/asteroid_0.png", 2, 2);
-
-        asteroidSmall = createSprite("images/space/asteroid_1.png", 1, 1);
-
+        asteroidLarge = createSprite("images/space/asteroid_0.png", 2f, 2f);
+        asteroidSmall = createSprite("images/space/asteroid_1.png", 1f, 1f);
         laser = createSprite("images/space/laser_shot_0.png", 0.25f, 0.25f);
 
-        // TODO: rewrite with all stages, put in a hashmap<UpgradeStage, Sprite>
-        fuselagePlayer = createSprite("images/upgrades/fuselage_stage_0.png", 1, 1);
+        // setup upgrades and player fuselage
+        for (UpgradeType type : UpgradeType.values()) {
+            Map<UpgradeStage, Sprite> stageSprites = new HashMap<>();
+            String basePath = "images/upgrades/" + type.name().toLowerCase() + "_stage_";
+            for (UpgradeStage stage : UpgradeStage.values()) {
+                String path = basePath + stage.ordinal() + ".png";
 
-        fuselageEnemy = createSprite("images/upgrades/fuselage_enemy_stage_0.png", 1, 1);
+                Sprite sprite = createSprite(path, 1f, 1f);
 
-        diamond = createSprite("images/space/diamond.png", 1, 1);
+                stageSprites.put(stage, sprite);
+            }
+            shipSprites.put(type, stageSprites);
+        }
+
+        // setup enemy fuselage
+        String basePath = "images/upgrades/fuselage_enemy_stage_";
+        for (UpgradeStage stage : UpgradeStage.values()) {
+            String path = basePath + stage.ordinal() + ".png";
+
+            Sprite sprite = createSprite(path, 1f, 1f);
+
+            enemyShipSprites.put(stage, sprite);
+        }
+
+        diamond = createSprite("images/space/diamond.png", 1f, 1f);
     }
 
     private void setupAnimationHashMap() {
@@ -174,16 +191,6 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
                 atlas.findRegions("explosion"), PlayMode.NORMAL);
 
         animationMap.put(AnimationType.EXPLOSION, explosionAnimation);
-    }
-
-    private void setupUpgradeHashMap() {
-        upgradeIcons = new HashMap<>();
-        upgradeIcons.put(UpgradeType.TURRET,
-                createSprite("images/upgrades/turret_stage_0.png", 1, 1));
-        upgradeIcons.put(UpgradeType.THRUSTER,
-                createSprite("images/upgrades/thruster_stage_0.png", 1, 1));
-        upgradeIcons.put(UpgradeType.SHIELD,
-                createSprite("images/upgrades/shield_stage_0.png", 1, 1));
     }
 
     private void setupLighting() {
@@ -265,19 +272,23 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
                 float shipX = ship.getX() + cell.pos().col();
                 float shipY = ship.getY() + cell.pos().row();
                 if (ship.isPlayerShip()) {
+                    Sprite fuselagePlayer = shipSprites.get(cell.value().getType()).get(cell.value().getStage());
                     fuselagePlayer.setCenterX(shipX);
                     fuselagePlayer.setCenterY(shipY);
                     fuselagePlayer.draw(batch);
                 } else {
+                    Sprite fuselageEnemy = enemyShipSprites.get(cell.value().getStage());
                     fuselageEnemy.setCenterX(shipX);
                     fuselageEnemy.setCenterY(shipY);
                     fuselageEnemy.draw(batch);
                 }
 
                 if (cell.value().getUpgrade() != null) {
-                    upgradeIcons.get(cell.value().getUpgrade().getType()).setCenterX(shipX);
-                    upgradeIcons.get(cell.value().getUpgrade().getType()).setCenterY(shipY);
-                    upgradeIcons.get(cell.value().getUpgrade().getType()).draw(batch);
+                    Sprite upgradeSprite = shipSprites.get(cell.value().getUpgrade().getType())
+                            .get(cell.value().getUpgrade().getStage());
+                    upgradeSprite.setCenterX(shipX);
+                    upgradeSprite.setCenterY(shipY);
+                    upgradeSprite.draw(batch);
 
                     if (cell.value().getUpgrade().getType() == UpgradeType.THRUSTER) {
 
