@@ -83,7 +83,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     int cursorWidth = 64;
     int cursorHeight = 64;
 
-    // UpgradeStageDisplay
+    // UpgradeStageDisplay //TODO: Should this be moved to UpgradeScreenModel?
     private UpgradeStageDisplay upgradeStageDisplay;
 
     /**
@@ -193,7 +193,8 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         upgradeStageDisplay = new UpgradeStageDisplay(max, upgradeSprites, fontRegular, upgradeIconZoom / 2f);
         upgradeStageDisplay.setComponents(new Fuselage(), new Turret());
         upgradeStageDisplay.setPosition(new FloatPair(3f, 1f));
-        upgradeStageDisplay.setCurrentStats(model.getPlayer().getShipStructure().getCombinedStatModifier());
+        upgradeStageDisplay.setCurrentStats(model.getPlayerStats());
+        upgradeStageDisplay.setVisibility(false);
     }
 
     private void drawValidFuselagePlacements() {
@@ -268,6 +269,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
             model.updateOffsets(viewportGame.getWorldWidth(), viewportGame.getWorldHeight());
             model.offsetsMustBeUpdated = false;
         }
+
         ScreenUtils.clear(Palette.MUTED_GREEN);
         viewportGame.apply(false);
         batch.setProjectionMatrix(viewportGame.getCamera().combined);
@@ -281,7 +283,6 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         }
 
         drawShipGrid();
-
         drawShip();
 
         if (model.isUpgradeGrabbed()) {
@@ -305,13 +306,12 @@ public class UpgradeScreen extends InputAdapter implements Screen {
             upgrade.setY(pos.y - 0.5f * upgradeIconZoom);
             upgrade.draw(batch);
         }
-
-        // TODO: Remove after testing UpgradeStageDisplay:
         batch.end();
 
-        shape.setProjectionMatrix(viewportGame.getCamera().combined);
-        upgradeStageDisplay.render(batch, shape);
-        batch.end();
+        if (upgradeStageDisplay.getVisibility()) {
+            shape.setProjectionMatrix(viewportGame.getCamera().combined);
+            upgradeStageDisplay.render(batch, shape, true);
+        }
 
         // draw UI elements
         viewportUI.apply(true);
@@ -368,6 +368,11 @@ public class UpgradeScreen extends InputAdapter implements Screen {
             }
         }
 
+        // draw cell highlight if a cell has been selected
+        if (model.getShowCellHighlight()) {
+            drawGridHighlight(model.getCellHighlightPosition());
+        }
+
         batch.end();
 
         // draw upgrade description if inspection mode is on
@@ -393,6 +398,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
                     touchPos.y - rectanglePadding - descriptionRect.height,
                     descriptionRect.width + 2f * rectanglePadding,
                     descriptionRect.height + 2f * rectanglePadding);
+            shape.end();
 
             batch.begin();
             fontRegular.draw(batch, glyphLayout,
@@ -445,6 +451,12 @@ public class UpgradeScreen extends InputAdapter implements Screen {
             squareRed.setY(model.getUpgradeOffsetY());
             squareRed.draw(batch, 0.5f);
         }
+    }
+
+    private void drawGridHighlight(CellPosition cp) {
+        squareGreen.setX(model.getGridOffsetX() + cp.col());
+        squareGreen.setY(model.getGridOffsetY() + cp.row());
+        squareGreen.draw(batch, 0.5f);
     }
 
     private void drawGridSquare(Sprite squareSprite, int x, int y) {
@@ -560,6 +572,10 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         viewportGame.unproject(pos);
     }
 
+    public UpgradeStageDisplay getUpgradeStageDisplay() {
+        return upgradeStageDisplay;
+    }
+
     @Override
     public void resize(int width, int height) {
         int oldWidth = viewportGame.getScreenWidth();
@@ -581,11 +597,9 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         viewportUI.update(width, height, true);
     }
 
-    float oldZoom;
-
     @Override
     public void show() {
-        oldZoom = ((OrthographicCamera) viewportGame.getCamera()).zoom;
+        model.setOldCameraZoom(((OrthographicCamera) viewportGame.getCamera()).zoom);
         Gdx.input.setInputProcessor(controller);
         controller.reset();
         updateCameraZoom(model.getCurrentZoom());
@@ -596,7 +610,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     @Override
     public void hide() {
         Gdx.input.setInputProcessor(null);
-        updateCameraZoom(oldZoom);
+        updateCameraZoom(model.getOldCameraZoom());
     }
 
     @Override

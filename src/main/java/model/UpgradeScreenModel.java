@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import model.ShipComponents.Components.Fuselage;
 import model.ShipComponents.Components.ShipUpgrade;
+import model.ShipComponents.Components.stats.StatModifier;
 import model.ShipComponents.UpgradeHandler;
 import model.SpaceCharacters.Ships.Player;
 import model.World.StoreItem;
@@ -28,6 +29,7 @@ public class UpgradeScreenModel {
     private final float[] cameraZoomLevels = { 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1f, 1.1f, 1.2f, 1.3f, 1.4f, 1.5f };
     private int cameraCurrentZoomLevel;
     private float cameraZoomDeltaTime;
+    private float oldCameraZoom;
     private final float cameraZoomTextFadeCutoffTime = 0.5f;
     private boolean cameraZoomRecently;
     private final Vector2 cameraPosition;
@@ -48,6 +50,9 @@ public class UpgradeScreenModel {
     private final Player player;
     private final UpgradeHandler upgradeHandler;
     public boolean offsetsMustBeUpdated;
+
+    private CellPosition highlightedCellPosition;
+    private boolean showCellHighlight;
 
     /**
      * Initializes an upgrade screen model with vectors for tracking positions. Also
@@ -86,10 +91,8 @@ public class UpgradeScreenModel {
      * This method handles camera zoom updates and processes the release of a
      * grabbed upgrade.
      * If an upgrade is grabbed and released, it is either placed as a fuselage or
-     * as a ship
-     * upgrade.
+     * as a ship upgrade.
      * After placing the upgrade, relevant state variables are reset.
-     * </p>
      *
      * @param delta The time elapsed since the last update, used for time-based
      *              calculations.
@@ -128,6 +131,10 @@ public class UpgradeScreenModel {
         return ShipUpgrade.getShipUpgrade(upgradeType);
     }
 
+    public StatModifier getPlayerStats() {
+        return player.getShipStructure().getCombinedStatModifier().copy();
+    }
+
     /**
      * Upgrade camera zoom level based on scroll input.
      * Clamps zoom level between minimum and maximum zoom.
@@ -158,6 +165,19 @@ public class UpgradeScreenModel {
                 cameraZoomRecently = false;
             }
         }
+    }
+
+    // TODO: This should be handled in SpaceScreen, not UpgradeScreen
+    /**
+     * Updates the camera zoom level used for the previous screen.
+     * This is used for camera zoom transitions between screens.
+     * It is recommended to call this in <code>UpgradeScreen.show()</code>.
+     * Value is retrieved with the <code>getOldCameraZoom()</code> method.
+     * 
+     * @param oldCameraZoom
+     */
+    public void setOldCameraZoom(float oldCameraZoom) {
+        this.oldCameraZoom = oldCameraZoom;
     }
 
     /**
@@ -203,6 +223,10 @@ public class UpgradeScreenModel {
 
     public float getCurrentZoom() {
         return cameraZoomLevels[cameraCurrentZoomLevel];
+    }
+
+    public float getOldCameraZoom() {
+        return oldCameraZoom;
     }
 
     public boolean isUpgradeGrabbed() {
@@ -307,7 +331,6 @@ public class UpgradeScreenModel {
 
     public void setReleasedCellPosition(CellPosition cellPosition) {
         releasedCellPosition = cellPosition;
-
     }
 
     public Player getPlayer() {
@@ -336,5 +359,43 @@ public class UpgradeScreenModel {
 
     public void exitUpgradeHandler() {
         upgradeHandler.exit();
+    }
+
+    public void setCellHighlight(boolean showCellHighlight, CellPosition cpGrid) {
+        if (upgradeHandler.hasFuselage(cpGrid)) {
+            this.showCellHighlight = showCellHighlight;
+            this.highlightedCellPosition = cpGrid;
+        } else {
+            this.showCellHighlight = false;
+        }
+    }
+
+    public void disableCellHighlight() {
+        showCellHighlight = false;
+    }
+
+    public boolean getShowCellHighlight() {
+        return showCellHighlight;
+    }
+
+    public CellPosition getCellHighlightPosition() {
+        return highlightedCellPosition;
+    }
+
+    public boolean attemptUpgradeStagePurchase(CellPosition cpGrid, ShipUpgrade upgrade) {
+
+        int price = store.getUpgradeStageShelf().get(upgrade.getType());
+
+        boolean canAfford = player.getInventory().canAfford(price);
+
+        if (canAfford) {
+            boolean upgradeSuccess = upgradeHandler.upgradeStage(cpGrid, upgrade.getType());
+            if (upgradeSuccess) {
+                player.getInventory().spendResources(price);
+                return true;
+            }
+        }
+
+        return false;
     }
 }

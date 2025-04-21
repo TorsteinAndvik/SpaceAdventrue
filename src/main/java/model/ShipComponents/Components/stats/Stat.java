@@ -6,8 +6,8 @@ public enum Stat {
     RESOURCE_VALUE(true, "Value", true),
     HEALTH_VALUE(true, "Health", true),
     HEALTH_REGENERATION_RATE(false, "Health regeneration", true),
-    MAX_SPEED(false, "Max speed", true),
-    ACCELERATION_FORCE(false, "Acceleration force", true),
+    MAX_SPEED(false, "Max velocity", true),
+    ACCELERATION_FORCE(false, "Thruster force", true),
     FIRE_RATE(false, "Shots per second", true);
 
     public final boolean intBased;

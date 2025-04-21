@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Rectangle;
 
 import model.ShipComponents.UpgradeStage;
 import model.ShipComponents.UpgradeType;
@@ -33,6 +34,15 @@ public class UpgradeStageDisplay {
     private Map<Stat, GlyphLayout> glyphLayouts;
     private float spriteRadius;
 
+    private final FloatPair displayDimensions;
+
+    private Rectangle fuselageHitbox;
+    private Rectangle upgradeHitbox;
+
+    private boolean fuselageMode;
+
+    private boolean visible = true;
+
     private Color outlineColor = Palette.BLACK;
     private Color displayColor = Palette.MUTED_GREEN_LIGHT;
     private BitmapFont font;
@@ -41,7 +51,6 @@ public class UpgradeStageDisplay {
             BitmapFont font, float spriteRadius) {
 
         this.upgradeSprites = upgradeSprites;
-        this.position = new FloatPair(0, 0);
         this.diffBarScales = new FloatPair(3f, 0.1f);
         this.spriteRadius = spriteRadius;
         this.font = font;
@@ -69,17 +78,63 @@ public class UpgradeStageDisplay {
 
         this.bars = bars;
         this.glyphLayouts = glyphLayouts;
+
+        this.position = new FloatPair(0f, 0f);
+
+        displayDimensions = new FloatPair(getWidth(), getHeight());
+        fuselageHitbox = new Rectangle(
+                position.x() + 2f * padding,
+                position.y() + 2f * padding,
+                2f * spriteRadius,
+                displayDimensions.y() - 4f * padding);
+
+        upgradeHitbox = new Rectangle(
+                position.x() + 2f * padding + 2f * spriteRadius,
+                position.y() + 2f * padding,
+                2f * spriteRadius,
+                displayDimensions.y() - 4f * padding);
+    }
+
+    public void setVisibility(boolean visible) {
+        this.visible = visible;
+    }
+
+    public boolean getVisibility() {
+        return visible;
     }
 
     public void setPosition(FloatPair position) {
+        float deltaX = position.x() - this.position.x();
+        float deltaY = position.y() - this.position.y();
+
+        fuselageHitbox.setPosition(fuselageHitbox.x + deltaX, fuselageHitbox.y + deltaY);
+        upgradeHitbox.setPosition(upgradeHitbox.x + deltaX, upgradeHitbox.y + deltaY);
+
         this.position = position;
+    }
+
+    public void setComponents(Fuselage fuselage) {
+        setComponents(fuselage, fuselage.getUpgrade());
     }
 
     public void setComponents(Fuselage fuselage, ShipUpgrade upgrade) {
         this.fuselage = fuselage;
         this.upgrade = upgrade;
 
-        setStatDiffs(fuselage);
+        if (fuselageMode || upgrade == null) {
+            setStatDiffs(fuselage);
+        } else {
+            setStatDiffs(upgrade);
+        }
+    }
+
+    public void setFuselageMode(boolean fuselageMode) {
+        this.fuselageMode = fuselageMode;
+        if (fuselageMode) {
+            setStatDiffs(fuselage);
+        } else {
+            setStatDiffs(upgrade);
+        }
     }
 
     public void setCurrentStats(StatModifier current) {
@@ -89,38 +144,63 @@ public class UpgradeStageDisplay {
     }
 
     private void setStatDiffs(ShipUpgrade upgrade) {
-        StatModifier diff = (upgrade.getStage().isUpgradeable() ? upgrade.getUpgradeStatModifier() : new StatModifier())
-                .addModifier(new Fuselage().getStatModifier());
+        StatModifier diff;
+        if (upgrade != null && upgrade.getStage().isUpgradeable()) {
+            diff = upgrade.getUpgradeStatModifier();
+        } else {
+            diff = new StatModifier();
+        }
+
         for (Stat stat : Stat.values()) {
             bars.get(stat).updateDiff(diff.getModifiers().get(stat).floatValue(), stat.positiveIsBeneficial);
         }
     }
 
     /**
-     * Renders the upgrade stage display.
+     * Renders the upgrade stage display if it is set to be visible.
      * <p>
-     * Assumes shape and batch do not have <code>begin()</code>
-     * called before calling this method.
+     * Assumes <code>shape</code> and <code>batch</code> do not have
+     * <code>begin()</code> called on them before calling this method.
      * <p>
-     * shape will have end() called on it. batch will NOT have end() called on it,
-     * to allow for additional rendering without an extra buffer dump.
+     * It is up to the caller to ensure the proper projection matrices
+     * have been set before calling this method.
+     * <p>
+     * This method will call <code>shape.end()</code>.
+     * <code>shape</code> will retain its originally set <code>Color</code>.
+     * <p>
+     * <code>batch</code> will have <code>end()</code> called on it if
+     * <code>endBatch</code> is <code>true</code>, otherwise it will not.
+     * The option to not call <code>batch.end()</code> is to allow
+     * for additional batch-rendering without an extra buffer dump.
      * 
-     * @param batch the <code>SpriteBatch</code> to render Sprites with
-     * @param shape the <code>ShapeRenderer</code> to render the display box with
+     * @param batch    the <code>SpriteBatch</code> to render Sprites with.
+     * @param shape    the <code>ShapeRenderer</code> to render the display box
+     *                 with.
+     * @param endBatch whether this method should call <code>batch.end()</code>
+     *                 before returning.
      */
-    public void render(SpriteBatch batch, ShapeRenderer shape) {
+    public void render(SpriteBatch batch, ShapeRenderer shape, boolean endBatch) {
+        if (!visible) {
+            return;
+        }
 
         float x = position.x();
         float y = position.y();
-        float width = getWidth();
-        float height = getHeight();
+        float width = displayDimensions.x();
+        float height = displayDimensions.y();
 
+        shape.begin(ShapeType.Filled);
         renderShapes(shape, x, y, width, height);
+        shape.end();
+
+        batch.begin();
         renderSprites(batch, x, y, width, height);
+        if (endBatch) {
+            batch.end();
+        }
     }
 
     private void renderShapes(ShapeRenderer shape, float x, float y, float width, float height) {
-        shape.begin(ShapeType.Filled);
         Color oldColor = shape.getColor();
 
         shape.setColor(outlineColor);
@@ -132,25 +212,23 @@ public class UpgradeStageDisplay {
         float barX = x + 4f * (padding + spriteRadius);
         renderBars(shape, barX, y, width, height);
 
+        shape.setColor(Palette.WHITE);
+        if (fuselageMode) {
+            shape.rect(fuselageHitbox.x, fuselageHitbox.y, fuselageHitbox.width, fuselageHitbox.height);
+        } else {
+            shape.rect(upgradeHitbox.x, upgradeHitbox.y, upgradeHitbox.width, upgradeHitbox.height);
+        }
+
         shape.setColor(oldColor);
-        shape.end();
     }
 
     private void renderSprites(SpriteBatch batch, float x, float y, float width, float height) {
-        batch.begin();
-
         // Fuselage and Upgrade sprites logic
         float fuselageNextStageOffsetX = 2f * padding + spriteRadius;
         float fuselageNextStageOffsetY = 2f * padding + spriteRadius;
 
         float fuselageOffsetX = fuselageNextStageOffsetX;
         float fuselageOffsetY = height - fuselageNextStageOffsetY;
-
-        float upgradeNextStageOffsetX = fuselageNextStageOffsetX + spriteRadius + padding + spriteRadius;
-        float upgradeNextStageOffsetY = fuselageNextStageOffsetY;
-
-        float upgradeOffsetX = upgradeNextStageOffsetX;
-        float upgradeOffsetY = fuselageOffsetY;
 
         Sprite fuselageSprite = upgradeSprites.get(UpgradeType.FUSELAGE).get(fuselage.getStage());
         fuselageSprite.setCenterX(x + fuselageOffsetX);
@@ -162,18 +240,27 @@ public class UpgradeStageDisplay {
         fuselageNextStageSprite.setCenterY(y + fuselageNextStageOffsetY);
         fuselageNextStageSprite.draw(batch);
 
-        Sprite upgradeSprite = upgradeSprites.get(upgrade.getType()).get(upgrade.getStage());
-        upgradeSprite.setCenterX(x + upgradeOffsetX);
-        upgradeSprite.setCenterY(y + upgradeOffsetY);
-        upgradeSprite.draw(batch);
+        if (upgrade != null) {
 
-        Sprite upgradeNextStageSprite = upgradeSprites.get(upgrade.getType()).get(upgrade.getStage().nextStage());
-        upgradeNextStageSprite.setCenterX(x + upgradeNextStageOffsetX);
-        upgradeNextStageSprite.setCenterY(y + upgradeNextStageOffsetY);
-        upgradeNextStageSprite.draw(batch);
+            float upgradeNextStageOffsetX = fuselageNextStageOffsetX + spriteRadius + padding + spriteRadius;
+            float upgradeNextStageOffsetY = fuselageNextStageOffsetY;
+
+            float upgradeOffsetX = upgradeNextStageOffsetX;
+            float upgradeOffsetY = fuselageOffsetY;
+
+            Sprite upgradeSprite = upgradeSprites.get(upgrade.getType()).get(upgrade.getStage());
+            upgradeSprite.setCenterX(x + upgradeOffsetX);
+            upgradeSprite.setCenterY(y + upgradeOffsetY);
+            upgradeSprite.draw(batch);
+
+            Sprite upgradeNextStageSprite = upgradeSprites.get(upgrade.getType()).get(upgrade.getStage().nextStage());
+            upgradeNextStageSprite.setCenterX(x + upgradeNextStageOffsetX);
+            upgradeNextStageSprite.setCenterY(y + upgradeNextStageOffsetY);
+            upgradeNextStageSprite.draw(batch);
+        }
 
         // Render stat-bar text
-        float barX = x + upgradeOffsetX + spriteRadius + padding;
+        float barX = x + fuselageNextStageOffsetX + 3f * spriteRadius + 2f * padding;
         renderText(batch, barX, y, width, height);
     }
 
@@ -184,8 +271,8 @@ public class UpgradeStageDisplay {
             GlyphLayout glyphLayout = glyphLayouts.get(stat);
 
             barY -= glyphLayout.height;
-
             barY -= padding + diffBarScales.y();
+
             statBar.setPosition(barX, barY);
             statBar.draw(shape);
 
@@ -202,23 +289,22 @@ public class UpgradeStageDisplay {
                     barX, barY);
 
             barY -= glyphLayout.height;
-
             barY -= padding + diffBarScales.y();
             barY -= barPaddingTextScale * glyphLayout.height;
         }
     }
 
-    // TODO: Make this a calculate and store once? Is a resize ever necessary?
     private float getWidth() {
-        float totalPadding = 6f * padding;
-        float spriteWidth = 4f * spriteRadius;
+        float totalPadding = 6f * padding; // 2+2 for outline and inner borders, 1 between fuselage and upgrade,
+                                           // 1 between upgrade and bars
+        float spriteWidth = 2f * 2f * spriteRadius; // 2 radii for each Sprite (fuselage + upgrade)
 
         return totalPadding + spriteWidth + diffBarScales.x();
     }
 
-    // TODO: Make this a calculate and store once? Is a resize ever necessary?
     private float getHeight() {
-        float totalPadding = 4f * padding;
+        float totalPadding = 4f * padding; // 2+2 for outline and inner borders
+        // height of bars + height of text + a text offset + additional padding
         float barHeights = 0f;
         for (Stat stat : Stat.values()) {
             barHeights += diffBarScales.y();
@@ -226,9 +312,44 @@ public class UpgradeStageDisplay {
             barHeights += padding;
         }
 
-        float fuselageHeights = 3f * (2f * spriteRadius);
+        float fuselageHeights = 3f * (2f * spriteRadius); // 2 for each sprite +1 for extra space
         float upgradeHeights = 3f * (2f * spriteRadius);
 
+        // space for bars may be more or less than the space for sprites,
+        // so we use the maximum of the two
         return totalPadding + Math.max(barHeights, Math.max(fuselageHeights, upgradeHeights));
+    }
+
+    public boolean clickedOnUpgradeStageDisplay(float x, float y) {
+        if (!visible) {
+            return false;
+        }
+
+        return x >= position.x() && x <= position.x() + displayDimensions.x()
+                && y >= position.y() && y <= position.y() + displayDimensions.y();
+    }
+
+    public ShipUpgrade getClickedUpgrade(float x, float y, boolean onlyReturnIfAlreadySelected) {
+        if (!visible) {
+            return null;
+        }
+
+        if (fuselageHitbox.contains(x, y)) {
+            if (onlyReturnIfAlreadySelected && !fuselageMode) {
+                setFuselageMode(true);
+                return null;
+            }
+            return fuselage;
+
+        } else if (upgradeHitbox.contains(x, y)) {
+            if (onlyReturnIfAlreadySelected && fuselageMode) {
+                setFuselageMode(false);
+                return null;
+            }
+            return upgrade;
+
+        } else {
+            return null;
+        }
     }
 }

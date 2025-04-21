@@ -37,11 +37,28 @@ public class UpgradeHandler {
         return placedItem;
     }
 
+    public boolean hasFuselage(CellPosition cp) {
+        return structure.hasFuselage(cp);
+    }
+
+    public Fuselage getFuselage(CellPosition cp) {
+        return structure.getFuselage(cp);
+    }
+
     public IGrid<Fuselage> getGrid() {
         return structure.getGridCopy();
     }
 
     public void exit() {
         structure.normalize();
+    }
+
+    public boolean upgradeStage(CellPosition cpGrid, UpgradeType type) {
+        Fuselage fuselage = structure.getFuselage(cpGrid);
+        if (type == UpgradeType.FUSELAGE) {
+            return fuselage.upgrade();
+        } else {
+            return fuselage.getUpgrade().upgrade();
+        }
     }
 }

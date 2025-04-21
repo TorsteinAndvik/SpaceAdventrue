@@ -332,6 +332,22 @@ public class ShipStructure implements ViewableShipStructure {
         return this.centerOfMass;
     }
 
+    /**
+     * @param cp the <code>CellPosition</code> to get an eventual
+     *           <code>Fuselage</code> from.
+     * @return the <code>Fuselage</code> at the given <code>CellPosition</code> if
+     *         there is one, otherwise <code>null</code>.
+     *         <p>
+     *         Note: This also returns null if the <code>CellPosition</code>
+     *         is out of bounds.
+     */
+    public Fuselage getFuselage(CellPosition cp) {
+        if (!hasFuselage(cp)) {
+            return null;
+        }
+        return this.grid.get(cp);
+    }
+
     @Override
     public boolean hasFuselage(CellPosition cp) {
         return hasFuselage(cp, grid);
