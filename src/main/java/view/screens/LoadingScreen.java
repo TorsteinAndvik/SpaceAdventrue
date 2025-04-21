@@ -178,7 +178,7 @@ public class LoadingScreen implements Screen {
             gameStateModel.onAssetsLoaded();
 
             // show start screen
-            if (Gdx.input.isTouched() && game instanceof TestSpaceGame) {
+            if (game instanceof TestSpaceGame) {
                 loadingProgressBar.setVisible(false);
                 ((TestSpaceGame) game).setStartScreen();
             }

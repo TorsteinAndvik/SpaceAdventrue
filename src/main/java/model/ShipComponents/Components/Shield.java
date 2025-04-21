@@ -26,8 +26,8 @@ public class Shield extends ShipUpgrade {
         statModifier.setModifier(Stat.HEALTH_REGENERATION_RATE, 1f / 8f);
 
         // Upgrades:
-        upgradeModifier.setModifier(Stat.HEALTH_VALUE, 2);
-        upgradeModifier.setModifier(Stat.RESOURCE_VALUE, 4);
+        upgradeModifier.setModifier(Stat.HEALTH_VALUE, 1);
+        upgradeModifier.setModifier(Stat.RESOURCE_VALUE, 3);
         upgradeModifier.setModifier(Stat.HEALTH_REGENERATION_RATE, 1f / 12f);
     }
 }
