@@ -120,6 +120,6 @@ public class Fuselage extends ShipUpgrade {
         // Upgrades:
         // TODO: require upgrading fuselage before held upgrade can be upgraded?
         upgradeModifier.setModifier(Stat.HEALTH_VALUE, 1);
-        upgradeModifier.setModifier(Stat.RESOURCE_VALUE, 3);
+        upgradeModifier.setModifier(Stat.RESOURCE_VALUE, 5);
     }
 }

@@ -29,11 +29,11 @@ public class Thruster extends ShipUpgrade {
         statModifier.setModifier(Stat.MASS, PhysicsParameters.shipUpgradeMass);
         statModifier.setModifier(Stat.ACCELERATION_FORCE, 9f);
         statModifier.setModifier(Stat.MAX_SPEED, 2f);
-        statModifier.setModifier(Stat.RESOURCE_VALUE, 3);
+        statModifier.setModifier(Stat.RESOURCE_VALUE, 26);
 
         // Upgrades:
         upgradeModifier.setModifier(Stat.ACCELERATION_FORCE, 3f);
         upgradeModifier.setModifier(Stat.MAX_SPEED, 1f);
-        upgradeModifier.setModifier(Stat.RESOURCE_VALUE, 1);
+        upgradeModifier.setModifier(Stat.RESOURCE_VALUE, 13);
     }
 }
