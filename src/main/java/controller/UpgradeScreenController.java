@@ -108,16 +108,16 @@ public class UpgradeScreenController extends GenericController {
         CellPosition cpGrid = convertMouseToGrid(touchPos.x, touchPos.y);
         CellPosition cpUpgrade = convertMouseToUpgradeBar(touchPos.x, touchPos.y);
 
-        if (cellPositionOnGrid(cpGrid) && upgradeModel.getUpgradeHandler().hasFuselage(cpGrid)) {
+        if (clickedOnUpgradeStageDisplay(touchPos.x, touchPos.y)) {
+            handleUpgradeDisplayClick(upgradeModel.getCellHighlightPosition(), touchPos.x, touchPos.y);
+            return true;
+
+        } else if (cellPositionOnGrid(cpGrid) && upgradeModel.getUpgradeHandler().hasFuselage(cpGrid)) {
             // TODO: add option for selling an upgrade?
             // TODO: add option for selling a fuselage, as long as ship stays connected?
 
             upgradeModel.setCellHighlight(true, cpGrid);
             updateAndShowUpgradeStageDisplay(cpGrid);
-            return true;
-
-        } else if (clickedOnUpgradeStageDisplay(touchPos.x, touchPos.y)) {
-            handleUpgradeDisplayClick(upgradeModel.getCellHighlightPosition(), touchPos.x, touchPos.y);
             return true;
 
         } else {
@@ -132,6 +132,7 @@ public class UpgradeScreenController extends GenericController {
 
             upgradeModel.setGrabbedUpgradeIndex(cpUpgrade.col());
             upgradeModel.setUpgradeGrabbed(true);
+            return true;
         }
 
         return false;

@@ -160,7 +160,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
         // swap to game screen (Esc key)
         kbEsc.setX(0f);
-        // kbEsc.y must be set in render() since it changes dynamically with window size
+        kbEsc.setY(4.21f * fontRegular.getData().lineHeight);
     }
 
     private Sprite createSprite(String path, float width, float height) {
@@ -306,6 +306,12 @@ public class UpgradeScreen extends InputAdapter implements Screen {
             upgrade.setY(pos.y - 0.5f * upgradeIconZoom);
             upgrade.draw(batch);
         }
+
+        // draw cell highlight if a cell has been selected
+        if (model.getShowCellHighlight()) {
+            drawGridHighlight(model.getCellHighlightPosition());
+        }
+
         batch.end();
 
         if (upgradeStageDisplay.getVisibility()) {
@@ -328,30 +334,29 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         // move camera (right click)
         msRight.draw(batch);
         fontRegular.draw(batch, "Move camera", fontRegular.getData().lineHeight,
-                2 * fontRegular.getData().lineHeight);
+                2f * fontRegular.getData().lineHeight);
 
         // grab upgrade (left click)
         msLeft.draw(batch);
         fontRegular.draw(batch, "Grab upgrade", fontRegular.getData().lineHeight,
-                3 * fontRegular.getData().lineHeight);
+                3f * fontRegular.getData().lineHeight);
 
         // inspect upgrade (T key)
         kbT.draw(batch);
         fontRegular.draw(batch, "Inspect upgrade", fontRegular.getData().lineHeight,
-                4 * fontRegular.getData().lineHeight);
+                4f * fontRegular.getData().lineHeight);
 
         // escape (Esc key)
-        kbEsc.setY(viewportUI.getWorldHeight() - 1.15f * fontRegular.getData().lineHeight);
         kbEsc.draw(batch);
         fontRegular.draw(batch, "Change screen", fontRegular.getData().lineHeight,
-                viewportUI.getWorldHeight() - 0.33f * fontRegular.getData().lineHeight);
+                5f * fontRegular.getData().lineHeight);
 
         // Resources
-        diamond.setY(viewportUI.getWorldHeight() - 3f * fontRegular.getData().lineHeight);
-        diamond.setX(diamond.getWidth() * -.15f);
+        diamond.setY(viewportUI.getWorldHeight() - 1.06f * diamond.getHeight());
+        diamond.setX(-0.15f * diamond.getWidth());
         diamond.draw(batch);
         fontRegular.draw(batch, String.valueOf(model.getPlayerResources()), diamond.getX() + diamond.getWidth(),
-                diamond.getY() + diamond.getHeight() - .3f);
+                diamond.getY() + 0.5f * diamond.getHeight());
 
         if (model.isCameraZoomRecently()) {
             float alpha = model.getCameraZoomDeltaTime() < model.getCameraZoomTextFadeCutoffTime() ? 1f
@@ -364,15 +369,9 @@ public class UpgradeScreen extends InputAdapter implements Screen {
                 fontColor.a = alpha;
                 fontRegular.setColor(fontColor);
                 fontRegular.draw(batch, "Zoom = x" + model.getCurrentZoom(),
-                        0.1f, 5 * fontRegular.getData().lineHeight);
+                        0.1f, 6f * fontRegular.getData().lineHeight);
             }
         }
-
-        // draw cell highlight if a cell has been selected
-        if (model.getShowCellHighlight()) {
-            drawGridHighlight(model.getCellHighlightPosition());
-        }
-
         batch.end();
 
         // draw upgrade description if inspection mode is on
