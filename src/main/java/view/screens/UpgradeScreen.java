@@ -355,7 +355,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         diamond.setX(-0.15f * diamond.getWidth());
         diamond.draw(batch);
         fontRegular.draw(batch, String.valueOf(model.getPlayerResources()), diamond.getX() + diamond.getWidth(),
-                diamond.getY() + 0.5f * diamond.getHeight());
+                diamond.getY() + 0.45f * diamond.getHeight() + 0.5f * fontRegular.getLineHeight());
 
         if (model.isCameraZoomRecently()) {
             float alpha = model.getCameraZoomDeltaTime() < model.getCameraZoomTextFadeCutoffTime() ? 1f

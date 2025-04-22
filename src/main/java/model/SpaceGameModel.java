@@ -247,7 +247,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
         if (destroyA) {
             if (B instanceof Bullet) {
-                if (A instanceof SpaceBody && !(A instanceof Bullet)) {
+                if (A instanceof SpaceBody && !(A instanceof Bullet) && !(A instanceof Player)) {
 
                     Collectable diamond = diamondFactory.spawn((SpaceBody) A);
                     collectables.add(diamond);
@@ -259,7 +259,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
         if (destroyB) {
             if (A instanceof Bullet) {
-                if (B instanceof SpaceBody && !(B instanceof Bullet)) {
+                if (B instanceof SpaceBody && !(B instanceof Bullet) && !(B instanceof Player)) {
                     Diamond diamond = diamondFactory.spawn((SpaceBody) B);
                     collectables.add(diamond);
                     hitDetection.addCollider(diamond);

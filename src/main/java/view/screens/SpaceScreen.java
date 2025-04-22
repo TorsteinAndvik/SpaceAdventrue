@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Matrix4;
@@ -63,7 +64,9 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     private final SpriteBatch batch;
     private final ShapeRenderer shape;
     private final ScreenViewport viewport;
+    private final ScreenViewport viewportUI;
     private final ExtendViewport bgViewport;
+    private BitmapFont font;
 
     private final OrthographicCamera camera;
     private final float zoomMin = 1f;
@@ -107,6 +110,9 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         this.bgViewport = game.getExtendViewport();
         this.camera = (OrthographicCamera) viewport.getCamera();
 
+        this.viewportUI = new ScreenViewport();
+        viewportUI.setUnitsPerPixel(viewport.getUnitsPerPixel());
+
         this.model = gameStateModel.getSpaceGameModel();
         this.controller = new SpaceScreenController(this, gameStateModel, game);
 
@@ -114,6 +120,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         setupSprites();
         setupAnimationHashMap();
         setupLighting();
+        setupFont();
     }
 
     private void setupBackground() {
@@ -217,6 +224,17 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
 
     private Texture loadTexture(String path) {
         return manager.get(path, Texture.class);
+    }
+
+    private void setupFont() {
+        font = manager.get("fonts/PixelOperatorMonoHB.ttf", BitmapFont.class);
+
+        // fonts are set as [integer]pt, need to scale them to our viewport by ratio of
+        // viewport height to screen height in order to use world-unit sized font
+
+        font.setUseIntegerPositions(false);
+        font.getData().setScale(viewportUI.getUnitsPerPixel());
+        font.setColor(Palette.WHITE);
     }
 
     @Override
@@ -388,6 +406,18 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
             }
             shape.end();
         }
+
+        // draw UI elements
+        viewportUI.apply(true);
+        batch.setProjectionMatrix(viewportUI.getCamera().combined);
+        batch.begin();
+        diamond.setY(viewportUI.getWorldHeight() - 1.06f * diamond.getHeight());
+        diamond.setX(-0.15f * diamond.getWidth());
+        diamond.draw(batch);
+        font.draw(batch, String.valueOf(model.getPlayer().getInventory().getResourceCount()),
+                diamond.getX() + diamond.getWidth(),
+                diamond.getY() + 0.45f * diamond.getHeight() + 0.5f * font.getLineHeight());
+        batch.end();
     }
 
     private void updateLightCounts() {
@@ -468,6 +498,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     public void resize(int width, int height) {
         viewport.update(width, height, false);
         bgViewport.update(width, height, true);
+        viewportUI.update(width, height, true);
         setCameraPosition(model.getPlayerCenterOfMass());
     }
 
