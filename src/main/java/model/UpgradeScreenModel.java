@@ -7,11 +7,13 @@ import java.util.List;
 import java.util.Set;
 import model.ShipComponents.Components.Fuselage;
 import model.ShipComponents.Components.ShipUpgrade;
+import model.ShipComponents.Components.stats.MaxStatCalculator;
 import model.ShipComponents.Components.stats.StatModifier;
 import model.ShipComponents.UpgradeHandler;
 import model.SpaceCharacters.Ships.Player;
 import model.World.StoreItem;
 import model.World.UpgradeStore;
+import view.bars.UpgradeStageDisplay;
 import model.ShipComponents.UpgradeType;
 
 /**
@@ -54,6 +56,9 @@ public class UpgradeScreenModel {
     private CellPosition highlightedCellPosition;
     private boolean showCellHighlight;
 
+    private UpgradeStageDisplay upgradeStageDisplay;
+    private final MaxStatCalculator maxStatCalculator;
+
     /**
      * Initializes an upgrade screen model with vectors for tracking positions. Also
      * initializes
@@ -63,6 +68,7 @@ public class UpgradeScreenModel {
         this.player = player;
         upgradeHandler = new UpgradeHandler(player.getShipStructure());
         store = new UpgradeStore();
+        this.maxStatCalculator = new MaxStatCalculator();
 
         cameraPosition = new Vector2();
         mousePosition = new Vector2();
@@ -76,6 +82,7 @@ public class UpgradeScreenModel {
      * Reset state of the model.
      */
     public void resetState() {
+        upgradeInspectionModeIsActive = false;
         upgradeGrabbed = false;
         releaseGrabbedUpgrade = false;
         grabbedUpgradeIndex = -1;
@@ -116,7 +123,10 @@ public class UpgradeScreenModel {
                         getGrabbedShipUpgrade().getType());
                 if (upgradeSuccess) {
                     player.getInventory().spendResources(upgradePrice);
-
+                    if (upgradeStageDisplay != null) {
+                        upgradeStageDisplay.setMaxStats(maxStatCalculator.getFuselageMax(player.getNumFuselage()));
+                        upgradeStageDisplay.setCurrentStats(getPlayerStats());
+                    }
                 }
             }
 
@@ -167,7 +177,7 @@ public class UpgradeScreenModel {
         }
     }
 
-    // TODO: This should be handled in SpaceScreen, not UpgradeScreen
+    // TODO: zoom-correction should be fixed in SpaceScreen, not in UpgradeScreen
     /**
      * Updates the camera zoom level used for the previous screen.
      * This is used for camera zoom transitions between screens.
@@ -392,9 +402,33 @@ public class UpgradeScreenModel {
             boolean upgradeSuccess = upgradeHandler.upgradeStage(cpGrid, upgrade.getType() == UpgradeType.FUSELAGE);
             if (upgradeSuccess) {
                 player.getInventory().spendResources(store.getUpgradeStageShelf().get(upgrade.getType()));
+                if (upgradeStageDisplay != null) {
+                    upgradeStageDisplay.setCurrentStats(getPlayerStats());
+                }
                 return true;
             }
         }
         return false;
+    }
+
+    public void setUpgradeStageDisplay(UpgradeStageDisplay display) {
+        this.upgradeStageDisplay = display;
+        upgradeStageDisplay.setMaxStats(maxStatCalculator.getFuselageMax(player.getNumFuselage()));
+        upgradeStageDisplay.setCurrentStats(getPlayerStats());
+        setUpgradeStageDisplayPrices(upgradeStageDisplay.getFuselage());
+    }
+
+    public void setUpgradeStageDisplayPrices(Fuselage usdFuselage) {
+        if (upgradeStageDisplay != null) {
+            if (usdFuselage == null) {
+                upgradeStageDisplay.setPrices(0, 0);
+            } else {
+                int upgradePrice = usdFuselage.hasUpgrade()
+                        ? store.getUpgradeStageShelf().get(usdFuselage.getUpgrade().getType())
+                        : 0;
+                int fuselagePrice = store.getUpgradeStageShelf().get(usdFuselage.getType());
+                upgradeStageDisplay.setPrices(fuselagePrice, upgradePrice);
+            }
+        }
     }
 }

@@ -20,7 +20,7 @@ public class UpgradeScreenController extends GenericController {
 
     public UpgradeScreenController(UpgradeScreen view, GameStateModel gameStateModel,
             SpaceGame game) {
-        super(view, gameStateModel, game); // GenericController gives us touchpos
+        super(view, gameStateModel, game);
         this.view = view;
         this.upgradeModel = gameStateModel.getUpgradeScreenModel();
     }
@@ -113,9 +113,6 @@ public class UpgradeScreenController extends GenericController {
             return true;
 
         } else if (cellPositionOnGrid(cpGrid) && upgradeModel.getUpgradeHandler().hasFuselage(cpGrid)) {
-            // TODO: add option for selling an upgrade?
-            // TODO: add option for selling a fuselage, as long as ship stays connected?
-
             upgradeModel.setCellHighlight(true, cpGrid);
             updateAndShowUpgradeStageDisplay(cpGrid);
             return true;
@@ -142,10 +139,12 @@ public class UpgradeScreenController extends GenericController {
         ShipUpgrade upgrade = view.getUpgradeStageDisplay().getClickedUpgrade(x, y, true);
         if (upgrade != null) { // didn't click on empty space, or clicked on already selected upgrade
             if (upgradeModel.attemptUpgradeStagePurchase(cpGrid, upgrade)) {// stage upgrade successful
-                view.getUpgradeStageDisplay().setCurrentStats(upgradeModel.getPlayerStats());
+                // view.getUpgradeStageDisplay().setCurrentStats(upgradeModel.getPlayerStats());
+                Fuselage usdFuselage = view.getUpgradeStageDisplay().getFuselage();
                 view.getUpgradeStageDisplay().setUpgradeEligibility(
-                        fuselageUpgradeableAndAffordable(view.getUpgradeStageDisplay().getFuselage()),
-                        upgradeUpgradeableAndAffordable(view.getUpgradeStageDisplay().getFuselage()));
+                        fuselageUpgradeableAndAffordable(usdFuselage),
+                        upgradeUpgradeableAndAffordable(usdFuselage));
+                upgradeModel.setUpgradeStageDisplayPrices(usdFuselage);
             }
         }
     }
@@ -161,6 +160,8 @@ public class UpgradeScreenController extends GenericController {
             view.getUpgradeStageDisplay().setUpgradeEligibility(
                     fuselageUpgradeableAndAffordable(fuselage),
                     upgradeUpgradeableAndAffordable(fuselage));
+
+            upgradeModel.setUpgradeStageDisplayPrices(fuselage);
 
             view.getUpgradeStageDisplay().setComponents(upgradeModel.getUpgradeHandler().getFuselage(cpGrid));
             view.getUpgradeStageDisplay().setVisibility(true);

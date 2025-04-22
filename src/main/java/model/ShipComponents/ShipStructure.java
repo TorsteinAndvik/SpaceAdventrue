@@ -278,6 +278,18 @@ public class ShipStructure implements ViewableShipStructure {
         return this.grid.iterator();
     }
 
+    public int getNumFuselage() {
+        int numFuselage = 0;
+
+        for (GridCell<Fuselage> cell : this) {
+            if (cell.value() != null) {
+                numFuselage++;
+            }
+        }
+
+        return numFuselage;
+    }
+
     /**
      * @param type the <code>UpgradeType</code> we are looking for
      * @return a <code>List</code> of <code>CellPosition</code> for each of the

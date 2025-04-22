@@ -220,7 +220,7 @@ public class PercentageBar {
     }
 
     /**
-     * Sets the max value of the bar to a minimum of <code>1f</code>.
+     * Sets the max value of the bar to a minimum of <code>0.001f</code>.
      * <p>
      * If current value would become larger than <code>maxValue</code>,
      * the current value is set equal to <code>maxValue</code>.
@@ -230,7 +230,7 @@ public class PercentageBar {
      * @param maxValue the new max value
      */
     public void setMaxValue(float maxValue) {
-        this.maxValue = Math.max(1f, maxValue);
+        this.maxValue = Math.max(0.001f, maxValue);
         this.currentValue = Math.min(currentValue, maxValue);
         updateBar();
     }

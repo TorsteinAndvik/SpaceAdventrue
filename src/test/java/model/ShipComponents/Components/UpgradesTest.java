@@ -2,6 +2,7 @@ package model.ShipComponents.Components;
 
 import model.ShipComponents.UpgradeStage;
 import model.ShipComponents.UpgradeType;
+import model.ShipComponents.Components.stats.StatModifier;
 import model.constants.PhysicsParameters;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -101,9 +102,11 @@ class UpgradesTest {
     @Test
     void upgradesApplyUpgradeModifierTest() {
         Turret basicTurret = new Turret();
+        StatModifier basicTurretStats = basicTurret.getStatModifier();
+        StatModifier basicTurretUpgradeStats = basicTurret.getUpgradeStatModifier();
         while (turret.upgrade()) {
-            basicTurret.getStatModifier().addModifier(basicTurret.getUpgradeStatModifier());
-            assertEquals(basicTurret.getModifiers(), turret.getModifiers());
+            basicTurretStats.addModifier(basicTurretUpgradeStats);
+            assertEquals(basicTurretStats.getModifiers(), turret.getModifiers());
         }
 
         // A maxed turret should not increase its stats if .upgrade() is called again:

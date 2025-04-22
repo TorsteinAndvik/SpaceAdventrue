@@ -108,6 +108,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         loadSprites();
         setupUISprites();
         setupUpgradeStageDisplay();
+        this.model.setUpgradeStageDisplay(upgradeStageDisplay);
         descriptionRect = new Rectangle(0, 0, 0, 0);
     }
 
@@ -603,12 +604,14 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         updateCameraZoom(model.getCurrentZoom());
         viewportGame.apply(true);
         viewportUI.apply(true);
+        model.setUpgradeStageDisplay(upgradeStageDisplay);
     }
 
     @Override
     public void hide() {
         Gdx.input.setInputProcessor(null);
         updateCameraZoom(model.getOldCameraZoom());
+        model.setCellHighlight(false, null);
     }
 
     @Override

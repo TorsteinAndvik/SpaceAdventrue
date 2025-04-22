@@ -194,6 +194,10 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
         return shipStructure.getRadius();
     }
 
+    public int getNumFuselage() {
+        return shipStructure.getNumFuselage();
+    }
+
     /**
      * Get the radius of the ship for proximity detection.
      * This radius takes into consideration the fact that

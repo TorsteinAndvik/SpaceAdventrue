@@ -114,12 +114,11 @@ public abstract class AsteroidFactory {
         }
 
         float distance = SpaceCalculator.distance(targetX - x, targetY - y);
-        float speed = distance / (2f * deltaTime); // TODO: Why does dividing by 2 fix collision course?
+        float speed = distance / (2f * deltaTime);
 
         float angle = (float) Math.toDegrees(Math.atan2(targetY - y, targetX - x));
 
         return SpaceCalculator.velocityFromAngleSpeed(angle, speed);
-
 
     }
 

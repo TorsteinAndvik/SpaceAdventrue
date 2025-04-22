@@ -17,7 +17,6 @@ public class Turret extends UpdateableShipUpgrade {
 
     public Turret(UpgradeStage stage) {
         super("Turret", "Fires lasers at enemies and asteroids", UpgradeType.TURRET, stage);
-
         // simple workaround to able to fire immediately
         timeSinceLastShot = statModifier.getModifiers().get(Stat.FIRE_RATE).floatValue();
     }

@@ -44,7 +44,7 @@ public class UpgradeStageDisplay {
     private int fuselagePrice = 25;
     private int upgradePrice = 50;
 
-    private boolean fuselageMode;
+    private boolean fuselageMode = true;
     private boolean fuselageUpgradeEligible;
     private boolean upgradeUpgradeEligible;
 
@@ -149,6 +149,12 @@ public class UpgradeStageDisplay {
         }
     }
 
+    public void setMaxStats(StatModifier max) {
+        for (Stat stat : Stat.values()) {
+            bars.get(stat).setMaxValue(max.getModifiers().get(stat).floatValue());
+        }
+    }
+
     private void setStatDiffs(ShipUpgrade upgrade) {
         StatModifier diff;
         if (upgrade != null && upgrade.getStage().isUpgradeable()) {
@@ -160,6 +166,11 @@ public class UpgradeStageDisplay {
         for (Stat stat : Stat.values()) {
             bars.get(stat).updateDiff(diff.getModifiers().get(stat).floatValue(), stat.positiveIsBeneficial);
         }
+    }
+
+    public void setPrices(int fuselagePrice, int upgradePrice) {
+        this.fuselagePrice = fuselagePrice;
+        this.upgradePrice = upgradePrice;
     }
 
     /**
@@ -338,27 +349,32 @@ public class UpgradeStageDisplay {
 
     private void renderPriceText(SpriteBatch batch, float x, float y, float width, float height) {
         // Draw fuselage price
-        if (fuselageUpgradeEligible) {
-            font.setColor(Palette.WHITE);
-        } else {
-            font.setColor(Palette.MUTED_RED_LIGHT);
-        }
-        priceGlyphLayout.setText(font, Integer.toString(fuselagePrice));
+        if (fuselagePrice > 0) {
+            if (fuselageUpgradeEligible) {
+                font.setColor(Palette.WHITE);
+            } else {
+                font.setColor(Palette.MUTED_RED_LIGHT);
+            }
+            priceGlyphLayout.setText(font, Integer.toString(fuselagePrice));
 
-        float fuselagePriceX = x + 2f * padding + spriteRadius - 0.5f * priceGlyphLayout.width;
-        float priceY = y + height - 2f * padding - 3f * spriteRadius;
-        font.draw(batch, priceGlyphLayout, fuselagePriceX, priceY);
+            float fuselagePriceX = x + 2f * padding + spriteRadius - 0.5f * priceGlyphLayout.width;
+            float priceY = y + height - 2f * padding - 3f * spriteRadius;
+            font.draw(batch, priceGlyphLayout, fuselagePriceX, priceY);
+        }
 
         // Draw upgrade price
-        if (upgradeUpgradeEligible) {
-            font.setColor(Palette.WHITE);
-        } else {
-            font.setColor(Palette.MUTED_RED_LIGHT);
-        }
-        priceGlyphLayout.setText(font, Integer.toString(upgradePrice));
+        if (upgradePrice > 0) {
+            if (upgradeUpgradeEligible) {
+                font.setColor(Palette.WHITE);
+            } else {
+                font.setColor(Palette.MUTED_RED_LIGHT);
+            }
+            priceGlyphLayout.setText(font, Integer.toString(upgradePrice));
 
-        float upgradePriceX = fuselagePriceX + 2f * spriteRadius + padding;
-        font.draw(batch, priceGlyphLayout, upgradePriceX, priceY);
+            float upgradePriceX = x + 3f * (padding + spriteRadius) - 0.5f * priceGlyphLayout.width;
+            float priceY = y + height - 2f * padding - 3f * spriteRadius;
+            font.draw(batch, priceGlyphLayout, upgradePriceX, priceY);
+        }
     }
 
     private void renderBarText(SpriteBatch batch, float barX, float y, float width, float height) {

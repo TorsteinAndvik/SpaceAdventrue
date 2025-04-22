@@ -20,10 +20,14 @@ public abstract class ShipUpgrade {
         this.name = name;
         this.description = description;
         this.type = type;
-        this.stage = stage;
+        this.stage = UpgradeStage.ZERO;
         this.statModifier = new StatModifier();
         this.upgradeModifier = new StatModifier();
         setupStatModifiers();
+
+        while (this.stage != stage) {
+            upgrade();
+        }
     }
 
     protected abstract void setupStatModifiers();
@@ -49,19 +53,19 @@ public abstract class ShipUpgrade {
     }
 
     public StatModifier getStatModifier() {
-        return statModifier;
+        return statModifier.copy();
     }
 
     public HashMap<Stat, Number> getModifiers() {
-        return statModifier.getModifiers();
+        return statModifier.copy().getModifiers();
     }
 
     public StatModifier getUpgradeStatModifier() {
-        return upgradeModifier;
+        return upgradeModifier.copy();
     }
 
     public HashMap<Stat, Number> getUpgradeModifiers() {
-        return upgradeModifier.getModifiers();
+        return upgradeModifier.copy().getModifiers();
     }
 
     /**
