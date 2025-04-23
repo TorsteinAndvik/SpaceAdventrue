@@ -4,8 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -56,6 +58,33 @@ public class MusicManagerTest {
     }
 
     @Test
+    public void setMusicEnabledTest() {
+        musicManager.setMusicEnabled(true);
+        verify(musicMock, never()).play();
+        verify(atmosphereMock, never()).play();
+
+        musicManager.init();
+
+        verify(musicMock, never()).play();
+        verify(atmosphereMock, never()).play();
+
+        musicManager.setMusicEnabled(true);
+        verify(musicMock, times(1)).play();
+        verify(atmosphereMock, times(1)).play();
+        verify(musicMock, times(1)).setVolume(anyFloat());
+        verify(atmosphereMock, times(1)).setVolume(anyFloat());
+
+        musicManager.setMusicEnabled(false);
+        verify(musicMock, times(1)).pause();
+        verify(atmosphereMock, times(1)).pause();
+
+        verify(musicMock, times(1)).play();
+        verify(atmosphereMock, times(1)).play();
+        verify(musicMock, times(1)).setVolume(anyFloat());
+        verify(atmosphereMock, times(1)).setVolume(anyFloat());
+    }
+
+    @Test
     public void playTest() {
         musicManager.play();
         verify(musicMock, never()).play();
@@ -66,6 +95,14 @@ public class MusicManagerTest {
         musicManager.play();
         verify(musicMock).play();
         verify(atmosphereMock).play();
+
+        assertTrue(musicManager.isMusicEnabled());
+        musicManager.setMusicEnabled(false);
+        assertFalse(musicManager.isMusicEnabled());
+
+        musicManager.play();
+        verify(musicMock, times(1)).play(); // shouldn't be called a 2nd time
+        verify(atmosphereMock, times(1)).play();
     }
 
     @Test
