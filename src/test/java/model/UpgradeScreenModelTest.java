@@ -240,7 +240,6 @@ class UpgradeScreenModelTest {
 
         model.getUpgradeHandler().expand();
         ShipStructure structure = model.getPlayer().getShipStructure();
-        System.out.println(structure.getGridCopy());
         assertTrue(structure.hasFuselage(new CellPosition(2, 1)));
         assertTrue(structure.hasFuselage(new CellPosition(1, 1)));
         assertTrue(structure.hasUpgrade(new CellPosition(2, 1)));
@@ -262,7 +261,6 @@ class UpgradeScreenModelTest {
 
             assertTrue(structure.hasFuselage(pos.offset(0, 1)));
             if (x == 1) {
-                System.out.println(structure.getGridCopy());
                 assertTrue(structure.hasUpgrade(new CellPosition(1, 1)));
             }
 

@@ -20,6 +20,9 @@ import model.Animation.AnimationType;
 import model.Globals.Collectable;
 import model.Globals.Collidable;
 import model.Globals.Damageable;
+import model.Score.BasicScoreFormula;
+import model.Score.GameStats;
+import model.Score.ScoreBoard;
 import model.ShipComponents.ShipFactory;
 import model.ShipComponents.UpgradeType;
 import model.ShipComponents.Components.Turret;
@@ -52,7 +55,10 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     private AnimationCallback animationCallback;
     private ScreenBoundsProvider screenBoundsProvider;
     private AudioCallback audioCallback;
-
+    private final ScoreBoard scoreBoard;
+    private boolean scoreSubmitted;
+    private float timeSurvived;
+    private int objectsDestroyed;
     private RandomAsteroidFactory randomAsteroidFactory;
     private DirectionalAsteroidFactory directionalAsteroidFactory;
     private float asteroidTimer = 0f;
@@ -75,6 +81,10 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         this.collectables = new LinkedList<>();
 
         this.hitDetection = new HitDetection(this);
+        scoreBoard = new ScoreBoard(5, new BasicScoreFormula());
+        timeSurvived = 0;
+        objectsDestroyed = 0;
+        scoreSubmitted = false;
 
         createDiamondFactory(50);
         createAsteroidFactory(50);
@@ -154,6 +164,11 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     @Override
     public void update(float delta) {
+        timeSurvived += delta;
+        if (player.isDestroyed() && !scoreSubmitted) {
+            submitScore();
+        }
+
         for (Asteroid asteroid : asteroids) {
             asteroid.update(delta);
         }
@@ -248,6 +263,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                     Collectable diamond = diamondFactory.spawn((SpaceBody) A);
                     collectables.add(diamond);
                     hitDetection.addCollider(diamond);
+                    objectsDestroyed++;
                 }
             }
             remove(A, true);
@@ -374,13 +390,13 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         }
     }
 
-    private void collectResources(Collidable collidable) {
-        if (collidable instanceof SpaceBody spaceBody) {
-            player.getInventory().addResource(spaceBody.getResourceValue());
-
-            // TODO: Remove when displayed on screen
-            System.out.println(player.getInventory().listInventory());
-        }
+    private void submitScore() {
+        //TODO: Get input from player
+        String playerName = "PLAYER NAME HERE";
+        GameStats gameStats = new GameStats(timeSurvived, objectsDestroyed, player.getResourceValue(),
+                player.getInventory().getResourceCount());
+        scoreBoard.submitScore(playerName, gameStats);
+        scoreSubmitted = true;
     }
 
     public void playerShoot() {
