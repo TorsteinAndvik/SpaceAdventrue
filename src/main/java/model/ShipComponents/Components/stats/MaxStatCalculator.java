@@ -11,11 +11,6 @@ import model.ShipComponents.Components.Turret;
 
 public class MaxStatCalculator {
 
-    public static void main(String[] args) {
-        MaxStatCalculator calculator = new MaxStatCalculator();
-        System.out.println(calculator.fuselageMax);
-    }
-
     private final StatModifier fuselageMax;
 
     public MaxStatCalculator() {
@@ -46,7 +41,7 @@ public class MaxStatCalculator {
      * @return a <code>StatModifier</code> containing the maximum value of each stat
      */
     public StatModifier getFuselageMax(int numFuselage) {
-        if (numFuselage < 0) {
+        if (numFuselage <= 0) {
             return new StatModifier();
         } else {
             StatModifier shipMax = new StatModifier();

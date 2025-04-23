@@ -1,6 +1,6 @@
 package model.constants;
 
-public class PhysicsParameters {
+public final class PhysicsParameters {
 
     public static final float fuselageMass = 1f;
 
