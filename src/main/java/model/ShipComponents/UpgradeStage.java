@@ -2,11 +2,11 @@ package model.ShipComponents;
 
 public enum UpgradeStage {
 
-    ZERO, // base stage
+    ZERO,
     ONE,
     TWO,
     THREE,
-    MAX; // final upgrade stage
+    MAX;
 
     public UpgradeStage nextStage() {
         return nextStage(this);
@@ -24,11 +24,5 @@ public enum UpgradeStage {
 
     public boolean isUpgradeable() {
         return this != UpgradeStage.MAX;
-    }
-
-    // Being able to display the number of upgrade stages available could be a nice
-    // detail for the view
-    public int numberOfUpgradeStages() {
-        return UpgradeStage.values().length;
     }
 }
