@@ -7,7 +7,7 @@ import model.ai.NullBrain;
 
 public class EnemyShip extends SpaceShip {
 
-    private Brain brain = new NullBrain();
+    protected Brain brain = new NullBrain();
 
     public EnemyShip(ShipStructure shipStructure, String name, String description,
             float x, float y, float angle) {
