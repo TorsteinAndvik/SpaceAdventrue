@@ -1,6 +1,8 @@
 package controller;
 
 import controller.audio.AudioCallback;
+import model.Animation.AnimationCallback;
+import model.ScreenBoundsProvider;
 
 public interface ControllableSpaceGameModel {
 
@@ -38,6 +40,7 @@ public interface ControllableSpaceGameModel {
     void stopMoving();
 
     // TODO: Update javadocs
+
     /**
      * Move the spaceship up.
      */
@@ -60,8 +63,22 @@ public interface ControllableSpaceGameModel {
 
     /**
      * Sets the audio callback object.
-     * 
+     *
      * @param audioCallback the <code>AudioCallback</code> object.
      */
     void setAudioCallback(AudioCallback audioCallback);
+
+    /**
+     * Sets the <code>AnimationCallback</code> for the model.
+     *
+     * @param animationCallback an AnimationCallback object.
+     */
+    void setAnimationCallback(AnimationCallback animationCallback);
+
+    /**
+     * Sets the <code>ScreenBoundsProvider</code> for the model.
+     *
+     * @param screenBoundsProvider a ScreenBoundsProvider object.
+     */
+    void setScreenBoundsProvider(ScreenBoundsProvider screenBoundsProvider);
 }

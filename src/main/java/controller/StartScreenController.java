@@ -32,12 +32,12 @@ public class StartScreenController extends GenericController {
         switch (keycode) {
             case Input.Keys.UP:
                 gameStateModel.setSelectedButtonIndex(
-                    Math.max(0, gameStateModel.getSelectedButtonIndex() - 1));
+                        Math.max(0, gameStateModel.getSelectedButtonIndex() - 1));
                 soundManager.play(SoundEffect.MENU_SELECT, 0.4f);
                 return true;
             case Input.Keys.DOWN:
                 gameStateModel.setSelectedButtonIndex(
-                    Math.min(menuButtons.size() - 1, gameStateModel.getSelectedButtonIndex() + 1));
+                        Math.min(menuButtons.size() - 1, gameStateModel.getSelectedButtonIndex() + 1));
                 soundManager.play(SoundEffect.MENU_SELECT, 0.4f);
                 return true;
             case Input.Keys.ENTER:
@@ -69,15 +69,10 @@ public class StartScreenController extends GenericController {
         soundManager.play(SoundEffect.MENU_SELECT, 0.7f);
 
         switch (index) {
-            case 0:
-                startGame();
-                break;
-            case 1:
-                showOptionsScreen();
-                break;
-            case 2:
-                exitGame();
-                break;
+            case 0 -> startGame();
+            case 1 -> showHighScoreScreen();
+            case 2 -> showOptionsScreen();
+            case 3 -> exitGame();
         }
     }
 
@@ -85,6 +80,8 @@ public class StartScreenController extends GenericController {
         gameStateModel.startNewGame();
         game.setSpaceScreen();
     }
+
+    private void showHighScoreScreen() { game.setHighScoreScreen(); }
 
     private void showOptionsScreen() {
         game.setOptionsScreen();

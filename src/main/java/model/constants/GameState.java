@@ -12,4 +12,5 @@ public enum GameState {
     PAUSED,
     GAME_OVER,
     OPTIONS,
+    HIGH_SCORE,
 }

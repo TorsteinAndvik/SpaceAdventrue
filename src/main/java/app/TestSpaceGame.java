@@ -14,6 +14,7 @@ import model.GameStateModel;
 import model.SpaceGameModel;
 import model.constants.GameState;
 import view.SpaceGame;
+import view.screens.HighScoreScreen;
 import view.screens.LoadingScreen;
 import view.screens.OptionsScreen;
 import view.screens.SpaceScreen;
@@ -46,7 +47,7 @@ public class TestSpaceGame extends Game implements SpaceGame {
         screenViewport = new ScreenViewport();
         screenViewport.setUnitsPerPixel((float) METERS / (float) Gdx.graphics.getWidth());
         extendViewport = new ExtendViewport(Gdx.graphics.getWidth() / METERS,
-            Gdx.graphics.getHeight() / METERS);
+                Gdx.graphics.getHeight() / METERS);
 
         manager = new AssetManager();
 
@@ -150,6 +151,14 @@ public class TestSpaceGame extends Game implements SpaceGame {
             gameStateModel.changeState(GameState.OPTIONS);
         }
         setScreen(new OptionsScreen(this, gameStateModel));
+    }
+
+    @Override
+    public void setHighScoreScreen() {
+        if (gameStateModel.getCurrentState() != GameState.HIGH_SCORE) {
+            gameStateModel.changeState(GameState.HIGH_SCORE);
+        }
+        setScreen(new HighScoreScreen(this, gameStateModel));
     }
 
 

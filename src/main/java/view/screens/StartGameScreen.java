@@ -21,6 +21,9 @@ import controller.StartScreenController;
 import java.util.ArrayList;
 import java.util.List;
 import model.GameStateModel;
+import model.Score.ScoreBoard;
+import model.Score.ScoreEntry;
+import model.Score.ViewableScoreBoard;
 import model.constants.GameState;
 import model.utils.MenuButton;
 import view.Palette;
@@ -35,6 +38,7 @@ public class StartGameScreen implements Screen {
     private final OrthographicCamera camera;
     private final AssetManager assetManager;
     private final StartScreenController controller;
+    private final ViewableScoreBoard scoreBoard;
 
     private final BitmapFont titleFont;
     private final BitmapFont regularFont;
@@ -79,7 +83,7 @@ public class StartGameScreen implements Screen {
         this.glyphLayout = new GlyphLayout();
 
         this.controller = new StartScreenController(this, gameStateModel, game);
-
+        this.scoreBoard = new ScoreBoard();
         setupBackground();
         setupFonts();
 
@@ -104,17 +108,17 @@ public class StartGameScreen implements Screen {
         this.background = new TextureRegion[6];
 
         background[0] = new TextureRegion(
-            assetManager.get("images/space/background/bkgd_1.png", Texture.class));
+                assetManager.get("images/space/background/bkgd_1.png", Texture.class));
         background[1] = new TextureRegion(
-            assetManager.get("images/space/background/bkgd_2.png", Texture.class));
+                assetManager.get("images/space/background/bkgd_2.png", Texture.class));
         background[2] = new TextureRegion(
-            assetManager.get("images/space/background/bkgd_3.png", Texture.class));
+                assetManager.get("images/space/background/bkgd_3.png", Texture.class));
         background[3] = new TextureRegion(
-            assetManager.get("images/space/background/bkgd_4.png", Texture.class));
+                assetManager.get("images/space/background/bkgd_4.png", Texture.class));
         background[4] = new TextureRegion(
-            assetManager.get("images/space/background/bkgd_6.png", Texture.class));
+                assetManager.get("images/space/background/bkgd_6.png", Texture.class));
         background[5] = new TextureRegion(
-            assetManager.get("images/space/background/bkgd_7.png", Texture.class));
+                assetManager.get("images/space/background/bkgd_7.png", Texture.class));
 
         this.backgroundParallax = new float[background.length];
         this.backgroundDrift = new float[background.length];
@@ -145,9 +149,11 @@ public class StartGameScreen implements Screen {
         menuButtons.clear();
         menuButtons.add(new MenuButton("START GAME", worldCenterX, startY));
         menuButtons.add(
-            new MenuButton("OPTIONS", worldCenterX, startY - spacing));
+                new MenuButton("HIGH SCORES", worldCenterX, startY - spacing));
         menuButtons.add(
-            new MenuButton("EXIT", worldCenterX, startY - 2 * spacing));
+                new MenuButton("OPTIONS", worldCenterX, startY - 2 * spacing));
+        menuButtons.add(
+                new MenuButton("EXIT", worldCenterX, startY - 3 * spacing));
 
         menuInitialized = true;
     }
@@ -184,7 +190,7 @@ public class StartGameScreen implements Screen {
         spriteBatch.begin();
         for (TextureRegion layer : background) {
             spriteBatch.draw(layer, 0, 0, backgroundViewport.getWorldWidth(),
-                backgroundViewport.getWorldHeight());
+                    backgroundViewport.getWorldHeight());
         }
         spriteBatch.end();
 
@@ -211,6 +217,7 @@ public class StartGameScreen implements Screen {
 
         // draw buttons
         renderButtons(spriteBatch);
+        renderScoreBoard(spriteBatch);
 
         spriteBatch.end();
 
@@ -236,8 +243,8 @@ public class StartGameScreen implements Screen {
         float relativeY = (mousePosition.y - screenCenterY) / screenCenterY;
 
         Vector2 mouseVelocity = new Vector2(
-            relativeX * mouseInfluence,
-            relativeY * mouseInfluence);
+                relativeX * mouseInfluence,
+                relativeY * mouseInfluence);
 
         // update each background layer
         for (int i = 0; i < background.length; i++) {
@@ -247,8 +254,8 @@ public class StartGameScreen implements Screen {
             // scrollX is negative when mouse is to the right
             // scrollY is positive when mouse is to the bottom
             background[i].scroll(
-                delta * (drift + parallax * mouseVelocity.x),
-                delta * (-drift + parallax * mouseVelocity.y));
+                    delta * (drift + parallax * mouseVelocity.x),
+                    delta * (-drift + parallax * mouseVelocity.y));
         }
     }
 
@@ -279,10 +286,10 @@ public class StartGameScreen implements Screen {
 
             // update button bounds for click detection
             button.setBounds(new Rectangle(
-                button.getX() - BUTTON_WIDTH / 2f,
-                button.getY() - BUTTON_HEIGHT / 2f,
-                BUTTON_WIDTH,
-                BUTTON_HEIGHT));
+                    button.getX() - BUTTON_WIDTH / 2f,
+                    button.getY() - BUTTON_HEIGHT / 2f,
+                    BUTTON_WIDTH,
+                    BUTTON_HEIGHT));
 
             // draw button text
             regularFont.draw(spriteBatch, buttonText, textX, textY);
