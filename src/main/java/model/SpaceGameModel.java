@@ -246,8 +246,8 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         }
 
         if (destroyA) {
-            if (B instanceof Bullet bullet && bullet.isPlayerBullet()) {
-                if (A instanceof SpaceBody && !(A instanceof Bullet)) {
+            if (B instanceof Bullet) {
+                if (A instanceof SpaceBody && !(A instanceof Bullet) && !(A instanceof Player)) {
 
                     Collectable diamond = diamondFactory.spawn((SpaceBody) A);
                     collectables.add(diamond);
@@ -258,8 +258,8 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         }
 
         if (destroyB) {
-            if (A instanceof Bullet bullet && bullet.isPlayerBullet()) {
-                if (B instanceof SpaceBody && !(B instanceof Bullet)) {
+            if (A instanceof Bullet) {
+                if (B instanceof SpaceBody && !(B instanceof Bullet) && !(B instanceof Player)) {
                     Diamond diamond = diamondFactory.spawn((SpaceBody) B);
                     collectables.add(diamond);
                     hitDetection.addCollider(diamond);
@@ -270,17 +270,15 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     }
 
     private boolean handleCollection(Collidable A, Collidable B) {
-        if (A instanceof Collectable c && B instanceof SpaceShip p) {
-            if (p instanceof Player) {
-                player.getInventory().addResource(c);
-            }
+        if (A instanceof Collectable c && B instanceof Player p) {
+
+            p.getInventory().addResource(c);
             remove(c, false);
             return true;
         }
-        if (B instanceof Collectable c && A instanceof SpaceShip p) {
-            if (p instanceof Player) {
-                player.getInventory().addResource(c);
-            }
+        if (B instanceof Collectable c && A instanceof Player p) {
+
+            p.getInventory().addResource(c);
             remove(c, false);
             return true;
         }
@@ -378,15 +376,6 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         }
     }
 
-    private void collectResources(Collidable collidable) {
-        if (collidable instanceof SpaceBody spaceBody) {
-            player.getInventory().addResource(spaceBody.getResourceValue());
-
-            // TODO: Remove when displayed on screen
-            System.out.println(player.getInventory().listInventory());
-        }
-    }
-
     public void playerShoot() {
         setShipToShoot(player);
     }
@@ -410,7 +399,6 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
             addLaser(point.x(), point.y(), PhysicsParameters.laserVelocity, ship.getRotationAngle() + 90f,
                     0.125f, ship.isPlayerShip()).setSourceID(ship.getID());
 
-            // TODO: Refactor using the turret's upgrade stage?
             int effect = rng.nextInt(3);
             if (effect == 0) {
                 playAudio(SoundEffect.LASER_0);

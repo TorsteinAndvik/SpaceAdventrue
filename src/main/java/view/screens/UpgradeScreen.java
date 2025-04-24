@@ -25,13 +25,19 @@ import grid.IGrid;
 import java.util.HashMap;
 import java.util.List;
 import model.ShipComponents.ShipStructure;
+import model.ShipComponents.UpgradeStage;
 import model.World.StoreItem;
+import model.utils.FloatPair;
 import view.Palette;
 import view.SpaceGame;
+import view.bars.UpgradeStageDisplay;
 import model.GameStateModel;
 import model.UpgradeScreenModel;
 import model.ShipComponents.UpgradeType;
 import model.ShipComponents.Components.Fuselage;
+import model.ShipComponents.Components.stats.Stat;
+import model.ShipComponents.Components.stats.StatModifier;
+
 import java.util.Map;
 
 /**
@@ -70,11 +76,14 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     private final float upgradeIconZoom = 0.8f;
     private float uiIconZoom;
 
-    private final Map<UpgradeType, Sprite> upgradeSprites = new HashMap<>();
+    private final Map<UpgradeType, Map<UpgradeStage, Sprite>> upgradeSprites = new HashMap<>();
     private final List<StoreItem<UpgradeType>> storeShelf;
 
     int cursorWidth = 64;
     int cursorHeight = 64;
+
+    // UpgradeStageDisplay //TODO: Should this be moved to UpgradeScreenModel?
+    private UpgradeStageDisplay upgradeStageDisplay;
 
     /**
      * Creates a new upgrade screen with necessary components for rendering and
@@ -98,6 +107,8 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         setupFonts();
         loadSprites();
         setupUISprites();
+        setupUpgradeStageDisplay();
+        this.model.setUpgradeStageDisplay(upgradeStageDisplay);
         descriptionRect = new Rectangle(0, 0, 0, 0);
     }
 
@@ -106,17 +117,21 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         squareGreen = createSprite("images/upgrade_grid_tile_green.png", 1, 1);
         squareGray = createSprite("images/upgrade_grid_tile_gray.png", 1, 1);
 
-        Sprite fuselage = createSprite("images/upgrades/fuselage_alt_stage_0.png", upgradeIconZoom, upgradeIconZoom);
-        Sprite turret = createSprite("images/upgrades/turret_laser_stage_0.png", upgradeIconZoom, upgradeIconZoom);
-        Sprite thruster = createSprite("images/upgrades/rocket_stage_0.png", upgradeIconZoom, upgradeIconZoom);
-        Sprite shield = createSprite("images/upgrades/shield_stage_0.png", upgradeIconZoom, upgradeIconZoom);
+        for (UpgradeType type : UpgradeType.values()) {
+            Map<UpgradeStage, Sprite> stageSprites = new HashMap<>();
+            String basePath = "images/upgrades/" + type.name().toLowerCase() + "_stage_";
+            for (UpgradeStage stage : UpgradeStage.values()) {
 
-        upgradeSprites.put(UpgradeType.FUSELAGE, fuselage);
-        upgradeSprites.put(UpgradeType.TURRET, turret);
-        upgradeSprites.put(UpgradeType.THRUSTER, thruster);
-        upgradeSprites.put(UpgradeType.SHIELD, shield);
+                String path = basePath + stage.ordinal() + ".png";
 
-        diamond = createSprite("images/space/diamond.png", 1, 1);
+                Sprite sprite = createSprite(path, upgradeIconZoom, upgradeIconZoom);
+
+                stageSprites.put(stage, sprite);
+            }
+            upgradeSprites.put(type, stageSprites);
+        }
+
+        diamond = createSprite("images/space/diamond.png", 1f, 1f);
         uiIconZoom = fontRegular.getData().lineHeight;
 
         msLeft = createSprite("images/ui/Mouse_Left_Key_Light.png", uiIconZoom, uiIconZoom);
@@ -145,7 +160,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
         // swap to game screen (Esc key)
         kbEsc.setX(0f);
-        // kbEsc.y must be set in render() since it changes dynamically with window size
+        kbEsc.setY(4.21f * fontRegular.getData().lineHeight);
     }
 
     private Sprite createSprite(String path, float width, float height) {
@@ -167,6 +182,18 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         fontRegular.getData().setScale(viewportGame.getUnitsPerPixel());
 
         glyphLayout = new GlyphLayout();
+    }
+
+    private void setupUpgradeStageDisplay() {
+        StatModifier max = new StatModifier();
+        for (Stat stat : Stat.values()) {
+            max.setModifier(stat, 42f);
+        }
+
+        upgradeStageDisplay = new UpgradeStageDisplay(max, upgradeSprites, fontRegular, upgradeIconZoom / 2f);
+        upgradeStageDisplay.setPosition(new FloatPair(3f, 1f));
+        upgradeStageDisplay.setCurrentStats(model.getPlayerStats());
+        upgradeStageDisplay.setVisibility(false);
     }
 
     private void drawValidFuselagePlacements() {
@@ -225,11 +252,11 @@ public class UpgradeScreen extends InputAdapter implements Screen {
                 continue;
             }
             CellPosition pos = cell.pos();
-            drawFuselage(pos);
+            drawFuselage(pos, cell.value().getStage());
 
             if (cell.value().hasUpgrade()) {
                 UpgradeType type = cell.value().getUpgrade().getType();
-                drawUpgrade(pos, type);
+                drawUpgrade(pos, type, cell.value().getUpgrade().getStage());
             }
         }
     }
@@ -241,6 +268,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
             model.updateOffsets(viewportGame.getWorldWidth(), viewportGame.getWorldHeight());
             model.offsetsMustBeUpdated = false;
         }
+
         ScreenUtils.clear(Palette.MUTED_GREEN);
         viewportGame.apply(false);
         batch.setProjectionMatrix(viewportGame.getCamera().combined);
@@ -254,7 +282,6 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         }
 
         drawShipGrid();
-
         drawShip();
 
         if (model.isUpgradeGrabbed()) {
@@ -279,7 +306,17 @@ public class UpgradeScreen extends InputAdapter implements Screen {
             upgrade.draw(batch);
         }
 
+        // draw cell highlight if a cell has been selected
+        if (model.getShowCellHighlight()) {
+            drawGridHighlight(model.getCellHighlightPosition());
+        }
+
         batch.end();
+
+        if (upgradeStageDisplay.getVisibility()) {
+            shape.setProjectionMatrix(viewportGame.getCamera().combined);
+            upgradeStageDisplay.render(batch, shape, true);
+        }
 
         // draw UI elements
         viewportUI.apply(true);
@@ -296,30 +333,29 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         // move camera (right click)
         msRight.draw(batch);
         fontRegular.draw(batch, "Move camera", fontRegular.getData().lineHeight,
-                2 * fontRegular.getData().lineHeight);
+                2f * fontRegular.getData().lineHeight);
 
         // grab upgrade (left click)
         msLeft.draw(batch);
         fontRegular.draw(batch, "Grab upgrade", fontRegular.getData().lineHeight,
-                3 * fontRegular.getData().lineHeight);
+                3f * fontRegular.getData().lineHeight);
 
         // inspect upgrade (T key)
         kbT.draw(batch);
         fontRegular.draw(batch, "Inspect upgrade", fontRegular.getData().lineHeight,
-                4 * fontRegular.getData().lineHeight);
+                4f * fontRegular.getData().lineHeight);
 
         // escape (Esc key)
-        kbEsc.setY(viewportUI.getWorldHeight() - 1.15f * fontRegular.getData().lineHeight);
         kbEsc.draw(batch);
         fontRegular.draw(batch, "Change screen", fontRegular.getData().lineHeight,
-                viewportUI.getWorldHeight() - 0.33f * fontRegular.getData().lineHeight);
+                5f * fontRegular.getData().lineHeight);
 
         // Resources
-        diamond.setY(viewportUI.getWorldHeight() - 3f * fontRegular.getData().lineHeight);
-        diamond.setX(diamond.getWidth() * -.15f);
+        diamond.setY(viewportUI.getWorldHeight() - 1.06f * diamond.getHeight());
+        diamond.setX(-0.15f * diamond.getWidth());
         diamond.draw(batch);
         fontRegular.draw(batch, String.valueOf(model.getPlayerResources()), diamond.getX() + diamond.getWidth(),
-                diamond.getY() + diamond.getHeight() - .3f);
+                diamond.getY() + 0.45f * diamond.getHeight() + 0.5f * fontRegular.getLineHeight());
 
         if (model.isCameraZoomRecently()) {
             float alpha = model.getCameraZoomDeltaTime() < model.getCameraZoomTextFadeCutoffTime() ? 1f
@@ -332,10 +368,9 @@ public class UpgradeScreen extends InputAdapter implements Screen {
                 fontColor.a = alpha;
                 fontRegular.setColor(fontColor);
                 fontRegular.draw(batch, "Zoom = x" + model.getCurrentZoom(),
-                        0.1f, 5 * fontRegular.getData().lineHeight);
+                        0.1f, 6f * fontRegular.getData().lineHeight);
             }
         }
-
         batch.end();
 
         // draw upgrade description if inspection mode is on
@@ -345,7 +380,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
             float width = 3f;
             float rectanglePadding = 0.1f;
-            glyphLayout.setText(fontRegular, upgradeDescription, Color.WHITE, width, Align.left,
+            glyphLayout.setText(fontRegular, upgradeDescription, Palette.WHITE, width, Align.left,
                     true);
 
             touchPos.set(Gdx.input.getX(), Gdx.input.getY() + cursorHeight);
@@ -366,6 +401,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
             batch.begin();
             fontRegular.draw(batch, glyphLayout,
                     touchPos.x, touchPos.y);
+
             batch.end();
         }
     }
@@ -406,6 +442,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
     }
 
+    // TODO: Move this to model?
     private void drawUpgradeShade(int x) {
         boolean canAfford = storeShelf.get(x).price() <= model.getPlayerResources();
         if (!canAfford) {
@@ -413,6 +450,12 @@ public class UpgradeScreen extends InputAdapter implements Screen {
             squareRed.setY(model.getUpgradeOffsetY());
             squareRed.draw(batch, 0.5f);
         }
+    }
+
+    private void drawGridHighlight(CellPosition cp) {
+        squareGreen.setX(model.getGridOffsetX() + cp.col());
+        squareGreen.setY(model.getGridOffsetY() + cp.row());
+        squareGreen.draw(batch, 0.5f);
     }
 
     private void drawGridSquare(Sprite squareSprite, int x, int y) {
@@ -425,12 +468,12 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         drawGridSquare(squareSprite, cell.pos().col(), cell.pos().row());
     }
 
-    private void drawFuselage(CellPosition cp) {
-        drawUpgrade(cp, UpgradeType.FUSELAGE);
+    private void drawFuselage(CellPosition cp, UpgradeStage stage) {
+        drawUpgrade(cp, UpgradeType.FUSELAGE, stage);
     }
 
-    private void drawUpgrade(CellPosition cp, UpgradeType type) {
-        Sprite upgrade = upgradeSprites.get(type);
+    private void drawUpgrade(CellPosition cp, UpgradeType type, UpgradeStage stage) {
+        Sprite upgrade = upgradeSprites.get(type).get(stage);
         upgrade.setX(model.getGridOffsetX() + cp.col() + 0.5f * (1f - upgradeIconZoom));
         upgrade.setY(model.getGridOffsetY() + cp.row() + 0.5f * (1f - upgradeIconZoom));
         upgrade.draw(batch);
@@ -458,7 +501,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     }
 
     public Sprite getSpriteFromIndex(int index) {
-        return upgradeSprites.get(getUpgradeTypeFromIndex(index));
+        return upgradeSprites.get(getUpgradeTypeFromIndex(index)).get(UpgradeStage.ZERO);
     }
 
     private boolean canPlaceItem(CellPosition cp) {
@@ -528,6 +571,10 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         viewportGame.unproject(pos);
     }
 
+    public UpgradeStageDisplay getUpgradeStageDisplay() {
+        return upgradeStageDisplay;
+    }
+
     @Override
     public void resize(int width, int height) {
         int oldWidth = viewportGame.getScreenWidth();
@@ -549,22 +596,22 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         viewportUI.update(width, height, true);
     }
 
-    float oldZoom;
-
     @Override
     public void show() {
-        oldZoom = ((OrthographicCamera) viewportGame.getCamera()).zoom;
+        model.setOldCameraZoom(((OrthographicCamera) viewportGame.getCamera()).zoom);
         Gdx.input.setInputProcessor(controller);
         controller.reset();
         updateCameraZoom(model.getCurrentZoom());
         viewportGame.apply(true);
         viewportUI.apply(true);
+        model.setUpgradeStageDisplay(upgradeStageDisplay);
     }
 
     @Override
     public void hide() {
         Gdx.input.setInputProcessor(null);
-        updateCameraZoom(oldZoom);
+        updateCameraZoom(model.getOldCameraZoom());
+        model.setCellHighlight(false, null);
     }
 
     @Override

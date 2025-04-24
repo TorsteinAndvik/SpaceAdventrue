@@ -7,10 +7,13 @@ import java.util.List;
 import java.util.Set;
 import model.ShipComponents.Components.Fuselage;
 import model.ShipComponents.Components.ShipUpgrade;
+import model.ShipComponents.Components.stats.MaxStatCalculator;
+import model.ShipComponents.Components.stats.StatModifier;
 import model.ShipComponents.UpgradeHandler;
 import model.SpaceCharacters.Ships.Player;
 import model.World.StoreItem;
 import model.World.UpgradeStore;
+import view.bars.UpgradeStageDisplay;
 import model.ShipComponents.UpgradeType;
 
 /**
@@ -28,6 +31,7 @@ public class UpgradeScreenModel {
     private final float[] cameraZoomLevels = { 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1f, 1.1f, 1.2f, 1.3f, 1.4f, 1.5f };
     private int cameraCurrentZoomLevel;
     private float cameraZoomDeltaTime;
+    private float oldCameraZoom;
     private final float cameraZoomTextFadeCutoffTime = 0.5f;
     private boolean cameraZoomRecently;
     private final Vector2 cameraPosition;
@@ -49,6 +53,12 @@ public class UpgradeScreenModel {
     private final UpgradeHandler upgradeHandler;
     public boolean offsetsMustBeUpdated;
 
+    private CellPosition highlightedCellPosition;
+    private boolean showCellHighlight;
+
+    private UpgradeStageDisplay upgradeStageDisplay;
+    private final MaxStatCalculator maxStatCalculator;
+
     /**
      * Initializes an upgrade screen model with vectors for tracking positions. Also
      * initializes
@@ -58,6 +68,7 @@ public class UpgradeScreenModel {
         this.player = player;
         upgradeHandler = new UpgradeHandler(player.getShipStructure());
         store = new UpgradeStore();
+        this.maxStatCalculator = new MaxStatCalculator();
 
         cameraPosition = new Vector2();
         mousePosition = new Vector2();
@@ -71,6 +82,7 @@ public class UpgradeScreenModel {
      * Reset state of the model.
      */
     public void resetState() {
+        upgradeInspectionModeIsActive = false;
         upgradeGrabbed = false;
         releaseGrabbedUpgrade = false;
         grabbedUpgradeIndex = -1;
@@ -86,10 +98,8 @@ public class UpgradeScreenModel {
      * This method handles camera zoom updates and processes the release of a
      * grabbed upgrade.
      * If an upgrade is grabbed and released, it is either placed as a fuselage or
-     * as a ship
-     * upgrade.
+     * as a ship upgrade.
      * After placing the upgrade, relevant state variables are reset.
-     * </p>
      *
      * @param delta The time elapsed since the last update, used for time-based
      *              calculations.
@@ -113,7 +123,10 @@ public class UpgradeScreenModel {
                         getGrabbedShipUpgrade().getType());
                 if (upgradeSuccess) {
                     player.getInventory().spendResources(upgradePrice);
-
+                    if (upgradeStageDisplay != null) {
+                        upgradeStageDisplay.setMaxStats(maxStatCalculator.getFuselageMax(player.getNumFuselage()));
+                        upgradeStageDisplay.setCurrentStats(getPlayerStats());
+                    }
                 }
             }
 
@@ -126,6 +139,10 @@ public class UpgradeScreenModel {
     private ShipUpgrade getGrabbedShipUpgrade() {
         UpgradeType upgradeType = store.getStoreItem(getGrabbedUpgradeIndex()).item();
         return ShipUpgrade.getShipUpgrade(upgradeType);
+    }
+
+    public StatModifier getPlayerStats() {
+        return player.getShipStructure().getCombinedStatModifier().copy();
     }
 
     /**
@@ -158,6 +175,19 @@ public class UpgradeScreenModel {
                 cameraZoomRecently = false;
             }
         }
+    }
+
+    // TODO: zoom-correction should be fixed in SpaceScreen, not in UpgradeScreen
+    /**
+     * Updates the camera zoom level used for the previous screen.
+     * This is used for camera zoom transitions between screens.
+     * It is recommended to call this in <code>UpgradeScreen.show()</code>.
+     * Value is retrieved with the <code>getOldCameraZoom()</code> method.
+     * 
+     * @param oldCameraZoom
+     */
+    public void setOldCameraZoom(float oldCameraZoom) {
+        this.oldCameraZoom = oldCameraZoom;
     }
 
     /**
@@ -203,6 +233,10 @@ public class UpgradeScreenModel {
 
     public float getCurrentZoom() {
         return cameraZoomLevels[cameraCurrentZoomLevel];
+    }
+
+    public float getOldCameraZoom() {
+        return oldCameraZoom;
     }
 
     public boolean isUpgradeGrabbed() {
@@ -307,7 +341,6 @@ public class UpgradeScreenModel {
 
     public void setReleasedCellPosition(CellPosition cellPosition) {
         releasedCellPosition = cellPosition;
-
     }
 
     public Player getPlayer() {
@@ -336,5 +369,66 @@ public class UpgradeScreenModel {
 
     public void exitUpgradeHandler() {
         upgradeHandler.exit();
+    }
+
+    public void setCellHighlight(boolean showCellHighlight, CellPosition cpGrid) {
+        if (upgradeHandler.hasFuselage(cpGrid)) {
+            this.showCellHighlight = showCellHighlight;
+            this.highlightedCellPosition = cpGrid;
+        } else {
+            this.showCellHighlight = false;
+        }
+    }
+
+    public void disableCellHighlight() {
+        showCellHighlight = false;
+    }
+
+    public boolean getShowCellHighlight() {
+        return showCellHighlight;
+    }
+
+    public CellPosition getCellHighlightPosition() {
+        return highlightedCellPosition;
+    }
+
+    public boolean canAfford(ShipUpgrade upgrade) {
+        int price = store.getUpgradeStageShelf().get(upgrade.getType());
+        return player.getInventory().canAfford(price);
+    }
+
+    public boolean attemptUpgradeStagePurchase(CellPosition cpGrid, ShipUpgrade upgrade) {
+        if (canAfford(upgrade)) {
+            boolean upgradeSuccess = upgradeHandler.upgradeStage(cpGrid, upgrade.getType() == UpgradeType.FUSELAGE);
+            if (upgradeSuccess) {
+                player.getInventory().spendResources(store.getUpgradeStageShelf().get(upgrade.getType()));
+                if (upgradeStageDisplay != null) {
+                    upgradeStageDisplay.setCurrentStats(getPlayerStats());
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void setUpgradeStageDisplay(UpgradeStageDisplay display) {
+        this.upgradeStageDisplay = display;
+        upgradeStageDisplay.setMaxStats(maxStatCalculator.getFuselageMax(player.getNumFuselage()));
+        upgradeStageDisplay.setCurrentStats(getPlayerStats());
+        setUpgradeStageDisplayPrices(upgradeStageDisplay.getFuselage());
+    }
+
+    public void setUpgradeStageDisplayPrices(Fuselage usdFuselage) {
+        if (upgradeStageDisplay != null) {
+            if (usdFuselage == null) {
+                upgradeStageDisplay.setPrices(0, 0);
+            } else {
+                int upgradePrice = usdFuselage.hasUpgrade()
+                        ? store.getUpgradeStageShelf().get(usdFuselage.getUpgrade().getType())
+                        : 0;
+                int fuselagePrice = store.getUpgradeStageShelf().get(usdFuselage.getType());
+                upgradeStageDisplay.setPrices(fuselagePrice, upgradePrice);
+            }
+        }
     }
 }

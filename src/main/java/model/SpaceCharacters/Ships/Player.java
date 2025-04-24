@@ -1,6 +1,5 @@
 package model.SpaceCharacters.Ships;
 
-import java.util.HashMap;
 import model.ShipComponents.ShipStructure;
 import model.ShipComponents.Components.stats.Stat;
 import model.SpaceCharacters.CharacterType;
@@ -17,7 +16,7 @@ public class Player extends SpaceShip implements ViewablePlayer {
 
     public Player(ShipStructure shipStructure, String name, String description, float x, float y) {
         super(shipStructure, name, description, CharacterType.PLAYER, x, y, 0);
-        inventory = new PlayerInventory(new HashMap<>(), 300);
+        inventory = new PlayerInventory(300);
     }
 
     @Override
@@ -36,30 +35,31 @@ public class Player extends SpaceShip implements ViewablePlayer {
     public void update(float deltaTime) {
         super.update(deltaTime);
 
-        float force = force();
+        float acceleration = force() / getMass();
         if (accelerateForward) {
-            addVelocityX(deltaTime * force
-                    * (float) Math.cos(Math.toRadians(rotation.getAngle() + 90f)) / getMass());
-            addVelocityY(deltaTime * force
-                    * (float) Math.sin(Math.toRadians(rotation.getAngle() + 90f)) / getMass());
+            addVelocityX(deltaTime * Math.min(acceleration, PhysicsParameters.accelerationLimitLongitudonal)
+                    * (float) Math.cos(Math.toRadians(rotation.getAngle() + 90f)));
+            addVelocityY(deltaTime * Math.min(acceleration, PhysicsParameters.accelerationLimitLongitudonal)
+                    * (float) Math.sin(Math.toRadians(rotation.getAngle() + 90f)));
             applySpeedLimit();
 
         } else if (accelerateBackward) {
-            addVelocityX(-deltaTime * force
-                    * (float) Math.cos(Math.toRadians(rotation.getAngle() + 90f)) / getMass());
-            addVelocityY(-deltaTime * force
-                    * (float) Math.sin(Math.toRadians(rotation.getAngle() + 90f)) / getMass());
+            addVelocityX(-deltaTime * Math.min(acceleration, PhysicsParameters.accelerationLimitLongitudonal)
+                    * (float) Math.cos(Math.toRadians(rotation.getAngle() + 90f)));
+            addVelocityY(-deltaTime * Math.min(acceleration, PhysicsParameters.accelerationLimitLongitudonal)
+                    * (float) Math.sin(Math.toRadians(rotation.getAngle() + 90f)));
             applySpeedLimit();
 
         } else {
             dampVelocity(deltaTime);
         }
 
+        float rotAcceleration = torque() / getMass();
         if (accelerateClockwise) {
-            addRotationSpeed(-deltaTime * torque() / getMass());
+            addRotationSpeed(-deltaTime * Math.min(rotAcceleration, PhysicsParameters.accelerationLimitRotational));
             applyRotationalSpeedLimit();
         } else if (accelerateCounterClockwise) {
-            addRotationSpeed(deltaTime * torque() / getMass());
+            addRotationSpeed(deltaTime * Math.min(rotAcceleration, PhysicsParameters.accelerationLimitRotational));
             applyRotationalSpeedLimit();
         } else {
             dampRotation(deltaTime);
@@ -70,14 +70,12 @@ public class Player extends SpaceShip implements ViewablePlayer {
     }
 
     private float force() {
-        return Math.min(
-                shipStructure.getCombinedStatModifier().getModifiers().get(Stat.ACCELERATION_FORCE).floatValue(),
-                PhysicsParameters.accelerationForceLimitLongitudonal);
+        return shipStructure.getCombinedStatModifier().getModifiers().get(Stat.ACCELERATION_FORCE).floatValue();
     }
 
     private float torque() {
-        return force() * PhysicsParameters.accelerationForceLimitRotational
-                / PhysicsParameters.accelerationForceLimitLongitudonal;
+        return force() * PhysicsParameters.accelerationLimitRotational
+                / PhysicsParameters.accelerationLimitLongitudonal;
     }
 
     private float maxSpeed() {

@@ -19,6 +19,10 @@ public class PlayerInventory implements Inventory {
         this.resources = resources;
     }
 
+    public PlayerInventory(int resources) {
+        this(new HashMap<>(), resources);
+    }
+
     public PlayerInventory() {
         this(new HashMap<>(), 0);
     }

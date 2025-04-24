@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -93,5 +94,22 @@ public class SoundManagerTest {
 
         soundManager.play(SoundEffect.LASER_0);
         verify(laser0Mock).play(anyFloat());
+    }
+
+    @Test
+    public void enabledTest() {
+        assertTrue(soundManager.isSoundEnabled());
+        assertFalse(soundManager.initialized);
+
+        soundManager.play(SoundEffect.LASER_0);
+        verify(laser0Mock, never()).play(anyFloat());
+
+        soundManager.init();
+        soundManager.play(SoundEffect.LASER_0);
+        verify(laser0Mock).play(anyFloat());
+
+        soundManager.setSoundEnabled(false);
+        soundManager.play(SoundEffect.LASER_0);
+        verify(laser0Mock, times(1)).play(anyFloat()); // shouldn't play a 2nd time
     }
 }

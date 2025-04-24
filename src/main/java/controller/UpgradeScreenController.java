@@ -7,6 +7,9 @@ import com.badlogic.gdx.math.Vector2;
 import grid.CellPosition;
 import model.GameStateModel;
 import model.UpgradeScreenModel;
+import model.ShipComponents.Components.Fuselage;
+import model.ShipComponents.Components.ShipUpgrade;
+import model.utils.FloatPair;
 import view.SpaceGame;
 import view.screens.UpgradeScreen;
 
@@ -17,7 +20,7 @@ public class UpgradeScreenController extends GenericController {
 
     public UpgradeScreenController(UpgradeScreen view, GameStateModel gameStateModel,
             SpaceGame game) {
-        super(view, gameStateModel, game); // GenericController gives us touchpos
+        super(view, gameStateModel, game);
         this.view = view;
         this.upgradeModel = gameStateModel.getUpgradeScreenModel();
     }
@@ -105,21 +108,79 @@ public class UpgradeScreenController extends GenericController {
         CellPosition cpGrid = convertMouseToGrid(touchPos.x, touchPos.y);
         CellPosition cpUpgrade = convertMouseToUpgradeBar(touchPos.x, touchPos.y);
 
-        if (cellPositionOnGrid(cpGrid)) {// TODO: Implement actions when clicking the grid.
-            // TODO: add option for selling an upgrade?
-            // TODO: add option for selling a fuselage, as long as ship stays connected?
-            // System.out.println("x = " + cpGrid.col() + ", y = " + cpGrid.row());
+        if (clickedOnUpgradeStageDisplay(touchPos.x, touchPos.y)) {
+            handleUpgradeDisplayClick(upgradeModel.getCellHighlightPosition(), touchPos.x, touchPos.y);
+            return true;
+
+        } else if (cellPositionOnGrid(cpGrid) && upgradeModel.getUpgradeHandler().hasFuselage(cpGrid)) {
+            upgradeModel.setCellHighlight(true, cpGrid);
+            updateAndShowUpgradeStageDisplay(cpGrid);
+            return true;
+
+        } else {
+            upgradeModel.disableCellHighlight();
+            view.getUpgradeStageDisplay().setVisibility(false);
         }
 
         if (cellPositionOnUpgradeBar(cpUpgrade)) {
             if (upgradeModel.getStoreShelf().get(cpUpgrade.col()).price() > upgradeModel.getPlayerResources()) {
                 return true;
             }
+
             upgradeModel.setGrabbedUpgradeIndex(cpUpgrade.col());
             upgradeModel.setUpgradeGrabbed(true);
+            return true;
         }
 
-        return true;
+        return false;
+    }
+
+    private void handleUpgradeDisplayClick(CellPosition cpGrid, float x, float y) {
+        ShipUpgrade upgrade = view.getUpgradeStageDisplay().getClickedUpgrade(x, y, true);
+        if (upgrade != null) { // didn't click on empty space, or clicked on already selected upgrade
+            if (upgradeModel.attemptUpgradeStagePurchase(cpGrid, upgrade)) {// stage upgrade successful
+                // view.getUpgradeStageDisplay().setCurrentStats(upgradeModel.getPlayerStats());
+                Fuselage usdFuselage = view.getUpgradeStageDisplay().getFuselage();
+                view.getUpgradeStageDisplay().setUpgradeEligibility(
+                        fuselageUpgradeableAndAffordable(usdFuselage),
+                        upgradeUpgradeableAndAffordable(usdFuselage));
+                upgradeModel.setUpgradeStageDisplayPrices(usdFuselage);
+            }
+        }
+    }
+
+    private void updateAndShowUpgradeStageDisplay(CellPosition cpGrid) {
+        Fuselage fuselage = upgradeModel.getUpgradeHandler().getFuselage(cpGrid);
+        if (fuselage != null) { // ==null would mean cpGrid is on the grid but not a fuselage
+            view.getUpgradeStageDisplay().setPosition(
+                    new FloatPair(
+                            upgradeModel.getGridOffsetX() + (float) cpGrid.col() + 1.5f,
+                            upgradeModel.getGridOffsetY() + (float) cpGrid.row() - 1.5f));
+
+            view.getUpgradeStageDisplay().setUpgradeEligibility(
+                    fuselageUpgradeableAndAffordable(fuselage),
+                    upgradeUpgradeableAndAffordable(fuselage));
+
+            upgradeModel.setUpgradeStageDisplayPrices(fuselage);
+
+            view.getUpgradeStageDisplay().setComponents(upgradeModel.getUpgradeHandler().getFuselage(cpGrid));
+            view.getUpgradeStageDisplay().setVisibility(true);
+        }
+    }
+
+    private boolean fuselageUpgradeableAndAffordable(Fuselage fuselage) {
+        return fuselage.getStage().isUpgradeable() && upgradeModel.canAfford(fuselage);
+    }
+
+    private boolean upgradeUpgradeableAndAffordable(Fuselage fuselage) {
+        return fuselage.hasUpgrade()
+                && fuselage.getUpgrade().getStage().isUpgradeable()
+                && upgradeModel.canAfford(fuselage.getUpgrade())
+                && upgradeModel.getUpgradeHandler().upgradeStageIncreaseIsAllowed(fuselage);
+    }
+
+    public boolean clickedOnUpgradeStageDisplay(float x, float y) {
+        return view.getUpgradeStageDisplay().clickedOnUpgradeStageDisplay(x, y);
     }
 
     @Override

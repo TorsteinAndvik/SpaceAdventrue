@@ -83,11 +83,35 @@ public class LoadingScreen implements Screen {
         queueTexture("images/upgrade_grid_tile_gray.png");
 
         // ship parts
-        queueTexture("images/upgrades/turret_laser_stage_0.png");
-        queueTexture("images/upgrades/fuselage_alt_stage_0.png");
-        queueTexture("images/upgrades/rocket_stage_0.png");
+        queueTexture("images/upgrades/turret_stage_0.png");
+        queueTexture("images/upgrades/turret_stage_1.png");
+        queueTexture("images/upgrades/turret_stage_2.png");
+        queueTexture("images/upgrades/turret_stage_3.png");
+        queueTexture("images/upgrades/turret_stage_4.png");
+
+        queueTexture("images/upgrades/fuselage_stage_0.png");
+        queueTexture("images/upgrades/fuselage_stage_1.png");
+        queueTexture("images/upgrades/fuselage_stage_2.png");
+        queueTexture("images/upgrades/fuselage_stage_3.png");
+        queueTexture("images/upgrades/fuselage_stage_4.png");
+
+        queueTexture("images/upgrades/thruster_stage_0.png");
+        queueTexture("images/upgrades/thruster_stage_1.png");
+        queueTexture("images/upgrades/thruster_stage_2.png");
+        queueTexture("images/upgrades/thruster_stage_3.png");
+        queueTexture("images/upgrades/thruster_stage_4.png");
+
         queueTexture("images/upgrades/shield_stage_0.png");
+        queueTexture("images/upgrades/shield_stage_1.png");
+        queueTexture("images/upgrades/shield_stage_2.png");
+        queueTexture("images/upgrades/shield_stage_3.png");
+        queueTexture("images/upgrades/shield_stage_4.png");
+
         queueTexture("images/upgrades/fuselage_enemy_stage_0.png");
+        queueTexture("images/upgrades/fuselage_enemy_stage_1.png");
+        queueTexture("images/upgrades/fuselage_enemy_stage_2.png");
+        queueTexture("images/upgrades/fuselage_enemy_stage_3.png");
+        queueTexture("images/upgrades/fuselage_enemy_stage_4.png");
 
         // ui
         queueTexture("images/ui/Mouse_Left_Key_Light.png");
@@ -154,7 +178,7 @@ public class LoadingScreen implements Screen {
             gameStateModel.onAssetsLoaded();
 
             // show start screen
-            if (Gdx.input.isTouched() && game instanceof TestSpaceGame) {
+            if (game instanceof TestSpaceGame) {
                 loadingProgressBar.setVisible(false);
                 ((TestSpaceGame) game).setStartScreen();
             }
