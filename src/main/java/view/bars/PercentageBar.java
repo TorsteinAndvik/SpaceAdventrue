@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 
 import model.utils.FloatPair;
+import view.Palette;
 
 public class PercentageBar {
     protected float maxValue;
@@ -12,6 +13,7 @@ public class PercentageBar {
     protected float scaleX = 1f;
     protected float scaleY = 1f;
     protected float outlineScale = 0.15f;
+    protected float outlineWidth = 0f;
     protected float notchScale = 0.15f;
     protected int numNotches = 0;
 
@@ -44,7 +46,7 @@ public class PercentageBar {
     }
 
     public PercentageBar(Rectangle dimensions, float maxValue, float currentValue) {
-        this(dimensions, maxValue, currentValue, Color.BLACK, Color.WHITE, Color.BLACK);
+        this(dimensions, maxValue, currentValue, Palette.WHITE, Palette.BLACK, Color.BLACK);
     }
 
     public PercentageBar(Rectangle dimensions, float maxValue) {
@@ -61,7 +63,7 @@ public class PercentageBar {
         this(new Rectangle(0f, 0f, 1f, 1f), 1f);
     }
 
-    private Rectangle copyRectangle(Rectangle rect) {
+    protected Rectangle copyRectangle(Rectangle rect) {
         return new Rectangle(rect.x, rect.y, rect.width, rect.height);
     }
 
@@ -103,24 +105,23 @@ public class PercentageBar {
 
         Color oldColor = renderer.getColor();
 
-        float outlineWidth = 0f;
         if (drawOutline) {
             outlineWidth = outlineScale * minDimension();
             renderer.setColor(outlineColor);
             renderer.rect(dimensions.x, dimensions.y, scaleX * dimensions.width, scaleY * dimensions.height);
+        } else {
+            outlineWidth = 0f;
         }
 
         renderer.setColor(bgColor);
         renderer.rect(dimensions.x + outlineWidth, dimensions.y + outlineWidth,
-                Math.max(scaleX * dimensions.width - 2f * outlineWidth, 0f),
-                Math.max(scaleY * dimensions.height - 2f * outlineWidth, 0f));
+                scaleX * dimensions.width - 2f * outlineWidth,
+                scaleY * dimensions.height - 2f * outlineWidth);
 
         renderer.setColor(barColor);
-        renderer.rect(bar.x + outlineWidth, bar.y + outlineWidth,
-                Math.max(scaleX * bar.width - 2f * outlineWidth, 0),
-                Math.max(scaleY * bar.height - 2f * outlineWidth, 0f));
+        renderer.rect(bar.x + outlineWidth, bar.y + outlineWidth, barWidth(), barHeight());
 
-        if (numNotches != 0) {
+        if (numNotches > 0) {
             float notchWidth = notchScale * minDimension();
             float notchDistance = (scaleX * dimensions.width - 2f * outlineWidth) / (numNotches + 1);
 
@@ -141,8 +142,23 @@ public class PercentageBar {
                         y + outlineWidth, notchWidth, height);
             }
         }
-
         renderer.setColor(oldColor);
+    }
+
+    protected float barWidth() {
+        return scaleX * outlineWidthScaleFactor() * bar.width;
+    }
+
+    protected float barHeight() {
+        return scaleY * bar.height - 2f * outlineWidth;
+    }
+
+    protected float outlineWidthScaleFactor() {
+        if (drawOutline) {
+            return (scaleX * dimensions.width - 2f * outlineWidth) / (scaleX * dimensions.width);
+        }
+        return 1f;
+
     }
 
     private float minDimension() {
@@ -204,7 +220,7 @@ public class PercentageBar {
     }
 
     /**
-     * Sets the max value of the bar to a minimum of <code>1f</code>.
+     * Sets the max value of the bar to a minimum of <code>0.001f</code>.
      * <p>
      * If current value would become larger than <code>maxValue</code>,
      * the current value is set equal to <code>maxValue</code>.
@@ -214,7 +230,7 @@ public class PercentageBar {
      * @param maxValue the new max value
      */
     public void setMaxValue(float maxValue) {
-        this.maxValue = Math.max(1f, maxValue);
+        this.maxValue = Math.max(0.001f, maxValue);
         this.currentValue = Math.min(currentValue, maxValue);
         updateBar();
     }

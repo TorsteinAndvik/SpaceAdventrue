@@ -13,7 +13,7 @@ import com.badlogic.gdx.utils.Pool;
 import controller.ControllableSpaceGameModel;
 import controller.audio.AudioCallback;
 import controller.audio.SoundEffect;
-import grid.CellPosition;
+import grid.GridCell;
 import model.Animation.AnimationCallback;
 import model.Animation.AnimationStateImpl;
 import model.Animation.AnimationType;
@@ -25,7 +25,6 @@ import model.Score.GameStats;
 import model.Score.ScoreBoard;
 import model.Score.SystemUserNameProvider;
 import model.ShipComponents.ShipFactory;
-import model.ShipComponents.UpgradeType;
 import model.ShipComponents.Components.Turret;
 import model.SpaceCharacters.Asteroid;
 import model.SpaceCharacters.Bullet;
@@ -62,7 +61,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     private int objectsDestroyed;
     private RandomAsteroidFactory randomAsteroidFactory;
     private DirectionalAsteroidFactory directionalAsteroidFactory;
-    private float asteroidTimer = 0f;
+    private float asteroidTimer = 5f; // >0 to make first wave spawn earlier
 
     private float enemySpawnTimer = 0f;
     private int spawnedShipCounter = 0;
@@ -128,7 +127,6 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         player = new Player(
                 ShipFactory.playerShip(), "player", "the player's spaceship", 8f, 1f);
         player.setRotationSpeed(0f);
-        player.setFireRate(0.4f);
     }
 
     private void createAsteroids() {
@@ -197,13 +195,13 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         }
 
         asteroidTimer += delta;
-        if (asteroidTimer > 6f) { // 6 for testing
+        if (asteroidTimer > asteroidSpawnTimer()) {
             createAsteroids();
             asteroidTimer = 0f;
         }
 
         enemySpawnTimer += delta;
-        if (enemySpawnTimer > 5f + spawnedShipCounter) {
+        if (enemySpawnTimer > enemySpawnTimer()) {
             spawnRandomShip();
             spawnedShipCounter++;
             enemySpawnTimer = 0f;
@@ -211,12 +209,18 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
         for (SpaceShip spaceShip : spaceShips) {
             spaceShip.update(delta);
-            if (spaceShip.isShooting()) {
-                shoot(spaceShip);
-            }
+            handleShootingLogic(spaceShip);
         }
 
         hitDetection.checkCollisions();
+    }
+
+    private float asteroidSpawnTimer() {
+        return 10f;
+    }
+
+    private float enemySpawnTimer() {
+        return 8f + 3f * spawnedShipCounter;
     }
 
     /**
@@ -257,8 +261,8 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         }
 
         if (destroyA) {
-            if (B instanceof Bullet bullet && bullet.isPlayerBullet()) {
-                if (A instanceof SpaceBody && !(A instanceof Bullet)) {
+            if (B instanceof Bullet) {
+                if (A instanceof SpaceBody && !(A instanceof Bullet) && !(A instanceof Player)) {
 
                     Collectable diamond = diamondFactory.spawn((SpaceBody) A);
                     collectables.add(diamond);
@@ -270,8 +274,8 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         }
 
         if (destroyB) {
-            if (A instanceof Bullet bullet && bullet.isPlayerBullet()) {
-                if (B instanceof SpaceBody && !(B instanceof Bullet)) {
+            if (A instanceof Bullet) {
+                if (B instanceof SpaceBody && !(B instanceof Bullet) && !(B instanceof Player)) {
                     Diamond diamond = diamondFactory.spawn((SpaceBody) B);
                     collectables.add(diamond);
                     hitDetection.addCollider(diamond);
@@ -282,17 +286,15 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     }
 
     private boolean handleCollection(Collidable A, Collidable B) {
-        if (A instanceof Collectable c && B instanceof SpaceShip p) {
-            if (p instanceof Player) {
-                player.getInventory().addResource(c);
-            }
+        if (A instanceof Collectable c && B instanceof Player p) {
+
+            p.getInventory().addResource(c);
             remove(c, false);
             return true;
         }
-        if (B instanceof Collectable c && A instanceof SpaceShip p) {
-            if (p instanceof Player) {
-                player.getInventory().addResource(c);
-            }
+        if (B instanceof Collectable c && A instanceof Player p) {
+
+            p.getInventory().addResource(c);
             remove(c, false);
             return true;
         }
@@ -401,21 +403,28 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     }
 
     public void playerShoot() {
-        player.setIsShooting(true);
+        setShipToShoot(player);
     }
 
-    public void shoot(ViewableSpaceShip ship) {
-        for (CellPosition cell : ship.getUpgradeTypePositions(UpgradeType.TURRET)) {
+    protected void setShipToShoot(SpaceShip ship) {
+        ship.setToShoot(true);
+    }
 
-            float x = (float) cell.col() + Turret.turretBarrelLocation().x();
-            float y = (float) cell.row() + Turret.turretBarrelLocation().y();
+    protected void handleShootingLogic(SpaceShip ship) {
+        for (GridCell<Turret> turretCell : ship.getTurretGridCells()) {
+
+            if (!turretCell.value().shoot()) {
+                continue;
+            }
+
+            float x = (float) turretCell.pos().col() + Turret.turretBarrelLocation().x();
+            float y = (float) turretCell.pos().row() + Turret.turretBarrelLocation().y();
             FloatPair point = SpaceCalculator.rotatePoint(x, y, ship.getRelativeCenterOfMass(),
                     ship.getAbsoluteCenterOfMass(), ship.getRotationAngle());
 
             addLaser(point.x(), point.y(), PhysicsParameters.laserVelocity, ship.getRotationAngle() + 90f,
                     0.125f, ship.isPlayerShip()).setSourceID(ship.getID());
 
-            // TODO: Refactor using the turret's upgrade stage?
             int effect = rng.nextInt(3);
             if (effect == 0) {
                 playAudio(SoundEffect.LASER_0);
@@ -425,7 +434,6 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                 playAudio(SoundEffect.LASER_2);
             }
         }
-        ship.hasShot();
     }
 
     /**
@@ -513,7 +521,6 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                 0f);
 
         enemyShip.setBrain(new LerpBrain(enemyShip, player));
-        enemyShip.setFireRate(0.6f);
 
         spaceShips.addLast(enemyShip);
         hitDetection.addCollider(enemyShip);

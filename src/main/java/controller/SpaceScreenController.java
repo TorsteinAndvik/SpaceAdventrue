@@ -10,7 +10,6 @@ import view.SpaceGame;
 import view.screens.SpaceScreen;
 
 public class SpaceScreenController extends GenericController implements AudioCallback {
-    // TODO: Move AudioCallback implementation to pause screen when implemented.
 
     private final SpaceGameModel model;
 
@@ -57,7 +56,7 @@ public class SpaceScreenController extends GenericController implements AudioCal
                 yield true;
             }
             case Keys.ESCAPE -> {
-                //TODO: Do we keep this?
+                // TODO: Do we keep this?
                 game.setStartScreen();
                 yield true;
             }

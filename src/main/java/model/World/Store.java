@@ -51,7 +51,8 @@ public class Store<E> {
 
     /**
      * Returns a list containing all items currently in stock.
-     * The returned list is a copy and modifications to it will not affect the store's internal stock.
+     * The returned list is a copy and modifications to it will not affect the
+     * store's internal stock.
      *
      * @return a list of all items in stock
      */

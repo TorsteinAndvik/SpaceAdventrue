@@ -7,7 +7,7 @@ import model.ai.NullBrain;
 
 public class EnemyShip extends SpaceShip {
 
-    private Brain brain = new NullBrain();
+    protected Brain brain = new NullBrain();
 
     public EnemyShip(ShipStructure shipStructure, String name, String description,
             float x, float y, float angle) {
@@ -15,12 +15,18 @@ public class EnemyShip extends SpaceShip {
     }
 
     @Override
-    public void update(float delta) {
-        timeSinceLastShot += delta;
-        brain.update(delta);
+    public void update(float deltaTime) {
+        super.update(deltaTime);
+        brain.update(deltaTime);
     }
 
     public void setBrain(Brain brain) {
         this.brain = brain;
+    }
+
+    @Override
+    public boolean isAccelerating() {
+        // set permanently on for rendering in SpaceScreen
+        return true;
     }
 }

@@ -3,9 +3,9 @@ package model.ai;
 public interface ShooterBrain {
 
     /**
-     * Fires the ship's turrets.
+     * Sets the ship's turret to shoot or not.
      */
-    void shoot();
+    void shoot(boolean setToShoot);
 
     /**
      * @return whether the ship is in firing range or not.

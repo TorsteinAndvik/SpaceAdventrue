@@ -2,6 +2,7 @@ package model.ShipComponents.Components;
 
 import model.ShipComponents.UpgradeStage;
 import model.ShipComponents.UpgradeType;
+import model.ShipComponents.Components.stats.StatModifier;
 import model.constants.PhysicsParameters;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class UpgradesTest {
@@ -95,6 +97,25 @@ class UpgradesTest {
         assertFalse(superShield.upgrade());
         assertFalse(superThruster.upgrade());
         assertFalse(superTurret.upgrade());
+    }
+
+    @Test
+    void upgradesApplyUpgradeModifierTest() {
+        Turret basicTurret = new Turret();
+        StatModifier basicTurretStats = basicTurret.getStatModifier();
+        StatModifier basicTurretUpgradeStats = basicTurret.getUpgradeStatModifier();
+        while (turret.upgrade()) {
+            basicTurretStats.addModifier(basicTurretUpgradeStats);
+            assertEquals(basicTurretStats.getModifiers(), turret.getModifiers());
+        }
+
+        // A maxed turret should not increase its stats if .upgrade() is called again:
+        basicTurret.getStatModifier().addModifier(basicTurret.getUpgradeStatModifier());
+        assertFalse(turret.upgrade());
+        assertNotEquals(basicTurret.getModifiers(), turret.getModifiers());
+
+        // Upgrade modifiers should not change - also tests different getters
+        assertEquals(basicTurret.getUpgradeStatModifier().getModifiers(), turret.getUpgradeModifiers());
     }
 
     @Test

@@ -73,7 +73,6 @@ public class MusicManager {
             if (enabled) {
                 setVolume(volume);
                 play();
-
             } else {
                 pause();
             }

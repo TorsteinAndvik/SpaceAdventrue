@@ -6,7 +6,10 @@ import model.ShipComponents.Components.stats.Stat;
 import model.constants.PhysicsParameters;
 import model.utils.FloatPair;
 
-public class Turret extends ShipUpgrade {
+public class Turret extends UpdateableShipUpgrade {
+
+    private float timeSinceLastShot; // able to fire immediately
+    private boolean isSetToShoot;
 
     public Turret() {
         this(UpgradeStage.ZERO);
@@ -14,6 +17,8 @@ public class Turret extends ShipUpgrade {
 
     public Turret(UpgradeStage stage) {
         super("Turret", "Fires lasers at enemies and asteroids", UpgradeType.TURRET, stage);
+        // simple workaround to able to fire immediately
+        timeSinceLastShot = statModifier.getModifiers().get(Stat.FIRE_RATE).floatValue();
     }
 
     /**
@@ -25,8 +30,43 @@ public class Turret extends ShipUpgrade {
     }
 
     @Override
-    protected void setupStatModifier() {
+    protected void setupStatModifiers() {
         statModifier.setModifier(Stat.MASS, PhysicsParameters.shipUpgradeMass);
-        statModifier.setModifier(Stat.RESOURCE_VALUE, 5);
+        statModifier.setModifier(Stat.FIRE_RATE, 1f);
+        statModifier.setModifier(Stat.RESOURCE_VALUE, 30);
+
+        // Upgrades:
+        upgradeModifier.setModifier(Stat.FIRE_RATE, 0.25f);
+        upgradeModifier.setModifier(Stat.RESOURCE_VALUE, 15);
+    }
+
+    @Override
+    public void update(float deltaTime) {
+        timeSinceLastShot += deltaTime;
+    }
+
+    public boolean canShoot() { // 1/x means it fires 1 shot every x seconds
+        return timeSinceLastShot >= 1f / statModifier.getModifiers().get(Stat.FIRE_RATE).floatValue();
+    }
+
+    public boolean shoot() {
+        if (isShooting()) {
+            hasShot();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isShooting() {
+        return isSetToShoot && canShoot();
+    }
+
+    public void setToShoot(boolean setToShoot) {
+        isSetToShoot = setToShoot;
+    }
+
+    public void hasShot() {
+        timeSinceLastShot = 0f;
+        setToShoot(false);
     }
 }

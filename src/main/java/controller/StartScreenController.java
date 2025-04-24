@@ -78,7 +78,7 @@ public class StartScreenController extends GenericController {
 
     private void startGame() {
         gameStateModel.startNewGame();
-        game.setSpaceScreen();
+        game.setUpgradeScreen();
     }
 
     private void showHighScoreScreen() { game.setHighScoreScreen(); }

@@ -17,7 +17,11 @@ public class Fuselage extends ShipUpgrade {
     }
 
     public Fuselage(ShipUpgrade upgrade) {
-        super("Fuselage", "The base building block of a ship", UpgradeType.FUSELAGE, UpgradeStage.ZERO);
+        this(upgrade, UpgradeStage.ZERO);
+    }
+
+    public Fuselage(ShipUpgrade upgrade, UpgradeStage fuselageStage) {
+        super("Fuselage", "The base building block of a ship", UpgradeType.FUSELAGE, fuselageStage);
         if (upgrade == null || upgrade.getType() == UpgradeType.FUSELAGE) {
             return;
         }
@@ -95,7 +99,7 @@ public class Fuselage extends ShipUpgrade {
         if (hasUpgrade()) {
             return statModifier.copy().addModifier(heldUpgrade.getStatModifier());
         }
-        return statModifier;
+        return statModifier.copy();
     }
 
     @Override
@@ -103,7 +107,7 @@ public class Fuselage extends ShipUpgrade {
         if (hasUpgrade()) {
             return statModifier.copy().addModifier(heldUpgrade.getStatModifier()).getModifiers();
         }
-        return statModifier.getModifiers();
+        return statModifier.copy().getModifiers();
     }
 
     @Override
@@ -112,9 +116,13 @@ public class Fuselage extends ShipUpgrade {
     }
 
     @Override
-    protected void setupStatModifier() {
+    protected void setupStatModifiers() {
         statModifier.setModifier(Stat.MASS, PhysicsParameters.fuselageMass);
-        statModifier.setModifier(Stat.HEALTH_VALUE, 5);
+        statModifier.setModifier(Stat.HEALTH_VALUE, 4);
         statModifier.setModifier(Stat.RESOURCE_VALUE, 10);
+
+        // Upgrades:
+        upgradeModifier.setModifier(Stat.HEALTH_VALUE, 1);
+        upgradeModifier.setModifier(Stat.RESOURCE_VALUE, 5);
     }
 }
