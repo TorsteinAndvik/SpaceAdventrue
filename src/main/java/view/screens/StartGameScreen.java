@@ -21,9 +21,6 @@ import controller.StartScreenController;
 import java.util.ArrayList;
 import java.util.List;
 import model.GameStateModel;
-import model.Score.ScoreBoard;
-import model.Score.ScoreEntry;
-import model.Score.ViewableScoreBoard;
 import model.constants.GameState;
 import model.utils.MenuButton;
 import view.Palette;
@@ -38,7 +35,6 @@ public class StartGameScreen implements Screen {
     private final OrthographicCamera camera;
     private final AssetManager assetManager;
     private final StartScreenController controller;
-    private final ViewableScoreBoard scoreBoard;
 
     private final BitmapFont titleFont;
     private final BitmapFont regularFont;
@@ -83,7 +79,6 @@ public class StartGameScreen implements Screen {
         this.glyphLayout = new GlyphLayout();
 
         this.controller = new StartScreenController(this, gameStateModel, game);
-        this.scoreBoard = new ScoreBoard();
         setupBackground();
         setupFonts();
 
@@ -217,7 +212,6 @@ public class StartGameScreen implements Screen {
 
         // draw buttons
         renderButtons(spriteBatch);
-        renderScoreBoard(spriteBatch);
 
         spriteBatch.end();
 

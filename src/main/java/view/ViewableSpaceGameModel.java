@@ -4,9 +4,6 @@ import java.io.InvalidClassException;
 import java.util.List;
 
 import model.Globals.Collectable;
-import model.Score.ScoreEntry;
-import model.ScreenBoundsProvider;
-import model.Animation.AnimationCallback;
 import model.SpaceCharacters.Asteroid;
 import model.SpaceCharacters.Bullet;
 import model.SpaceCharacters.Ships.SpaceShip;

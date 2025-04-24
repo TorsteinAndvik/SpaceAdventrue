@@ -23,6 +23,7 @@ import model.Globals.Damageable;
 import model.Score.BasicScoreFormula;
 import model.Score.GameStats;
 import model.Score.ScoreBoard;
+import model.Score.SystemUserNameProvider;
 import model.ShipComponents.ShipFactory;
 import model.ShipComponents.UpgradeType;
 import model.ShipComponents.Components.Turret;
@@ -390,9 +391,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     }
 
     private void submitScore() {
-        //TODO: Get input from player
-        String playerName = "PLAYER NAME HERE";
-        scoreBoard.submitScore(playerName, getGameStats());
+        scoreBoard.submitScore(new SystemUserNameProvider(), getGameStats());
         scoreSubmitted = true;
     }
 

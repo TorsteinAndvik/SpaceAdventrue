@@ -48,12 +48,11 @@ public class ScoreBoardTest {
 
     @Test
     void testReadScoreBoard() {
-        String name = "PlayerName";
         GameStats gs = new GameStats(1, 0, 0, 0);
         int score = basicScoreFormula.calculateScore(gs);
 
         assertNotEquals("[ScoreEntry[name=PlayerName, score=" + score + "]]", scoreBoard.getHighScores().toString());
-        scoreBoard.submitScore(name, gs);
+        scoreBoard.submitScore(new DummyNameProvider(), gs);
         assertEquals("[ScoreEntry[name=PlayerName, score=" + score + "]]", scoreBoard.getHighScores().toString());
 
     }
@@ -65,7 +64,7 @@ public class ScoreBoardTest {
 
         for (int x = 0; x <= maxEntries; x++) {
 
-            scoreBoard.submitScore(name, new GameStats(3, x, 0, 0));
+            scoreBoard.submitScore(new DummyNameProvider(), new GameStats(3, x, 0, 0));
 
             if (x == maxEntries) {
                 assertFalse(scoreBoard.getHighScores().contains(new ScoreEntry(name, firstScore)));
@@ -114,5 +113,13 @@ public class ScoreBoardTest {
     @Test
     void testGetScoreFormula() {
         assertEquals(basicScoreFormula, scoreBoard.getScoreFormula());
+    }
+
+    public static class DummyNameProvider implements NameProvider {
+
+        @Override
+        public String getPlayerName() {
+            return "PlayerName";
+        }
     }
 }

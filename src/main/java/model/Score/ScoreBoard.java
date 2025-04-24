@@ -90,14 +90,14 @@ public class ScoreBoard implements ViewableScoreBoard {
     /**
      * Submit a score to the {@code ScoreBoard}.
      *
-     * @param playerName the players name
-     * @param gameStats  statistics about the game
+     * @param nameProvider the class providing the players name
+     * @param gameStats    statistics about the game
      */
-    public void submitScore(String playerName, GameStats gameStats) {
+    public void submitScore(NameProvider nameProvider, GameStats gameStats) {
         if (scoreFormula == null) {
             return;
         }
-        ScoreEntry scoreEntry = new ScoreEntry(playerName, getScore(gameStats));
+        ScoreEntry scoreEntry = new ScoreEntry(nameProvider.getPlayerName(), getScore(gameStats));
         entries.add(scoreEntry);
         entries.sort(Comparator.comparingInt(ScoreEntry::score).reversed());
         if (entries.size() > maxEntries) {
