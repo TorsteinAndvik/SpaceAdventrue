@@ -42,7 +42,7 @@ import view.ViewableSpaceGameModel;
 public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpaceGameModel {
 
     private Player player;
-    private LinkedList<SpaceShip> spaceShips;
+    private final LinkedList<SpaceShip> spaceShips;
     private final HitDetection hitDetection;
     private final LinkedList<Asteroid> asteroids;
     private final LinkedList<Bullet> lasers;
@@ -66,7 +66,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     private float enemySpawnTimer = 0f;
     private int spawnedShipCounter = 0;
 
-    private Random rng = new Random();
+    private final Random rng = new Random();
     private DiamondFactory diamondFactory;
 
     public SpaceGameModel() {
@@ -485,7 +485,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     public void spawnRandomShip() {
         int numFuselage = 2 + spawnedShipCounter;
-        int numUpgrades = rng.nextInt((int) Math.max(2, numFuselage / 2), numFuselage + 1);
+        int numUpgrades = rng.nextInt(Math.max(2, numFuselage / 2), numFuselage + 1);
 
         Rectangle spawnPerimeter = screenBoundsProvider.getBounds();
 

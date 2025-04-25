@@ -9,12 +9,12 @@ import model.utils.SpaceCalculator;
 
 public class DirectionalAsteroidFactory extends AsteroidFactory {
 
-    private Random rng = new Random();
+    private final Random rng = new Random();
 
     /**
      * Generates a single asteroid at a random position at a certain angle from the
      * player
-     * 
+     *
      * @return A randomly spawned Asteroid object.
      */
     public Asteroid getAsteroid() {

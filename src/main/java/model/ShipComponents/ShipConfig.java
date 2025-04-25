@@ -22,7 +22,7 @@ public class ShipConfig {
                 + ", height="
                 + height
                 + ", components="
-                + sj.toString()
+                + sj
                 + '}';
     }
 

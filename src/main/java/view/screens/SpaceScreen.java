@@ -80,8 +80,8 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
 
     private Sprite diamond;
 
-    private Map<UpgradeStage, Sprite> enemyShipSprites = new HashMap<>();
-    private Map<UpgradeType, Map<UpgradeStage, Sprite>> shipSprites = new HashMap<>();
+    private final Map<UpgradeStage, Sprite> enemyShipSprites = new HashMap<>();
+    private final Map<UpgradeType, Map<UpgradeStage, Sprite>> shipSprites = new HashMap<>();
 
     // Background
     private TextureRegion[] background;
@@ -99,7 +99,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     private ShipThrusterLightMap shipThrusterLightMap;
 
     // Hitboxes (for testing/debugging)
-    private boolean showHitboxes = false;
+    private final boolean showHitboxes = false;
 
     public SpaceScreen(final SpaceGame game, final GameStateModel gameStateModel) {
         this.game = game;

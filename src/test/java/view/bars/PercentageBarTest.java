@@ -1,6 +1,8 @@
 package view.bars;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -107,15 +109,15 @@ public class PercentageBarTest {
     @Test
     public void visibilityTest() {
         bar.setVisible(true);
-        assertEquals(true, bar.visible);
+        assertTrue(bar.visible);
         bar.setVisible(true);
-        assertEquals(true, bar.visible);
+        assertTrue(bar.visible);
         bar.setVisible(false);
-        assertEquals(false, bar.visible);
+        assertFalse(bar.visible);
         bar.setVisible(false);
-        assertEquals(false, bar.visible);
+        assertFalse(bar.visible);
         bar.setVisible(true);
-        assertEquals(true, bar.visible);
+        assertTrue(bar.visible);
     }
 
     @Test

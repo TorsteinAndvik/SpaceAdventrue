@@ -3,6 +3,7 @@ package model.ShipComponents;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -140,12 +141,12 @@ public class ShipFactoryTest {
     void playerShipTest() {
         ShipStructure player = ShipFactory.playerShip();
         assertNotNull(player);
-        assertTrue(player.getHeight() == 2);
-        assertTrue(player.getWidth() == 1);
+        assertEquals(2, player.getHeight());
+        assertEquals(1, player.getWidth());
         assertTrue(player.hasFuselage(new CellPosition(0, 0)));
         assertTrue(player.hasFuselage(new CellPosition(1, 0)));
-        assertTrue(player.getGridCopy().get(new CellPosition(0, 0)).getUpgrade().getType() == UpgradeType.THRUSTER);
-        assertTrue(player.getGridCopy().get(new CellPosition(1, 0)).getUpgrade().getType() == UpgradeType.TURRET);
+        assertSame(player.getGridCopy().get(new CellPosition(0, 0)).getUpgrade().getType(), UpgradeType.THRUSTER);
+        assertSame(player.getGridCopy().get(new CellPosition(1, 0)).getUpgrade().getType(), UpgradeType.TURRET);
     }
 
     @Test
@@ -158,7 +159,7 @@ public class ShipFactoryTest {
         for (int i = 0; i < 500; i++) {
             ShipStructure basicShip = ShipFactory.generateShipStructure(2, 2);
             assertNotNull(basicShip);
-            assertTrue(basicShip.getHeight() * basicShip.getWidth() == 2);
+            assertEquals(2, basicShip.getHeight() * basicShip.getWidth());
 
             List<UpgradeType> upgrades = new ArrayList<>();
             for (GridCell<Fuselage> gridCell : basicShip) {

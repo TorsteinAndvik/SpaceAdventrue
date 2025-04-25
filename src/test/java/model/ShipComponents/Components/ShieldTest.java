@@ -18,7 +18,7 @@ public class ShieldTest {
 
         for (Stat stat : Stat.values()) {
             if (stat == Stat.MASS) {
-                assertTrue(shield.getModifiers().get(stat).floatValue() == PhysicsParameters.shipUpgradeMass);
+                assertEquals(PhysicsParameters.shipUpgradeMass, shield.getModifiers().get(stat).floatValue());
             } else if (stat == Stat.HEALTH_VALUE) {
                 assertTrue(shield.getModifiers().get(stat).intValue() > 0);
             } else if (stat == Stat.HEALTH_REGENERATION_RATE) {
@@ -26,7 +26,7 @@ public class ShieldTest {
             } else if (stat == Stat.RESOURCE_VALUE) {
                 assertTrue(shield.getModifiers().get(stat).intValue() > 0);
             } else {
-                assertTrue(shield.getModifiers().get(stat).floatValue() == 0f);
+                assertEquals(0f, shield.getModifiers().get(stat).floatValue());
             }
         }
     }

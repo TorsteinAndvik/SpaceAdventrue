@@ -8,7 +8,7 @@ import model.SpaceCharacters.Asteroid;
 
 public class RandomAsteroidFactory extends AsteroidFactory {
 
-    private Random rng = new Random();
+    private final Random rng = new Random();
 
     /**
      * Generates a shower of multiple asteroids at random positions in a set radius

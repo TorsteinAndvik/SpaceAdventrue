@@ -26,21 +26,21 @@ import view.Palette;
 public class UpgradeStageDisplay {
 
     private Fuselage fuselage;
-    private Map<UpgradeType, Map<UpgradeStage, Sprite>> upgradeSprites;
+    private final Map<UpgradeType, Map<UpgradeStage, Sprite>> upgradeSprites;
     private FloatPair position;
     private FloatPair diffBarScales;
-    private float padding = 0.05f;
-    private float barPaddingTextScale = 0.5f;
-    private Map<Stat, DiffBar> bars;
-    private Map<Stat, GlyphLayout> glyphLayouts;
-    private float spriteRadius;
+    private final float padding = 0.05f;
+    private final float barPaddingTextScale = 0.5f;
+    private final Map<Stat, DiffBar> bars;
+    private final Map<Stat, GlyphLayout> glyphLayouts;
+    private final float spriteRadius;
 
     private final FloatPair displayDimensions;
 
-    private Rectangle fuselageHitbox;
-    private Rectangle upgradeHitbox;
+    private final Rectangle fuselageHitbox;
+    private final Rectangle upgradeHitbox;
 
-    private GlyphLayout priceGlyphLayout = new GlyphLayout();
+    private final GlyphLayout priceGlyphLayout = new GlyphLayout();
     private int fuselagePrice = 25;
     private int upgradePrice = 50;
 
@@ -50,9 +50,9 @@ public class UpgradeStageDisplay {
 
     private boolean visible = true;
 
-    private Color outlineColor = Palette.BLACK;
-    private Color displayColor = Palette.MUTED_GREEN_LIGHT;
-    private BitmapFont font;
+    private final Color outlineColor = Palette.BLACK;
+    private final Color displayColor = Palette.MUTED_GREEN_LIGHT;
+    private final BitmapFont font;
 
     public UpgradeStageDisplay(StatModifier max, Map<UpgradeType, Map<UpgradeStage, Sprite>> upgradeSprites,
             BitmapFont font, float spriteRadius) {
@@ -189,7 +189,7 @@ public class UpgradeStageDisplay {
      * <code>endBatch</code> is <code>true</code>, otherwise it will not.
      * The option to not call <code>batch.end()</code> is to allow
      * for additional batch-rendering without an extra buffer dump.
-     * 
+     *
      * @param batch    the <code>SpriteBatch</code> to render Sprites with.
      * @param shape    the <code>ShapeRenderer</code> to render the display box
      *                 with.
@@ -393,7 +393,7 @@ public class UpgradeStageDisplay {
 
     private float getWidth() {
         float totalPadding = 6f * padding; // 2+2 for outline and inner borders, 1 between fuselage and upgrade,
-                                           // 1 between upgrade and bars
+        // 1 between upgrade and bars
         float spriteWidth = 2f * 2f * spriteRadius; // 2 radii for each Sprite (fuselage + upgrade)
 
         return totalPadding + spriteWidth + diffBarScales.x();

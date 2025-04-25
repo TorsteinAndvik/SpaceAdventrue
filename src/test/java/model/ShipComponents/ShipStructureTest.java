@@ -457,7 +457,7 @@ class ShipStructureTest {
         structure.setFuselage(new CellPosition(0, 2), new Fuselage(new Shield()));
         structure.setFuselage(new CellPosition(1, 1), new Fuselage());
 
-        List<CellPosition> actualShieldPositions = new ArrayList<>(Arrays.asList(new CellPosition(0, 2)));
+        List<CellPosition> actualShieldPositions = new ArrayList<>(List.of(new CellPosition(0, 2)));
         List<CellPosition> actualThrusterPositions = new ArrayList<>(
                 Arrays.asList(new CellPosition(0, 0), new CellPosition(0, 1)));
         List<CellPosition> actualTurretPositions = new ArrayList<>();

@@ -64,7 +64,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     private Sprite squareGreen;
     private Sprite squareGray;
     private Sprite diamond;
-    private Rectangle descriptionRect;
+    private final Rectangle descriptionRect;
 
     // ui sprites:
     private Sprite msLeft;
@@ -79,7 +79,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     private final Map<UpgradeType, Map<UpgradeStage, Sprite>> upgradeSprites = new HashMap<>();
     private final List<StoreItem<UpgradeType>> storeShelf;
 
-    private int cursorDimentions = 64;
+    private final int cursorDimentions = 64;
 
     private UpgradeStageDisplay upgradeStageDisplay;
 

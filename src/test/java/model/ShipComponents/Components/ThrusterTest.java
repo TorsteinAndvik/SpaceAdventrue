@@ -19,7 +19,7 @@ public class ThrusterTest {
 
         for (Stat stat : Stat.values()) {
             if (stat == Stat.MASS) {
-                assertTrue(thruster.getModifiers().get(stat).floatValue() == PhysicsParameters.shipUpgradeMass);
+                assertEquals(PhysicsParameters.shipUpgradeMass, thruster.getModifiers().get(stat).floatValue());
             } else if (stat == Stat.ACCELERATION_FORCE) {
                 assertTrue(thruster.getModifiers().get(stat).floatValue() > 0f);
             } else if (stat == Stat.RESOURCE_VALUE) {
@@ -27,7 +27,7 @@ public class ThrusterTest {
             } else if (stat == Stat.MAX_SPEED) {
                 assertTrue(thruster.getModifiers().get(stat).floatValue() > 0f);
             } else {
-                assertTrue(thruster.getModifiers().get(stat).floatValue() == 0f);
+                assertEquals(0f, thruster.getModifiers().get(stat).floatValue());
             }
         }
     }

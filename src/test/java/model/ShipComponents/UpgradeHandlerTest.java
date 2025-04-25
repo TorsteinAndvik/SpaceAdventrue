@@ -102,7 +102,7 @@ public class UpgradeHandlerTest {
         IGrid<Fuselage> gridCopy = upgradeHandler.getGrid();
 
         for (GridCell<Fuselage> cp : originalGrid) {
-            assertTrue(gridCopy.get(cp.pos()).equals(cp.value()));
+            assertEquals(gridCopy.get(cp.pos()), cp.value());
         }
 
     }
