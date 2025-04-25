@@ -20,6 +20,10 @@ import model.Animation.AnimationType;
 import model.Globals.Collectable;
 import model.Globals.Collidable;
 import model.Globals.Damageable;
+import model.Score.BasicScoreFormula;
+import model.Score.GameStats;
+import model.Score.ScoreBoard;
+import model.Score.SystemUserNameProvider;
 import model.ShipComponents.ShipFactory;
 import model.ShipComponents.Components.Turret;
 import model.SpaceCharacters.Asteroid;
@@ -51,7 +55,10 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     private AnimationCallback animationCallback;
     private ScreenBoundsProvider screenBoundsProvider;
     private AudioCallback audioCallback;
-
+    private final ScoreBoard scoreBoard;
+    private boolean scoreSubmitted;
+    private float timeSurvived;
+    private int objectsDestroyed;
     private RandomAsteroidFactory randomAsteroidFactory;
     private DirectionalAsteroidFactory directionalAsteroidFactory;
     private float asteroidTimer = 5f; // >0 to make first wave spawn earlier
@@ -65,7 +72,6 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     public SpaceGameModel() {
 
         setupPlayer();
-
         this.spaceShips = new LinkedList<>();
         this.spaceShips.add(player);
 
@@ -74,6 +80,10 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         this.collectables = new LinkedList<>();
 
         this.hitDetection = new HitDetection(this);
+        scoreBoard = new ScoreBoard(new BasicScoreFormula());
+        timeSurvived = 0;
+        objectsDestroyed = 0;
+        scoreSubmitted = false;
 
         createDiamondFactory(50);
         createAsteroidFactory(50);
@@ -152,6 +162,11 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     @Override
     public void update(float delta) {
+        timeSurvived += delta;
+        if (player.isDestroyed() && !scoreSubmitted) {
+            submitScore();
+        }
+
         for (Asteroid asteroid : asteroids) {
             asteroid.update(delta);
         }
@@ -252,6 +267,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                     Collectable diamond = diamondFactory.spawn((SpaceBody) A);
                     collectables.add(diamond);
                     hitDetection.addCollider(diamond);
+                    objectsDestroyed++;
                 }
             }
             remove(A, true);
@@ -374,6 +390,16 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         if (audioCallback != null) {
             audioCallback.play(soundEffect);
         }
+    }
+
+    private void submitScore() {
+        scoreBoard.submitScore(new SystemUserNameProvider(), getGameStats());
+        scoreSubmitted = true;
+    }
+
+    private GameStats getGameStats() {
+        return new GameStats(timeSurvived, objectsDestroyed, player.getResourceValue(),
+                player.getInventory().getResourceCount());
     }
 
     public void playerShoot() {
@@ -542,7 +568,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     @Override
     public int getScore() {
-        return 0;
+        return scoreBoard.getScore(getGameStats());
     }
 
     @Override

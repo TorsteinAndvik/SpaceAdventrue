@@ -4,8 +4,6 @@ import java.io.InvalidClassException;
 import java.util.List;
 
 import model.Globals.Collectable;
-import model.ScreenBoundsProvider;
-import model.Animation.AnimationCallback;
 import model.SpaceCharacters.Asteroid;
 import model.SpaceCharacters.Bullet;
 import model.SpaceCharacters.Ships.SpaceShip;
@@ -60,20 +58,5 @@ public interface ViewableSpaceGameModel {
      * @return a <code>List</code> of <code>Collectable</code> objects
      */
     List<Collectable> getCollectables();
-
-    /**
-     * Sets the <code>AnimationCallback</code> for the model.
-     *
-     * @param animationCallback an AnimationCallback object.
-     */
-    void setAnimationCallback(AnimationCallback animationCallback);
-
-    /**
-     * Sets the <code>ScreenBoundsProvider</code> for the model.
-     *
-     * @param screenBoundsProvider a ScreenBoundsProvider object.
-     */
-    void setScreenBoundsProvider(ScreenBoundsProvider screenBoundsProvider);
-
 
 }

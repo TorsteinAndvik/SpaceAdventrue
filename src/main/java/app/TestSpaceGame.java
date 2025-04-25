@@ -14,6 +14,7 @@ import model.GameStateModel;
 import model.SpaceGameModel;
 import model.constants.GameState;
 import view.SpaceGame;
+import view.screens.HighScoreScreen;
 import view.screens.LoadingScreen;
 import view.screens.OptionsScreen;
 import view.screens.SpaceScreen;
@@ -151,6 +152,15 @@ public class TestSpaceGame extends Game implements SpaceGame {
         }
         setScreen(new OptionsScreen(this, gameStateModel));
     }
+
+    @Override
+    public void setHighScoreScreen() {
+        if (gameStateModel.getCurrentState() != GameState.HIGH_SCORE) {
+            gameStateModel.changeState(GameState.HIGH_SCORE);
+        }
+        setScreen(new HighScoreScreen(this, gameStateModel));
+    }
+
 
     @Override
     public MusicManager getMusicManager() {

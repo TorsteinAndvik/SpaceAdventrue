@@ -57,6 +57,11 @@ public interface SpaceGame {
     void setOptionsScreen();
 
     /**
+     * Change active screen to HighScoreScreen
+     */
+    void setHighScoreScreen();
+
+    /**
      * Change active screen to StartScreen
      */
     void setStartScreen();

@@ -69,15 +69,10 @@ public class StartScreenController extends GenericController {
         soundManager.play(SoundEffect.MENU_SELECT, 0.7f);
 
         switch (index) {
-            case 0:
-                startGame();
-                break;
-            case 1:
-                showOptionsScreen();
-                break;
-            case 2:
-                exitGame();
-                break;
+            case 0 -> startGame();
+            case 1 -> showHighScoreScreen();
+            case 2 -> showOptionsScreen();
+            case 3 -> exitGame();
         }
     }
 
@@ -85,6 +80,8 @@ public class StartScreenController extends GenericController {
         gameStateModel.startNewGame();
         game.setUpgradeScreen();
     }
+
+    private void showHighScoreScreen() { game.setHighScoreScreen(); }
 
     private void showOptionsScreen() {
         game.setOptionsScreen();
