@@ -177,7 +177,6 @@ public class UpgradeScreenModel {
         }
     }
 
-    // TODO: zoom-correction should be fixed in SpaceScreen, not in UpgradeScreen
     /**
      * Updates the camera zoom level used for the previous screen.
      * This is used for camera zoom transitions between screens.

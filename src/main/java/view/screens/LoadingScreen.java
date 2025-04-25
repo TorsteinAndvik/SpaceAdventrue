@@ -1,6 +1,6 @@
 package view.screens;
 
-import app.TestSpaceGame;
+import app.SpaceGameImpl;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetDescriptor;
@@ -178,9 +178,9 @@ public class LoadingScreen implements Screen {
             gameStateModel.onAssetsLoaded();
 
             // show start screen
-            if (game instanceof TestSpaceGame) {
+            if (game instanceof SpaceGameImpl) {
                 loadingProgressBar.setVisible(false);
-                ((TestSpaceGame) game).setStartScreen();
+                ((SpaceGameImpl) game).setStartScreen();
             }
         }
 

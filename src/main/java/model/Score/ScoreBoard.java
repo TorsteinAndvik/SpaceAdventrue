@@ -1,6 +1,5 @@
 package model.Score;
 
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Json;
@@ -35,6 +34,7 @@ public class ScoreBoard implements ViewableScoreBoard {
         this.scoreFormula = scoreFormula;
         json = new Json();
         json.setSerializer(ScoreEntry.class, new Serializer<>() {
+            @SuppressWarnings("rawtypes")
             @Override
             public void write(Json json, ScoreEntry entry, Class knownType) {
                 json.writeObjectStart();
@@ -43,6 +43,7 @@ public class ScoreBoard implements ViewableScoreBoard {
                 json.writeObjectEnd();
             }
 
+            @SuppressWarnings("rawtypes")
             @Override
             public ScoreEntry read(Json json, JsonValue jsonData, Class type) {
                 String name = jsonData.getString("name");
@@ -55,7 +56,8 @@ public class ScoreBoard implements ViewableScoreBoard {
     }
 
     /**
-     * Convenience constructor - uses default file location for saving/loading scores.
+     * Convenience constructor - uses default file location for saving/loading
+     * scores.
      *
      * @param maxEntries   the maximum number of score entries to retain
      * @param scoreFormula the formula used to calculate scores
@@ -63,7 +65,6 @@ public class ScoreBoard implements ViewableScoreBoard {
     public ScoreBoard(int maxEntries, ScoreFormula scoreFormula) {
         this(maxEntries, Gdx.files.local(DEFAULT_LOCATION), scoreFormula);
     }
-
 
     /**
      * Convenience constructor - uses default max entries and file location.
@@ -156,4 +157,3 @@ public class ScoreBoard implements ViewableScoreBoard {
         return scoreFormula;
     }
 }
-

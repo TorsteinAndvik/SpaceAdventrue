@@ -2,7 +2,6 @@ package model.ShipComponents.Components.stats;
 
 import java.util.HashMap;
 
-// TODO: Add javadocs to StatModifier.java
 public class StatModifier {
 
     protected final HashMap<Stat, Number> modifiers;
@@ -18,6 +17,12 @@ public class StatModifier {
         }
     }
 
+    /**
+     * Sets the value of a stat.
+     * 
+     * @param stat  the <code>Stat</code> to set
+     * @param value the new value
+     */
     public void setModifier(Stat stat, Number value) {
         if (stat.intBased) {
             modifiers.put(stat, value.intValue());
@@ -26,10 +31,20 @@ public class StatModifier {
         }
     }
 
+    /**
+     * @return the HashMap of modifiers.
+     */
     public HashMap<Stat, Number> getModifiers() {
         return modifiers;
     }
 
+    /**
+     * Adds the modifiers of another <code>StatModifier</code> to <code>this</code>,
+     * and returns <code>this</code>.
+     * 
+     * @param addedModifiers the <code>StatModifier</code> to add
+     * @return <code>this</code>
+     */
     public StatModifier addModifier(StatModifier addedModifiers) {
         for (Stat stat : Stat.values()) {
             if (stat.intBased) {
@@ -43,6 +58,9 @@ public class StatModifier {
         return this;
     }
 
+    /**
+     * @return a safe-to-modify copy of <code>this</code>.
+     */
     public StatModifier copy() {
         StatModifier copy = new StatModifier();
         for (Stat stat : Stat.values()) {

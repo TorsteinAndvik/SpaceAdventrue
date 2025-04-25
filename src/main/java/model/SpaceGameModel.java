@@ -360,7 +360,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                     }
                     break;
 
-                case PLAYER: // TODO: Implement remove(Player) case (game over)
+                case PLAYER:
                     if (drawExplosion) {
                         addAnimationState(getPlayerCenterOfMass().x(), getPlayerCenterOfMass().y(), player.getRadius(),
                                 AnimationType.EXPLOSION);
@@ -527,23 +527,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     }
 
     @Override
-    public void gameStateActive() {
-    }
-
-    @Override
-    public void gameStatePaused() {
-    }
-
-    @Override
     public void stopGame() {
-    }
-
-    @Override
-    public void startNewGame() {
-    }
-
-    @Override
-    public void stopMoving() {
     }
 
     @Override
@@ -569,11 +553,6 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     @Override
     public int getScore() {
         return scoreBoard.getScore(getGameStats());
-    }
-
-    @Override
-    public int getProgression() {
-        return 0;
     }
 
     @Override

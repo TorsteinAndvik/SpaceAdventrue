@@ -21,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SpaceGameModelTest {
 
-    // TODO: Finish testing as we keep implementing methods in spaceGame.
     private SpaceGameModel gameModel;
     float initialPlayerX;
     float initialPlayerY;
@@ -54,41 +53,6 @@ class SpaceGameModelTest {
         assertNotNull(gameModel.getAsteroids());
         assertNotNull(gameModel.getLasers());
     }
-
-    /*
-     * // TODO: Not compatible with new movement physics
-     *
-     * @Test
-     * public void testPlayerMovement() {
-     * gameModel.accelerateForward();
-     * assertEquals(initialPlayerY + 1, gameModel.getPlayerSpaceShip().getY());
-     *
-     * gameModel.accelerateBackward();
-     * assertEquals(initialPlayerY, gameModel.getPlayerSpaceShip().getY());
-     *
-     * gameModel.accelerateCounterClockwise();
-     * assertEquals(initialPlayerX - 1, gameModel.getPlayerSpaceShip().getX());
-     *
-     * gameModel.accelerateClockwise();
-     * assertEquals(initialPlayerX, gameModel.getPlayerSpaceShip().getX());
-     * }
-     */
-
-    /*
-     * //TODO: Rewrite test to be compatible with refactored lasers in model
-     *
-     * @Test
-     * public void testShoot() {
-     * gameModel.shoot();
-     * Bullet laser = gameModel.getLaser();
-     * assertNotNull(laser);
-     * assertTrue(gameModel.laserExists);
-     *
-     * assertEquals(2, laser.getY()); // TODO: Fix. This test depends on ship grid
-     * size.
-     * assertEquals(gameModel.getPlayerSpaceShip().getCenter().x(), laser.getX());
-     * }
-     */
 
     @Test
     void friendlyFireBulletBulletTest() {
@@ -129,26 +93,5 @@ class SpaceGameModelTest {
 
         assertTrue(HitDetection.isFriendlyFire(gameModel.getPlayer(), laser));
         assertFalse(HitDetection.isFriendlyFire(laser, enemy_1));
-
     }
-
-    /*
-     * // TODO: This must be rewritten
-     *
-     * @Test
-     * void collectResourcesTest() {
-     * Inventory inventory = ((Player) gameModel.getPlayer()).getInventory();
-     * Asteroid a = gameModel.getAsteroids().get(0);
-     * assertFalse(inventory.hasResourceAmount(a.getResourceValue()));
-     *
-     * while (!a.isDestroyed()) {
-     * gameModel.shoot();
-     * Bullet laser = gameModel.getLasers().get(0);
-     * laser.setX(a.getX());
-     * laser.setY(a.getY());
-     * gameModel.handleCollision(a, laser);
-     * }
-     * assertTrue(inventory.hasResourceAmount(a.getResourceValue()));
-     * }
-     */
 }

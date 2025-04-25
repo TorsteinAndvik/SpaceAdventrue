@@ -1,6 +1,6 @@
 package view.screens;
 
-import app.TestSpaceGame;
+import app.SpaceGameImpl;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
@@ -24,7 +24,7 @@ import view.Palette;
 
 public class OptionsScreen implements Screen {
 
-    private final TestSpaceGame game;
+    private final SpaceGameImpl game;
     private final GameStateModel gameStateModel;
     private final SpriteBatch spriteBatch;
     private final ScreenViewport viewport;
@@ -61,7 +61,7 @@ public class OptionsScreen implements Screen {
     private final List<Rectangle> categoryBounds = new ArrayList<>();
     private Runnable backButtonAction;
 
-    public OptionsScreen(TestSpaceGame game, GameStateModel gameStateModel) {
+    public OptionsScreen(SpaceGameImpl game, GameStateModel gameStateModel) {
         this.game = game;
         this.gameStateModel = gameStateModel;
         this.spriteBatch = game.getSpriteBatch();

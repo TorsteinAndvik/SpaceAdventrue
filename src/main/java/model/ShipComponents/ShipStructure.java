@@ -104,7 +104,10 @@ public class ShipStructure implements ViewableShipStructure {
         return getMassProperties(grid);
     }
 
-    // TODO: Refactor to calculate and store once, update when needed
+    /**
+     * @return the total stats for <code>this</code> stored in a
+     *         <code>StatModifier</code>.
+     */
     public StatModifier getCombinedStatModifier() {
         StatModifier combinedModifier = new StatModifier();
 
@@ -119,6 +122,10 @@ public class ShipStructure implements ViewableShipStructure {
         return combinedModifier;
     }
 
+    /**
+     * @return the total stats for <code>this</code> stored in a
+     *         <code>HashMap</code>.
+     */
     public HashMap<Stat, Number> getCombinedStats() {
         return getCombinedStatModifier().getModifiers();
     }
@@ -550,7 +557,10 @@ public class ShipStructure implements ViewableShipStructure {
         centerOfMass = mp.centerOfMass();
     }
 
-    // TODO: Add javadoc + write tests
+    /**
+     * @return a list of all <code>GridCell</code> objects in
+     *         <code>this.getGrid()</code>holding <code>Turret</code> objects.
+     */
     public List<GridCell<Turret>> getTurretGridCells() {
         List<GridCell<Turret>> turretGridCells = new ArrayList<>();
         for (GridCell<Fuselage> gridCell : grid) {

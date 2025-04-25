@@ -450,7 +450,6 @@ public class UpgradeStageDisplay {
         }
     }
 
-    // TODO: Use these in render to communicate eligibility to the player.
     public void setUpgradeEligibility(boolean fuselageUpgradeEligible, boolean upgradeUpgradeEligible) {
         this.fuselageUpgradeEligible = fuselageUpgradeEligible;
         this.upgradeUpgradeEligible = upgradeUpgradeEligible;

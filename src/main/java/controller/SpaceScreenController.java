@@ -56,7 +56,6 @@ public class SpaceScreenController extends GenericController implements AudioCal
                 yield true;
             }
             case Keys.ESCAPE -> {
-                // TODO: Do we keep this?
                 game.setStartScreen();
                 yield true;
             }

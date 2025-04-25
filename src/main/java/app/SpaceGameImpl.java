@@ -21,7 +21,7 @@ import view.screens.SpaceScreen;
 import view.screens.StartGameScreen;
 import view.screens.UpgradeScreen;
 
-public class TestSpaceGame extends Game implements SpaceGame {
+public class SpaceGameImpl extends Game implements SpaceGame {
 
     private SpriteBatch batch;
     private ShapeRenderer shape;
@@ -160,7 +160,6 @@ public class TestSpaceGame extends Game implements SpaceGame {
         }
         setScreen(new HighScoreScreen(this, gameStateModel));
     }
-
 
     @Override
     public MusicManager getMusicManager() {

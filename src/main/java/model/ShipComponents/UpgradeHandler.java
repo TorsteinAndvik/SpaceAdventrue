@@ -80,7 +80,6 @@ public class UpgradeHandler {
         }
     }
 
-    // TODO: Should this be moved to UpgradeScreenModel?
     /**
      * Checks if the upgrade stage of the <code>fuselage</code>'s
      * held upgrade can be increased.
