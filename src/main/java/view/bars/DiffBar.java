@@ -6,10 +6,11 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import view.Palette;
 
 public class DiffBar extends PercentageBar {
+
     private float diffValue = 0f;
     private boolean diffIsBeneficial = true;
-    private Color goodColor = Palette.MUTED_GREEN_LIGHT;
-    private Color badColor = Palette.MUTED_RED_LIGHT;
+    private final Color goodColor = Palette.MUTED_GREEN_LIGHT;
+    private final Color badColor = Palette.MUTED_RED_LIGHT;
 
     public DiffBar(float maxValue, float currentValue) {
         super(maxValue, currentValue);
@@ -31,7 +32,7 @@ public class DiffBar extends PercentageBar {
      * Updates the diff value of the bar. The value is clamped such that
      * <code>currentValue</code> + <code>diffValue</code> remains between
      * <code>0f</code> and <code>maxValue</code>.
-     * 
+     *
      * @param diffValue
      * @param positiveIsBeneficial
      */

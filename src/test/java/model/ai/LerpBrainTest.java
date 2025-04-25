@@ -15,6 +15,7 @@ import model.utils.FloatPair;
 import model.utils.SpaceCalculator;
 
 public class LerpBrainTest {
+
     private LerpBrain lerpBrain;
     private EnemyShip enemy;
     private Player player;
@@ -89,9 +90,6 @@ public class LerpBrainTest {
 
         float newDistance = SpaceCalculator.distance(player.getAbsoluteCenterOfMass(), enemy.getAbsoluteCenterOfMass());
         float newRotation = enemy.getRotationAngle();
-
-        System.out.println(rotation);
-        System.out.println(newRotation);
 
         assertTrue(distance > newDistance);
         assertTrue(newRotation > rotation); // enemy starts at 0 rotation

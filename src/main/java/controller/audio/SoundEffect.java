@@ -6,5 +6,5 @@ public enum SoundEffect {
     LASER_1,
     LASER_2,
     SHIP_EXPLOSION_SMALL,
-    SHIP_EXPLOSION_BIG;
+    SHIP_EXPLOSION_BIG
 }

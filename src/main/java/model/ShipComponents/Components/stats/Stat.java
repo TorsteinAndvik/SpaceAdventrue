@@ -14,7 +14,7 @@ public enum Stat {
     public final String name;
     public final boolean positiveIsBeneficial;
 
-    private Stat(boolean intBased, String name, boolean positiveIsBeneficial) {
+    Stat(boolean intBased, String name, boolean positiveIsBeneficial) {
         this.intBased = intBased;
         this.name = name;
         this.positiveIsBeneficial = positiveIsBeneficial;

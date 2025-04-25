@@ -30,9 +30,9 @@ public class LoadingScreen implements Screen {
 
     private final SpaceGame game;
     private final GameStateModel gameStateModel;
-    private ScreenViewport viewport;
-    private ShapeRenderer shape;
-    private AssetManager manager;
+    private final ScreenViewport viewport;
+    private final ShapeRenderer shape;
+    private final AssetManager manager;
     private PercentageBar loadingProgressBar;
 
     // Constants
@@ -180,7 +180,7 @@ public class LoadingScreen implements Screen {
             // show start screen
             if (game instanceof SpaceGameImpl) {
                 loadingProgressBar.setVisible(false);
-                ((SpaceGameImpl) game).setStartScreen();
+                game.setStartScreen();
             }
         }
 
