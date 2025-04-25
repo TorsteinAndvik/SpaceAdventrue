@@ -1,6 +1,6 @@
 package view.screens;
 
-import app.TestSpaceGame;
+import app.SpaceGameImpl;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
@@ -27,7 +27,7 @@ import view.Palette;
 
 public class StartGameScreen implements Screen {
 
-    private final TestSpaceGame game;
+    private final SpaceGameImpl game;
     private final GameStateModel gameStateModel;
     private final SpriteBatch spriteBatch;
     private final ScreenViewport viewport;
@@ -64,7 +64,7 @@ public class StartGameScreen implements Screen {
 
     private final GlyphLayout glyphLayout;
 
-    public StartGameScreen(TestSpaceGame testSpaceGame, GameStateModel gameStateModel) {
+    public StartGameScreen(SpaceGameImpl testSpaceGame, GameStateModel gameStateModel) {
         this.game = testSpaceGame;
         this.gameStateModel = gameStateModel;
         this.spriteBatch = game.getSpriteBatch();
@@ -95,10 +95,6 @@ public class StartGameScreen implements Screen {
 
     }
 
-    /**
-     * Borrowed in its entirety from the SpaceScreen. TODO: Maybe refactor into a setup background
-     * class?
-     */
     private void setupBackground() {
         this.background = new TextureRegion[6];
 

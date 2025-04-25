@@ -79,10 +79,8 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     private final Map<UpgradeType, Map<UpgradeStage, Sprite>> upgradeSprites = new HashMap<>();
     private final List<StoreItem<UpgradeType>> storeShelf;
 
-    int cursorWidth = 64;
-    int cursorHeight = 64;
+    private int cursorDimentions = 64;
 
-    // UpgradeStageDisplay //TODO: Should this be moved to UpgradeScreenModel?
     private UpgradeStageDisplay upgradeStageDisplay;
 
     /**
@@ -378,12 +376,12 @@ public class UpgradeScreen extends InputAdapter implements Screen {
             int upgradeIndex = model.getInspectedUpgradeIndex();
             String upgradeDescription = storeShelf.get(upgradeIndex).description();
 
-            float width = 3f;
+            float width = 5f;
             float rectanglePadding = 0.1f;
             glyphLayout.setText(fontRegular, upgradeDescription, Palette.WHITE, width, Align.left,
                     true);
 
-            touchPos.set(Gdx.input.getX(), Gdx.input.getY() + cursorHeight);
+            touchPos.set(Gdx.input.getX(), Gdx.input.getY() + cursorDimentions);
             viewportUI.unproject(touchPos);
 
             descriptionRect.setWidth(glyphLayout.width);
@@ -442,7 +440,6 @@ public class UpgradeScreen extends InputAdapter implements Screen {
 
     }
 
-    // TODO: Move this to model?
     private void drawUpgradeShade(int x) {
         boolean canAfford = storeShelf.get(x).price() <= model.getPlayerResources();
         if (!canAfford) {

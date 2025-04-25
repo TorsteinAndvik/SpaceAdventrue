@@ -1,6 +1,6 @@
 package view.screens;
 
-import app.TestSpaceGame;
+import app.SpaceGameImpl;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
@@ -45,7 +45,7 @@ public class HighScoreScreen implements Screen {
     private float pulseTime = 0f;
     private final GlyphLayout glyphLayout;
 
-    public HighScoreScreen(TestSpaceGame game, GameStateModel gameStateModel) {
+    public HighScoreScreen(SpaceGameImpl game, GameStateModel gameStateModel) {
         this.gameStateModel = gameStateModel;
         this.spriteBatch = game.getSpriteBatch();
         AssetManager assetManager = game.getAssetManager();
@@ -130,7 +130,7 @@ public class HighScoreScreen implements Screen {
             ScoreEntry entry = scoreEntries.get(i);
             float y = scoreStartY - i * lineHeight;
             regularFont.setColor(i == 0 ? Color.GOLD : Color.WHITE);
-            
+
             regularFont.draw(spriteBatch, String.valueOf(i + 1), colNumX, y);
             regularFont.draw(spriteBatch, entry.name(), colNameX, y);
             regularFont.draw(spriteBatch, String.valueOf(entry.score()), colScoreX, y);
@@ -194,10 +194,12 @@ public class HighScoreScreen implements Screen {
     }
 
     @Override
-    public void pause() { }
+    public void pause() {
+    }
 
     @Override
-    public void resume() { }
+    public void resume() {
+    }
 
     @Override
     public void hide() {
@@ -205,7 +207,8 @@ public class HighScoreScreen implements Screen {
     }
 
     @Override
-    public void dispose() { }
+    public void dispose() {
+    }
 
     public Vector3 unprojectScreenCoords(int screenX, int screenY) {
         Vector3 worldCoords = new Vector3(screenX, screenY, 0f);

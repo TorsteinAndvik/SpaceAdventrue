@@ -19,18 +19,9 @@ public interface ViewableSpaceGameModel {
     int getScore();
 
     /**
-     * Returns an integer representation of the game progression @TODO are we
-     * changing this?
-     *
-     * @return an integer representation of the game score.
-     */
-    int getProgression();
-
-    /**
      * @return a <code>List</code> containing all <code>SpaceShip</code> objects in
      *         the model.
      */
-
     List<SpaceShip> getSpaceShips();
 
     /**

@@ -20,10 +20,10 @@ public class Main {
 
         float aspectRatio = (float) dm.width / (float) dm.height;
 
-        cfg.setTitle("TestSpaceGame");
+        cfg.setTitle("Space Adventure");
         cfg.setWindowedMode(dm.width / 2, (int) (aspectRatio * (float) dm.height / 2f));
 
         // cfg.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
-        new Lwjgl3Application(new TestSpaceGame(), cfg);
+        new Lwjgl3Application(new SpaceGameImpl(), cfg);
     }
 }

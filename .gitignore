@@ -52,3 +52,6 @@ dependency-reduced-pom.xml
 
 # Paint.net files
 *.pdn
+
+# highscore file
+score.txt
