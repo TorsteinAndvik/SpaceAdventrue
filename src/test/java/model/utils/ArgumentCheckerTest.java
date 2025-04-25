@@ -10,7 +10,8 @@ class ArgumentCheckerTest {
 
     @Test
     void requireNonNull_valueIsNonNull() {
-        assertDoesNotThrow(() -> ArgumentChecker.requireNonNull("hello", "Value should not be null"));
+        String string = "Hello";
+        assertDoesNotThrow(() -> ArgumentChecker.requireNonNull(string, "Value should not be null"));
     }
 
     @Test
