@@ -22,19 +22,35 @@ public class HitDetection {
         this.model = model;
     }
 
+    /**
+     * Adds a {@link Collidable} object to the front of the collider list.
+     * 
+     * @param c The {@code Collidable} object to be added.
+     */
     public void addCollider(Collidable c) {
         colliders.addFirst(c);
     }
 
+    /**
+     * Adds a list of {@link Collidable} objects to the collider list.
+     *
+     * @param colliders A list of objects that implement the {@code Collidable}
+     *                  interface to be added.
+     */
     public void addColliders(List<? extends Collidable> colliders) {
         this.colliders.addAll(colliders);
     }
 
+    /**
+     * Removes the specified {@link Collidable} object from the collider list.
+     *
+     * @param c The {@code Collidable} object to be removed.
+     */
     public void removeCollider(Collidable c) {
         colliders.remove(c);
     }
 
-    public boolean objectProximity(Collidable c1, Collidable c2) {
+    private boolean objectProximity(Collidable c1, Collidable c2) {
         if (c1 instanceof SpaceShip ship1) {
             if (c2 instanceof SpaceShip ship2) {
                 float dx = ship1.getAbsoluteCenterOfMass().x() - ship2.getAbsoluteCenterOfMass().x();
@@ -63,6 +79,15 @@ public class HitDetection {
         return SpaceCalculator.distance(c1.getX() - c2.getX(), c1.getY() - c2.getY()) < c1.getRadius() + c2.getRadius();
     }
 
+    /**
+     * Iterates through all pairs of registered {@link Collidable} objects and
+     * checks
+     * for potential collisions based on their proximity.
+     * <p>
+     * If two objects are within proximity of each other (as determined by
+     * {@link #objectProximity}),
+     * the {@link #checkCollision} method is called to handle the collision logic.
+     */
     public void checkCollisions() {
         for (int i = 0; i < colliders.size(); i++) {
             Collidable collA = colliders.get(i);

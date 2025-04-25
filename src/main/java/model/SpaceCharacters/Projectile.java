@@ -55,11 +55,12 @@ public abstract class Projectile extends SpaceBody implements Damageable, Damage
         this.hitPoints = Math.max(this.hitPoints - hitPoints, 0);
     }
 
-
+    @Override
     public void dealDamage(Damageable target, int damage) {
         target.takeDamage(damage);
     }
 
+    @Override
     public int getDamage() {
         return this.multiplier * this.hitPoints;
     }

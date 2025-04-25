@@ -192,10 +192,23 @@ public abstract class AsteroidFactory {
         this.spawnPerimeter = spawnPerimeter;
     }
 
+    /**
+     * Returns an {@link Asteroid} instance back to the asteroid pool,
+     * making it available for reuse.
+     *
+     * @param asteroid The {@code Asteroid} instance to be returned to the pool.
+     */
     public void free(Asteroid asteroid) {
         asteroidPool.free(asteroid);
     }
 
+    /**
+     * Pre-fills the asteroid pool with a specified number of {@link Asteroid}
+     * instances.
+     *
+     * @param asteroidPreFill The number of asteroid instances to pre-fill the pool
+     *                        with.
+     */
     public void fill(int asteroidPreFill) {
         asteroidPool.fill(asteroidPreFill);
     }
