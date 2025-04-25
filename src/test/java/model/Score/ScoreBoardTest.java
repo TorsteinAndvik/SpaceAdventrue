@@ -3,13 +3,17 @@ package model.Score;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.badlogic.gdx.Files;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,6 +40,10 @@ public class ScoreBoardTest {
         when(fileHandle.parent()).thenReturn(parentHandle);
         when(parentHandle.exists()).thenReturn(true);
         when(fileHandle.exists()).thenReturn(true);
+
+        Files mockFiles = mock(Files.class);
+        when(mockFiles.local(anyString())).thenReturn(fileHandle);
+        Gdx.files = mockFiles;
 
         scoreBoard = new ScoreBoard(maxEntries, fileHandle, basicScoreFormula);
     }
@@ -121,5 +129,19 @@ public class ScoreBoardTest {
         public String getPlayerName() {
             return "PlayerName";
         }
+    }
+
+    @Test
+    public void testConstructorMaxEntries_UsesDefaultFile() {
+        ScoreBoard board = new ScoreBoard(4, basicScoreFormula);
+        assertEquals(basicScoreFormula, board.getScoreFormula());
+        assertTrue(board.getHighScores().isEmpty());
+    }
+
+    @Test
+    public void testConstructorNoParams() {
+        ScoreBoard board = new ScoreBoard();
+        assertNull(board.getScoreFormula());
+        assertTrue(board.getHighScores().isEmpty());
     }
 }
