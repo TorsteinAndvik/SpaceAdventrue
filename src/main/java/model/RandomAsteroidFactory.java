@@ -20,7 +20,7 @@ public class RandomAsteroidFactory extends AsteroidFactory {
     public List<Asteroid> getAsteroidShower() {
 
         int asteroidNumber = rng.nextInt(4, 8);
-        List<Asteroid> showerList = new ArrayList<Asteroid>();
+        List<Asteroid> showerList = new ArrayList<>();
 
         for (int i = 0; i < asteroidNumber; i++) {
             showerList.add(spawnAsteroid());

@@ -33,8 +33,6 @@ class ShipStructureTest {
 
     private ShipStructure shipStructure;
     private ShipStructure shipStructureLarge;
-    private ShipConfig shipConfig;
-    private ShipConfig shipConfigLarge;
 
     @BeforeEach
     void setUp() {
@@ -52,7 +50,7 @@ class ShipStructureTest {
         component2.y = 1;
         component2.upgrade = upgrade;
 
-        shipConfig = new ShipConfig();
+        ShipConfig shipConfig = new ShipConfig();
         shipConfig.width = 10;
         shipConfig.height = 10;
         shipConfig.components = Arrays.asList(component1, component2);
@@ -87,7 +85,7 @@ class ShipStructureTest {
         component5.y = 1;
         component5.upgrade = upgradeFuselage;
 
-        shipConfigLarge = new ShipConfig();
+        ShipConfig shipConfigLarge = new ShipConfig();
         shipConfigLarge.width = 10;
         shipConfigLarge.height = 10;
         shipConfigLarge.components = Arrays.asList(component1, component2, component3, component4, component5);
@@ -460,7 +458,6 @@ class ShipStructureTest {
         List<CellPosition> actualShieldPositions = new ArrayList<>(List.of(new CellPosition(0, 2)));
         List<CellPosition> actualThrusterPositions = new ArrayList<>(
                 Arrays.asList(new CellPosition(0, 0), new CellPosition(0, 1)));
-        List<CellPosition> actualTurretPositions = new ArrayList<>();
 
         List<CellPosition> shieldPositions = structure.getUpgradeTypePositions(UpgradeType.SHIELD);
         List<CellPosition> thrusterPositions = structure.getUpgradeTypePositions(UpgradeType.THRUSTER);
@@ -468,7 +465,7 @@ class ShipStructureTest {
 
         assertEquals(actualShieldPositions.size(), shieldPositions.size());
         assertEquals(actualThrusterPositions.size(), thrusterPositions.size());
-        assertEquals(actualTurretPositions.size(), turretPositions.size());
+        assertEquals(0, turretPositions.size());
 
         for (CellPosition position : actualShieldPositions) {
             assertTrue(shieldPositions.contains(position));
@@ -478,9 +475,6 @@ class ShipStructureTest {
             assertTrue(thrusterPositions.contains(position));
         }
 
-        for (CellPosition position : actualTurretPositions) {
-            assertTrue(turretPositions.contains(position));
-        }
     }
 
     @Test

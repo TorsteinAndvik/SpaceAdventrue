@@ -77,7 +77,6 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     private Sprite asteroidLarge;
     private Sprite asteroidSmall;
     private Sprite laser;
-
     private Sprite diamond;
 
     private final Map<UpgradeStage, Sprite> enemyShipSprites = new HashMap<>();
@@ -468,8 +467,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     }
 
     private void cameraZoom(float delta) {
-        float zoom = SpaceCalculator.lerp1D(camera.zoom, getZoomLevel(), 1.2f * delta);
-        camera.zoom = zoom;
+        camera.zoom = SpaceCalculator.lerp1D(camera.zoom, getZoomLevel(), 1.2f * delta);
     }
 
     @Override
@@ -523,9 +521,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         float maxWidth = viewport.getWorldWidth() * zoomMax;
         float maxHeight = viewport.getWorldHeight() * zoomMax;
 
-        Rectangle bounds = new Rectangle(-maxWidth / 2f + camera.position.x,
+        return new Rectangle(-maxWidth / 2f + camera.position.x,
                 -maxHeight / 2f + camera.position.y, maxWidth, maxHeight);
-
-        return bounds;
     }
 }

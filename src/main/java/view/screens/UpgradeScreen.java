@@ -57,7 +57,6 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     private final Vector2 touchPos; // Simplifies converting touch / mouse position in window-coordinates (pixels)
     // to game-coordinates (meters x meters set in viewport)
 
-    private BitmapFont fontBold;
     private BitmapFont fontRegular;
     private GlyphLayout glyphLayout;
     private Sprite squareRed;
@@ -74,7 +73,6 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     private Sprite kbEsc;
 
     private final float upgradeIconZoom = 0.8f;
-    private float uiIconZoom;
 
     private final Map<UpgradeType, Map<UpgradeStage, Sprite>> upgradeSprites = new HashMap<>();
     private final List<StoreItem<UpgradeType>> storeShelf;
@@ -130,7 +128,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
         }
 
         diamond = createSprite("images/space/diamond.png", 1f, 1f);
-        uiIconZoom = fontRegular.getData().lineHeight;
+        float uiIconZoom = fontRegular.getData().lineHeight;
 
         msLeft = createSprite("images/ui/Mouse_Left_Key_Light.png", uiIconZoom, uiIconZoom);
         msMiddle = createSprite("images/ui/Mouse_Middle_Key_Light.png", uiIconZoom, uiIconZoom);
@@ -168,7 +166,7 @@ public class UpgradeScreen extends InputAdapter implements Screen {
     }
 
     private void setupFonts() {
-        fontBold = manager.get("fonts/PixelOperatorMono-Bold.ttf", BitmapFont.class);
+        BitmapFont fontBold = manager.get("fonts/PixelOperatorMono-Bold.ttf", BitmapFont.class);
         fontRegular = manager.get("fonts/PixelOperatorMonoHB.ttf", BitmapFont.class);
 
         // font are set as [integer]pt, need to scale them to our viewport by ratio of

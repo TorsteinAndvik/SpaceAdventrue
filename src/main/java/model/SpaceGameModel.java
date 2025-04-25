@@ -85,11 +85,9 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         objectsDestroyed = 0;
         scoreSubmitted = false;
 
-        createDiamondFactory(50);
-        createAsteroidFactory(50);
-        createLaserPool(300);
-        createAsteroidFactory(100);
-        createLaserPool(200);
+        createDiamondFactory();
+        createAsteroidFactory();
+        createLaserPool();
 
         registerColliders();
 
@@ -97,12 +95,14 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         this.transformMatrix = new Matrix4();
     }
 
-    private void createDiamondFactory(int diamondPreFill) {
+    private void createDiamondFactory() {
+        int diamondPreFill = 20;
         diamondFactory = new DiamondFactory();
         diamondFactory.fill(diamondPreFill);
     }
 
-    private void createAsteroidFactory(int asteroidPreFill) {
+    private void createAsteroidFactory() {
+        int asteroidPreFill = 30;
         randomAsteroidFactory = new RandomAsteroidFactory();
         randomAsteroidFactory.setShip(player);
         randomAsteroidFactory.fill(asteroidPreFill);
@@ -112,7 +112,8 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     }
 
-    private void createLaserPool(int laserPreFill) {
+    private void createLaserPool() {
+        int laserPreFill = 60;
         this.laserPool = new Pool<>() {
             @Override
             protected Bullet newObject() {
@@ -335,9 +336,8 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                     for (Collectable collectable : this.collectables) {
                         if (collectable == c) {
                             collectables.remove(c);
-                            diamondFactory.free((Diamond) c);
+                            if (c instanceof Diamond d) { diamondFactory.free(d); }
                             break;
-
                         }
                     }
 
@@ -430,7 +430,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                 playAudio(SoundEffect.LASER_0);
             } else if (effect == 1) {
                 playAudio(SoundEffect.LASER_1);
-            } else if (effect == 2) {
+            } else {
                 playAudio(SoundEffect.LASER_2);
             }
         }
@@ -464,15 +464,6 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         return new Matrix4(transformMatrix);
     }
 
-    /**
-     * Gets the center of mass coordinates for a ship
-     *
-     * @param ship the ship to get center of mass for
-     * @return the x,y coordinates of the center of mass
-     */
-    public FloatPair getShipCenterOfMass(SpaceShip ship) {
-        return ship.getAbsoluteCenterOfMass();
-    }
 
     /**
      * Gets the center of mass coordinates for the player

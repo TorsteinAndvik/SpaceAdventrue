@@ -31,13 +31,13 @@ public class DirectionalAsteroidFactory extends AsteroidFactory {
     public List<Asteroid> getAsteroidShower() {
 
         int asteroidNumber = rng.nextInt(4, 8);
-        List<Asteroid> showerList = new ArrayList<Asteroid>();
+        List<Asteroid> showerList = new ArrayList<>();
         while (showerList.size() < asteroidNumber) {
             Asteroid potential = spawnDirectionalAsteroid();
-            List<Asteroid> collisionCheck = new ArrayList<Asteroid>();
-            for (int i = 0; i < showerList.size(); i++) {
-                if (SpaceCalculator.collisionCalculator(potential, showerList.get(i))) {
-                    collisionCheck.add(showerList.get(i));
+            List<Asteroid> collisionCheck = new ArrayList<>();
+            for (Asteroid asteroid : showerList) {
+                if (SpaceCalculator.collisionCalculator(potential, asteroid)) {
+                    collisionCheck.add(asteroid);
                 }
             }
             if (collisionCheck.size() == 0) {
