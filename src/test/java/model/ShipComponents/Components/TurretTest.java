@@ -20,13 +20,13 @@ public class TurretTest {
 
         for (Stat stat : Stat.values()) {
             if (stat == Stat.MASS) {
-                assertTrue(turret.getModifiers().get(stat).floatValue() == PhysicsParameters.shipUpgradeMass);
+                assertEquals(PhysicsParameters.shipUpgradeMass, turret.getModifiers().get(stat).floatValue());
             } else if (stat == Stat.FIRE_RATE) {
                 assertTrue(turret.getModifiers().get(stat).floatValue() > 0f);
             } else if (stat == Stat.RESOURCE_VALUE) {
                 assertTrue(turret.getModifiers().get(stat).intValue() > 0);
             } else {
-                assertTrue(turret.getModifiers().get(stat).floatValue() == 0f);
+                assertEquals(0f, turret.getModifiers().get(stat).floatValue());
             }
         }
     }

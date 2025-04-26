@@ -36,7 +36,7 @@ public interface ControllableSpaceBody {
     /**
      * Translates the <code>SpaceBody</code> by a given vector,
      * represented by a <code>FloatPair</code>.
-     * 
+     *
      * @param translation the <code>FloatPair</code> to translate by.
      */
     void translate(FloatPair translation);
@@ -92,7 +92,7 @@ public interface ControllableSpaceBody {
 
     /**
      * Scale the velocity of the SpaceBody by the given scalar.
-     * 
+     *
      * @param scale The scalar to scale the velocity by.
      */
     void scaleVelocity(float scale);
@@ -127,7 +127,7 @@ public interface ControllableSpaceBody {
 
     /**
      * Scale the rotational speed of the SpaceBody by the given scalar.
-     * 
+     *
      * @param scale The scalar to scale the rotational velocity by.
      */
     void scaleRotationSpeed(float scale);
@@ -144,6 +144,6 @@ public interface ControllableSpaceBody {
      *
      * @param deltaTime the time since last update.
      */
-    public void update(float deltaTime);
+    void update(float deltaTime);
 
 }

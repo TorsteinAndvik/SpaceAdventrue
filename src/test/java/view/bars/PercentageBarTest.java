@@ -128,15 +128,15 @@ public class PercentageBarTest {
     @Test
     public void visibilityTest() {
         bar.setVisible(true);
-        assertEquals(true, bar.visible);
+        assertTrue(bar.visible);
         bar.setVisible(true);
-        assertEquals(true, bar.visible);
+        assertTrue(bar.visible);
         bar.setVisible(false);
-        assertEquals(false, bar.visible);
+        assertFalse(bar.visible);
         bar.setVisible(false);
-        assertEquals(false, bar.visible);
+        assertFalse(bar.visible);
         bar.setVisible(true);
-        assertEquals(true, bar.visible);
+        assertTrue(bar.visible);
     }
 
     @Test
