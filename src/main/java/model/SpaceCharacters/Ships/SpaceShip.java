@@ -50,7 +50,7 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
     }
 
     private void makeHealthBar() {
-        healthBar = new ShipHealthBar(this, new FloatPair(0, 0.2f));
+        healthBar = new ShipHealthBar(this, new FloatPair(0, 0.4f));
         healthBar.setScale(0.9f, 0.13f);
         if (isPlayerShip()) {
             healthBar.setBarColor(Palette.MUTED_GREEN_LIGHT);

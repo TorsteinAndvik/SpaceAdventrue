@@ -175,7 +175,7 @@ public class PercentageBarTest {
         bar.setNotchScale(0.2f);
         assertEquals(0.2f, bar.notchScale);
         bar.setNotchScale(-1f);
-        assertEquals(0f, bar.notchScale);
+        assertEquals(PercentageBar.MIN_NOTCH_SCALE, bar.notchScale);
 
         bar.setHalfNotch(false);
         assertFalse(bar.halfNotch);
@@ -189,12 +189,12 @@ public class PercentageBarTest {
 
         bar.setNumNotches(0);
         assertEquals(0, bar.numNotches);
-        bar.setNumNotches(-1);
-        assertEquals(0, bar.numNotches);
+        bar.setNumNotches(-1323);
+        assertEquals(PercentageBar.MIN_NUM_NOTCHES, bar.numNotches);
         bar.setNumNotches(5);
         assertEquals(5, bar.numNotches);
-        bar.setNumNotches(12);
-        assertEquals(10, bar.numNotches);
+        bar.setNumNotches(125);
+        assertEquals(PercentageBar.MAX_NUM_NOTCHES, bar.numNotches);
 
         bar.setOutlineScale(0f);
         assertEquals(PercentageBar.MIN_OUTLINE_SCALE, bar.outlineScale);
