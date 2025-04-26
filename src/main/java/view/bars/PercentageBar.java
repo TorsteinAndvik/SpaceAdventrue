@@ -17,7 +17,14 @@ public class PercentageBar {
     protected float notchScale = 0.15f;
     protected int numNotches = 0;
 
-    private static final float MIN_SCALE = 0.001f;
+    public static final float MIN_MAX_VALUE = 0.001f;
+    public static final float MIN_CURRENT_VALUE = 0f;
+    public static final float MIN_SCALE = 0.001f;
+    public static final float MAX_OUTLINE_SCALE = 0.49f;
+    public static final float MIN_OUTLINE_SCALE = 0.01f;
+    public static final float MIN_NOTCH_SCALE = 0.01f;
+    public static final int MAX_NUM_NOTCHES = 10;
+    public static final int MIN_NUM_NOTCHES = 0;
 
     protected Rectangle dimensions;
     protected Rectangle bar;
@@ -161,7 +168,7 @@ public class PercentageBar {
 
     }
 
-    private float minDimension() {
+    protected float minDimension() {
         return Math.min(scaleX * dimensions.width, scaleY * dimensions.height);
     }
 
@@ -201,13 +208,12 @@ public class PercentageBar {
      * @param outlineColor the new color of the outline.
      */
     public void setColors(Color barColor, Color bgColor, Color outlineColor) {
-        setBarColor(barColor);
-        setBackgroundColor(bgColor);
+        setColors(barColor, bgColor);
         setOutlineColor(outlineColor);
     }
 
     /**
-     * Sets the current value of the bar to a minimum of 0
+     * Sets the current value of the bar to a minimum of {@value #MIN_CURRENT_VALUE}
      * and a maximum of <code>maxValue</code>.
      * <p>
      * Updates the bar width.
@@ -215,12 +221,12 @@ public class PercentageBar {
      * @param currentValue the new current value
      */
     public void setCurrentValue(float currentValue) {
-        this.currentValue = Math.min(Math.max(0f, currentValue), maxValue);
+        this.currentValue = Math.min(Math.max(MIN_CURRENT_VALUE, currentValue), maxValue);
         updateBar();
     }
 
     /**
-     * Sets the max value of the bar to a minimum of <code>0.001f</code>.
+     * Sets the max value of the bar to a minimum of {@value #MIN_MAX_VALUE}.
      * <p>
      * If current value would become larger than <code>maxValue</code>,
      * the current value is set equal to <code>maxValue</code>.
@@ -230,7 +236,7 @@ public class PercentageBar {
      * @param maxValue the new max value
      */
     public void setMaxValue(float maxValue) {
-        this.maxValue = Math.max(0.001f, maxValue);
+        this.maxValue = Math.max(MIN_MAX_VALUE, maxValue);
         this.currentValue = Math.min(currentValue, maxValue);
         updateBar();
     }
@@ -345,34 +351,53 @@ public class PercentageBar {
     }
 
     /**
-     * Sets the scale of the outline, to a minimum of <code>0.01f</code> and a
-     * maximum of <code>0.49f</code>. When drawing, the outline is a percentage
+     * Sets the scale of the outline, to a minimum of {@value #MIN_OUTLINE_SCALE}
+     * and a maximum of {@value #MAX_OUTLINE_SCALE}.
+     * <p>
+     * When drawing, the outline is a percentage
      * (given by <code>outlineScale</code>) of whichever
      * of the bar's width or height is smaller.
      * <p>
-     * Note that an outline scale of <code>0.01f</code> will essentially make the
-     * outline invisible,
-     * while an outline scale of <code>0.49f</code> will make the percentage bar
-     * itself essentially invisible.
+     * Note that an outline scale of {@value #MIN_OUTLINE_SCALE} will essentially
+     * make the outline invisible,
+     * while an outline scale of {@value #MAX_OUTLINE_SCALE} will make the
+     * bar itself essentially invisible. Values between <code>0.1f</code>
+     * and <code>0.25f</code> are recommended.
      * 
      * @param outlineScale float to set outline scale to.
      */
     public void setOutlineScale(float outlineScale) {
-        this.outlineScale = Math.max(Math.min(outlineScale, 0.49f), 0.01f);
+        this.outlineScale = Math.max(Math.min(outlineScale, MAX_OUTLINE_SCALE), MIN_OUTLINE_SCALE);
     }
 
     /**
      * @param numNotches int to set number of notches to,
-     *                   automatically limited to be between 0 and 10.
+     *                   limited to be between {@value #MIN_NUM_NOTCHES}
+     *                   and {@value #MAX_NUM_NOTCHES}.
      */
     public void setNumNotches(int numNotches) {
-        this.numNotches = Math.max(Math.min(numNotches, 10), 0);
+        this.numNotches = Math.max(Math.min(numNotches, MAX_NUM_NOTCHES), MIN_NUM_NOTCHES);
     }
 
+    /**
+     * Sets the notch scale, to a minimum of {@value #MIN_NOTCH_SCALE}.
+     * The width of the notches is calculated as
+     * <code>notchScale * minimal dimension</code>, where
+     * minimal dimension is whichever of the bar's width or height is smaller,
+     * when x- and y-scaling is taken into consideration.
+     * 
+     * @param notchScale the notch scaling factor to use.
+     */
     public void setNotchScale(float notchScale) {
-        this.notchScale = notchScale;
+        this.notchScale = (float) Math.max(notchScale, MIN_NOTCH_SCALE);
     }
 
+    /**
+     * If <code>halfNotch</code> is <code>true</code>, the heights of the notches
+     * will cover half of the bar height. Otherwise, they cover the full height.
+     * 
+     * @param halfNotch boolean to set <code>halfNotch</code> to
+     */
     public void setHalfNotch(boolean halfNotch) {
         this.halfNotch = halfNotch;
     }

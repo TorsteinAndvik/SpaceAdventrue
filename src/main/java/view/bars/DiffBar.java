@@ -7,10 +7,10 @@ import view.Palette;
 
 public class DiffBar extends PercentageBar {
 
-    private float diffValue = 0f;
-    private boolean diffIsBeneficial = true;
-    private final Color goodColor = Palette.MUTED_GREEN_LIGHT;
-    private final Color badColor = Palette.MUTED_RED_LIGHT;
+    protected float diffValue = 0f;
+    protected boolean diffIsBeneficial = true;
+    protected final Color goodColor = Palette.MUTED_GREEN_LIGHT;
+    protected final Color badColor = Palette.MUTED_RED_LIGHT;
 
     public DiffBar(float maxValue, float currentValue) {
         super(maxValue, currentValue);
