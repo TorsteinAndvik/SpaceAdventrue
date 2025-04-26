@@ -111,6 +111,25 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
         repair(healthToRestore);
     }
 
+    protected float force() {
+        return shipStructure.getCombinedStatModifier().getModifiers().get(Stat.ACCELERATION_FORCE).floatValue();
+    }
+
+    protected float torque() {
+        return force() * PhysicsParameters.accelerationLimitRotational
+                / PhysicsParameters.accelerationLimitLongitudonal;
+    }
+
+    protected float maxSpeed() {
+        return Math.min(
+                shipStructure.getCombinedStatModifier().getModifiers().get(Stat.MAX_SPEED).floatValue(),
+                PhysicsParameters.maxVelocityLongitudonal);
+    }
+
+    protected float maxRotVel() {
+        return maxSpeed() * PhysicsParameters.maxVelocityRotational / PhysicsParameters.maxVelocityLongitudonal;
+    }
+
     @Override
     public FloatPair getAbsoluteCenter() {
         return new FloatPair(getX() + shipStructure.getWidth() / 2f - PhysicsParameters.fuselageRadius,
