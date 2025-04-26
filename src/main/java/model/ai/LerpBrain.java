@@ -13,6 +13,12 @@ public class LerpBrain extends Brain implements ShooterBrain {
 
     @Override
     public void update(float delta) {
+        ship.setRotation(newAngle(delta));
+        ship.translate(newPositionDelta(delta));
+        shoot(inFiringRange());
+    }
+
+    protected float newAngle(float delta) {
         // lerp the rotation angle towards the player
         float angle = SpaceCalculator.angleBetweenPoints(
                 ship.getAbsoluteCenterOfMass(),
@@ -24,9 +30,10 @@ public class LerpBrain extends Brain implements ShooterBrain {
         } else {
             newAngle = SpaceCalculator.lerp1D(ship.getRotationAngle() - 360f, angle + 90f, 1.75f * delta);
         }
+        return newAngle;
+    }
 
-        ship.setRotation(newAngle);
-
+    protected FloatPair newPositionDelta(float delta) {
         // lerp the position towards the player, at a "safe" hover-distance
         FloatPair target = SpaceCalculator.getPointAtDistance(ship.getAbsoluteCenterOfMass(),
                 player.getAbsoluteCenterOfMass(), hoverDistance());
@@ -36,10 +43,7 @@ public class LerpBrain extends Brain implements ShooterBrain {
         FloatPair deltaPos = new FloatPair(newPos.x() - ship.getAbsoluteCenterOfMass().x(),
                 newPos.y() - ship.getAbsoluteCenterOfMass().y());
 
-        ship.translate(deltaPos);
-
-        // shooting logic
-        shoot(inFiringRange());
+        return deltaPos;
     }
 
     protected float hoverDistance() {
