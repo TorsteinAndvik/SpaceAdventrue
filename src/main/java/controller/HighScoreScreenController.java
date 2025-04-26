@@ -4,33 +4,26 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector3;
 import controller.audio.SoundEffect;
 import model.GameStateModel;
-import model.constants.GameState;
 import view.SpaceGame;
 import view.screens.HighScoreScreen;
 
 public class HighScoreScreenController extends GenericController {
 
     private final HighScoreScreen view;
+    private final int backButtonIndex = 0;
 
     public HighScoreScreenController(HighScoreScreen view, GameStateModel model, SpaceGame game) {
         super(view, model, game);
         this.view = view;
-        gameStateModel.setSelectedButtonIndex(0);
+
     }
 
     @Override
     protected boolean handleKeyDown(int keyCode) {
-        if (keyCode == Keys.ESCAPE) {
-            activateButton(gameStateModel.getSelectedButtonIndex());
-            game.setStartScreen();
+        if (keyCode == Keys.ESCAPE || keyCode == Keys.ENTER || keyCode == Keys.SPACE) {
+            activateButton(backButtonIndex);
             return true;
         }
-
-        if (keyCode == Keys.ENTER || keyCode == Keys.SPACE) {
-            activateButton(gameStateModel.getSelectedButtonIndex());
-            return true;
-        }
-
         return false;
     }
 
@@ -39,34 +32,24 @@ public class HighScoreScreenController extends GenericController {
         Vector3 worldCoords = view.unprojectScreenCoords(screenX, screenY);
 
         if (view.getBackButton().getBounds().contains(worldCoords.x, worldCoords.y)) {
-            gameStateModel.setSelectedButtonIndex(0);
-            activateButton(0);
+            gameStateModel.setSelectedButtonIndex(backButtonIndex);
+            activateButton(button);
             return true;
         }
 
         return false;
     }
 
+    @Override
+    public void update(float delta) { }
+
+
     public void activateButton(int buttonIndex) {
         soundManager.play(SoundEffect.MENU_SELECT, 0.2f);
 
-        if (buttonIndex == 0) {
-            returnToPreviousScreen();
-        }
-    }
-
-    private void returnToPreviousScreen() {
-        GameState prevState = gameStateModel.getPreviousState();
-        if (prevState == GameState.PLAYING) {
-            game.setSpaceScreen();
-        } else {
+        if (buttonIndex == backButtonIndex) {
             game.setStartScreen();
         }
-    }
-
-    @Override
-    public void update(float delta) {
-        // No update logic currently needed
     }
 
     @Override
@@ -106,7 +89,6 @@ public class HighScoreScreenController extends GenericController {
 
     @Override
     protected void handleScroll(float amountY) {
-        // No scroll handling needed
     }
 
     @Override
@@ -114,8 +96,8 @@ public class HighScoreScreenController extends GenericController {
         Vector3 worldCoords = view.unprojectScreenCoords(screenX, screenY);
 
         if (view.getBackButton().getBounds().contains(worldCoords.x, worldCoords.y)) {
-            if (gameStateModel.getSelectedButtonIndex() != 0) {
-                gameStateModel.setSelectedButtonIndex(0);
+            if (gameStateModel.getSelectedButtonIndex() != backButtonIndex) {
+                gameStateModel.setSelectedButtonIndex(backButtonIndex);
                 soundManager.play(SoundEffect.MENU_SELECT, 0.2f);
             }
             return true;
