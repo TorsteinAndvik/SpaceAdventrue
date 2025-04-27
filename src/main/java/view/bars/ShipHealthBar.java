@@ -17,18 +17,8 @@ public class ShipHealthBar extends PercentageBar {
     }
 
     @Override
-    public void setPosition(FloatPair pos) {
-        this.setPosition(pos.x() + offset.x(), pos.y() + offset.y());
-    }
-
-    @Override
-    public void setPosition(float x, float y) {
-        super.setPosition(x + offset.x(), y + offset.y());
-    }
-
-    @Override
     public void setCenter(FloatPair pos) {
-        this.setCenter(pos.x() + offset.x(), pos.y() + offset.y());
+        this.setCenter(pos.x(), pos.y());
     }
 
     @Override

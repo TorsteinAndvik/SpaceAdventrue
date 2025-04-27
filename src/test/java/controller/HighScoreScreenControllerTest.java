@@ -1,6 +1,5 @@
 package controller;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -38,8 +37,8 @@ class HighScoreScreenControllerTest {
         mockView = mock(HighScoreScreen.class);
         mockModel = mock(GameStateModel.class);
         SpaceGame mockGame = mock(SpaceGame.class);
-        mockSoundManager = mock(SoundManager.class);
         mockBackButton = mock(MenuButton.class);
+        mockSoundManager = mock(SoundManager.class);
         MusicManager mockMusicManager = mock(MusicManager.class);
 
         when(mockGame.getSoundManager()).thenReturn(mockSoundManager);
@@ -174,4 +173,6 @@ class HighScoreScreenControllerTest {
         controller.handleScroll(10);
         verifyNoInteractions(mockModel);
     }
+
+
 }

@@ -37,10 +37,25 @@ public class UpgradeHandler {
         return placedItem;
     }
 
+    /**
+     * Checks if the specified position contains a <code>Fuselage</code>.
+     * 
+     * @param cp the <code>CellPosition</code> to check
+     * @return <code>true</code> if the position contains a <code>Fuselage</code>,
+     *         <code>false</code> otherwise.
+     */
     public boolean hasFuselage(CellPosition cp) {
         return structure.hasFuselage(cp);
     }
 
+    /**
+     * Gets the <code>Fuselage</code> at the specified <code>CellPosition</code>.
+     * This is simply a pass-through call to
+     * <code>ShipStructure.getFuselage()</code> and may return <code>null</code>.
+     * 
+     * @param cp the <code>CellPosition</code> to get the <code>Fuselage</code> from
+     * @return the <code>Fuselage</code> at the specified <code>CellPosition</code>
+     */
     public Fuselage getFuselage(CellPosition cp) {
         return structure.getFuselage(cp);
     }
