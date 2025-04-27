@@ -3,6 +3,8 @@ package model.ShipComponents;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import grid.CellPosition;
@@ -20,7 +22,7 @@ public class UpgradeHandlerTest {
 
     private UpgradeHandler upgradeHandler;
     private ShipStructure structure;
-    SpaceShip player;
+    private SpaceShip player;
 
     @BeforeEach
     void setup() {
@@ -33,6 +35,15 @@ public class UpgradeHandlerTest {
     void setupTest() {
         assertTrue(structure.hasFuselage(new CellPosition(0, 0)));
         assertTrue(structure.hasFuselage(new CellPosition(1, 0)));
+    }
+
+    @Test
+    void fuselageTest() {
+        assertTrue(upgradeHandler.hasFuselage(new CellPosition(0, 0)));
+        assertNotNull(upgradeHandler.getFuselage(new CellPosition(0, 0)));
+        upgradeHandler.expand();
+        assertFalse(upgradeHandler.hasFuselage(new CellPosition(0, 0)));
+        assertNull(upgradeHandler.getFuselage(new CellPosition(0, 0)));
     }
 
     @Test
@@ -104,6 +115,24 @@ public class UpgradeHandlerTest {
         for (GridCell<Fuselage> cp : originalGrid) {
             assertEquals(gridCopy.get(cp.pos()), cp.value());
         }
+    }
 
+    @Test
+    void upgradeStageTest() {
+        assertFalse(upgradeHandler.upgradeStageIncreaseIsAllowed(new Fuselage()));
+
+        CellPosition cp = new CellPosition(0, 0);
+
+        Fuselage fuselage = upgradeHandler.getFuselage(cp);
+        assertEquals(fuselage.getStage(), fuselage.getUpgrade().getStage());
+        assertFalse(upgradeHandler.upgradeStageIncreaseIsAllowed(fuselage));
+
+        assertTrue(fuselage.upgrade());
+
+        assertTrue(upgradeHandler.upgradeStageIncreaseIsAllowed(fuselage));
+        assertTrue(upgradeHandler.upgradeStage(cp, false));
+
+        assertFalse(upgradeHandler.upgradeStage(cp, false));
+        assertTrue(upgradeHandler.upgradeStage(cp, true));
     }
 }
