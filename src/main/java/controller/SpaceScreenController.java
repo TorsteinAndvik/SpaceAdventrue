@@ -133,9 +133,7 @@ public class SpaceScreenController extends GenericController implements AudioCal
     }
 
     @Override
-    protected void handleScroll(float amountY) {
-
-    }
+    protected void handleScroll(float amountY) { }
 
     @Override
     public void play(SoundEffect soundEffect) {
