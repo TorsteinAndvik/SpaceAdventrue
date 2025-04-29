@@ -3,6 +3,7 @@ package model.SpaceCharacters.Ships;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import model.World.GameItem;
@@ -129,5 +130,18 @@ public class PlayerInventoryTest {
                 Piece of wood (45.0 inches)    1
                 Piece of wood (44.5 inches)    2""";
         assertEquals(inventoryContent, inventory.listInventory());
+    }
+
+    @Test
+    void testAddResource() {
+        int startResources = inventory.getResourceCount();
+        inventory.addResource(100);
+        assertEquals(startResources + 100, inventory.getResourceCount());
+    }
+
+    @Test
+    void testCantAddNegativeResources() {
+        assertThrows(IllegalArgumentException.class, () -> inventory.addResource(-1));
+
     }
 }
