@@ -67,8 +67,7 @@ public abstract class SpaceBody implements SpaceThing, Rotatable, Collidable, Vi
      * @param angle         The angle of rotation (in degrees).
      * @param radius        The radius of the SpaceBody (in meters).
      * @implNote This constructor calls the full constructor with a default mass and
-     *           rotation speed
-     *           of 0.
+     *         rotation speed of 0.
      */
     public SpaceBody(String name, String description, CharacterType characterType, float x, float y,
             float angle, float radius) {
@@ -85,10 +84,19 @@ public abstract class SpaceBody implements SpaceThing, Rotatable, Collidable, Vi
      * @param description   A brief description of the SpaceBody.
      * @param characterType The CharacterType representing the type of SpaceBody.
      * @implNote This constructor initializes the SpaceBody at (0,0) with zero mass,
-     *           angle, velocity, and radius.
+     *         angle, velocity, and radius.
      */
     public SpaceBody(String name, String description, CharacterType characterType) {
         this(name, description, characterType, new Vector2(0, 0), new Vector2(0, 0), 0, 0, 0, 0);
+    }
+
+    public void init(float x, float y, float vX, float vY, float mass, float angle, float radius, float rotationSpeed) {
+        position.set(x, y);
+        velocity.set(vX, vY);
+        this.mass = mass;
+        rotation.setAngle(angle);
+        rotation.setRotationSpeed(rotationSpeed);
+        this.radius = radius;
     }
 
     @Override

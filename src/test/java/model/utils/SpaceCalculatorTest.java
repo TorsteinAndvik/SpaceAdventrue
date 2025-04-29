@@ -213,12 +213,16 @@ public class SpaceCalculatorTest {
 
     @Test
     void collisionCalculatorTest() {
-        Asteroid target1 = new Asteroid("null", "null", 1, 1, 1, 1, 1, 1, 1, 1);
-        Asteroid target2 = new Asteroid("null2", "null2", 1, 1, 1, 1, 1, 1, 1, 1);
+        Asteroid target1 = new Asteroid();
+        target1.init(1, 1, 1, 1, 1, 1, 1, 1);
+        Asteroid target2 = new Asteroid();
+        target2.init(1, 1, 1, 1, 1, 1, 1, 1);
         assertTrue(SpaceCalculator.collisionCalculator(target1, target2));
 
-        target1 = new Asteroid("null", "null", 1, 1, 1, 1, 1, 1, 10, 1);
-        target2 = new Asteroid("null2", "null2", 100, 100, 1, 1, 1, 1, 10, 1);
+        target1 = new Asteroid();
+        target1.init(1, 1, 1, 1, 1, 1, 10, 1);
+        target2 = new Asteroid();
+        target2.init(100, 100, 1, 1, 1, 1, 10, 1);
         assertFalse(SpaceCalculator.collisionCalculator(target1, target2));
     }
 
@@ -230,10 +234,11 @@ public class SpaceCalculatorTest {
         SpaceCalculator.crash(target1, target2);
         assertTrue(target1.isDestroyed() && target2.isDestroyed());
 
-        Asteroid target3 = new Asteroid("name", "description", 0, 0, 0, 0,
-                5, 0, 0, 0, 0, false);
-        Asteroid target4 = new Asteroid("name", "description", 0, 0, 0, 0,
-                12, 0, 0, 0, 0, false);
+        Asteroid target3 = new Asteroid();
+        target3.init(0, 0, 0, 0, 5, 0, 0, 0, 0, false);
+
+        Asteroid target4 = new Asteroid();
+        target4.init(0, 0, 0, 0, 12, 0, 0, 0, 0, false);
 
         SpaceCalculator.crash(target3, target4);
         assertTrue(target3.isDestroyed());

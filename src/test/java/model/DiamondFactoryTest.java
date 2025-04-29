@@ -17,7 +17,8 @@ public class DiamondFactoryTest {
     @BeforeEach
     void setup() {
         diamondFactory = new DiamondFactory();
-        asteroid = new Asteroid("Asteroid", "Asteroid", 5, 10, 15, 20, 25, 30, 35, 40);
+        asteroid = new Asteroid();
+        asteroid.init(5, 10, 15, 20, 25, 30, 35, 40, 45, true);
     }
 
     @Test
