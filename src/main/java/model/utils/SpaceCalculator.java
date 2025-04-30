@@ -12,9 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class SpaceCalculator {
-    private SpaceCalculator() {
-        // Utility class
-    }
 
     /**
      * Calculates the velocity vector given an angle (in degrees) and speed.

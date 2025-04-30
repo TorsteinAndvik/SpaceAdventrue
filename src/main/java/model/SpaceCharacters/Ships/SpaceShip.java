@@ -120,13 +120,16 @@ public abstract class SpaceShip extends SpaceBody implements DamageDealer, Damag
                 / PhysicsParameters.accelerationLimitLongitudonal;
     }
 
-    protected float maxSpeed() {
+    public float maxSpeed() {
+        if (shipStructure.getCombinedStatModifier().getModifiers().get(Stat.MAX_SPEED).floatValue() == 0f) {
+            System.out.println("max speed is 0");
+        }
         return Math.min(
                 shipStructure.getCombinedStatModifier().getModifiers().get(Stat.MAX_SPEED).floatValue(),
                 PhysicsParameters.maxVelocityLongitudonal);
     }
 
-    protected float maxRotVel() {
+    public float maxRotationalVelocity() {
         return maxSpeed() * PhysicsParameters.maxVelocityRotational / PhysicsParameters.maxVelocityLongitudonal;
     }
 

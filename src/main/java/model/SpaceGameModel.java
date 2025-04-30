@@ -33,7 +33,7 @@ import model.SpaceCharacters.Ships.EnemyShip;
 import model.SpaceCharacters.Ships.Player;
 import model.SpaceCharacters.SpaceBody;
 import model.SpaceCharacters.Ships.SpaceShip;
-import model.ai.LerpBrain;
+import model.ai.EnhancedLerpBrain;
 import model.constants.PhysicsParameters;
 import model.utils.FloatPair;
 import model.utils.SpaceCalculator;
@@ -176,7 +176,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         while (laserIterator.hasNext()) {
             Bullet laser = laserIterator.next();
             laser.update(delta);
-            if (cullSpaceBody(laser, 5f)) {// Remove if too distant to player
+            if (cullSpaceBody(laser, 3f)) {// Remove if too distant to player
                 hitDetection.removeCollider(laser);
                 laserPool.free(laser);
                 laserIterator.remove();
@@ -213,6 +213,19 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
             handleShootingLogic(spaceShip);
         }
 
+        // cull distant enemies
+        Iterator<SpaceShip> shipIterator = spaceShips.iterator();
+        if (shipIterator.hasNext()) {
+            shipIterator.next(); // skip player ship
+            while (shipIterator.hasNext()) {
+                SpaceShip iter = shipIterator.next();
+                if (cullSpaceBody(iter, 10f)) {// Remove if too distant to player
+                    hitDetection.removeCollider(iter);
+                    shipIterator.remove();
+                }
+            }
+        }
+
         hitDetection.checkCollisions();
     }
 
@@ -221,7 +234,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     }
 
     private float enemySpawnTimer() {
-        return 8f + 3f * spawnedShipCounter;
+        return 6f + 4f * spawnedShipCounter;
     }
 
     /**
@@ -336,7 +349,9 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                     for (Collectable collectable : this.collectables) {
                         if (collectable == c) {
                             collectables.remove(c);
-                            if (c instanceof Diamond d) { diamondFactory.free(d); }
+                            if (c instanceof Diamond d) {
+                                diamondFactory.free(d);
+                            }
                             break;
                         }
                     }
@@ -464,7 +479,6 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         return new Matrix4(transformMatrix);
     }
 
-
     /**
      * Gets the center of mass coordinates for the player
      *
@@ -503,15 +517,16 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                     spawnPerimeter.y + spawnPerimeter.height + numFuselage * PhysicsParameters.fuselageRadius);
         }
 
+        float angle = SpaceCalculator.angleBetweenPoints(player.getAbsoluteCenterOfMass(), new FloatPair(x, y));
         EnemyShip enemyShip = new EnemyShip(
                 ShipFactory.generateShipStructure(numFuselage, numUpgrades),
                 "enemy",
                 "an enemy ship",
                 x,
                 y,
-                0f);
+                angle);
 
-        enemyShip.setBrain(new LerpBrain(enemyShip, player));
+        enemyShip.setBrain(new EnhancedLerpBrain(enemyShip, player));
 
         spaceShips.addLast(enemyShip);
         hitDetection.addCollider(enemyShip);

@@ -25,10 +25,11 @@ public class LerpBrain extends Brain implements ShooterBrain {
                 player.getAbsoluteCenterOfMass());
 
         float newAngle;
+        float lerpAlpha = 1.75f * delta;
         if (ship.getRotationAngle() <= angle + 180f) {
-            newAngle = SpaceCalculator.lerp1D(ship.getRotationAngle(), angle + 90f, 1.75f * delta);
+            newAngle = SpaceCalculator.lerp1D(ship.getRotationAngle(), angle + 90f, lerpAlpha);
         } else {
-            newAngle = SpaceCalculator.lerp1D(ship.getRotationAngle() - 360f, angle + 90f, 1.75f * delta);
+            newAngle = SpaceCalculator.lerp1D(ship.getRotationAngle() - 360f, angle + 90f, lerpAlpha);
         }
         return newAngle;
     }
@@ -58,6 +59,6 @@ public class LerpBrain extends Brain implements ShooterBrain {
     @Override
     public boolean inFiringRange() {
         float distance = SpaceCalculator.distance(ship.getAbsoluteCenterOfMass(), player.getAbsoluteCenterOfMass());
-        return distance < 1.25f * hoverDistance();
+        return distance < 1.5f * hoverDistance();
     }
 }
