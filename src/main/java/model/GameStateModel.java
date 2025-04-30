@@ -76,6 +76,7 @@ public class GameStateModel {
         this.selectedButtonIndex = selectedButtonIndex;
     }
 
+    //TODO: Use method outside test class, or delete
     public boolean hasActiveGame() {
         return spaceGameModel != null && spaceGameModel.getPlayer() != null;
     }

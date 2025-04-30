@@ -47,27 +47,10 @@ public class SpaceBodyTest {
     }
 
     @Test
-    void createSpaceBodyTest() {
-        SpaceBody asteroid = new Asteroid(
-                "Ceres", "Ceres is a dwarf planet",
-                37, 68, 600, 200, 10_000, 45, 1, 0);
-        assertEquals("Ceres", asteroid.getName());
-        assertEquals("Ceres is a dwarf planet", asteroid.getDescription());
-        assertEquals(37, asteroid.getX());
-        assertEquals(68, asteroid.getY());
-        assertEquals(600, asteroid.getVelocity().x);
-        assertEquals(200, asteroid.getVelocity().y);
-        assertEquals(10_000, asteroid.getMass());
-        assertEquals(45, asteroid.getRotationAngle());
-        assertEquals(1, asteroid.getRadius());
-        assertEquals(0, asteroid.getRotationSpeed());
-    }
-
-    @Test
     void changeAngleSpaceBodyTest() {
         SpaceBody asteroid = new Asteroid(
-                "Ceres", "Ceres is a dwarf planet",
-                100, 0, 1, 1, 10, 45, 100, 1);
+                "Ceres", "Ceres is a dwarf planet");
+        asteroid.init(100, 0, 1, 1, 10, 45, 100, 1);
         assertEquals(45, asteroid.getRotationAngle());
         asteroid.rotate(314);
         assertEquals(359, asteroid.getRotationAngle());
@@ -78,8 +61,8 @@ public class SpaceBodyTest {
     @Test
     void setterGetterTests() {
         SpaceBody asteroid = new Asteroid(
-                "Ceres", "Ceres is a dwarf planet",
-                100, 68, 100, 600, 10_000, 45, 100, 1);
+                "Ceres", "Ceres is a dwarf planet");
+        asteroid.init(100, 68, 100, 600, 10_000, 45, 100, 1);
         asteroid.setName("Hygiea");
         asteroid.setDescription("Hygiea is a major asteroid located in the main asteroid belt");
         asteroid.setX(0);
@@ -135,8 +118,8 @@ public class SpaceBodyTest {
     @Test
     void translateTest() {
         SpaceBody asteroid = new Asteroid(
-                "Ceres", "Ceres is a dwarf planet",
-                100f, 68f, 100f, 600f, 10_000f, 45f, 100f, 1f);
+                "Ceres", "Ceres is a dwarf planet");
+        asteroid.init(100f, 68f, 100f, 600f, 10_000f, 45f, 100f, 1f);
 
         asteroid.translate(new FloatPair(100f, 20f));
         assertEquals(200f, asteroid.getX());
@@ -149,9 +132,13 @@ public class SpaceBodyTest {
 
     @Test
     void updateTest() {
-        SpaceBody asteroid = new Asteroid(
-                "Ceres", "Ceres is a dwarf planet",
-                100f, 68f, 100f, 600f, 10_000f, 45f, 100f, 1.5f);
+        SpaceBody asteroid = new Asteroid("Ceres", "Ceres is a dwarf planet");
+        asteroid.setX(100);
+        asteroid.setY(68);
+        asteroid.setVelocity(100, 600);
+        asteroid.setRotation(45);
+        asteroid.setRotationSpeed(1.5f);
+//                100f, 68f, 100f, 600f, 10_000f, 45f, 100f, 1.5f);
 
         asteroid.update(2f);
         assertEquals(300f, asteroid.getX());
@@ -161,9 +148,7 @@ public class SpaceBodyTest {
 
     @Test
     void toStringTest() {
-        SpaceBody asteroid = new Asteroid(
-                "Ceres", "Ceres is a dwarf planet",
-                100, 68, 100, 600, 10_000, 45, 100, 1);
+        SpaceBody asteroid = new Asteroid("Ceres", "Ceres is a dwarf planet");
         assertEquals("Ceres", asteroid.toString());
     }
 

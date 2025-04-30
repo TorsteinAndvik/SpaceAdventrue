@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import model.Globals.Collectable;
 import model.World.GameItem;
+import model.utils.ArgumentChecker;
 
 public class PlayerInventory implements Inventory {
 
@@ -83,6 +84,7 @@ public class PlayerInventory implements Inventory {
 
     @Override
     public void addResource(int value) {
+        ArgumentChecker.greaterOrEqualToZero(value, "Not allowed to add negative resources.");
         resources += value;
     }
 
