@@ -336,7 +336,9 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                     for (Collectable collectable : this.collectables) {
                         if (collectable == c) {
                             collectables.remove(c);
-                            if (c instanceof Diamond d) { diamondFactory.free(d); }
+                            if (c instanceof Diamond d) {
+                                diamondFactory.free(d);
+                            }
                             break;
                         }
                     }
@@ -463,7 +465,6 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         transformMatrix.translate(-x, -y, 0f);
         return new Matrix4(transformMatrix);
     }
-
 
     /**
      * Gets the center of mass coordinates for the player

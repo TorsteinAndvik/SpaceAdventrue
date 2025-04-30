@@ -15,7 +15,7 @@ import model.utils.SpaceCalculator;
 
 public class HitDetection {
 
-    private final LinkedList<Collidable> colliders = new LinkedList<>();
+    protected final LinkedList<Collidable> colliders = new LinkedList<>();
     private final SpaceGameModel model;
 
     public HitDetection(SpaceGameModel model) {
@@ -25,10 +25,10 @@ public class HitDetection {
     /**
      * Adds a {@link Collidable} object to the front of the collider list.
      * 
-     * @param c The {@code Collidable} object to be added.
+     * @param collideable The {@code Collidable} object to be added.
      */
-    public void addCollider(Collidable c) {
-        colliders.addFirst(c);
+    public void addCollider(Collidable collideable) {
+        colliders.addFirst(collideable);
     }
 
     /**
