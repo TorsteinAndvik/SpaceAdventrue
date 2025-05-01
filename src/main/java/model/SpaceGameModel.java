@@ -61,7 +61,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     private int objectsDestroyed;
     private RandomAsteroidFactory randomAsteroidFactory;
     private DirectionalAsteroidFactory directionalAsteroidFactory;
-    private float asteroidTimer = 5f; // >0 to make first wave spawn earlier
+    private float asteroidTimer = asteroidSpawnTimer() / 2f; // make first wave spawn earlier
 
     private float enemySpawnTimer = 0f;
     private int spawnedShipCounter = 0;
@@ -230,11 +230,11 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     }
 
     private float asteroidSpawnTimer() {
-        return 10f;
+        return 12f;
     }
 
     private float enemySpawnTimer() {
-        return 6f + 4f * spawnedShipCounter;
+        return 6f + 3f * spawnedShipCounter;
     }
 
     /**
@@ -253,7 +253,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                 || body.getY() - body.getRadius() - offset > bounds.y + bounds.height);
     }
 
-    void handleCollision(Collidable A, Collidable B) {
+    public void handleCollision(Collidable A, Collidable B) {
         if (HitDetection.isFriendlyFire(A, B)) {
             return;
         }
@@ -313,6 +313,24 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
             return true;
         }
         return false;
+    }
+
+    public void handleShipProximity(SpaceShip shipA, SpaceShip shipB) {
+        if (shipA.isPlayerShip() || shipB.isPlayerShip()) {
+            return;
+        }
+
+        notifyBrains((EnemyShip) shipA, (EnemyShip) shipB);
+    }
+
+    private void notifyBrains(EnemyShip shipA, EnemyShip shipB) {
+        if (shipA.getBrain() instanceof EnhancedLerpBrain brainA) {
+            brainA.nearCollision(shipB);
+        }
+
+        if (shipB.getBrain() instanceof EnhancedLerpBrain brainB) {
+            brainB.nearCollision(shipA);
+        }
     }
 
     private void remove(Collidable c, boolean drawExplosion) {
