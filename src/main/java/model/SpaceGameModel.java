@@ -219,7 +219,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
             shipIterator.next(); // skip player ship
             while (shipIterator.hasNext()) {
                 SpaceShip iter = shipIterator.next();
-                if (cullSpaceBody(iter, 10f)) {// Remove if too distant to player
+                if (cullSpaceBody(iter, iter.getProximityRadius())) {// Remove if too distant to player
                     hitDetection.removeCollider(iter);
                     shipIterator.remove();
                 }
