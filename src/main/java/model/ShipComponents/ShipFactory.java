@@ -16,6 +16,7 @@ import model.ShipComponents.Components.Fuselage;
 import model.ShipComponents.Components.Shield;
 import model.ShipComponents.Components.Thruster;
 import model.ShipComponents.Components.Turret;
+import model.SpaceCharacters.Ships.SpaceShip;
 import model.ShipComponents.ShipConfig.ShipComponent;
 import model.ShipComponents.ShipConfig.Upgrade;
 import model.utils.SpaceCalculator;
@@ -177,5 +178,69 @@ public final class ShipFactory {
             }
         }
         return positions;
+    }
+
+    /**
+     * Randomly upgrades a ship's upgrade stages.
+     * 
+     * @param enemyShip        the ship to upgrade
+     * @param numStageUpgrades the ship's upgrade budget
+     */
+    public static void upgradeStages(SpaceShip ship, int numStageUpgrades) {
+        if (numStageUpgrades <= 0) {
+            return;
+        }
+
+        List<GridCell<Fuselage>> fuselageCells = new ArrayList<>();
+        for (GridCell<Fuselage> gridCell : ship.getShipStructure()) {
+            if (gridCell.value() == null) {
+                continue;
+            }
+            fuselageCells.add(gridCell);
+        }
+
+        Random rng = new Random();
+
+        while (numStageUpgrades > 0 && canHaveStageUpgrades(ship)) {
+
+            int index = rng.nextInt(fuselageCells.size());
+            if (fuselageCells.get(index).value().upgrade()) {
+                numStageUpgrades--;
+                if (numStageUpgrades == 0) {
+                    break;
+                }
+
+                if (!fuselageCells.get(index).value().hasUpgrade()) {
+                    continue;
+                }
+
+                if (fuselageCells.get(index).value().getUpgrade().upgrade()) {
+                    numStageUpgrades--;
+                }
+            }
+            numStageUpgrades--;
+        }
+    }
+
+    private static boolean canHaveStageUpgrades(SpaceShip ship) {
+        for (GridCell<Fuselage> gridCell : ship.getShipStructure()) {
+            if (gridCell.value() == null) {
+                continue;
+            }
+
+            if (gridCell.value().getStage().isUpgradeable()) {
+                return true;
+            }
+
+            if (!gridCell.value().hasUpgrade()) {
+                continue;
+            }
+
+            if (gridCell.value().getUpgrade().getStage().isUpgradeable()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

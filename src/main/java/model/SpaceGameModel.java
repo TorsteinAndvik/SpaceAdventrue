@@ -234,7 +234,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     }
 
     private float enemySpawnTimer() {
-        return 6f + 3f * spawnedShipCounter;
+        return Math.min(30f, 5f + 2.5f * spawnedShipCounter);
     }
 
     /**
@@ -507,8 +507,9 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     }
 
     public void spawnRandomShip() {
-        int numFuselage = 2 + spawnedShipCounter;
+        int numFuselage = 2 + spawnedShipCounter / 2;
         int numUpgrades = rng.nextInt(Math.max(2, numFuselage / 2), numFuselage + 1);
+        int stageUpgradeBudget = getScore() / 500;
 
         Rectangle spawnPerimeter = screenBoundsProvider.getBounds();
 
@@ -545,6 +546,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                 angle);
 
         enemyShip.setBrain(new EnhancedLerpBrain(enemyShip, player));
+        ShipFactory.upgradeStages(enemyShip, stageUpgradeBudget);
 
         spaceShips.addLast(enemyShip);
         hitDetection.addCollider(enemyShip);
