@@ -2,6 +2,7 @@ package model.SpaceCharacters.Ships;
 
 import grid.CellPosition;
 import model.ShipComponents.Components.Fuselage;
+import model.ShipComponents.Components.stats.Stat;
 import model.ShipComponents.ShipFactory;
 import model.utils.FloatPair;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,11 +15,12 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SpaceShipTest {
 
     private SpaceShip spaceShip;
-    private final int startHealth = 8;
+    private int startHealth;
 
     @BeforeEach()
     void setup() {
         spaceShip = new Player(ShipFactory.simpleShip(), "The Black Swan", "A beautiful pirate ship.", 0f, 100f);
+        startHealth = 2 * (new Fuselage()).getModifiers().get(Stat.HEALTH_VALUE).intValue();
     }
 
     @Test
