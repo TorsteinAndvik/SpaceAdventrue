@@ -1,7 +1,6 @@
 package model.SpaceCharacters.Ships;
 
 import model.ShipComponents.ShipStructure;
-import model.ShipComponents.Components.stats.Stat;
 import model.SpaceCharacters.CharacterType;
 import model.constants.PhysicsParameters;
 
@@ -16,7 +15,7 @@ public class Player extends SpaceShip implements ViewablePlayer {
 
     public Player(ShipStructure shipStructure, String name, String description, float x, float y) {
         super(shipStructure, name, description, CharacterType.PLAYER, x, y, 0);
-        inventory = new PlayerInventory(300);
+        inventory = new PlayerInventory(500);
     }
 
     @Override
@@ -69,25 +68,6 @@ public class Player extends SpaceShip implements ViewablePlayer {
         position.add(velocity.x * deltaTime, velocity.y * deltaTime);
     }
 
-    private float force() {
-        return shipStructure.getCombinedStatModifier().getModifiers().get(Stat.ACCELERATION_FORCE).floatValue();
-    }
-
-    private float torque() {
-        return force() * PhysicsParameters.accelerationLimitRotational
-                / PhysicsParameters.accelerationLimitLongitudonal;
-    }
-
-    private float maxSpeed() {
-        return Math.min(
-                shipStructure.getCombinedStatModifier().getModifiers().get(Stat.MAX_SPEED).floatValue(),
-                PhysicsParameters.maxVelocityLongitudonal);
-    }
-
-    private float maxRotVel() {
-        return maxSpeed() * PhysicsParameters.maxVelocityRotational / PhysicsParameters.maxVelocityLongitudonal;
-    }
-
     private void applySpeedLimit() {
         float maxSpeed = maxSpeed();
         if (getSpeed() > maxSpeed) {
@@ -96,7 +76,7 @@ public class Player extends SpaceShip implements ViewablePlayer {
     }
 
     private void applyRotationalSpeedLimit() {
-        float maxRotSpeed = maxRotVel();
+        float maxRotSpeed = maxRotationalVelocity();
 
         if (getRotationSpeed() < -maxRotSpeed) {
             rotation.setRotationSpeed(-maxRotSpeed);

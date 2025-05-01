@@ -141,6 +141,7 @@ public class HitDetection {
     }
 
     private boolean doubleShipCollision(SpaceShip shipA, SpaceShip shipB) {
+        model.handleShipProximity(shipA, shipB); // ships are close
         for (GridCell<Fuselage> gridCellA : shipA.getShipStructure().getGridCopy()) {
             if (gridCellA.value() == null) {
                 continue;
