@@ -8,7 +8,7 @@ public final class PhysicsParameters {
 
     public static final float shipUpgradeMass = 0.5f;
 
-    public static final float maxVelocityLongitudonal = 6f;
+    public static final float maxVelocityLongitudonal = 9f;
 
     public static final float maxVelocityRotational = 180f;
 

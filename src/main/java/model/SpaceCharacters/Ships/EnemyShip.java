@@ -24,6 +24,10 @@ public class EnemyShip extends SpaceShip {
         this.brain = brain;
     }
 
+    public Brain getBrain() {
+        return brain;
+    }
+
     @Override
     public boolean isAccelerating() {
         // set permanently on for rendering in SpaceScreen

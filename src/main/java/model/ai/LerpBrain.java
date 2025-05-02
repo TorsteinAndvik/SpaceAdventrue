@@ -13,20 +13,28 @@ public class LerpBrain extends Brain implements ShooterBrain {
 
     @Override
     public void update(float delta) {
+        ship.setRotation(newAngle(delta));
+        ship.translate(newPositionDelta(delta));
+        shoot(inFiringRange());
+    }
+
+    protected float newAngle(float delta) {
         // lerp the rotation angle towards the player
         float angle = SpaceCalculator.angleBetweenPoints(
                 ship.getAbsoluteCenterOfMass(),
                 player.getAbsoluteCenterOfMass());
 
         float newAngle;
+        float lerpAlpha = 1.75f * delta;
         if (ship.getRotationAngle() <= angle + 180f) {
-            newAngle = SpaceCalculator.lerp1D(ship.getRotationAngle(), angle + 90f, 1.75f * delta);
+            newAngle = SpaceCalculator.lerp1D(ship.getRotationAngle(), angle + 90f, lerpAlpha);
         } else {
-            newAngle = SpaceCalculator.lerp1D(ship.getRotationAngle() - 360f, angle + 90f, 1.75f * delta);
+            newAngle = SpaceCalculator.lerp1D(ship.getRotationAngle() - 360f, angle + 90f, lerpAlpha);
         }
+        return newAngle;
+    }
 
-        ship.setRotation(newAngle);
-
+    protected FloatPair newPositionDelta(float delta) {
         // lerp the position towards the player, at a "safe" hover-distance
         FloatPair target = SpaceCalculator.getPointAtDistance(ship.getAbsoluteCenterOfMass(),
                 player.getAbsoluteCenterOfMass(), hoverDistance());
@@ -36,10 +44,7 @@ public class LerpBrain extends Brain implements ShooterBrain {
         FloatPair deltaPos = new FloatPair(newPos.x() - ship.getAbsoluteCenterOfMass().x(),
                 newPos.y() - ship.getAbsoluteCenterOfMass().y());
 
-        ship.translate(deltaPos);
-
-        // shooting logic
-        shoot(inFiringRange());
+        return deltaPos;
     }
 
     protected float hoverDistance() {
@@ -54,6 +59,6 @@ public class LerpBrain extends Brain implements ShooterBrain {
     @Override
     public boolean inFiringRange() {
         float distance = SpaceCalculator.distance(ship.getAbsoluteCenterOfMass(), player.getAbsoluteCenterOfMass());
-        return distance < 1.2f * hoverDistance();
+        return distance < 1.35f * hoverDistance();
     }
 }

@@ -33,7 +33,7 @@ import model.SpaceCharacters.Ships.EnemyShip;
 import model.SpaceCharacters.Ships.Player;
 import model.SpaceCharacters.SpaceBody;
 import model.SpaceCharacters.Ships.SpaceShip;
-import model.ai.LerpBrain;
+import model.ai.EnhancedLerpBrain;
 import model.constants.PhysicsParameters;
 import model.utils.FloatPair;
 import model.utils.SpaceCalculator;
@@ -61,7 +61,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     private int objectsDestroyed;
     private RandomAsteroidFactory randomAsteroidFactory;
     private DirectionalAsteroidFactory directionalAsteroidFactory;
-    private float asteroidTimer = 5f; // >0 to make first wave spawn earlier
+    private float asteroidTimer = asteroidSpawnTimer() / 2f; // make first wave spawn earlier
 
     private float enemySpawnTimer = 0f;
     private int spawnedShipCounter = 0;
@@ -176,7 +176,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         while (laserIterator.hasNext()) {
             Bullet laser = laserIterator.next();
             laser.update(delta);
-            if (cullSpaceBody(laser, 5f)) {// Remove if too distant to player
+            if (cullSpaceBody(laser, 3f)) {// Remove if too distant to player
                 hitDetection.removeCollider(laser);
                 laserPool.free(laser);
                 laserIterator.remove();
@@ -213,15 +213,28 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
             handleShootingLogic(spaceShip);
         }
 
+        // cull distant enemies
+        Iterator<SpaceShip> shipIterator = spaceShips.iterator();
+        if (shipIterator.hasNext()) {
+            shipIterator.next(); // skip player ship
+            while (shipIterator.hasNext()) {
+                SpaceShip iter = shipIterator.next();
+                if (cullSpaceBody(iter, iter.getProximityRadius())) {// Remove if too distant to player
+                    hitDetection.removeCollider(iter);
+                    shipIterator.remove();
+                }
+            }
+        }
+
         hitDetection.checkCollisions();
     }
 
     private float asteroidSpawnTimer() {
-        return 10f;
+        return 12f;
     }
 
     private float enemySpawnTimer() {
-        return 8f + 3f * spawnedShipCounter;
+        return Math.min(30f, 5f + 2.5f * spawnedShipCounter);
     }
 
     /**
@@ -240,7 +253,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                 || body.getY() - body.getRadius() - offset > bounds.y + bounds.height);
     }
 
-    void handleCollision(Collidable A, Collidable B) {
+    public void handleCollision(Collidable A, Collidable B) {
         if (HitDetection.isFriendlyFire(A, B)) {
             return;
         }
@@ -302,6 +315,24 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         return false;
     }
 
+    public void handleShipProximity(SpaceShip shipA, SpaceShip shipB) {
+        if (shipA.isPlayerShip() || shipB.isPlayerShip()) {
+            return;
+        }
+
+        notifyBrains((EnemyShip) shipA, (EnemyShip) shipB);
+    }
+
+    private void notifyBrains(EnemyShip shipA, EnemyShip shipB) {
+        if (shipA.getBrain() instanceof EnhancedLerpBrain brainA) {
+            brainA.nearCollision(shipB);
+        }
+
+        if (shipB.getBrain() instanceof EnhancedLerpBrain brainB) {
+            brainB.nearCollision(shipA);
+        }
+    }
+
     private void remove(Collidable c, boolean drawExplosion) {
         hitDetection.removeCollider(c);
         if (c instanceof SpaceBody sb) {
@@ -336,7 +367,9 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                     for (Collectable collectable : this.collectables) {
                         if (collectable == c) {
                             collectables.remove(c);
-                            if (c instanceof Diamond d) { diamondFactory.free(d); }
+                            if (c instanceof Diamond d) {
+                                diamondFactory.free(d);
+                            }
                             break;
                         }
                     }
@@ -464,7 +497,6 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         return new Matrix4(transformMatrix);
     }
 
-
     /**
      * Gets the center of mass coordinates for the player
      *
@@ -475,8 +507,9 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     }
 
     public void spawnRandomShip() {
-        int numFuselage = 2 + spawnedShipCounter;
+        int numFuselage = 2 + spawnedShipCounter / 2;
         int numUpgrades = rng.nextInt(Math.max(2, numFuselage / 2), numFuselage + 1);
+        int stageUpgradeBudget = getScore() / 500;
 
         Rectangle spawnPerimeter = screenBoundsProvider.getBounds();
 
@@ -503,15 +536,17 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                     spawnPerimeter.y + spawnPerimeter.height + numFuselage * PhysicsParameters.fuselageRadius);
         }
 
+        float angle = SpaceCalculator.angleBetweenPoints(player.getAbsoluteCenterOfMass(), new FloatPair(x, y));
         EnemyShip enemyShip = new EnemyShip(
                 ShipFactory.generateShipStructure(numFuselage, numUpgrades),
                 "enemy",
                 "an enemy ship",
                 x,
                 y,
-                0f);
+                angle);
 
-        enemyShip.setBrain(new LerpBrain(enemyShip, player));
+        enemyShip.setBrain(new EnhancedLerpBrain(enemyShip, player));
+        ShipFactory.upgradeStages(enemyShip, stageUpgradeBudget);
 
         spaceShips.addLast(enemyShip);
         hitDetection.addCollider(enemyShip);
