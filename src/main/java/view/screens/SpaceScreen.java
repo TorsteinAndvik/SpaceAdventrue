@@ -437,10 +437,10 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         star.setPosition(scoreIconX, scoreIconY);
         star.draw(batch);
 
-        float scoreTextY = scoreIconY + (star.getHeight() + font.getLineHeight()) * 0.35f;
+        float scoreTextY = scoreIconY + (star.getHeight() + fontRegular.getLineHeight()) * 0.35f;
         float scoreTextX = scoreIconX + star.getWidth();
 
-        float diamondIconY = scoreTextY - font.getLineHeight() * 0.9f - diamond.getHeight();
+        float diamondIconY = scoreTextY - fontRegular.getLineHeight() * 0.9f - diamond.getHeight();
         float diamondIconX = -0.15f * diamond.getWidth();
         diamond.setPosition(diamondIconX, diamondIconY);
         diamond.draw(batch);
@@ -454,9 +454,9 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         fontRegular.draw(batch, String.valueOf(resources), textX, resourceTextY);
 
         if (model.isGameOver()) {
-            float textX = viewportUI.getWorldWidth() / 2f - gameOverLayout.width / 2f;
-            float textY = 3f * viewportUI.getWorldHeight() / 4f - gameOverLayout.height / 2f;
-            fontBold.draw(batch, "Game Over", textX, textY);
+            float gameOverX = viewportUI.getWorldWidth() / 2f - gameOverLayout.width / 2f;
+            float gameOverY = 3f * viewportUI.getWorldHeight() / 4f - gameOverLayout.height / 2f;
+            fontBold.draw(batch, "Game Over", gameOverX, gameOverY);
         }
 
         batch.end();
