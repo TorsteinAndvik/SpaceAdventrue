@@ -1,7 +1,6 @@
 package model.SpaceCharacters.Ships;
 
 import model.ShipComponents.ShipStructure;
-import model.ShipComponents.Components.stats.Stat;
 import model.SpaceCharacters.CharacterType;
 import model.constants.PhysicsParameters;
 

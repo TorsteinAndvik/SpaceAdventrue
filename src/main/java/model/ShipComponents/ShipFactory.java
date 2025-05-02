@@ -103,10 +103,8 @@ public final class ShipFactory {
      *                    <code>ShipStructure</code>.
      * @param numUpgrades number of <code>ShipUpgrade</code> held by in
      *                    <code>ShipStructure</code>.
-     *
      * @return a randomly generated and valid <code>ShipStructure</code> with the
      *         specified number of fuselages and upgrades.
-     *
      * @throws IllegalArgumentException if either <code>numFuselage</code> or
      *                                  <code>numUpgrades</code> is less
      *                                  than 2, or <code>numUpgrades</code> is
@@ -182,8 +180,8 @@ public final class ShipFactory {
 
     /**
      * Randomly upgrades a ship's upgrade stages.
-     * 
-     * @param enemyShip        the ship to upgrade
+     *
+     * @param ship             the ship to upgrade
      * @param numStageUpgrades the ship's upgrade budget
      */
     public static void upgradeStages(SpaceShip ship, int numStageUpgrades) {
