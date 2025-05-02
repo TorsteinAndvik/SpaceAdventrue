@@ -205,10 +205,8 @@
             </goals>
             <configuration>
               <excludes>
-                **/view/**
-              </excludes>
-              <excludes>
-                **/app/**
+                <exclude>**/view/**</exclude>
+                <exclude>**/app/**</exclude>
               </excludes>
             </configuration>
           </execution>
