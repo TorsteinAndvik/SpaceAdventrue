@@ -36,7 +36,8 @@ public class HitDetectionTest {
     public void setup() {
         model = mock(SpaceGameModel.class);
 
-        asteroid = new Asteroid("asteroid", "an asteroid", -5, -5, 0, 0, 1f, 0f, 1f, 0f);
+        asteroid = new Asteroid();
+        asteroid.setPosition(new FloatPair(-5f, -5f));
         laser = new Bullet("bullet", "a bullet", 3, 3, 0, 0, 0.25f, false);
         player = new Player(ShipFactory.playerShip(), "player", "the player's ship", 8, 8);
         enemyShip = new EnemyShip(ShipFactory.simpleShip(), "dreadnought", "an enemy ship",
