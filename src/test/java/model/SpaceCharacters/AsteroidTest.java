@@ -53,7 +53,7 @@ public class AsteroidTest {
         Asteroid a = new Asteroid();
         a.setMass(10);
         a.setRadius(5);
-        int multiplier = 10;
+        int multiplier = 30;
         int value = (int) (a.getMass() * a.radius) * multiplier;
         assertEquals(value, a.getResourceValue());
 

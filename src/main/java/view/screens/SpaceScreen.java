@@ -78,6 +78,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     private Sprite asteroidSmall;
     private Sprite laser;
     private Sprite diamond;
+    private Sprite star;
 
     private final Map<UpgradeStage, Sprite> enemyShipSprites = new HashMap<>();
     private final Map<UpgradeType, Map<UpgradeStage, Sprite>> shipSprites = new HashMap<>();
@@ -184,6 +185,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         }
 
         diamond = createSprite("images/space/diamond.png", 1f, 1f);
+        star = createSprite("images/space/star.png", .6f, .6f);
     }
 
     private void setupAnimationHashMap() {
@@ -406,16 +408,32 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
             shape.end();
         }
 
-        // draw UI elements
+        // Draw UI
         viewportUI.apply(true);
         batch.setProjectionMatrix(viewportUI.getCamera().combined);
         batch.begin();
-        diamond.setY(viewportUI.getWorldHeight() - 1.06f * diamond.getHeight());
-        diamond.setX(-0.15f * diamond.getWidth());
+
+        float scoreIconY = viewportUI.getWorldHeight() - 1.4f * star.getHeight();
+        float scoreIconX = star.getWidth() - 0.55f;
+        star.setPosition(scoreIconX, scoreIconY);
+        star.draw(batch);
+
+        float scoreTextY = scoreIconY + (star.getHeight() + font.getLineHeight()) * 0.35f;
+        float scoreTextX = scoreIconX + star.getWidth();
+
+        float diamondIconY = scoreTextY - font.getLineHeight() * 0.9f - diamond.getHeight();
+        float diamondIconX = -0.15f * diamond.getWidth();
+        diamond.setPosition(diamondIconX, diamondIconY);
         diamond.draw(batch);
-        font.draw(batch, String.valueOf(model.getPlayer().getInventory().getResourceCount()),
-                diamond.getX() + diamond.getWidth(),
-                diamond.getY() + 0.45f * diamond.getHeight() + 0.5f * font.getLineHeight());
+
+        float resourceTextY = diamondIconY + 0.42f * (diamond.getHeight() + font.getLineHeight());
+        float resourceTextX = diamondIconX + diamond.getWidth();
+        int resources = model.getPlayer().getInventory().getResourceCount();
+
+        float textX = Math.max(scoreTextX, resourceTextX);
+        font.draw(batch, String.valueOf(model.getScore()), textX, scoreTextY);
+        font.draw(batch, String.valueOf(resources), textX, resourceTextY);
+
         batch.end();
     }
 

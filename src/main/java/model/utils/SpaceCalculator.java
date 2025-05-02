@@ -81,7 +81,7 @@ public final class SpaceCalculator {
      * Calculates the angle (in degrees) between two points.
      * The first 2 parameters are the coordinates of the target point, the last 2
      * are the coordinates of the source point.
-     * 
+     *
      * @param x1
      * @param y1
      * @param x2
@@ -99,7 +99,7 @@ public final class SpaceCalculator {
      * Calculates the angle (in degrees) between two points.
      * The first 2 parameters are the coordinates of the target point, the
      * <code>FloatPair</code> holds the coordinates of the source point.
-     * 
+     *
      * @param x
      * @param y
      * @param source
@@ -113,7 +113,7 @@ public final class SpaceCalculator {
      * Calculates the angle (in degrees) between two points.
      * The first <code>FloatPair</code> holds the coordinates of the target point,
      * the second <code>FloatPair</code> holds the coordinates of the source point.
-     * 
+     *
      * @param target
      * @param source
      * @return
@@ -124,14 +124,13 @@ public final class SpaceCalculator {
 
     /**
      * Rotates a point around a center of rotation by a given angle.
-     * 
+     *
      * @param point                    the <code>FloatPair</code> to be rotated.
      * @param relativeCenterOfRotation the <code>FloatPair</code> for the relative
      *                                 center of rotation.
      * @param absoluteCenterOfRotation the <code>FloatPair</code> for the absolute
      *                                 center of rotation.
      * @param angle                    the angle in degrees to rotate the point by.
-     * 
      * @return the rotated and translated <code>FloatPair</code>.
      */
     public static FloatPair rotatePoint(FloatPair point, FloatPair relativeCenterOfRotation,
@@ -141,15 +140,14 @@ public final class SpaceCalculator {
 
     /**
      * Rotates a point around a center of rotation by a given angle.
-     * 
-     * @param x                        the x coordinate of the point to be rotated
-     * @param y                        the y coordinate of the point to be rotated
-     * @param relativeCenterOfRotation the <code>FloatPair</code> for the relative
-     *                                 center of rotation.
-     * @param absoluteCenterOfRotation the <code>FloatPair</code> for the absolute
-     *                                 center of rotation.
-     * @param angle                    the angle in degrees to rotate the point by.
-     * 
+     *
+     * @param x                the x coordinate of the point to be rotated
+     * @param y                the y coordinate of the point to be rotated
+     * @param centerOfRotation the <code>FloatPair</code> for the relative
+     *                         center of rotation.
+     * @param translation      the <code>FloatPair</code> for the absolute
+     *                         center of rotation.
+     * @param angle            the angle in degrees to rotate the point by.
      */
     public static FloatPair rotatePoint(float x, float y, FloatPair centerOfRotation, FloatPair translation,
             float angle) {
@@ -170,7 +168,7 @@ public final class SpaceCalculator {
 
     /**
      * Performs one-dimensional linear interpolation.
-     * 
+     *
      * @param source the source or start value
      * @param target the target value
      * @param alpha  the interpolation factor,
@@ -187,7 +185,7 @@ public final class SpaceCalculator {
 
     /**
      * Performs two-dimensional linear interpolation.
-     * 
+     *
      * @param source the source or start <code>FloatPair</code>
      * @param target the target <code>FloatPair</code>
      * @param alpha  the interpolation factor,
@@ -205,7 +203,7 @@ public final class SpaceCalculator {
 
     /**
      * Performs two-dimensional linear interpolation.
-     * 
+     *
      * @param source the source or start <code>Vector2</code>
      * @param target the target <code>FloatPair</code>
      * @param alpha  the interpolation factor,
@@ -222,7 +220,7 @@ public final class SpaceCalculator {
 
     /**
      * Performs two-dimensional linear interpolation.
-     * 
+     *
      * @param source the source or start <code>Vector3</code>. This only considers
      *               its x and y values. Useful in conjunction with viewport cameras
      *               in libGDX, which use a 3D coordinate system.
@@ -241,7 +239,7 @@ public final class SpaceCalculator {
 
     /**
      * Calculates a point at a certain distance from another point.
-     * 
+     *
      * @param posA     the point away from the target point <code>posB</code> which
      *                 defines the direction.
      * @param posB     the point from which the returned <code>FloatPair</code> is
@@ -281,7 +279,7 @@ public final class SpaceCalculator {
 
     /**
      * Calculates the damage of a collision and applies it to the target objects.
-     * 
+     *
      * @param A a <code>Collidable</code> crashing into <code>B</code>.
      * @param B a <code>Collidable</code> crashing into <code>A</code>.
      */
