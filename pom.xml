@@ -207,6 +207,9 @@
               <excludes>
                 **/view/**
               </excludes>
+              <excludes>
+                **/app/**
+              </excludes>
             </configuration>
           </execution>
         </executions>

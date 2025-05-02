@@ -14,11 +14,6 @@ public interface ControllableSpaceGameModel {
     void update(float delta);
 
     /**
-     * Stops the game. Sets GameState to STOPPED_GAME.
-     */
-    void stopGame();
-
-    /**
      * Set ship to accelerate forwards.
      */
     void setAccelerateForward(boolean accelerate);

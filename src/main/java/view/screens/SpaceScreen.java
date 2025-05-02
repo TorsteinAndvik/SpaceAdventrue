@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Matrix4;
@@ -66,7 +67,8 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     private final ScreenViewport viewport;
     private final ScreenViewport viewportUI;
     private final ExtendViewport bgViewport;
-    private BitmapFont font;
+    private BitmapFont fontRegular;
+    private BitmapFont fontBold;
 
     private final OrthographicCamera camera;
     private final float zoomMin = 1f;
@@ -98,6 +100,9 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     private Pool<LaserLight> laserLightPool;
     private ShipThrusterLightMap shipThrusterLightMap;
 
+    // Game over text layout
+    private GlyphLayout gameOverLayout;
+
     // Hitboxes (for testing/debugging)
     private final boolean showHitboxes = false;
 
@@ -120,7 +125,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         setupSprites();
         setupAnimationHashMap();
         setupLighting();
-        setupFont();
+        setupFonts();
     }
 
     private void setupBackground() {
@@ -227,15 +232,23 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         return manager.get(path, Texture.class);
     }
 
-    private void setupFont() {
-        font = manager.get("fonts/PixelOperatorMonoHB.ttf", BitmapFont.class);
+    private void setupFonts() {
+        fontRegular = manager.get("fonts/PixelOperatorMonoHB.ttf", BitmapFont.class);
 
         // fonts are set as [integer]pt, need to scale them to our viewport by ratio of
         // viewport height to screen height in order to use world-unit sized font
 
-        font.setUseIntegerPositions(false);
-        font.getData().setScale(viewportUI.getUnitsPerPixel());
-        font.setColor(Palette.WHITE);
+        fontRegular.setUseIntegerPositions(false);
+        fontRegular.getData().setScale(viewportUI.getUnitsPerPixel());
+        fontRegular.setColor(Palette.WHITE);
+
+        fontBold = manager.get("fonts/PixelOperatorMono-Bold.ttf", BitmapFont.class);
+        fontBold.setUseIntegerPositions(false);
+        fontBold.getData().setScale(viewportUI.getUnitsPerPixel());
+        fontBold.setColor(Palette.WHITE);
+
+        gameOverLayout = new GlyphLayout();
+        gameOverLayout.setText(fontBold, "GAME OVER");
     }
 
     @Override
@@ -291,6 +304,9 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
                 float shipX = ship.getX() + cell.pos().col();
                 float shipY = ship.getY() + cell.pos().row();
                 if (ship.isPlayerShip()) {
+                    if (model.isGameOver()) {
+                        continue;
+                    }
                     Sprite fuselagePlayer = shipSprites.get(cell.value().getType()).get(cell.value().getStage());
                     fuselagePlayer.setCenterX(shipX);
                     fuselagePlayer.setCenterY(shipY);
@@ -387,6 +403,9 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         shape.setProjectionMatrix(camera.combined);
         shape.begin(ShapeType.Filled);
         for (SpaceShip ship : model.getSpaceShips()) {
+            if (ship.isPlayerShip() && model.isGameOver()) {
+                continue;
+            }
             ship.getHealthBar().draw(shape);
         }
         shape.end();
@@ -418,23 +437,30 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         star.setPosition(scoreIconX, scoreIconY);
         star.draw(batch);
 
-        float scoreTextY = scoreIconY + (star.getHeight() + font.getLineHeight()) * 0.35f;
+        float scoreTextY = scoreIconY + (star.getHeight() + fontRegular.getLineHeight()) * 0.35f;
         float scoreTextX = scoreIconX + star.getWidth();
 
-        float diamondIconY = scoreTextY - font.getLineHeight() * 0.9f - diamond.getHeight();
+        float diamondIconY = scoreTextY - fontRegular.getLineHeight() * 0.9f - diamond.getHeight();
         float diamondIconX = -0.15f * diamond.getWidth();
         diamond.setPosition(diamondIconX, diamondIconY);
         diamond.draw(batch);
 
-        float resourceTextY = diamondIconY + 0.42f * (diamond.getHeight() + font.getLineHeight());
+        float resourceTextY = diamondIconY + 0.42f * (diamond.getHeight() + fontRegular.getLineHeight());
         float resourceTextX = diamondIconX + diamond.getWidth();
         int resources = model.getPlayer().getInventory().getResourceCount();
 
         float textX = Math.max(scoreTextX, resourceTextX);
-        font.draw(batch, String.valueOf(model.getScore()), textX, scoreTextY);
-        font.draw(batch, String.valueOf(resources), textX, resourceTextY);
+        fontRegular.draw(batch, String.valueOf(model.getScore()), textX, scoreTextY);
+        fontRegular.draw(batch, String.valueOf(resources), textX, resourceTextY);
+
+        if (model.isGameOver()) {
+            float gameOverX = viewportUI.getWorldWidth() / 2f - gameOverLayout.width / 2f;
+            float gameOverY = 3f * viewportUI.getWorldHeight() / 4f - gameOverLayout.height / 2f;
+            fontBold.draw(batch, "Game Over", gameOverX, gameOverY);
+        }
 
         batch.end();
+
     }
 
     private void updateLightCounts() {

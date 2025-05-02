@@ -11,10 +11,8 @@ import controller.audio.SoundManager;
 import java.util.ArrayList;
 import java.util.List;
 import model.GameStateModel;
-import model.ShipComponents.ShipFactory;
 import model.ShipComponents.UpgradeHandler;
 import model.ShipComponents.UpgradeType;
-import model.SpaceCharacters.Ships.Player;
 import model.UpgradeScreenModel;
 import model.World.StoreItem;
 import org.junit.jupiter.api.BeforeEach;
@@ -241,7 +239,6 @@ class UpgradeScreenControllerTest {
 
         verify(mockModel).disableCellHighlight();
 
-
     }
 
     @Test
@@ -257,8 +254,7 @@ class UpgradeScreenControllerTest {
 
         List<StoreItem<UpgradeType>> shelf = new ArrayList<>(List.of(
                 new StoreItem<>(UpgradeType.TURRET, 50, "Turret"),
-                new StoreItem<>(UpgradeType.SHIELD, 10, "Shield")
-        ));
+                new StoreItem<>(UpgradeType.SHIELD, 10, "Shield")));
 
         when(mockModel.getStoreShelf()).thenReturn(shelf);
         when(mockModel.getPlayerResources()).thenReturn(1000);

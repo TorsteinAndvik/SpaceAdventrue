@@ -6,6 +6,7 @@ import controller.audio.AudioCallback;
 import controller.audio.SoundEffect;
 import model.GameStateModel;
 import model.SpaceGameModel;
+import model.constants.GameState;
 import view.SpaceGame;
 import view.screens.SpaceScreen;
 
@@ -22,36 +23,57 @@ public class SpaceScreenController extends GenericController implements AudioCal
 
     public void update(float delta) {
         model.update(delta);
+        if (model.isGameOver()) {
+            gameStateModel.changeState(GameState.GAME_OVER);
+        }
     }
 
     @Override
     protected boolean handleKeyDown(int keycode) {
         return switch (keycode) {
             case Input.Keys.W -> {
+                if (gameStateModel.getCurrentState() == GameState.GAME_OVER) {
+                    yield true;
+                }
                 model.setAccelerateForward(true);
                 model.setAccelerateBackward(false);
                 yield true;
             }
             case Input.Keys.S -> {
+                if (gameStateModel.getCurrentState() == GameState.GAME_OVER) {
+                    yield true;
+                }
                 model.setAccelerateBackward(true);
                 model.setAccelerateForward(false);
                 yield true;
             }
             case Input.Keys.A -> {
+                if (gameStateModel.getCurrentState() == GameState.GAME_OVER) {
+                    yield true;
+                }
                 model.setAccelerateCounterClockwise(true);
                 model.setAccelerateClockwise(false);
                 yield true;
             }
             case Input.Keys.D -> {
+                if (gameStateModel.getCurrentState() == GameState.GAME_OVER) {
+                    yield true;
+                }
                 model.setAccelerateClockwise(true);
                 model.setAccelerateCounterClockwise(false);
                 yield true;
             }
             case Input.Keys.SPACE -> {
+                if (gameStateModel.getCurrentState() == GameState.GAME_OVER) {
+                    yield true;
+                }
                 model.playerShoot();
                 yield true;
             }
             case Input.Keys.U -> {
+                if (gameStateModel.getCurrentState() == GameState.GAME_OVER) {
+                    yield true;
+                }
                 game.setUpgradeScreen();
                 yield true;
             }
@@ -60,6 +82,9 @@ public class SpaceScreenController extends GenericController implements AudioCal
                 yield true;
             }
             case Input.Keys.P -> {
+                if (gameStateModel.getCurrentState() == GameState.GAME_OVER) {
+                    yield true;
+                }
                 game.setOptionsScreen();
                 yield true;
             }
@@ -71,18 +96,30 @@ public class SpaceScreenController extends GenericController implements AudioCal
     protected boolean handleKeyUp(int keycode) {
         return switch (keycode) {
             case Input.Keys.W -> {
+                if (gameStateModel.getCurrentState() == GameState.GAME_OVER) {
+                    yield true;
+                }
                 model.setAccelerateForward(false);
                 yield true;
             }
             case Input.Keys.S -> {
+                if (gameStateModel.getCurrentState() == GameState.GAME_OVER) {
+                    yield true;
+                }
                 model.setAccelerateBackward(false);
                 yield true;
             }
             case Input.Keys.A -> {
+                if (gameStateModel.getCurrentState() == GameState.GAME_OVER) {
+                    yield true;
+                }
                 model.setAccelerateCounterClockwise(false);
                 yield true;
             }
             case Input.Keys.D -> {
+                if (gameStateModel.getCurrentState() == GameState.GAME_OVER) {
+                    yield true;
+                }
                 model.setAccelerateClockwise(false);
                 yield true;
             }
@@ -133,7 +170,8 @@ public class SpaceScreenController extends GenericController implements AudioCal
     }
 
     @Override
-    protected void handleScroll(float amountY) { }
+    protected void handleScroll(float amountY) {
+    }
 
     @Override
     public void play(SoundEffect soundEffect) {
