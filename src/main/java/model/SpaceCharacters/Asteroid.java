@@ -26,7 +26,7 @@ public class Asteroid extends Projectile {
 
     @Override
     public int getResourceValue() {
-        int resourceValueMultiplier = 10;
+        int resourceValueMultiplier = 30;
         return (int) (mass * radius * resourceValueMultiplier);
     }
 }

@@ -11,7 +11,7 @@ public class EnhancedLerpBrain extends LerpBrain {
     private boolean nearCollision = false;
     private FloatPair nearCollisionPos = null;
     private float nearCollisionProximity = 0f;
-    private float nearCollisionScalar = 4f;
+    private final float nearCollisionScalar = 4f;
 
     public EnhancedLerpBrain(EnemyShip ship, Player player) {
         super(ship, player);
