@@ -21,7 +21,8 @@
   </properties>
   <dependencies>
     <dependency>
-      <!--libGDX graphics library – https://libgdx.com/ -->
+      <!--libGDX
+      graphics library – https://libgdx.com/ -->
       <groupId>com.badlogicgames.gdx</groupId>
       <artifactId>gdx</artifactId>
       <version>${libgdx.version}</version>
@@ -155,7 +156,7 @@
                   </manifestEntries>
                 </transformer>
                 <transformer
-                  implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                  implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
               </transformers>
               <artifactSet></artifactSet>
               <outputFile>
@@ -202,6 +203,11 @@
             <goals>
               <goal>report</goal>
             </goals>
+            <configuration>
+              <excludes>
+                **/view/**
+              </excludes>
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -311,7 +317,8 @@
           <configuration>
             <!-- don't notify us about new alpha/beta/milestone versions -->
             <!-- you can check for updated plugins and dependencies by running: -->
-            <!--   mvn versions:display-plugin-updates versions:display-property-updates versions:display-dependency-updates -->
+            <!--   mvn versions:display-plugin-updates versions:display-property-updates
+            versions:display-dependency-updates -->
             <ruleSet>
               <ignoreVersions>
                 <ignoreVersion>

@@ -130,7 +130,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
         player.setRotationSpeed(0f);
     }
 
-    private void createAsteroids() {
+    protected void createAsteroids() {
         randomAsteroidFactory.setSpawnPerimeter(screenBoundsProvider.getBounds());
         directionalAsteroidFactory.setSpawnPerimeter(screenBoundsProvider.getBounds());
 

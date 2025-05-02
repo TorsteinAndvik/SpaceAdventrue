@@ -10,6 +10,8 @@ import model.ShipComponents.ShipFactory;
 import model.SpaceCharacters.Bullet;
 import model.SpaceCharacters.Ships.EnemyShip;
 import model.SpaceCharacters.Ships.SpaceShip;
+import model.utils.FloatPair;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,9 +44,13 @@ class SpaceGameModelTest {
         gameModel = new SpaceGameModel();
         initialPlayerX = gameModel.getPlayer().getX();
         initialPlayerY = gameModel.getPlayer().getY();
+
         gameModel.setAnimationCallback(state -> {
         });
-        gameModel.setScreenBoundsProvider(() -> new Rectangle(initialPlayerX, initialPlayerY, 10000f, 10000f));
+        gameModel.setScreenBoundsProvider(() -> new Rectangle(gameModel.getPlayerCenterOfMass().x(),
+                gameModel.getPlayerCenterOfMass().y(), 10000f, 10000f));
+        gameModel.setAudioCallback(soundEffect -> {
+        });
     }
 
     @Test
@@ -80,7 +86,6 @@ class SpaceGameModelTest {
                 firstLaser.getY() + firstLaser.getRadius(), 0, 0, 1, false);
         fourthLaser.setSourceID(enemy_2.getID());
         assertFalse(HitDetection.isFriendlyFire(thirdLaser, fourthLaser));
-
     }
 
     @Test
@@ -93,5 +98,35 @@ class SpaceGameModelTest {
 
         assertTrue(HitDetection.isFriendlyFire(gameModel.getPlayer(), laser));
         assertFalse(HitDetection.isFriendlyFire(laser, enemy_1));
+    }
+
+    @Test
+    public void createAsteroidsTest() {
+        // check that asteroids are actually added
+        assertTrue(gameModel.getAsteroids().size() == 0);
+        gameModel.createAsteroids();
+        assertTrue(gameModel.getAsteroids().size() > 0);
+    }
+
+    @Test
+    public void cullSpaceBodyTest() {
+        // create SpaceBody objects, check they are added and don't dissappear on update
+        gameModel.createAsteroids();
+        gameModel.spawnRandomShip();
+        gameModel.getSpaceShips().get(1).setPosition(new FloatPair(initialPlayerX + 3f, initialPlayerY + 3f));
+        gameModel.getSpaceShips().get(1).setToShoot(true);
+
+        gameModel.update(0.01f);
+
+        assertTrue(gameModel.getAsteroids().size() > 0);
+        assertTrue(gameModel.getLasers().size() > 0);
+        assertTrue(gameModel.getSpaceShips().size() > 1);
+
+        // move player far away, asteroids should be removed
+        gameModel.getPlayer().setPosition(new FloatPair(1_000_000f, -1_000_000f));
+        gameModel.update(0.01f);
+        assertTrue(gameModel.getAsteroids().size() == 0);
+        assertTrue(gameModel.getLasers().size() == 0);
+        assertTrue(gameModel.getSpaceShips().size() == 1);
     }
 }

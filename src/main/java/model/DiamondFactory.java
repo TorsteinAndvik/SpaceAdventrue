@@ -16,8 +16,10 @@ public class DiamondFactory {
     };
 
     /**
-     * Spawns a {@link Diamond} instance and places it relative to the given {@link ViewableSpaceBody}.
-     * The diamond’s value is randomly determined based on the resource value of the parent.
+     * Spawns a {@link Diamond} instance and places it relative to the given
+     * {@link ViewableSpaceBody}.
+     * The diamond’s value is randomly determined based on the resource value of the
+     * parent.
      *
      * @param parent the space object (e.g., asteroid) where the diamond is spawned
      * @return a {@link Diamond} instance
@@ -34,7 +36,8 @@ public class DiamondFactory {
     }
 
     /**
-     * Pre-fills the internal pool with a specified number of {@link Diamond} instances.
+     * Pre-fills the internal pool with a specified number of {@link Diamond}
+     * instances.
      *
      * @param diamondPreFill number of diamond instances to pre-allocate
      */
