@@ -16,7 +16,7 @@ public class Player extends SpaceShip implements ViewablePlayer {
 
     public Player(ShipStructure shipStructure, String name, String description, float x, float y) {
         super(shipStructure, name, description, CharacterType.PLAYER, x, y, 0);
-        inventory = new PlayerInventory(300);
+        inventory = new PlayerInventory(500);
     }
 
     @Override
