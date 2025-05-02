@@ -55,6 +55,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
     private AnimationCallback animationCallback;
     private ScreenBoundsProvider screenBoundsProvider;
     private AudioCallback audioCallback;
+
     private final ScoreBoard scoreBoard;
     private boolean scoreSubmitted;
     private float timeSurvived;
@@ -65,6 +66,9 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     private float enemySpawnTimer = 0f;
     private int spawnedShipCounter = 0;
+
+    private boolean gameOver = false;
+    private float timeSinceGameOver = 0f;
 
     private final Random rng = new Random();
     private DiamondFactory diamondFactory;
@@ -163,6 +167,11 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     @Override
     public void update(float delta) {
+        if (gameOver) {
+            timeSinceGameOver += delta;
+            return;
+        }
+
         timeSurvived += delta;
         if (player.isDestroyed() && !scoreSubmitted) {
             submitScore();
@@ -403,6 +412,8 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                     } else {
                         playAudio(SoundEffect.SHIP_EXPLOSION_SMALL);
                     }
+
+                    gameOver = false;
                     break;
 
                 default:
@@ -441,6 +452,14 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
     protected void setShipToShoot(SpaceShip ship) {
         ship.setToShoot(true);
+    }
+
+    public boolean isGameOver() {
+        return gameOver;
+    }
+
+    public float timeSinceGameOver() {
+        return timeSinceGameOver;
     }
 
     protected void handleShootingLogic(SpaceShip ship) {
@@ -550,10 +569,6 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
 
         spaceShips.addLast(enemyShip);
         hitDetection.addCollider(enemyShip);
-    }
-
-    @Override
-    public void stopGame() {
     }
 
     @Override

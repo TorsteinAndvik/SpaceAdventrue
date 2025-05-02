@@ -66,7 +66,8 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     private final ScreenViewport viewport;
     private final ScreenViewport viewportUI;
     private final ExtendViewport bgViewport;
-    private BitmapFont font;
+    private BitmapFont fontRegular;
+    private BitmapFont fontBold;
 
     private final OrthographicCamera camera;
     private final float zoomMin = 1f;
@@ -119,7 +120,7 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         setupSprites();
         setupAnimationHashMap();
         setupLighting();
-        setupFont();
+        setupFonts();
     }
 
     private void setupBackground() {
@@ -225,15 +226,20 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         return manager.get(path, Texture.class);
     }
 
-    private void setupFont() {
-        font = manager.get("fonts/PixelOperatorMonoHB.ttf", BitmapFont.class);
+    private void setupFonts() {
+        fontRegular = manager.get("fonts/PixelOperatorMonoHB.ttf", BitmapFont.class);
 
         // fonts are set as [integer]pt, need to scale them to our viewport by ratio of
         // viewport height to screen height in order to use world-unit sized font
 
-        font.setUseIntegerPositions(false);
-        font.getData().setScale(viewportUI.getUnitsPerPixel());
-        font.setColor(Palette.WHITE);
+        fontRegular.setUseIntegerPositions(false);
+        fontRegular.getData().setScale(viewportUI.getUnitsPerPixel());
+        fontRegular.setColor(Palette.WHITE);
+
+        fontBold = manager.get("fonts/PixelOperatorMono-Bold.ttf", BitmapFont.class);
+        fontBold.setUseIntegerPositions(false);
+        fontBold.getData().setScale(viewportUI.getUnitsPerPixel());
+        fontBold.setColor(Palette.WHITE);
     }
 
     @Override
@@ -413,10 +419,16 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         diamond.setY(viewportUI.getWorldHeight() - 1.06f * diamond.getHeight());
         diamond.setX(-0.15f * diamond.getWidth());
         diamond.draw(batch);
-        font.draw(batch, String.valueOf(model.getPlayer().getInventory().getResourceCount()),
+        fontRegular.draw(batch, String.valueOf(model.getPlayer().getInventory().getResourceCount()),
                 diamond.getX() + diamond.getWidth(),
-                diamond.getY() + 0.45f * diamond.getHeight() + 0.5f * font.getLineHeight());
+                diamond.getY() + 0.45f * diamond.getHeight() + 0.5f * fontRegular.getLineHeight());
+
+        if (model.isGameOver()) {
+            fontRegular.draw(batch, "Game Over", viewportUI.getWorldWidth() / 2f, viewportUI.getWorldHeight() / 2f);
+        }
+
         batch.end();
+
     }
 
     private void updateLightCounts() {

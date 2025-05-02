@@ -6,6 +6,7 @@ import controller.audio.AudioCallback;
 import controller.audio.SoundEffect;
 import model.GameStateModel;
 import model.SpaceGameModel;
+import model.constants.GameState;
 import view.SpaceGame;
 import view.screens.SpaceScreen;
 
@@ -22,6 +23,9 @@ public class SpaceScreenController extends GenericController implements AudioCal
 
     public void update(float delta) {
         model.update(delta);
+        if (model.isGameOver()) {
+            gameStateModel.changeState(GameState.GAME_OVER);
+        }
     }
 
     @Override
@@ -133,7 +137,8 @@ public class SpaceScreenController extends GenericController implements AudioCal
     }
 
     @Override
-    protected void handleScroll(float amountY) { }
+    protected void handleScroll(float amountY) {
+    }
 
     @Override
     public void play(SoundEffect soundEffect) {
