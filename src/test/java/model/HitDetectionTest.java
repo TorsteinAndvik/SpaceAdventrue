@@ -1,5 +1,6 @@
 package model;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -7,9 +8,13 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import model.Globals.Collidable;
 import model.ShipComponents.ShipFactory;
 import model.SpaceCharacters.Asteroid;
 import model.SpaceCharacters.Bullet;
@@ -39,14 +44,41 @@ public class HitDetectionTest {
 
         hitDetection = new HitDetection(model);
         hitDetection.addCollider(asteroid);
-        hitDetection.addCollider(laser);
         hitDetection.addCollider(player);
+        hitDetection.addCollider(laser);
         hitDetection.addCollider(enemyShip);
     }
 
     @Test
     public void addColliderTest() {
         assertTrue(hitDetection.colliders.contains(asteroid));
+        assertTrue(hitDetection.colliders.contains(laser));
+        assertTrue(hitDetection.colliders.contains(player));
+        assertTrue(hitDetection.colliders.contains(enemyShip));
+
+        List<Collidable> colliders = new ArrayList<>();
+        Asteroid newAsteroid1 = new Asteroid();
+        Asteroid newAsteroid2 = new Asteroid();
+        colliders.add(newAsteroid1);
+        colliders.add(newAsteroid2);
+        hitDetection.addColliders(colliders);
+        assertTrue(hitDetection.colliders.contains(newAsteroid1));
+        assertTrue(hitDetection.colliders.contains(newAsteroid2));
+
+        // check other collideables are still present
+        assertTrue(hitDetection.colliders.contains(asteroid));
+        assertTrue(hitDetection.colliders.contains(laser));
+        assertTrue(hitDetection.colliders.contains(player));
+        assertTrue(hitDetection.colliders.contains(enemyShip));
+    }
+
+    @Test
+    public void removeColliderTest() {
+        assertTrue(hitDetection.colliders.contains(asteroid));
+        hitDetection.removeCollider(asteroid);
+        assertFalse(hitDetection.colliders.contains(asteroid));
+
+        // check other collideables aren't removed
         assertTrue(hitDetection.colliders.contains(laser));
         assertTrue(hitDetection.colliders.contains(player));
         assertTrue(hitDetection.colliders.contains(enemyShip));
@@ -83,6 +115,29 @@ public class HitDetectionTest {
         hitDetection.checkCollisions();
         verify(model, never()).handleCollision(any(), any());
 
+        FloatPair pos1 = new FloatPair(1000f, 1000f);
+        FloatPair pos2 = new FloatPair(2000f, 2000f);
+        player.setPosition(pos1);
+        laser.setPosition(pos1);
+
+        hitDetection.checkCollisions();
+        verify(model, times(1)).handleCollision(any(), any());
+
+        laser.setPosition(pos2);
+        hitDetection.checkCollisions();
+        verify(model, times(1)).handleCollision(any(), any());
+
+        enemyShip.setPosition(pos2);
+        hitDetection.checkCollisions();
+        verify(model, times(2)).handleCollision(any(), any());
+    }
+
+    @Test
+    public void doubleShipCollisionTest() {
+        // ensure no collisions initially
+        hitDetection.checkCollisions();
+        verify(model, never()).handleCollision(any(), any());
+
         // make player and enemy overlap
         FloatPair pos = new FloatPair(1000f, 1000f);
         player.setPosition(pos);
@@ -109,5 +164,28 @@ public class HitDetectionTest {
         player.rotate(90f);
         hitDetection.checkCollisions();
         verify(model, times(3)).handleCollision(any(), any());
+    }
+
+    @Test
+    public void isFriendlyFireTest() {
+        assertFalse(HitDetection.isFriendlyFire(player, asteroid));
+        assertFalse(HitDetection.isFriendlyFire(asteroid, asteroid));
+        assertFalse(HitDetection.isFriendlyFire(laser, asteroid));
+        assertFalse(HitDetection.isFriendlyFire(asteroid, laser));
+        assertFalse(HitDetection.isFriendlyFire(asteroid, player));
+
+        laser.setSourceID("");
+
+        assertFalse(HitDetection.isFriendlyFire(laser, player));
+        assertFalse(HitDetection.isFriendlyFire(laser, enemyShip));
+        assertFalse(HitDetection.isFriendlyFire(player, laser));
+        assertFalse(HitDetection.isFriendlyFire(enemyShip, laser));
+
+        laser.setSourceID(enemyShip.getID());
+        assertFalse(HitDetection.isFriendlyFire(laser, player));
+        assertTrue(HitDetection.isFriendlyFire(laser, enemyShip));
+        assertFalse(HitDetection.isFriendlyFire(player, laser));
+        assertTrue(HitDetection.isFriendlyFire(enemyShip, laser));
+        assertTrue(HitDetection.isFriendlyFire(laser, laser));
     }
 }
