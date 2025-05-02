@@ -302,6 +302,9 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
                 float shipX = ship.getX() + cell.pos().col();
                 float shipY = ship.getY() + cell.pos().row();
                 if (ship.isPlayerShip()) {
+                    if (model.isGameOver()) {
+                        continue;
+                    }
                     Sprite fuselagePlayer = shipSprites.get(cell.value().getType()).get(cell.value().getStage());
                     fuselagePlayer.setCenterX(shipX);
                     fuselagePlayer.setCenterY(shipY);
@@ -398,6 +401,9 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         shape.setProjectionMatrix(camera.combined);
         shape.begin(ShapeType.Filled);
         for (SpaceShip ship : model.getSpaceShips()) {
+            if (ship.isPlayerShip() && model.isGameOver()) {
+                continue;
+            }
             ship.getHealthBar().draw(shape);
         }
         shape.end();

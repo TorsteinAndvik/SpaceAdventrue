@@ -358,6 +358,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                             break;
                         }
                     }
+                    playAudio(SoundEffect.SHIP_EXPLOSION_SMALL);
                     break;
 
                 case BULLET:
