@@ -413,7 +413,7 @@ public class SpaceGameModel implements ViewableSpaceGameModel, ControllableSpace
                         playAudio(SoundEffect.SHIP_EXPLOSION_SMALL);
                     }
 
-                    gameOver = false;
+                    gameOver = true;
                     break;
 
                 default:

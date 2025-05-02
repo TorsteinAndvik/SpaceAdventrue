@@ -72,6 +72,9 @@ public class OptionsScreenController extends GenericController {
                 return true;
             case Input.Keys.ESCAPE:
             case Input.Keys.P:
+                if (!gameStateModel.hasActiveGame()) {
+                    return false;
+                }
                 game.setSpaceScreen();
                 return true;
         }
@@ -157,6 +160,7 @@ public class OptionsScreenController extends GenericController {
 
         // add back button
         view.addControlsBackButton("BACK", view::resetToOptionsMenu);
+        gameStateModel.setSelectedButtonIndex(3);
     }
 
     private void toggleSound() {

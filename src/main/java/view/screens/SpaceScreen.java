@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Matrix4;
@@ -97,6 +98,9 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
     private LinkedList<LaserLight> laserLights;
     private Pool<LaserLight> laserLightPool;
     private ShipThrusterLightMap shipThrusterLightMap;
+
+    // Game over text layout
+    private GlyphLayout gameOverLayout;
 
     // Hitboxes (for testing/debugging)
     private final boolean showHitboxes = false;
@@ -240,6 +244,9 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
         fontBold.setUseIntegerPositions(false);
         fontBold.getData().setScale(viewportUI.getUnitsPerPixel());
         fontBold.setColor(Palette.WHITE);
+
+        gameOverLayout = new GlyphLayout();
+        gameOverLayout.setText(fontBold, "GAME OVER");
     }
 
     @Override
@@ -424,7 +431,9 @@ public class SpaceScreen implements Screen, AnimationCallback, ScreenBoundsProvi
                 diamond.getY() + 0.45f * diamond.getHeight() + 0.5f * fontRegular.getLineHeight());
 
         if (model.isGameOver()) {
-            fontRegular.draw(batch, "Game Over", viewportUI.getWorldWidth() / 2f, viewportUI.getWorldHeight() / 2f);
+            float textX = viewportUI.getWorldWidth() / 2f - gameOverLayout.width / 2f;
+            float textY = 3f * viewportUI.getWorldHeight() / 4f - gameOverLayout.height / 2f;
+            fontBold.draw(batch, "Game Over", textX, textY);
         }
 
         batch.end();
