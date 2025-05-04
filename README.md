@@ -12,6 +12,10 @@
   Defeat enemy ships, destroy asteroids, and get upgrades. These will all help you survive, but for
   what purpose?
 
+![BuildShip.png](images%2FBuildShip.png)
+![UpgradeShip.png](images%2FUpgradeShip.png)
+![FightEnemies.png](images%2FFightEnemies.png)
+
 ## Controls
 
 You control the game with the usual WASD.
