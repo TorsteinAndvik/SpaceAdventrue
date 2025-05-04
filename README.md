@@ -12,10 +12,11 @@
   Defeat enemy ships, destroy asteroids, and get upgrades. These will all help you survive, but for
   what purpose?
 
+<div style="display: flex; gap: 10px; justify-content: center;">
 <img src="images/BuildShip.png" alt="BuildShip" width="211"/>
 <img src="images/UpgradeShip.png" alt="UpgradeShip" width="326"/>
 <img src="images/FightEnemies.png" alt="FightEnemies" width="229"/>
-
+</div>
 ## Controls
 
 You control the game with the usual WASD.
