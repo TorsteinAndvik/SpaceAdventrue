@@ -12,9 +12,9 @@
   Defeat enemy ships, destroy asteroids, and get upgrades. These will all help you survive, but for
   what purpose?
 
-![BuildShip.png](images%2FBuildShip.png)
-![UpgradeShip.png](images%2FUpgradeShip.png)
-![FightEnemies.png](images%2FFightEnemies.png)
+<img src="images/BuildShip.png" alt="BuildShip" width="211"/>
+<img src="images/UpgradeShip.png" alt="UpgradeShip" width="326"/>
+<img src="images/FightEnemies.png" alt="FightEnemies" width="229"/>
 
 ## Controls
 
