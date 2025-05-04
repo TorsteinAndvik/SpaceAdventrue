@@ -35,7 +35,8 @@ You control the game with the usual WASD.
 - `A` and `D` rotates the ship.
 - `P`: Pauses the game, and pulls up the options menu.
 - `Space`: Shoots lasers
-- `Esc`: shows the upgrade menu. You drag and drop upgrades on your ship.
+- `Esc`: shows the upgrade menu.
+- `Mouse` to build and upgrade the ship.
 
 An options menu lists all controls for every menu once in game. Just click options, or push `p`.
 
