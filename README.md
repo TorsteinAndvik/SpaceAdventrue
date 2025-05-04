@@ -1,5 +1,7 @@
 # INF112 Project - *Sprite*
 
+* This is a group project I was a part of during the spring of 2025 at the University of Bergen. 
+
 * Team: *Happy sprites*: *Tor Wollmann, Torstein Andvik, Flemming Bjørdal, Henrik
   Dalstø*
 * A complete UML diagram, kept uptdated, [is found here](./doc/umlDiagram.png). (NOTE: This file
