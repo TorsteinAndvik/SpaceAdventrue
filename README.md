@@ -1,8 +1,7 @@
 # INF112 Project - *Sprite*
 
-* Team: *Happy sprites* (Group 8_1): *Tor Wollmann, Torstein Andvik, Flemming Bjørdal, Henrik
+* Team: *Happy sprites*: *Tor Wollmann, Torstein Andvik, Flemming Bjørdal, Henrik
   Dalstø*
-* The project repository [is found here](https://git.app.uib.no/inf112/25v/proj/sprites).
 * A complete UML diagram, kept uptdated, [is found here](./doc/umlDiagram.png). (NOTE: This file
   will eat all you memory!)
 
@@ -40,8 +39,8 @@ Some resizing issues.
 
 ## Credits
 
-Flemming - Arts
-Henrik Dalstø - Music
+- Arts: Flemming Bjørdal, Torstein Andvik
+- Music: Henrik Dalstø
 
 ## Jar Files
 
